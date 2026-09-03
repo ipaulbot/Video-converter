@@ -11,9 +11,14 @@ Use this file as the shared parking lot for bugs, refactors, and new features.
 
 ## Bugs / Fixes
 
-- Update the shipped help document after the tab-visibility and multi-source recorder UI changes. The currently opened guide still references older behavior in places.
 - Keep testing preview play overlay theme changes on real drag/drop conversions.
 - Continue PC report SIW parity work with deeper codec, camera, and driver validation on lab PCs.
+
+## Done
+
+- Help documentation is now generated from `docs/help/source/` rather than
+  hand-maintained. Edit the content bundles and run
+  `python docs/help/source/build_help_docs.py`. See `docs/help/README.md`.
 
 ## Feature Ideas
 
