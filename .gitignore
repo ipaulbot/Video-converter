@@ -1,0 +1,42 @@
+# --- bundled FFmpeg binaries (~296 MB) -------------------------------------
+# Kept out of history deliberately. Download them into the project root, or
+# point utils/resources.resource_path at a local install, before running.
+ffmpeg.exe
+ffprobe.exe
+
+# --- Python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.eggs/
+
+# --- test / lint caches ----------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- PyInstaller build output ----------------------------------------------
+build/
+dist/
+
+# --- virtual environments --------------------------------------------------
+.venv/
+venv/
+env/
+
+# --- editor / OS -----------------------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+Thumbs.db
+Desktop.ini
+
+# --- Office lock files -----------------------------------------------------
+~$*
+
+# --- runtime artifacts -----------------------------------------------------
+*.log

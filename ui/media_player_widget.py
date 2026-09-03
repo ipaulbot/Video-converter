@@ -1,0 +1,485 @@
+import os
+
+from PyQt5.QtCore import Qt, QTimer, QUrl
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtWidgets import (
+    QComboBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSlider,
+    QVBoxLayout,
+    QWidget,
+)
+
+VIDEO_NAME_FILTER = (
+    "Video files (*.mp4 *.mov *.mkv *.avi *.wmv *.webm *.m4v *.mpg *.mpeg *.flv);;All files (*)"
+)
+
+# Available playback speeds shared by every panel so the tiles stay locked together.
+PLAYBACK_SPEEDS = [0.25, 0.5, 1.0, 1.5, 2.0]
+
+# Panel count presets the user can switch between. Observer-style review usually wants
+# 2 clips side by side, but up to 4 can be compared in a 2x2 grid.
+PANEL_COUNT_OPTIONS = [1, 2, 4]
+
+MAX_PANELS = 4
+
+# If a panel drifts further than this from where the shared timeline says it should be,
+# it gets nudged back into place on the next tick so the tiles do not slowly separate.
+DRIFT_CORRECTION_MS = 250
+
+
+def format_timecode(milliseconds):
+    """Format a millisecond position as H:MM:SS (or M:SS under an hour)."""
+    try:
+        total_seconds = int(max(0, milliseconds) // 1000)
+    except (TypeError, ValueError):
+        total_seconds = 0
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours:
+        return f"{hours}:{minutes:02d}:{seconds:02d}"
+    return f"{minutes}:{seconds:02d}"
+
+
+def panel_seek_position_ms(master_ms, offset_ms, duration_ms):
+    """Map a shared-timeline position to a single panel's position.
+
+    Each panel can carry a per-source offset (in ms) so clips that started at slightly
+    different real-world times can be aligned. The result is clamped to the panel's own
+    media duration so a seek never runs past the end of a shorter clip.
+    """
+    try:
+        target = int(master_ms) + int(offset_ms)
+    except (TypeError, ValueError):
+        return 0
+    if target < 0:
+        target = 0
+    if duration_ms and duration_ms > 0 and target > duration_ms:
+        target = int(duration_ms)
+    return target
+
+
+class PlayerPanel(QWidget):
+    """A single video tile: a video surface plus its own player and sync offset."""
+
+    def __init__(self, index, parent=None):
+        super().__init__(parent)
+        self.index = index
+        self.setAcceptDrops(True)
+        self._media_path = ""
+        self.player = None
+        # The host wires these so the player can drive the shared timeline once created.
+        self.on_duration_changed = None
+        self.on_media_status_changed = None
+        self._build_ui()
+
+    def _build_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
+
+        # The actual QVideoWidget (a native video surface) is created lazily on first
+        # load. Spawning one per panel up front allocates Windows video-surface resources
+        # that accumulate across many widgets and can crash the backend on teardown.
+        self.video_container = QFrame(self)
+        self.video_container.setStyleSheet("background:#101417; border-radius:6px;")
+        self.video_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.video_container.setMinimumHeight(120)
+        self._video_layout = QVBoxLayout(self.video_container)
+        self._video_layout.setContentsMargins(0, 0, 0, 0)
+        self.video_widget = None
+
+        self.placeholder = QLabel("Drop a video here\nor click Load", self.video_container)
+        self.placeholder.setAlignment(Qt.AlignCenter)
+        self.placeholder.setStyleSheet("color:#8a9298; font-size:11px; background:transparent;")
+
+        controls = QHBoxLayout()
+        controls.setSpacing(6)
+
+        self.name_label = QLabel(f"Panel {self.index + 1}: empty")
+        self.name_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+
+        self.offset_spin = QDoubleSpinBox()
+        self.offset_spin.setRange(-600.0, 600.0)
+        self.offset_spin.setSingleStep(0.1)
+        self.offset_spin.setDecimals(1)
+        self.offset_spin.setValue(0.0)
+        self.offset_spin.setSuffix(" s")
+        self.offset_spin.setMaximumWidth(78)
+        self.offset_spin.setToolTip(
+            "Sync offset for this panel. Shift this clip earlier (negative) or later "
+            "(positive) so its action lines up with the other panels."
+        )
+
+        self.load_btn = QPushButton("Load")
+        self.load_btn.setMaximumWidth(58)
+        self.load_btn.setCursor(Qt.PointingHandCursor)
+        self.load_btn.clicked.connect(self.browse_for_media)
+
+        self.clear_btn = QPushButton("Clear")
+        self.clear_btn.setMaximumWidth(58)
+        self.clear_btn.setCursor(Qt.PointingHandCursor)
+        self.clear_btn.clicked.connect(self.clear_media)
+
+        controls.addWidget(self.name_label)
+        controls.addWidget(QLabel("offset"))
+        controls.addWidget(self.offset_spin)
+        controls.addWidget(self.load_btn)
+        controls.addWidget(self.clear_btn)
+
+        layout.addWidget(self.video_container, 1)
+        layout.addLayout(controls)
+
+        frame_style = (
+            "PlayerPanel { background:#1b2227; border:1px solid #2c353b; border-radius:8px; }"
+        )
+        self.setStyleSheet(frame_style)
+        self.setObjectName("PlayerPanel")
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.placeholder.setGeometry(self.video_container.rect())
+
+    def _ensure_video_widget(self):
+        if self.video_widget is None:
+            self.video_widget = QVideoWidget(self.video_container)
+            self.video_widget.setStyleSheet("background:#101417; border-radius:6px;")
+            self.video_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            self._video_layout.addWidget(self.video_widget)
+            self.placeholder.raise_()
+        return self.video_widget
+
+    def _ensure_player(self):
+        # Create the QMediaPlayer lazily on first load. Creating it up front for every
+        # panel spawns Windows media-backend objects that are expensive and can crash on
+        # mass teardown; deferring until a clip is actually loaded avoids that entirely.
+        if self.player is not None:
+            return self.player
+        self.player = QMediaPlayer(self, QMediaPlayer.VideoSurface)
+        self.player.setVideoOutput(self._ensure_video_widget())
+        self.player.setNotifyInterval(50)
+        if callable(self.on_duration_changed):
+            self.player.durationChanged.connect(self.on_duration_changed)
+        if callable(self.on_media_status_changed):
+            self.player.mediaStatusChanged.connect(self.on_media_status_changed)
+        return self.player
+
+    def has_media(self):
+        return bool(self._media_path)
+
+    def offset_ms(self):
+        return int(round(self.offset_spin.value() * 1000))
+
+    def duration_ms(self):
+        return self.player.duration() if self.player is not None else 0
+
+    def browse_for_media(self):
+        path, _ = QFileDialog.getOpenFileName(self, "Open video", "", VIDEO_NAME_FILTER)
+        if path:
+            self.load_media(path)
+
+    def load_media(self, path):
+        if not path or not os.path.exists(path):
+            return False
+        self._ensure_player().setMedia(QMediaContent(QUrl.fromLocalFile(path)))
+        self._media_path = path
+        self.name_label.setText(f"Panel {self.index + 1}: {os.path.basename(path)}")
+        self.name_label.setToolTip(path)
+        self.placeholder.hide()
+        return True
+
+    def clear_media(self):
+        if self.player is not None:
+            self.player.stop()
+            self.player.setMedia(QMediaContent())
+        self._media_path = ""
+        self.name_label.setText(f"Panel {self.index + 1}: empty")
+        self.name_label.setToolTip("")
+        self.placeholder.show()
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        for url in event.mimeData().urls():
+            local = url.toLocalFile()
+            if local:
+                self.load_media(local)
+                break
+        event.acceptProposedAction()
+
+
+class MediaPlayerWidget(QWidget):
+    """Observer-style synchronized multi-panel player (up to four clips at once)."""
+
+    def __init__(self, parent=None, button_style=None):
+        super().__init__(parent)
+        self.button_style = button_style
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.panels = []
+        self._is_playing = False
+        self._suppress_seek = False
+        self._build_ui()
+
+        self.sync_timer = QTimer(self)
+        self.sync_timer.setInterval(60)
+        self.sync_timer.timeout.connect(self._on_tick)
+        self.sync_timer.start()
+
+        self.set_visible_panel_count(2)
+
+    def _build_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(10)
+
+        title = QLabel("Media Player")
+        title.setStyleSheet("font-size:18px; font-weight:bold; color:#43a296;")
+        layout.addWidget(title)
+
+        description = QLabel(
+            "Load up to four clips and review them side by side. Play, pause and seek "
+            "control every panel together; use each panel's offset to line up clips that "
+            "started at slightly different times."
+        )
+        description.setWordWrap(True)
+        description.setStyleSheet("color:#6c757d; font-size:11px;")
+        layout.addWidget(description)
+
+        self.grid = QGridLayout()
+        self.grid.setSpacing(8)
+        for index in range(MAX_PANELS):
+            panel = PlayerPanel(index, self)
+            panel.on_duration_changed = self._on_any_duration_changed
+            panel.on_media_status_changed = self._on_media_status_changed
+            self.panels.append(panel)
+        # 2x2 grid layout positions.
+        positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
+        for panel, (row, col) in zip(self.panels, positions):
+            self.grid.addWidget(panel, row, col)
+        layout.addLayout(self.grid, 1)
+
+        layout.addLayout(self._build_transport_bar())
+
+    def _build_transport_bar(self):
+        bar = QVBoxLayout()
+        bar.setSpacing(6)
+
+        seek_row = QHBoxLayout()
+        seek_row.setSpacing(8)
+        self.position_slider = QSlider(Qt.Horizontal)
+        self.position_slider.setRange(0, 0)
+        self.position_slider.sliderMoved.connect(self.seek_all)
+        self.position_slider.sliderPressed.connect(self._on_slider_pressed)
+        self.position_slider.sliderReleased.connect(self._on_slider_released)
+        self.time_label = QLabel("0:00 / 0:00")
+        self.time_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.time_label.setMinimumWidth(96)
+        self.time_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        seek_row.addWidget(self.position_slider, 1)
+        seek_row.addWidget(self.time_label)
+        bar.addLayout(seek_row)
+
+        button_row = QHBoxLayout()
+        button_row.setSpacing(8)
+
+        self.play_btn = QPushButton("Play all")
+        self.play_btn.setCursor(Qt.PointingHandCursor)
+        self.play_btn.clicked.connect(self.toggle_play_all)
+
+        self.stop_btn = QPushButton("Stop all")
+        self.stop_btn.setCursor(Qt.PointingHandCursor)
+        self.stop_btn.clicked.connect(self.stop_all)
+
+        self.restart_btn = QPushButton("Restart")
+        self.restart_btn.setCursor(Qt.PointingHandCursor)
+        self.restart_btn.clicked.connect(self.restart_all)
+
+        speed_label = QLabel("Speed")
+        speed_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.speed_combo = QComboBox()
+        for speed in PLAYBACK_SPEEDS:
+            self.speed_combo.addItem(f"{speed:g}x", speed)
+        self.speed_combo.setCurrentIndex(PLAYBACK_SPEEDS.index(1.0))
+        self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
+
+        panels_label = QLabel("Panels")
+        panels_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.panels_combo = QComboBox()
+        for count in PANEL_COUNT_OPTIONS:
+            self.panels_combo.addItem(str(count), count)
+        self.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(2))
+        self.panels_combo.currentIndexChanged.connect(self._on_panel_count_changed)
+
+        button_row.addWidget(self.play_btn)
+        button_row.addWidget(self.stop_btn)
+        button_row.addWidget(self.restart_btn)
+        button_row.addStretch(1)
+        button_row.addWidget(panels_label)
+        button_row.addWidget(self.panels_combo)
+        button_row.addWidget(speed_label)
+        button_row.addWidget(self.speed_combo)
+        bar.addLayout(button_row)
+        if self.button_style:
+            for button in (self.play_btn, self.stop_btn, self.restart_btn):
+                button.setStyleSheet(self.button_style)
+        return bar
+
+    # --- panel visibility -------------------------------------------------
+    def set_visible_panel_count(self, count):
+        for index, panel in enumerate(self.panels):
+            panel.setVisible(index < count)
+
+    def visible_panel_count(self):
+        return sum(1 for panel in self.panels if not panel.isHidden())
+
+    def _on_panel_count_changed(self, _index):
+        self.set_visible_panel_count(self.panels_combo.currentData())
+
+    # --- active players ---------------------------------------------------
+    def active_panels(self):
+        return [panel for panel in self.panels if not panel.isHidden() and panel.has_media()]
+
+    def _reference_panel(self):
+        # The longest loaded clip drives the shared timeline so the slider can reach the
+        # end of every panel.
+        candidates = self.active_panels()
+        if not candidates:
+            return None
+        return max(candidates, key=lambda panel: panel.duration_ms())
+
+    def timeline_duration_ms(self):
+        panels = self.active_panels()
+        if not panels:
+            return 0
+        return max(panel.duration_ms() for panel in panels)
+
+    # --- transport --------------------------------------------------------
+    def toggle_play_all(self):
+        if self._is_playing:
+            self.pause_all()
+        else:
+            self.play_all()
+
+    def play_all(self):
+        panels = self.active_panels()
+        if not panels:
+            return
+        rate = self.speed_combo.currentData() or 1.0
+        master = self.position_slider.value()
+        for panel in panels:
+            panel.player.setPlaybackRate(rate)
+            panel.player.setPosition(
+                panel_seek_position_ms(master, panel.offset_ms(), panel.duration_ms())
+            )
+            panel.player.play()
+        self._is_playing = True
+        self.play_btn.setText("Pause all")
+
+    def pause_all(self):
+        for panel in self.panels:
+            if panel.player is not None:
+                panel.player.pause()
+        self._is_playing = False
+        self.play_btn.setText("Play all")
+
+    def stop_all(self):
+        for panel in self.panels:
+            if panel.player is not None:
+                panel.player.stop()
+        self._is_playing = False
+        self.play_btn.setText("Play all")
+        self._set_slider_value(0)
+        self._update_time_label(0)
+
+    def restart_all(self):
+        self.seek_all(0)
+        self.play_all()
+
+    def seek_all(self, master_ms):
+        for panel in self.active_panels():
+            panel.player.setPosition(
+                panel_seek_position_ms(master_ms, panel.offset_ms(), panel.duration_ms())
+            )
+        self._update_time_label(master_ms)
+
+    def _on_slider_pressed(self):
+        self._suppress_seek = True
+
+    def _on_slider_released(self):
+        self._suppress_seek = False
+        self.seek_all(self.position_slider.value())
+
+    def _on_speed_changed(self, _index):
+        rate = self.speed_combo.currentData() or 1.0
+        for panel in self.panels:
+            if panel.player is not None:
+                panel.player.setPlaybackRate(rate)
+
+    # --- player signals ---------------------------------------------------
+    def _on_any_duration_changed(self, _duration):
+        self.position_slider.setRange(0, self.timeline_duration_ms())
+        self._update_time_label(self.position_slider.value())
+
+    def _on_media_status_changed(self, status):
+        if status == QMediaPlayer.EndOfMedia and self._is_playing:
+            # When the longest clip finishes, pause every panel so they stay aligned
+            # rather than letting shorter clips loop or freeze out of sync.
+            self.pause_all()
+
+    def _on_tick(self):
+        if not self._is_playing or self._suppress_seek:
+            return
+        reference = self._reference_panel()
+        if reference is None:
+            return
+        # Advance the slider from the reference panel, compensating for its own offset so
+        # the slider reflects the shared timeline rather than that panel's local position.
+        master = max(0, reference.player.position() - reference.offset_ms())
+        self._set_slider_value(master)
+        self._update_time_label(master)
+        self._correct_drift(master)
+
+    def _correct_drift(self, master_ms):
+        for panel in self.active_panels():
+            expected = panel_seek_position_ms(master_ms, panel.offset_ms(), panel.duration_ms())
+            if abs(panel.player.position() - expected) > DRIFT_CORRECTION_MS:
+                panel.player.setPosition(expected)
+
+    def _set_slider_value(self, value):
+        self.position_slider.blockSignals(True)
+        self.position_slider.setValue(int(value))
+        self.position_slider.blockSignals(False)
+
+    def _update_time_label(self, master_ms):
+        self.time_label.setText(
+            f"{format_timecode(master_ms)} / {format_timecode(self.timeline_duration_ms())}"
+        )
+
+    def shutdown(self):
+        try:
+            self.sync_timer.stop()
+        except Exception:
+            pass
+        for panel in self.panels:
+            if panel.player is None:
+                continue
+            try:
+                panel.player.stop()
+                # Detach the media and video surface before teardown. Leaving a live
+                # QMediaPlayer bound to a QVideoWidget can crash the Windows media backend
+                # when many players are destroyed at interpreter/app shutdown.
+                panel.player.setMedia(QMediaContent())
+                panel.player.setVideoOutput(None)
+            except Exception:
+                pass

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Multi-Source Recorder Mockup</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 24px;
+      color: #243030;
+      background: #f5f7f7;
+    }
+    h1, h2 {
+      color: #2f8f86;
+    }
+    .frame {
+      max-width: 980px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #d9eeee;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .mock-window {
+      border: 1px solid #cfd8d8;
+      background: #f2f2f2;
+    }
+    .tabs {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #cfd8d8;
+      background: #eeeeee;
+      padding: 4px 4px 0;
+    }
+    .tab {
+      padding: 8px 16px;
+      border: 1px solid #d8d8d8;
+      border-bottom: none;
+      background: #f8f8f8;
+      border-radius: 5px 5px 0 0;
+      font-size: 13px;
+    }
+    .tab.active {
+      background: white;
+      border-bottom: 2px solid #43a296;
+    }
+    .recorder {
+      padding: 12px;
+      background: white;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .preview {
+      height: 130px;
+      background: #050505;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border: 1px solid #cfd8d8;
+      font-size: 13px;
+    }
+    .badge {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: #43a296;
+      color: white;
+      font-size: 11px;
+    }
+    .badge.warn {
+      background: #b48225;
+    }
+    .properties {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: minmax(420px, 1.4fr) minmax(260px, .8fr);
+      gap: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid #d8d8d8;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background: #eef7f6;
+    }
+    .side {
+      border: 1px solid #d8d8d8;
+      padding: 10px;
+      background: #fafafa;
+      font-size: 12px;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .input {
+      border: 1px solid #cfd8d8;
+      background: white;
+      padding: 6px;
+      min-height: 16px;
+    }
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+    .record {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 3px solid #d0d0d0;
+      background: #d92828;
+    }
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 8px 18px;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #d9eeee;
+      background: #fbffff;
+    }
+    .note {
+      padding: 12px 14px;
+      border-left: 4px solid #43a296;
+      background: #eef9f8;
+      margin: 14px 0;
+    }
+    @media (max-width: 760px) {
+      .properties {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <h1>Multi-Source Recorder Layout Proposal</h1>
+    <p>This mockup shows the direction: make the recorder feel closer to MediaRecorder while staying compact enough for NVC's original window size.</p>
+
+    <h2>Recorder Tab</h2>
+    <div class="mock-window">
+      <div class="tabs">
+        <div class="tab">Conversion Log</div>
+        <div class="tab">Converted Files</div>
+        <div class="tab">Video Inspection Tool</div>
+        <div class="tab active">Multi-Source Recorder</div>
+      </div>
+      <div class="recorder">
+        <div class="preview-grid">
+          <div class="preview">Video 1 Preview <span class="badge">live</span></div>
+          <div class="preview">Video 2 <br>Error detected. Check settings. <span class="badge warn">error</span></div>
+          <div class="preview">Video 3 Preview <span class="badge warn">off</span></div>
+          <div class="preview">Video 4 Preview <span class="badge warn">off</span></div>
+        </div>
+
+        <div class="properties">
+          <table>
+            <tr><th>Nr</th><th>Use</th><th>Video name</th><th>Audio/source</th><th>Mute</th><th>Volume</th></tr>
+            <tr><td>1</td><td>✓</td><td>Video 1</td><td>Audio 1</td><td></td><td>100%</td></tr>
+            <tr><td>2</td><td>✓</td><td>Video 2</td><td>Audio 2</td><td>✓</td><td>0%</td></tr>
+            <tr><td>3</td><td></td><td>Video 3</td><td>Audio 3</td><td></td><td>100%</td></tr>
+            <tr><td>4</td><td></td><td>Video 4</td><td>Audio 4</td><td></td><td>100%</td></tr>
+          </table>
+          <div class="side">
+            <div class="field"><strong>File location</strong><div class="input">C:\Users\Public\Documents\Noldus\Media Recorder</div></div>
+            <div class="field"><strong>Base name</strong><div class="input">Video</div></div>
+            <div class="field"><strong>Mode</strong><div class="input">Copy / H.264</div></div>
+            <div class="field"><strong>Duration</strong><div class="input">blank = until stopped</div></div>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <span>Status: Not recording</span>
+          <button class="record" title="Record"></button>
+        </div>
+      </div>
+    </div>
+
+    <h2>Settings: Tool Tabs</h2>
+    <p>Add a new settings tab where the user chooses which tools appear in the main tab bar.</p>
+    <div class="settings">
+      <label><input type="checkbox" checked> Conversion Log</label>
+      <label><input type="checkbox" checked> Converted Files</label>
+      <label><input type="checkbox" checked> Video Inspection Tool</label>
+      <label><input type="checkbox"> PC Report</label>
+      <label><input type="checkbox"> Lossless Editor</label>
+      <label><input type="checkbox"> Multi-Source Recorder</label>
+    </div>
+
+    <div class="note">
+      Recommended default: show only Conversion Log, Converted Files, and Video Inspection Tool. Other tools remain available after checking them in Settings.
+    </div>
+  </div>
+</body>
+</html>

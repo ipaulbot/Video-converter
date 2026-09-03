@@ -1,0 +1,605 @@
+PREVIEW_FPS = 20
+PREVIEW_WIDTH = 480
+RTSP_PREVIEW_FPS = 12
+RTSP_PREVIEW_WIDTH = 360
+
+# NOTE: We deliberately do NOT add fragmented MP4 movflags here. Adding
+# "-movflags +frag_keyframe+empty_moov+default_base_moof" was tried as a way to keep
+# the file playable when stop has to escalate to a forced kill, but on real-world
+# FFmpeg builds those flags caused Axis RTSP stream-copy recordings to produce no
+# output file at all and stalled the DirectShow filter_complex preview pipe behind
+# the libx264 encoder. Plain MP4 saves reliably; an interrupted recording can be
+# repaired, but losing every recording is not acceptable.
+
+# Low-latency preview profile drops buffered frames so the live view stays close to wall clock.
+# This is appropriate for the idle preview pipeline but is too aggressive for recording, where
+# the codec parsing window of -analyzeduration/-probesize starves the muxer.
+RTSP_PREVIEW_INPUT_OPTIONS = [
+    "-rtsp_transport",
+    "tcp",
+    "-fflags",
+    "nobuffer",
+    "-flags",
+    "low_delay",
+    "-analyzeduration",
+    "0",
+    "-probesize",
+    "32",
+    "-max_delay",
+    "0",
+    "-reorder_queue_size",
+    "0",
+]
+
+# Stable recording profile keeps TCP transport but lets FFmpeg analyze the stream normally so
+# the resulting MP4 is well-formed. Long reads use a wall-clock timeout to avoid hangs.
+RTSP_RECORDING_INPUT_OPTIONS = [
+    "-rtsp_transport",
+    "tcp",
+    "-timeout",
+    "5000000",
+]
+
+# Backwards-compatible alias kept for any external callers that still reference the previous
+# constant name.
+RTSP_LOW_LATENCY_INPUT_OPTIONS = RTSP_PREVIEW_INPUT_OPTIONS
+
+
+def _normalize_recording_resolution(resolution):
+    text = str(resolution or "").strip()
+    if not text or text.lower() == "auto":
+        return ""
+    return text.lower().replace(" ", "")
+
+
+def _normalize_recording_framerate(frame_rate):
+    text = str(frame_rate or "").strip()
+    if not text or text.lower() == "auto":
+        return ""
+    try:
+        value = float(text)
+    except ValueError:
+        return text
+    if value.is_integer():
+        return str(int(value))
+    return str(value).rstrip("0").rstrip(".")
+
+
+def _is_genicam_source(source_text):
+    text = (source_text or "").lower()
+    return "genicam" in text or "basler" in text
+
+
+def _genicam_first_open_order(source_texts):
+    # GenICam / Basler DirectShow sources must be instantiated before any other dshow
+    # capture filter in the same FFmpeg process, otherwise they fail to BindToObject
+    # ("device already in use" / I/O error). A stable sort opens those sources first
+    # while every source keeps its original relative position for grid layout.
+    return sorted(range(len(source_texts)), key=lambda index: 0 if _is_genicam_source(source_texts[index]) else 1)
+
+
+def _normalize_itsoffset(value):
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    try:
+        seconds = float(text)
+    except ValueError:
+        return ""
+    if abs(seconds) < 1e-6:
+        return ""
+    return ("%f" % seconds).rstrip("0").rstrip(".")
+
+
+def _add_input(command, source_text, network_profile="preview", frame_rate="", resolution="", use_wallclock=False, itsoffset=""):
+    offset_value = _normalize_itsoffset(itsoffset)
+    if offset_value:
+        # Shift this input's timeline so the user can compensate for a constant capture
+        # latency difference (e.g. a GigE camera buffering ~1s behind a USB webcam).
+        command.extend(["-itsoffset", offset_value])
+    if use_wallclock:
+        # Stamp every frame with its real arrival time on a single shared clock. This
+        # is what lets a multi-input graph keep two live cameras on the same timeline
+        # instead of each starting from its own private zero.
+        command.extend(["-use_wallclock_as_timestamps", "1"])
+    if source_text.lower().startswith(("video=", "audio=")):
+        fps_value = _normalize_recording_framerate(frame_rate)
+        resolution_value = _normalize_recording_resolution(resolution)
+        command.extend(["-rtbufsize", "512M"])
+        if fps_value:
+            command.extend(["-framerate", fps_value])
+        if resolution_value:
+            command.extend(["-video_size", resolution_value])
+        command.extend(["-f", "dshow", "-i", source_text])
+        return
+    if source_text.lower().startswith("rtsp://"):
+        if network_profile == "recording":
+            command.extend(RTSP_RECORDING_INPUT_OPTIONS)
+        else:
+            command.extend(RTSP_PREVIEW_INPUT_OPTIONS)
+    command.extend(["-i", source_text])
+
+
+def build_record_command(
+    ffmpeg_path,
+    source,
+    output_file,
+    codec_mode="copy",
+    duration_seconds="",
+    preview_pipe=False,
+    frame_rate="",
+    resolution="",
+):
+    command = [ffmpeg_path, "-hide_banner", "-y"]
+    if duration_seconds:
+        command.extend(["-t", str(duration_seconds)])
+
+    source_text = (source or "").strip()
+    is_directshow = source_text.lower().startswith(("video=", "audio="))
+    _add_input(command, source_text, network_profile="recording", frame_rate=frame_rate, resolution=resolution)
+
+    if preview_pipe:
+        # Both DirectShow and RTSP/HTTP sources use a single decoded video stream that
+        # is split into the recording output and the MJPEG preview pipe. Sharing the
+        # decoder + scheduler is the only configuration we have seen reliably keep the
+        # preview tile updating while the file output is also active. A stream-copy
+        # file output with a separate decoded preview tap on the same input does avoid
+        # the re-encode cost, but in practice FFmpeg's scheduler starves the preview
+        # tap on RTSP inputs (notably Axis cameras) and the preview freezes. The CPU
+        # cost of re-encoding to libx264 veryfast is small relative to that trade-off.
+        command.extend([
+            "-filter_complex",
+            f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
+            "-map", "[v]",
+            "-map", "0:a?",
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-crf", "18",
+            "-c:a", "aac",
+            output_file,
+            "-map", "[p]",
+            "-q:v", "7",
+            "-f", "image2pipe",
+            "-vcodec", "mjpeg",
+            "pipe:1",
+        ])
+        return command
+
+    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
+    if codec_mode == "copy" and is_network_source:
+        command.extend(["-c:v", "copy", "-an"])
+    elif codec_mode == "copy" and not is_directshow:
+        command.extend(["-c", "copy"])
+    else:
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac"])
+
+    command.append(output_file)
+    return command
+
+
+COMBINED_GRID_FPS = 30
+
+
+def build_combined_grid_record_command(
+    ffmpeg_path,
+    sources,
+    output_file,
+    duration_seconds="",
+    preview_pipe=False,
+    preview_fps=PREVIEW_FPS,
+    preview_width=PREVIEW_WIDTH,
+    output_fps=COMBINED_GRID_FPS,
+    offsets_per_source=None,
+):
+    source_texts = [(source or "").strip() for source in sources if (source or "").strip()]
+    offsets = list(offsets_per_source or [])
+    command = [ffmpeg_path, "-hide_banner", "-y"]
+
+    # Open GenICam/Basler sources first so they can bind, but remember each source's
+    # original position so the grid tiles stay where the user arranged them.
+    open_order = _genicam_first_open_order(source_texts)
+    input_index_of = {original: opened for opened, original in enumerate(open_order)}
+    for original in open_order:
+        _add_input(
+            command,
+            source_texts[original],
+            network_profile="recording",
+        )
+
+    if len(source_texts) == 1 and not preview_pipe:
+        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-an"])
+        if duration_seconds:
+            command.extend(["-t", str(duration_seconds)])
+        command.append(output_file)
+        return command
+
+    filters = []
+    for opened_index in range(len(source_texts)):
+        original = open_order[opened_index]
+        offset_value = _normalize_itsoffset(offsets[original]) if original < len(offsets) else ""
+        # Rebase each tile to its OWN first frame (timebase 0) and only then resample
+        # to the common frame rate. Because both streams now share timebase 0 and the
+        # same CFR cadence, xstack's frame-sync pairs them 1:1 -- no repeated/dropped
+        # frames, which is what made the GigE tile choppy under the old wall-clock
+        # approach. A constant capture-latency difference between cameras (e.g. a GigE
+        # camera whose first frame lands ~1s after the webcam's) shows up as a fixed
+        # content offset, corrected with the per-source sync offset added to setpts.
+        if offset_value:
+            setpts = f"setpts=PTS-STARTPTS+({offset_value})/TB"
+        else:
+            setpts = "setpts=PTS-STARTPTS"
+        filters.append(
+            f"[{opened_index}:v]{setpts},fps={output_fps},"
+            "scale=640:360:force_original_aspect_ratio=decrease,"
+            "pad=640:360:(ow-iw)/2:(oh-ih)/2,setsar=1"
+            f"[v{opened_index}]"
+        )
+
+    # Feed xstack in ORIGINAL source order so tile positions match the user's rows,
+    # even though the inputs were opened GenICam-first.
+    labels = [f"[v{input_index_of[original]}]" for original in range(len(source_texts))]
+
+    if len(source_texts) == 2:
+        layout = "0_0|w0_0"
+    elif len(source_texts) == 3:
+        layout = "0_0|w0_0|0_h0"
+    else:
+        layout = "0_0|w0_0|0_h0|w0_h0"
+
+    if len(source_texts) == 1:
+        base_label = labels[0]
+    elif preview_pipe:
+        base_label = "[stacked]"
+        filters.append(
+            f"{''.join(labels)}xstack=inputs={len(source_texts)}:layout={layout}:fill=black{base_label}"
+        )
+    else:
+        base_label = "[v]"
+        filters.append(
+            f"{''.join(labels)}xstack=inputs={len(source_texts)}:layout={layout}:fill=black{base_label}"
+        )
+
+    if preview_pipe:
+        filters.append(f"{base_label}split=2[v][preview]")
+        filters.append(f"[preview]fps={preview_fps},scale={preview_width}:-1[p]")
+
+    command.extend([
+        "-filter_complex", ";".join(filters),
+        "-map", "[v]",
+        "-r", str(output_fps),
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-crf", "18",
+        "-an",
+    ])
+    if duration_seconds:
+        command.extend(["-t", str(duration_seconds)])
+    command.append(output_file)
+    if preview_pipe:
+        command.extend(["-map", "[p]", "-q:v", "7"])
+        if duration_seconds:
+            command.extend(["-t", str(duration_seconds)])
+        command.extend(["-f", "image2pipe", "-vcodec", "mjpeg", "pipe:1"])
+    return command
+
+
+def _grid_preview_rects(count):
+    # Normalized tile rectangles matching the combined-grid / separate-file arrangement.
+    if count == 1:
+        return [(0.0, 0.0, 1.0, 1.0)]
+    if count == 2:
+        return [(0.0, 0.0, 0.5, 1.0), (0.5, 0.0, 0.5, 1.0)]
+    if count == 3:
+        return [(0.0, 0.0, 0.5, 0.5), (0.5, 0.0, 0.5, 0.5), (0.0, 0.5, 0.5, 0.5)]
+    return [
+        (0.0, 0.0, 0.5, 0.5),
+        (0.5, 0.0, 0.5, 0.5),
+        (0.0, 0.5, 0.5, 0.5),
+        (0.5, 0.5, 0.5, 0.5),
+    ]
+
+
+def _pip_preview_rects(count):
+    # Source 1 fills the frame; the remaining sources are small insets stacked along the
+    # bottom-left, like a picture-in-picture composite.
+    rects = [(0.0, 0.0, 1.0, 1.0)]
+    inset_w = 0.28
+    inset_h = 0.28
+    gap = 0.04
+    margin = 0.05
+    for inset_index in range(count - 1):
+        x = margin + inset_index * (inset_w + gap)
+        y = 1.0 - margin - inset_h
+        rects.append((x, y, inset_w, inset_h))
+    return rects
+
+
+def recording_layout_preview_rects(mode, count):
+    """Describe where each numbered source lands in the recorder's output.
+
+    Returns a list of normalized ``(x, y, w, h)`` rectangles (each value in 0..1), one
+    per source in source order. This drives the layout schematic shown in the sidebar
+    preview so the user can see at a glance whether the output will be a side-by-side
+    grid, a picture-in-picture composite, or a single tile.
+    """
+    try:
+        count = int(count or 0)
+    except (TypeError, ValueError):
+        count = 0
+    count = max(0, min(count, 4))
+    if count == 0:
+        return []
+    mode_text = (mode or "").strip().lower()
+    if mode_text.startswith("picture"):
+        return _pip_preview_rects(count)
+    return _grid_preview_rects(count)
+
+
+def _preview_grid_layout(count):
+    # Compact grids for the common 2-4 camera setups, matching the combined-grid
+    # recorder layout. For larger counts fall back to a single horizontal row, which
+    # is always a valid xstack layout regardless of how many tiles there are.
+    if count == 2:
+        return "0_0|w0_0"
+    if count == 3:
+        return "0_0|w0_0|0_h0"
+    if count == 4:
+        return "0_0|w0_0|0_h0|w0_h0"
+    positions = ["0_0"]
+    for index in range(1, count):
+        positions.append("+".join(f"w{j}" for j in range(index)) + "_0")
+    return "|".join(positions)
+
+
+def build_multi_source_record_command(
+    ffmpeg_path,
+    sources,
+    output_files,
+    duration_seconds="",
+    options_per_source=None,
+    preview_pipe=False,
+    preview_fps=PREVIEW_FPS,
+    preview_width=PREVIEW_WIDTH,
+    audio_source="",
+):
+    """Build one FFmpeg command that records every source in a single process.
+
+    Each source is opened exactly once and written to its own MP4 file, which avoids
+    the DirectShow "device already in use" conflict that breaks a separate
+    preview-process + recording-process design. Every video stream is rebased with
+    ``setpts=PTS-STARTPTS`` so cameras that connect at slightly different times stay
+    aligned instead of drifting apart. When ``preview_pipe`` is set, the same process
+    also taps each input, scales it, stacks the tiles, and emits a single combined
+    MJPEG preview on stdout so the live view never has to re-open any device.
+
+    This is the unified-pipeline prototype; it is intentionally not yet wired into the
+    live recorder so the proven per-source paths keep working untouched.
+    """
+    source_texts = [(source or "").strip() for source in sources]
+    output_files = list(output_files or [])
+    options_list = list(options_per_source or [])
+
+    command = [ffmpeg_path, "-hide_banner", "-y"]
+
+    for index, source_text in enumerate(source_texts):
+        options = options_list[index] if index < len(options_list) else {}
+        _add_input(
+            command,
+            source_text,
+            network_profile="recording",
+            frame_rate=(options or {}).get("frame_rate", ""),
+            resolution=(options or {}).get("resolution", ""),
+        )
+
+    audio_text = (audio_source or "").strip()
+    audio_input_index = None
+    if audio_text:
+        audio_input_index = len(source_texts)
+        _add_input(command, audio_text, network_profile="recording")
+
+    filters = []
+    preview_scaled_labels = []
+    for index in range(len(source_texts)):
+        if preview_pipe:
+            filters.append(
+                f"[{index}:v]setpts=PTS-STARTPTS,split=2[rec{index}][pre{index}]"
+            )
+            filters.append(
+                f"[pre{index}]fps={preview_fps},scale={preview_width}:-1[p{index}]"
+            )
+            preview_scaled_labels.append(f"[p{index}]")
+        else:
+            filters.append(f"[{index}:v]setpts=PTS-STARTPTS[rec{index}]")
+
+    preview_map_label = None
+    if preview_pipe and preview_scaled_labels:
+        if len(preview_scaled_labels) == 1:
+            preview_map_label = preview_scaled_labels[0]
+        else:
+            layout = _preview_grid_layout(len(preview_scaled_labels))
+            filters.append(
+                f"{''.join(preview_scaled_labels)}"
+                f"xstack=inputs={len(preview_scaled_labels)}:layout={layout}:fill=black[grid]"
+            )
+            preview_map_label = "[grid]"
+
+    command.extend(["-filter_complex", ";".join(filters)])
+
+    duration = str(duration_seconds or "").strip()
+    for index, output_file in enumerate(output_files):
+        command.extend(["-map", f"[rec{index}]"])
+        attach_audio = audio_input_index is not None and index == 0
+        if attach_audio:
+            command.extend(["-map", f"{audio_input_index}:a"])
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if attach_audio:
+            command.extend(["-c:a", "aac"])
+        if duration:
+            command.extend(["-t", duration])
+        command.append(output_file)
+
+    if preview_pipe and preview_map_label:
+        command.extend(["-map", preview_map_label, "-q:v", "7"])
+        if duration:
+            # The preview output must honor the same duration as the file outputs;
+            # otherwise the live (never-ending) preview tap keeps the whole process
+            # alive past the requested recording length.
+            command.extend(["-t", duration])
+        command.extend(["-f", "image2pipe", "-vcodec", "mjpeg", "pipe:1"])
+    return command
+
+
+def build_directshow_camera_settings_command(ffmpeg_path, device_name):
+    source = device_name if str(device_name or "").lower().startswith("video=") else f"video={device_name}"
+    return [
+        ffmpeg_path,
+        "-hide_banner",
+        "-f",
+        "dshow",
+        "-show_video_device_dialog",
+        "true",
+        "-i",
+        source,
+        "-t",
+        "0.1",
+        "-f",
+        "null",
+        "NUL",
+    ]
+
+
+def build_directshow_list_options_command(ffmpeg_path, device_name):
+    source = device_name if str(device_name or "").lower().startswith("video=") else f"video={device_name}"
+    return [
+        ffmpeg_path,
+        "-hide_banner",
+        "-list_options",
+        "true",
+        "-f",
+        "dshow",
+        "-i",
+        source,
+    ]
+
+
+def build_directshow_preview_frame_command(ffmpeg_path, device_name, output_file):
+    source = device_name if str(device_name or "").lower().startswith("video=") else f"video={device_name}"
+    return [
+        ffmpeg_path,
+        "-hide_banner",
+        "-y",
+        "-f",
+        "dshow",
+        "-i",
+        source,
+        "-frames:v",
+        "1",
+        output_file,
+    ]
+
+
+def build_directshow_preview_stream_command(
+    ffmpeg_path,
+    device_name,
+    fps=PREVIEW_FPS,
+    width=PREVIEW_WIDTH,
+    frame_rate="",
+    resolution="",
+):
+    source = device_name if str(device_name or "").lower().startswith("video=") else f"video={device_name}"
+    command = [
+        ffmpeg_path,
+        "-hide_banner",
+        "-nostats",
+        "-rtbufsize",
+        "512M",
+    ]
+    fps_value = _normalize_recording_framerate(frame_rate)
+    resolution_value = _normalize_recording_resolution(resolution)
+    if fps_value:
+        command.extend(["-framerate", fps_value])
+    if resolution_value:
+        command.extend(["-video_size", resolution_value])
+    command.extend([
+        "-f",
+        "dshow",
+        "-i",
+        source,
+        "-vf",
+        f"fps={fps},scale={width}:-1",
+        "-q:v",
+        "5",
+        "-f",
+        "image2pipe",
+        "-vcodec",
+        "mjpeg",
+        "-",
+    ])
+    return command
+
+
+def build_preview_stream_command(ffmpeg_path, source, fps=PREVIEW_FPS, width=PREVIEW_WIDTH):
+    source_text = (source or "").strip()
+    is_rtsp = source_text.lower().startswith("rtsp://")
+    preview_fps = RTSP_PREVIEW_FPS if is_rtsp else fps
+    preview_width = RTSP_PREVIEW_WIDTH if is_rtsp else width
+    preview_quality = "9" if is_rtsp else "7"
+    command = [ffmpeg_path, "-hide_banner", "-nostats"]
+    _add_input(command, source_text, network_profile="preview")
+    command.extend([
+        "-an",
+        "-sn",
+        "-dn",
+        "-vf",
+        f"fps={preview_fps},scale={preview_width}:-1",
+        "-q:v",
+        preview_quality,
+        "-f",
+        "image2pipe",
+        "-vcodec",
+        "mjpeg",
+        "-",
+    ])
+    return command
+
+
+def build_directshow_record_with_preview_command(
+    ffmpeg_path,
+    source,
+    output_file,
+    duration_seconds="",
+    fps=5,
+    preview_pipe=False,
+    frame_rate="",
+    resolution="",
+):
+    source_text = (source or "").strip()
+    if not source_text.lower().startswith("video="):
+        source_text = f"video={source_text}"
+    command = [ffmpeg_path, "-hide_banner", "-y"]
+    if duration_seconds:
+        command.extend(["-t", str(duration_seconds)])
+    _add_input(command, source_text, network_profile="recording", frame_rate=frame_rate, resolution=resolution)
+    if preview_pipe:
+        command.extend([
+            "-filter_complex",
+            f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
+            "-map", "[v]",
+            "-map", "0:a?",
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-crf", "18",
+            "-c:a", "aac",
+            output_file,
+            "-map", "[p]",
+            "-q:v", "7",
+            "-f", "image2pipe",
+            "-vcodec", "mjpeg",
+            "pipe:1",
+        ])
+        return command
+    command.extend([
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+        output_file,
+    ])
+    return command

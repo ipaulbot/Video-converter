@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+import sys
+import os
+import logging
+from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtCore import QSharedMemory, QSystemSemaphore
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QIcon
+from ui.main_window import VideoConverterApp
+from utils.resources import resource_path
+from utils.retention import process_pending_deletions
+
+logging.basicConfig(level=logging.INFO)
+
+def main():
+    app = QApplication(sys.argv)
+    # Single-instance guard
+    semaphore = QSystemSemaphore('NVC_Semaphore', 1)
+    semaphore.acquire()
+    shared = QSharedMemory('NVC_SingleInstance')
+    already_running = False
+    if shared.attach():
+        already_running = True
+    else:
+        shared.create(1)
+    semaphore.release()
+    if already_running:
+        # Themed single-instance dialog using INFO icon and app icon
+        try:
+            icon_path = resource_path('graphics/INFO.ico')
+            pm = QPixmap(icon_path) if os.path.exists(icon_path) else None
+            msg = QMessageBox()
+            msg.setWindowTitle('NVC')
+            # Apply title/icon for dialog
+            try:
+                app_icon = resource_path('graphics/TEALNVCLOGO.ico')
+                if os.path.exists(app_icon):
+                    msg.setWindowIcon(QIcon(app_icon))
+            except Exception:
+                pass
+            if pm:
+                msg.setIconPixmap(pm.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            else:
+                msg.setIcon(QMessageBox.Information)
+            msg.setText('NVC is already running.')
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+        except Exception:
+            QMessageBox.information(None, 'NVC', 'NVC is already running.')
+        sys.exit(0)
+    # Check for required resource files using absolute paths.
+    required_files = [
+        'ffmpeg.exe',
+        'ffprobe.exe',
+        'graphics/NVCLOGO.ico',
+        'graphics/TEALNVCLOGO.ico',
+        'graphics/GRAYSCALELOCK.ico',
+        'graphics/UNLOCK.ico',
+        'graphics/BROOM.ico',
+        'graphics/GRAYSCALEBROOM.ico',
+        'graphics/GRAYSCALEBURGER.ico',
+        'graphics/INFO.ico',
+        'graphics/HELP.ico',
+        'graphics/GEAR.ico',
+        'help_document.html'
+    ]
+    missing_files = [f for f in required_files if not os.path.exists(resource_path(f))]
+    if missing_files:
+        QMessageBox.critical(
+            None,
+            "Missing Resources",
+            "The following required files are missing:\n" + "\n".join(missing_files)
+        )
+        sys.exit(1)
+
+    window = VideoConverterApp()
+    # Process any overdue pending deletions from previous sessions
+    try:
+        process_pending_deletions(log_cb=lambda m: None)
+    except Exception:
+        pass
+    window.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

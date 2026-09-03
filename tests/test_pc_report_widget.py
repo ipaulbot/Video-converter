@@ -1,0 +1,96 @@
+import unittest
+import inspect
+
+from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
+
+from ui.pc_report_dialog import PCReportWidget
+from ui.main_window import VideoConverterApp
+
+
+class PCReportWidgetTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def tearDown(self):
+        for widget in self.app.topLevelWidgets():
+            if isinstance(widget, VideoConverterApp):
+                try:
+                    widget.shutdown()
+                except Exception:
+                    pass
+
+    def test_embedded_pc_report_widget_is_not_a_dialog(self):
+        widget = PCReportWidget()
+
+        self.assertNotIsInstance(widget, QDialog)
+
+    def test_embedded_pc_report_widget_uses_flexible_size_policy(self):
+        widget = PCReportWidget()
+
+        self.assertEqual(widget.sizePolicy().horizontalPolicy(), QSizePolicy.Expanding)
+        self.assertEqual(widget.sizePolicy().verticalPolicy(), QSizePolicy.Expanding)
+
+    def test_default_report_path_uses_browser_style_unique_names(self):
+        widget = PCReportWidget()
+
+        path = widget.default_report_path()
+
+        self.assertTrue(path.endswith(".html"))
+        self.assertIn("PC_Report", path)
+
+    def test_main_window_pc_report_entrypoint_stays_embedded(self):
+        source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)
+
+        self.assertNotIn("PCReportDialog", source)
+        self.assertNotIn("exec_", source)
+        self.assertIn("pc_report_widget", source)
+
+    def test_main_window_new_tool_tabs_have_standard_footer_icons(self):
+        window = VideoConverterApp()
+        try:
+            self.assertGreaterEqual(len(window.footer_lock_labels), 6)
+            self.assertGreaterEqual(len(window.footer_file_labels), 6)
+            self.assertGreaterEqual(len(window.footer_broom_labels), 6)
+        finally:
+            window.shutdown()
+
+    def test_main_window_registers_media_player_tool_tab(self):
+        window = VideoConverterApp()
+        try:
+            self.assertIn("media_player", window.tool_tab_widgets)
+            self.assertTrue(hasattr(window, "media_player_widget"))
+        finally:
+            window.shutdown()
+
+    def test_recording_tab_lock_and_layout_preview(self):
+        window = VideoConverterApp()
+        try:
+            # Recording grays out every other tab but keeps the recorder usable.
+            window.multi_source_recorder_widget.status_label.setText("Recording")
+            window._apply_recording_tab_lock()
+            recorder_index = window.tabs.indexOf(window.multi_source_recorder_tab_scroll)
+            self.assertTrue(window.tabs.isTabEnabled(recorder_index))
+            other_indices = [i for i in range(window.tabs.count()) if i != recorder_index]
+            self.assertTrue(other_indices)
+            for index in other_indices:
+                self.assertFalse(window.tabs.isTabEnabled(index))
+
+            # Stopping recording re-enables everything.
+            window.multi_source_recorder_widget.status_label.setText("Not recording")
+            window._apply_recording_tab_lock()
+            for index in range(window.tabs.count()):
+                self.assertTrue(window.tabs.isTabEnabled(index))
+
+            # The sidebar shows a rendered layout schematic for the recorder.
+            window.multi_source_recorder_widget.output_mode_combo.setCurrentText("Combined grid")
+            window._show_recorder_layout_preview()
+            self.assertTrue(window._showing_recorder_layout_preview)
+            self.assertIsNotNone(window.preview_label.pixmap())
+            self.assertFalse(window.preview_label.pixmap().isNull())
+        finally:
+            window.shutdown()
+
+
+if __name__ == "__main__":
+    unittest.main()
