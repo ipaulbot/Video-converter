@@ -38,3 +38,9 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Replaced the hand-written help document with generated Help and Quick Start
   manuals, in PDF and DOCX, built from a single content source with
   screenshots. The Help menu opens the newest generated manual.
+- Added a theme layer (`ui/theme.py`). The app's three visual states -- idle
+  (teal), active (green) and locked (grayscale) -- are now named skins with one
+  definition each, instead of the same colours repeated across four separate
+  if/elif chains. Appearance is unchanged.
+- Removed the superseded hand-written help document; the generated manuals are
+  now the only help.
