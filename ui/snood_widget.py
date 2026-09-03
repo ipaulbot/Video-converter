@@ -253,7 +253,7 @@ class SnoodWidget(QWidget):
         self.images = self.load_images()
         # Extract background images per level for quick access
         self.backgrounds = {i: self.images.get(f'level{i}') for i in range(1, 11)}
-        
+
         self.ball_radius = 0
         self.ping_targets = set()
         self.ping_final_rc = None
@@ -276,7 +276,7 @@ class SnoodWidget(QWidget):
                 set_best_level(1)
         except Exception:
             pass
-        
+
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_tick)
         self.timer.start(16)
@@ -411,9 +411,9 @@ class SnoodWidget(QWidget):
         self.high_score_recorded = False
         self.entering_initials = False
         self.falling.clear()
-        
+
         self.recalculate_geometry()
-        
+
         # In editor preview, always load from level 1 template if requested
         # Load custom mask for this level if present (persisted across restarts)
         mask = CUSTOM_LEVEL_MASKS.get(str(idx+1))
@@ -461,7 +461,7 @@ class SnoodWidget(QWidget):
                 else:
                     built_row.append({'type': t, 'special': (t in ('bumper','cue'))})
             self.board.append(built_row)
-        
+
         types = list(set(t for row in pattern for t in row if t and t != 'bumper'))
         if not types:
             types = [f'ball{i}' for i in range(1,9)]
@@ -501,7 +501,7 @@ class SnoodWidget(QWidget):
                 self.next['bounces'] = intro['bounces']
 
     def create_ball(self, t):
-        ball = {'type': t, 'special': (t in ('bumper','cue')), 
+        ball = {'type': t, 'special': (t in ('bumper','cue')),
                 'x': self.width() / 2, 'y': self.shooter_y, 'vx': 0, 'vy': 0, 'rot': 0}
         if t == 'bouncy':
             # Start with no pre-counted bounces; will increment on each real ricochet
@@ -668,7 +668,7 @@ class SnoodWidget(QWidget):
         # Request redraw
         self.update_celebration()
         self.update()
-        
+
     def update_loading(self):
         """Animate the next-ball preview rolling toward the shooter.
         It overshoots the mark by ~2 px, then rolls back to settle."""
@@ -751,7 +751,7 @@ class SnoodWidget(QWidget):
         if angle > -0.1: angle = -0.1
         if angle < -math.pi + 0.1: angle = -math.pi + 0.1
         self.mouse_angle = angle
-        
+
     def _commit_initials(self):
         initials = "".join(c or " " for c in self.initial_chars).strip() or "YOU"
         self.high_scores.append((initials.upper(), self.pending_score, self.pending_level))
@@ -895,12 +895,12 @@ class SnoodWidget(QWidget):
         self.moving['vy'] = math.sin(self.mouse_angle) * SPEED
         self.current = None
         self.can_shoot = False
-        
+
         self.loading = True
         self.loading_ball = self.next
         self.loading_ball['rot'] = 0
         self.loading_ball['overshoot_stage'] = 0
-        preview_x = self.width() - self.ball_radius*2 - 20 
+        preview_x = self.width() - self.ball_radius*2 - 20
         preview_y = self.shooter_y
         self.loading_ball['x'], self.loading_ball['y'] = preview_x, preview_y
         # determine next ball; honor forced introduction if set
@@ -939,7 +939,7 @@ class SnoodWidget(QWidget):
             ball['x'] = right_wall
             ball['vx'] *= -1
             ball['bounces'] = ball.get('bounces',0) + 1
-        
+
                 # Stick to ceiling instead of bouncing
         # Ceiling at the same position as row 0 - no gap, no bounce, immediate attachment
         top_offset = getattr(self, 'top_offset', 0)
@@ -976,13 +976,13 @@ class SnoodWidget(QWidget):
                     dx = cx - ball['x']
                     dy = cy - ball['y']
                     dist = math.hypot(dx, dy)
-                    
+
                     vx, vy = ball['vx'], ball['vy']
                     mag_v = math.hypot(vx, vy)
                     if mag_v == 0: continue
-                    
+
                     cos_theta = (vx * dx + vy * dy) / (mag_v * dist)
-                    
+
                     # Hitbox tuning: bouncy +10%, others -5%
                     if ball['type'] == 'bouncy':
                         threshold = self.ball_radius * 1.65 * 1.10
@@ -1083,7 +1083,7 @@ class SnoodWidget(QWidget):
             for br, bc in adjacent_bumper_cells:
                 self.board[br][bc]['jiggle_until'] = _time.time() + 0.4
 
-        
+
         bounce_intensity = ball.get('bounces',0)
         if not ball['special'] and bounce_intensity >= 2 and random.random() < 0.5:
             # radius-1 blast including landing cell
@@ -1197,7 +1197,7 @@ class SnoodWidget(QWidget):
             self.score = max(0, self.score - 300)  # trigger score penalty animation
             self.drop_floating()
             self.maybe_level_complete()
-        
+
         if self.check_lose():
             self.finish_game()
 
@@ -1221,7 +1221,7 @@ class SnoodWidget(QWidget):
             deltas.extend([(-1,-1), (1,-1)])
         else:
             deltas.extend([(-1,1), (1,1)])
-        
+
         neighbours = []
         for dr, dc in deltas:
             nr, nc = r + dr, c + dc
@@ -1233,7 +1233,7 @@ class SnoodWidget(QWidget):
         cell = self.board[r][c]
         if not cell or cell['special']: return []
         target_type = cell['type']
-        
+
         q = [(r,c)]
         visited = set(q)
         cluster = []
@@ -1372,7 +1372,7 @@ class SnoodWidget(QWidget):
                     if (nr, nc) not in visited and self.board[nr][nc]:
                         visited.add((nr, nc))
                         q.append((nr, nc))
-        
+
         for r in range(MAX_ROWS):
             for c in range(NUM_COLS):
                 if self.board[r][c] and (r,c) not in connected:
@@ -1381,7 +1381,7 @@ class SnoodWidget(QWidget):
                     self.board[r][c] = None
                     self.score += FALL_SCORE
                     self.maybe_level_complete()
-                    
+
     def charge_random_ball(self):
         """Randomly charge a single normal ball on the board."""
         # Suppress when overall live balls below threshold
@@ -1447,11 +1447,11 @@ class SnoodWidget(QWidget):
         to_remove = set()
         q = [(r, c, 0)]
         visited = set([(r,c)])
-        
+
         while q:
             curr_r, curr_c, dist = q.pop(0)
             to_remove.add((curr_r, curr_c))
-            
+
             if dist < radius:
                  for nr, nc in self.get_neighbours(curr_r, curr_c):
                     if (nr, nc) not in visited:
@@ -1541,23 +1541,23 @@ class SnoodWidget(QWidget):
             painter.drawPixmap(0, 0, scaled)
         else:
             painter.fillRect(self.rect(), QColor("#F0FFF8"))
-        
+
         if self.ball_radius > 0:
             # Draw ceiling line (solid) half a ball width above row 0
             top_offset = getattr(self, 'top_offset', 0)
             ceiling_line_y = top_offset - self.ball_radius  # Half ball width above centers
             painter.setPen(QPen(self.primary_color, 2, Qt.SolidLine))  # Solid line, slightly thicker
             painter.drawLine(int(WALL_PADDING), int(ceiling_line_y), int(self.width() - WALL_PADDING), int(ceiling_line_y))
-            
+
             # Position threshold line relative to shooter - lowered by one ball width
             # Place it 1 ball diameter above the shooter (closer to shooter)
             threshold_y = self.shooter_y - (self.ball_radius * 2 * 1.0)
             painter.setPen(QPen(self.primary_color, 1, Qt.DashLine))
             painter.drawLine(int(WALL_PADDING), int(threshold_y), int(self.width() - WALL_PADDING), int(threshold_y))
-            
+
             draw_size = self.ball_radius*2 - PADDING*2
             offset = self.ball_radius - draw_size/2
-            
+
             for r in range(MAX_ROWS):
                 for c in range(NUM_COLS):
                     cell = self.board[r][c]
@@ -1632,7 +1632,7 @@ class SnoodWidget(QWidget):
             end_y   = shooter_y + math.sin(self.mouse_angle) * (self.ball_radius + 40)
             painter.setPen(QPen(QColor("#3CA37B"), 3))
             painter.drawLine(int(start_x), int(start_y), int(end_x), int(end_y))
-            
+
             if self.current:
                 pixmap = self.images.get(self.current['type'])
                 if pixmap:
@@ -1686,11 +1686,11 @@ class SnoodWidget(QWidget):
             if self.next:
                 pixmap = self.images.get(self.next['type'])
                 if pixmap:
-                    preview_x = self.width() - self.ball_radius*2 - 20 
+                    preview_x = self.width() - self.ball_radius*2 - 20
                     preview_y = self.shooter_y
                     jitter = random.uniform(-3,3) if getattr(self, 'explosion_wiggle_until', 0) > time.time() else 0
                     painter.drawPixmap(int(preview_x - draw_size/2 + jitter), int(preview_y - draw_size/2 + jitter), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        
+
         # Draw celebration particles (confetti + fireworks)
         self.draw_celebration(painter)
 
@@ -1703,9 +1703,9 @@ class SnoodWidget(QWidget):
             self.draw_win_overlay(painter)
         elif self.game_over:
             self.draw_game_over_overlay(painter)
-        
+
         painter.end()
-        
+
     def check_lose(self):
         # Calculate threshold line same as in paintEvent - relative to shooter position
         threshold_y = self.shooter_y - (self.ball_radius * 2 * 1.0)
@@ -1964,7 +1964,7 @@ class SnoodWidget(QWidget):
         font = QFont("Segoe UI", 20, QFont.Bold)
         painter.setFont(font)
         painter.drawText(QRectF(dlg_x, dlg_y+15, dlg_w, 32), Qt.AlignCenter, "GAME OVER!")
-        
+
         font.setPointSize(12)
         painter.setFont(font)
         painter.drawText(QRectF(dlg_x, dlg_y+55, dlg_w, 24), Qt.AlignCenter, "High Scores")
@@ -1985,7 +1985,7 @@ class SnoodWidget(QWidget):
 
         self.restart_button_rect = QRectF(right_x, button_y_start, button_w, button_h)
         self.exit_button_rect = QRectF(right_x, button_y_start + button_h + 10, button_w, button_h)
-        
+
         hover_restart = self.restart_button_rect.contains(self.mapFromGlobal(QCursor.pos()))
         hover_exit = self.exit_button_rect.contains(self.mapFromGlobal(QCursor.pos()))
         self.draw_styled_button(painter, self.restart_button_rect, "Restart", self.primary_color, hover_restart)
@@ -2007,7 +2007,7 @@ class SnoodWidget(QWidget):
         painter.setPen(Qt.white)
         font = QFont("Segoe UI", 12, QFont.Bold)
         painter.setFont(font)
-        painter.drawText(rect, Qt.AlignCenter, text) 
+        painter.drawText(rect, Qt.AlignCenter, text)
 
     # ─────────────────────────────────────────────────────────
     #  Level Editor helpers

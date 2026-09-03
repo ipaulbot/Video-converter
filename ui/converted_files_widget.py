@@ -41,26 +41,26 @@ class _ClipPrefixDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        
+
         # Get the actual text data from the model
         display_text = index.data(Qt.DisplayRole) or ""
-        
+
         # Estimate available width for text inside the item rect
         # Account for padding (left + right margins + selection indicator space)
         padding = 24
         avail = max(0, opt.rect.width() - padding)
-        
+
         # Manually truncate to fit
         fitted_text = self._fit_prefix(display_text, opt.fontMetrics, avail)
-        
+
         # CRITICAL: Clear the text from opt so Qt doesn't draw it
         opt.text = ""
         opt.features &= ~QStyleOptionViewItem.HasDisplay
-        
+
         # Draw the control with selection/background first (without text)
         style = opt.widget.style() if opt.widget else QApplication.style()
         style.drawControl(QStyle.CE_ItemViewItem, opt, painter, opt.widget)
-        
+
         # Now draw the fitted text manually on top
         text_rect = style.subElementRect(QStyle.SE_ItemViewItemText, opt, opt.widget)
         painter.save()
@@ -93,24 +93,24 @@ class ConvertedFilesWidget(QWidget):
         # No margins - they are set at the tab level
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        
+
         # Create a container widget similar to conversion log
         from PyQt5.QtWidgets import QFrame
         self.table_container = QFrame()
         self.table_container.setFrameStyle(QFrame.Box)
         self.table_container.setStyleSheet("QFrame { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
-        
+
         # Create a layout for the container
         container_layout = QVBoxLayout(self.table_container)
         container_layout.setContentsMargins(0, 0, 0, 0)
         container_layout.setSpacing(0)
-        
+
         # Create clear button
         self.clear_button = QPushButton("Clear")
         clear_button = self.clear_button
         clear_button.setFixedSize(60, 24)
         clear_button.setCursor(Qt.PointingHandCursor)
-        
+
         # Use provided button style or default transparent style
         if self.button_style:
             clear_button.setStyleSheet(self.button_style)
@@ -130,7 +130,7 @@ class ConvertedFilesWidget(QWidget):
         clear_button.clicked.connect(self.clear_table)
         clear_button.setProperty('skipGlobalStyle', True)
         clear_button.hide()
-        
+
         self.table_widget = QTableWidget(0, 3)
         self.table_widget.setHorizontalHeaderLabels(["File Name", "Destination Folder", "Date Modified"])
         self.table_widget.setSelectionBehavior(self.table_widget.SelectRows)
@@ -143,13 +143,13 @@ class ConvertedFilesWidget(QWidget):
         self.table_widget.setItemDelegate(self._clip_prefix_delegate)
         self.table_widget.setItemDelegateForColumn(0, self._clip_prefix_delegate)
         self.table_widget.setItemDelegateForColumn(1, self._clip_prefix_delegate)
-        
+
         # Make table more compact by setting size policy
         from PyQt5.QtWidgets import QSizePolicy
         self.table_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.table_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.table_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        
+
         # Set minimum height to make table more compact
         self.table_widget.setMinimumHeight(50)
         header = self.table_widget.horizontalHeader()
@@ -163,10 +163,10 @@ class ConvertedFilesWidget(QWidget):
             header.resizeSection(1, 420)
         except Exception:
             pass
-        
+
         # Add clear button to table corner widget to eliminate spacing
         # self.table_widget.setCornerWidget(clear_button)
-        
+
         # Style the table with minimal internal spacing
         self.table_widget.setStyleSheet("""
             QTableWidget {
@@ -196,10 +196,10 @@ class ConvertedFilesWidget(QWidget):
                 background: white;
             }
         """)
-        
+
         # Add table to container
         container_layout.addWidget(self.table_widget)
-        
+
         # Add container to main layout
         layout.addWidget(self.table_container)
         self.setLayout(layout)

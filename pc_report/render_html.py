@@ -81,13 +81,13 @@ def render(meta, data, options):
         if not isinstance(noldus_drivers, list): noldus_drivers = [noldus_drivers] if noldus_drivers else []
         if not isinstance(noldus_codecs, list): noldus_codecs = [noldus_codecs] if noldus_codecs else []
         if not isinstance(noldus_environment, list): noldus_environment = [noldus_environment] if noldus_environment else []
-        
+
         # Build System Specs for NVC Report
         sys_rows = ""
         # Specific requested fields: OS, Computer Type, Model, Brand, GPU, CPU, Storage, Last Boot
         # Note: 'Storage' might need aggregation if multiple disks. 'Computer Type' ~ Desktop/Laptop inferred from Chassis or Battery?
         # For simplicity, we use the collected sys_sum keys which are populated from collectors.py
-        
+
         # Helper to format key names nicely
         key_map = {
             'OS': 'Operating System',
@@ -99,10 +99,10 @@ def render(meta, data, options):
             'Model': 'Model',
             'Manufacturer': 'Brand/Manufacturer'
         }
-        
+
         # Custom ordering for NVC report
         ordered_keys = ['Manufacturer', 'Model', 'OS', 'CPU', 'GPU', 'RAM_GB', 'LastBoot', 'Uptime']
-        
+
         for k in ordered_keys:
             val = sys_sum.get(k, '')
             if k == 'LastBoot':
@@ -111,7 +111,7 @@ def render(meta, data, options):
                 val = f"{val} GB"
             label = key_map.get(k, k)
             sys_rows += f"<tr><th>{label}</th><td>{E(val)}</td></tr>"
-            
+
         findings_rows = [
             {'Area': 'Software / Packages', 'Count': len(noldus_soft)},
             {'Area': 'Drivers', 'Count': len(noldus_drivers)},

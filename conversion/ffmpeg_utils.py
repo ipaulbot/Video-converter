@@ -71,7 +71,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
         # If GPU acceleration is enabled, check for "Auto" or specific vendor
         if settings.get('use_gpu', False):
             gpu_vendor = settings.get('gpu_encoder', 'Auto')
-            
+
             # If Auto, try to detect best
             if gpu_vendor.lower() == 'auto':
                 from conversion.gpu_encoders import get_best_gpu_encoder
@@ -89,7 +89,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
                 gpu_encoder_map = GPU_ENCODERS.get(gpu_vendor.lower(), {})
                 codec_intent = video_codec_intent(settings.get('video_codec', 'libx264'))
                 gpu_encoder = gpu_encoder_map.get(codec_intent, '')
-                
+
                 if gpu_encoder:
                     command.extend(['-c:v', gpu_encoder])
                     logger.info(f"Using GPU Encoder: {gpu_encoder}")
@@ -118,7 +118,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
         audio_bitrate = settings.get('audio_bitrate', '')
         if audio_bitrate and audio_bitrate.lower() != "auto":
             command.extend(['-b:a', audio_bitrate])
-            
+
         # Volume Adjustment
         volume = settings.get('volume_percentage', 100)
         if volume != 100:
@@ -126,7 +126,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
              # 50% -> 0.5, 200% -> 2.0
              vol_float = float(volume) / 100.0
              command.extend(['-af', f"volume={vol_float:.2f}"])
-        
+
         # Text Overlay
         overlay_type = settings.get('text_overlay', 'None') or 'None'
         # Backwards compatibility (older saved values)
@@ -142,15 +142,15 @@ def build_ffmpeg_command(settings, input_file, output_file):
         }
         overlay_type = _overlay_norm.get(overlay_type, overlay_type)
         if overlay_type != 'None':
-            # Note: Video filters (-vf) are incompatible with -c copy and often conflict with GPU encoding 
+            # Note: Video filters (-vf) are incompatible with -c copy and often conflict with GPU encoding
             # unless using complex filters or specific GPU filters.
             # For simplicity, if overlay is enabled, we might need to rely on CPU filters or ensure the codec supports it.
-            # Since we construct command linearly, we need to append to -vf. 
-            
+            # Since we construct command linearly, we need to append to -vf.
+
             # Since we have scale filter from 'video_size' usually passed as -s, let's convert -s to scale filter if we use other filters?
-            # Actually ffmpeg can mix -s and -vf but order matters. 
+            # Actually ffmpeg can mix -s and -vf but order matters.
             # Ideally we use -vf for everything if one filter is used.
-            
+
             drawtext = ""
 
             def _escape_font_path_for_drawtext(p: str) -> str:
@@ -361,7 +361,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
         framerate = settings.get('framerate', '')
         if framerate and framerate.lower() != 'auto':
             command.extend(['-r', framerate])
-        
+
         # Keyframe Interval (GOP)
         gop = settings.get('keyframe_interval', 0)
         try:
@@ -374,7 +374,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
     output_format = settings.get('output_format', 'mp4')
     if output_format:
         command.extend(['-f', output_format])
-    
+
     # Custom Console Command
     custom_args = settings.get('custom_console_command', '').strip()
     if custom_args:

@@ -53,13 +53,13 @@ class InspectionWidget(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
         self.tabs = QTabWidget()
-        
+
         # Summary tab with drag and drop area
         self.summary_tab = QWidget()
         self.summary_layout = QVBoxLayout(self.summary_tab)
         # No margins - they are set at the tab level
         self.summary_layout.setContentsMargins(0, 0, 0, 0)
-        
+
         # Create drag and drop area for summary
         self.summary_drag_drop = QWidget()
         self.summary_drag_drop.setStyleSheet("""
@@ -76,10 +76,10 @@ class InspectionWidget(QWidget):
         """)
         self.summary_drag_drop.setMinimumHeight(120)
         self.summary_drag_drop.setAcceptDrops(True)
-        
+
         summary_drag_layout = QVBoxLayout(self.summary_drag_drop)
         summary_drag_layout.setAlignment(Qt.AlignCenter)
-        
+
         # Drag and drop text
         self.summary_drag_text = QLabel("Drag and drop media files here to see summary")
         self.summary_drag_text.setAlignment(Qt.AlignCenter)
@@ -95,9 +95,9 @@ class InspectionWidget(QWidget):
             }
         """)
         self.summary_drag_text.setWordWrap(True)
-        
+
         summary_drag_layout.addWidget(self.summary_drag_text)
-        
+
         # Create summary text widget and add it to the drag drop area
         self.summary_text = QPlainTextEdit()
         self.summary_text.setReadOnly(True)
@@ -126,12 +126,12 @@ class InspectionWidget(QWidget):
             }
         """)
         summary_drag_layout.addWidget(self.summary_text)
-        
+
         # Connect drag and drop events
         self.summary_drag_drop.dragEnterEvent = self.summary_drag_enter
         self.summary_drag_drop.dragLeaveEvent = self.summary_drag_leave
         self.summary_drag_drop.dropEvent = self.summary_drop
-        
+
         self.summary_layout.addWidget(self.summary_drag_drop)
         self.summary_tab.setLayout(self.summary_layout)
 
@@ -140,7 +140,7 @@ class InspectionWidget(QWidget):
         self.json_layout = QVBoxLayout(self.json_tab)
         # No margins - they are set at the tab level
         self.json_layout.setContentsMargins(0, 0, 0, 0)
-        
+
         # Create drag and drop area for JSON
         self.json_drag_drop = QWidget()
         self.json_drag_drop.setStyleSheet("""
@@ -157,10 +157,10 @@ class InspectionWidget(QWidget):
         """)
         self.json_drag_drop.setMinimumHeight(120)
         self.json_drag_drop.setAcceptDrops(True)
-        
+
         json_drag_layout = QVBoxLayout(self.json_drag_drop)
         json_drag_layout.setAlignment(Qt.AlignCenter)
-        
+
         # Drag and drop text
         self.json_drag_text = QLabel("Drag and drop media files here for detailed JSON")
         self.json_drag_text.setAlignment(Qt.AlignCenter)
@@ -176,9 +176,9 @@ class InspectionWidget(QWidget):
             }
         """)
         self.json_drag_text.setWordWrap(True)
-        
+
         json_drag_layout.addWidget(self.json_drag_text)
-        
+
         # Create info display widget and add it to the drag drop area
         self.info_display = QPlainTextEdit()
         self.info_display.setReadOnly(True)
@@ -216,12 +216,12 @@ class InspectionWidget(QWidget):
             }
         """)
         json_drag_layout.addWidget(self.info_display)
-        
+
         # Connect drag and drop events
         self.json_drag_drop.dragEnterEvent = self.json_drag_enter
         self.json_drag_drop.dragLeaveEvent = self.json_drag_leave
         self.json_drag_drop.dropEvent = self.json_drop
-        
+
         self.json_layout.addWidget(self.json_drag_drop)
         self.json_tab.setLayout(self.json_layout)
 
@@ -275,7 +275,7 @@ class InspectionWidget(QWidget):
             }
         """)
         self.summary_drag_text.setText("Drag and drop media files here to see summary")
-        
+
         urls = event.mimeData().urls()
         if urls:
             file_path = urls[0].toLocalFile()
@@ -326,7 +326,7 @@ class InspectionWidget(QWidget):
             }
         """)
         self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
-        
+
         urls = event.mimeData().urls()
         if urls:
             file_path = urls[0].toLocalFile()
@@ -352,7 +352,7 @@ class InspectionWidget(QWidget):
         self.summary_text.show()
         self.summary_text.clear()
         self._notify_main_preview(file_path)
-        
+
         if not os.path.isfile(file_path):
             self.summary_text.setPlainText("File not found.")
             return
@@ -363,17 +363,17 @@ class InspectionWidget(QWidget):
             return
 
         command = [ffprobe_path, '-v', 'error', '-show_format', '-show_streams', '-print_format', 'json', file_path]
-        
+
         # Additional command for keyframe interval using select filter (read 1000 frames max to estimate)
         # We can estimate GOP size by finding distance between I-frames.
         # This is a bit slow for large files, so we might want to run it in a thread or limit it.
         # For now, let's just get the first few GOPs.
         keyframe_command = [
-            ffprobe_path, 
-            '-v', 'error', 
-            '-select_streams', 'v:0', 
-            '-show_entries', 'packet=pts_time,flags', 
-            '-of', 'csv=print_section=0', 
+            ffprobe_path,
+            '-v', 'error',
+            '-select_streams', 'v:0',
+            '-show_entries', 'packet=pts_time,flags',
+            '-of', 'csv=print_section=0',
             '-read_intervals', '%+30', # Read first 30 seconds
             file_path
         ]
@@ -383,7 +383,7 @@ class InspectionWidget(QWidget):
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                                       startupinfo=startupinfo, creationflags=creationflags, check=True)
             data = json.loads(result.stdout)
-            
+
             # Get keyframe info (best effort)
             try:
                 gop_result = subprocess.run(keyframe_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
@@ -395,7 +395,7 @@ class InspectionWidget(QWidget):
             summary = self.generate_summary(data)
             if keyframe_info:
                 summary += f"\n{keyframe_info}"
-                
+
             self.summary_text.setPlainText(summary)
         except subprocess.CalledProcessError as e:
             err_msg = f"Error inspecting file:\n{e.stderr}"
@@ -405,10 +405,10 @@ class InspectionWidget(QWidget):
         """Analyze ffprobe packet data to find I-frame intervals."""
         if not csv_data:
             return ""
-        
+
         last_pts = None
         intervals = []
-        
+
         # Parse CSV: pts_time,flags (e.g. 0.000000,K_)
         # We look for 'K' (Keyframe)
         for line in csv_data.splitlines():
@@ -420,14 +420,14 @@ class InspectionWidget(QWidget):
                     if last_pts is not None:
                         intervals.append(pts - last_pts)
                     last_pts = pts
-        
+
         if not intervals:
             return "Keyframe Interval: Unable to determine (No keyframes found in first 30s)"
-            
+
         avg_interval = sum(intervals) / len(intervals)
         min_int = min(intervals)
         max_int = max(intervals)
-        
+
         return (f"\n--- Keyframe Analysis (First 30s) ---\n"
                 f"Average Interval: {avg_interval:.2f}s\n"
                 f"Min Interval: {min_int:.2f}s\n"
@@ -442,7 +442,7 @@ class InspectionWidget(QWidget):
         self.info_display.show()
         self.info_display.clear()
         self._notify_main_preview(file_path)
-        
+
         if not os.path.isfile(file_path):
             self.info_display.setPlainText("File not found.")
             return

@@ -24,25 +24,25 @@ class SettingsDialog(QDialog):
         self.setWindowTitle("Settings")
         # Use fixed-size dialog hint (Windows) and compute final size from content later
         self.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint, True)
-        
+
         # Get the appropriate gear icon based on parent's state
         if parent and hasattr(parent, 'get_icon_path'):
             gear_icon_path = parent.get_icon_path('GEAR')
         else:
             gear_icon_path = resource_path('graphics/GEAR.ico')
-        
+
         if os.path.exists(gear_icon_path):
             self.setWindowIcon(QIcon(gear_icon_path))
         else:
             self.setWindowIcon(QIcon(resource_path('graphics/GEAR.ico')))
-            
+
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.current_settings = current_settings
         self.easter_egg_dialog = None
         self.button_style = button_style
         # Derive info icon based on parent state (idle/monitoring/locked)
         self.info_icon_path = self._compute_info_icon_path(parent)
-        
+
         # Apply modern clean style
         button_style = self.button_style if self.button_style else """
             QPushButton {
@@ -62,7 +62,7 @@ class SettingsDialog(QDialog):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a9284, stop:1 #2d7d6f);
             }
         """
-        
+
         # Determine highlight color to match app state (teal idle, green running, gray locked)
         highlight_color = '#43a296'
         try:
@@ -174,7 +174,7 @@ class SettingsDialog(QDialog):
         main_layout.addWidget(self.tabs)
         # Normalize tab heights to avoid pixel drift when switching tabs
         self._normalize_tab_heights(include_conversion_expanded=False)
-        
+
         # Auto-collapse advanced options when switching away from Format tab
         self.tabs.currentChanged.connect(self._on_tab_changed)
 
@@ -210,7 +210,7 @@ class SettingsDialog(QDialog):
             self.setFixedSize(self.size())
         except Exception:
             pass
-        
+
         # Apply button style to all buttons if provided
         if self.button_style:
             self.apply_button_style_to_all_buttons()
@@ -224,7 +224,7 @@ class SettingsDialog(QDialog):
             self.ok_button.setStyleSheet(self.button_style)
         if hasattr(self, 'cancel_button'):
             self.cancel_button.setStyleSheet(self.button_style)
-        
+
         # Apply to all other buttons in the dialog
         self.apply_button_style_recursively(self)
 
@@ -315,7 +315,7 @@ class SettingsDialog(QDialog):
         gpu_form_layout.setSpacing(8)
         gpu_form_layout.setVerticalSpacing(6)
         gpu_form_layout.setContentsMargins(10, 10, 10, 10)
-        
+
         # Add spacing after the group box title
         gpu_form_layout.addItem(QSpacerItem(0, 6))
 
@@ -495,7 +495,7 @@ class SettingsDialog(QDialog):
         retention_form_layout.setSpacing(8)
         retention_form_layout.setVerticalSpacing(6)
         retention_form_layout.setContentsMargins(10, 10, 10, 10)
-        
+
         # Add spacing after the group box title
         retention_form_layout.addItem(QSpacerItem(0, 6))
 
@@ -668,10 +668,10 @@ class SettingsDialog(QDialog):
         advanced_layout.setSpacing(8)  # Increased from 4 to 8
         advanced_layout.setVerticalSpacing(6)  # Increased from 2 to 6
         advanced_layout.setContentsMargins(10, 10, 10, 10)  # Increased from 6 to 10
-        
+
         # Add spacing after the group box title
         advanced_layout.addItem(QSpacerItem(0, 6))  # Increased from 4 to 6
-        
+
         size_label = QLabel("Video Size:")
         self.video_size_combo = QComboBox()
         video_sizes = ["Auto", "640x480", "1280x720", "1920x1080", "3840x2160"]
@@ -757,23 +757,23 @@ class SettingsDialog(QDialog):
         except Exception:
             pass
         advanced_layout.addRow(overlay_label, self.text_overlay_combo)
-        
+
         # Console Integration (moved into Advanced)
         console_group = QGroupBox("Console Integration")
         console_layout = QVBoxLayout()
         console_layout.setContentsMargins(10, 10, 10, 10)
-        
+
         console_info = QLabel("Custom FFmpeg flags (for advanced users):")
         console_info.setStyleSheet("color: #666; font-style: italic;")
-        
+
         # Row for input + help button
         cmd_layout = QHBoxLayout()
         cmd_layout.setContentsMargins(0,0,0,0)
-        
+
         self.custom_command_edit = QLineEdit(self.current_settings.get('custom_console_command', ''))
         self.custom_command_edit.setPlaceholderText("-preset slow -profile:v high")
         self.custom_command_edit.setToolTip("Enter raw FFmpeg arguments here. These will be appended to the command.")
-        
+
         self.console_help_btn = QToolButton()
         self.console_help_btn.setIcon(QIcon(self.info_icon_path))
         self.console_help_btn.setIconSize(QSize(18, 18))
@@ -797,15 +797,15 @@ class SettingsDialog(QDialog):
         """)
         # Exclude from global button styling
         self.console_help_btn.setProperty('skipGlobalStyle', True)
-        
+
         cmd_layout.addWidget(self.custom_command_edit)
         cmd_layout.addWidget(self.console_help_btn)
-        
+
         console_layout.addWidget(console_info)
         console_layout.addLayout(cmd_layout)
         console_group.setLayout(console_layout)
         advanced_layout.addRow(console_group)
-        
+
         self.advanced_group.setLayout(advanced_layout)
         # Collapsible advanced section to keep dialog compact
         self.advanced_toggle = QToolButton()
@@ -825,52 +825,52 @@ class SettingsDialog(QDialog):
         preset_layout.setSpacing(6)
         preset_layout.setContentsMargins(10, 10, 10, 10)
         preset_layout.addSpacing(4)
-        
+
         # Horizontal layout for preset buttons to save space
         preset_buttons_layout = QHBoxLayout()
         preset_buttons_layout.setSpacing(6)
-        
+
         # Ethovision preset button
         ethovision_button = QPushButton("Ethovision")
         ethovision_button.setCursor(Qt.PointingHandCursor)
         ethovision_button.clicked.connect(self.apply_ethovision_preset)
         ethovision_button.setToolTip("Apply Ethovision-optimized settings (MP4, H.264, 1920x1080, 25fps)")
         preset_buttons_layout.addWidget(ethovision_button)
-        
+
         # Custom preset 1 button
         self.custom1_button = QPushButton("Custom 1")
         self.custom1_button.setCursor(Qt.PointingHandCursor)
         self.custom1_button.clicked.connect(lambda: self.apply_custom_preset(1))
         self.custom1_button.setToolTip("Apply Custom Preset 1")
         preset_buttons_layout.addWidget(self.custom1_button)
-        
+
         # Custom preset 2 button
         self.custom2_button = QPushButton("Custom 2")
         self.custom2_button.setCursor(Qt.PointingHandCursor)
         self.custom2_button.clicked.connect(lambda: self.apply_custom_preset(2))
         self.custom2_button.setToolTip("Apply Custom Preset 2")
         preset_buttons_layout.addWidget(self.custom2_button)
-        
+
         preset_layout.addLayout(preset_buttons_layout)
-        
+
         # Save preset buttons layout
         save_preset_layout = QHBoxLayout()
         save_preset_layout.setSpacing(6)
-        
+
         save1_button = QPushButton("Save to 1")
         save1_button.setCursor(Qt.PointingHandCursor)
         save1_button.clicked.connect(lambda: self.save_custom_preset(1))
         save1_button.setToolTip("Save current settings to Custom Preset 1")
         save_preset_layout.addWidget(save1_button)
-        
+
         save2_button = QPushButton("Save to 2")
         save2_button.setCursor(Qt.PointingHandCursor)
         save2_button.clicked.connect(lambda: self.save_custom_preset(2))
         save2_button.setToolTip("Save current settings to Custom Preset 2")
         save_preset_layout.addWidget(save2_button)
-        
+
         preset_layout.addLayout(save_preset_layout)
-        
+
         preset_group.setLayout(preset_layout)
         layout.addWidget(preset_group)
 
@@ -1176,7 +1176,7 @@ class SettingsDialog(QDialog):
         # Store in current_settings for persistence
         preset_key = f'custom_preset_{preset_num}'
         self.current_settings[preset_key] = settings
-        QMessageBox.information(self, "Preset Saved", 
+        QMessageBox.information(self, "Preset Saved",
                                f"Current format settings saved to Custom Preset {preset_num}.")
 
     def apply_custom_preset(self, preset_num):
@@ -1186,7 +1186,7 @@ class SettingsDialog(QDialog):
         if preset_settings:
             self.apply_format_settings(preset_settings)
         else:
-            QMessageBox.information(self, "No Preset", 
+            QMessageBox.information(self, "No Preset",
                                    f"Custom Preset {preset_num} has not been saved yet.\n\n"
                                    f"Configure your desired settings and click 'Save to {preset_num}' to create it.")
 
@@ -1278,7 +1278,7 @@ class SettingsDialog(QDialog):
         self.current_settings['use_gpu'] = self.use_gpu_checkbox.isChecked()
         self.current_settings['gpu_encoder'] = self.gpu_encoder_combo.currentText()
         self.current_settings['custom_console_command'] = self.custom_command_edit.text()
-        
+
         # Save Volume
         try:
             vol = int(self.volume_spin.value())

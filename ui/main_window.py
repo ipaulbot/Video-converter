@@ -223,11 +223,11 @@ class VideoConverterApp(QMainWindow):
         self.preview_container.setAttribute(Qt.WA_Hover, True)  # Enable hover events
         self.preview_w = self.preview_container.width()
         self.preview_h = self.preview_container.height()
-        
+
         self.preview_layout = QStackedLayout(self.preview_container)
         self.preview_layout.setStackingMode(QStackedLayout.StackAll)
         self.preview_layout.setContentsMargins(0,0,0,0)
-        
+
         # 1. Preview Label (thumbnail + decoded frames)
         self.preview_label = QLabel("No Preview")
         self.preview_label.setAlignment(Qt.AlignCenter)
@@ -243,7 +243,7 @@ class VideoConverterApp(QMainWindow):
         self.preview_label.setMouseTracking(True)  # Enable mouse tracking
         self.preview_label.setAttribute(Qt.WA_Hover, True)  # Enable hover events
         self.preview_layout.addWidget(self.preview_label)
-        
+
         # 3. Play/Pause Overlay (Top layer)
         self.overlay_container = QWidget()
         self.overlay_container.setStyleSheet("background: transparent;")
@@ -252,7 +252,7 @@ class VideoConverterApp(QMainWindow):
         overlay_layout = QVBoxLayout(self.overlay_container)
         overlay_layout.setContentsMargins(6, 6, 6, 6)
         overlay_layout.setSpacing(6)
-        
+
         self.play_pause_btn = QPushButton()
         # Smaller overlay button so it doesn't dominate the thumbnail
         self.play_pause_btn.setFixedSize(22, 22)
@@ -324,7 +324,7 @@ class VideoConverterApp(QMainWindow):
         overlay_layout.addStretch(1)
         overlay_layout.addWidget(self.preview_scrubber, alignment=Qt.AlignBottom)
         self.preview_layout.addWidget(self.overlay_container)
-        
+
         # Install event filter on all preview-related widgets to catch hover properly
         self.preview_label.installEventFilter(self)
         self.overlay_container.installEventFilter(self)
@@ -337,7 +337,7 @@ class VideoConverterApp(QMainWindow):
         self.preview_frame_index = 0
         self._preview_buf = bytearray()
         self._preview_frame_size = int(self.preview_w * self.preview_h * 3)  # rgb24
-        
+
         # Star field animation state
         self.stars = []
         self.star_color = None
@@ -366,7 +366,7 @@ class VideoConverterApp(QMainWindow):
         self.update_label.hide()
         self.update_label.mousePressEvent = self.open_update_url
         self.update_url = ""
-        
+
         self.threadpool = QThreadPool()
         self.threadpool.setMaxThreadCount(4)
 
@@ -453,7 +453,7 @@ class VideoConverterApp(QMainWindow):
                 height: 0px;
             }
             """)
-        
+
         # Create a container widget for the log area with overlay
         self.log_container = QFrame()
         self.log_container.setFrameStyle(QFrame.Box)
@@ -462,18 +462,18 @@ class VideoConverterApp(QMainWindow):
         self.log_container.customContextMenuRequested.connect(
             lambda pos: self.show_log_context_menu_global(self.log_container.mapToGlobal(pos))
         )
-        
+
         # Create a layout for the container
         log_container_layout = QVBoxLayout(self.log_container)
         log_container_layout.setContentsMargins(0, 0, 0, 0)
         log_container_layout.setSpacing(0)
-        
+
         # Add the console output to the container
         log_container_layout.addWidget(self.console_output)
         # Forward wheel events from container to console_output
         self.log_container.wheelEvent = lambda e: self._forward_log_wheel(e)
         self.log_container.installEventFilter(self)
-        
+
         # Create drag and drop overlay widget with absolute positioning
         self.drag_drop_overlay = QWidget(self.log_container)
         self.drag_drop_overlay.setStyleSheet("""
@@ -497,14 +497,14 @@ class VideoConverterApp(QMainWindow):
         # Forward wheel events to console_output for consistent scrolling
         self.drag_drop_overlay.wheelEvent = lambda e: self._forward_log_wheel(e)
         self.drag_drop_overlay.installEventFilter(self)
-        
+
         # Install event filter to handle mouse events selectively
         self.drag_drop_overlay.installEventFilter(self)
-        
+
         # Create a layout for the overlay
         overlay_layout = QVBoxLayout(self.drag_drop_overlay)
         overlay_layout.setAlignment(Qt.AlignCenter)
-        
+
         # Drag and drop text
         self.drag_drop_text = QLabel("Drag and drop media files here\nor select source folder to start monitoring and converting")
         self.drag_drop_text.setAlignment(Qt.AlignCenter)
@@ -519,28 +519,28 @@ class VideoConverterApp(QMainWindow):
             }
         """)
         self.drag_drop_text.setWordWrap(True)
-        
+
         overlay_layout.addWidget(self.drag_drop_text)
-        
+
         # Connect drag and drop events to the container instead
         self.log_container.dragEnterEvent = self.drag_drop_widget_drag_enter
         self.log_container.dragLeaveEvent = self.drag_drop_widget_drag_leave
         self.log_container.dropEvent = self.drag_drop_widget_drop
         self.log_container.setAcceptDrops(True)
-        
+
         # Initialize conversion state tracking
         self.is_converting = False
         self.conversion_count = 0
-        
+
         # Initially show the overlay
         self.drag_drop_overlay.show()
-        
+
         # Connect resize event to reposition overlay
         self.log_container.resizeEvent = self.log_container_resize_event
-        
+
         # Position overlay initially
         self.log_container_resize_event(None)
-        
+
         log_tab_layout.addWidget(self.log_container)
         # Initialize footer widgets before make_footer
         self.lock_icon_label_log_tab = QLabel()
@@ -898,7 +898,7 @@ class VideoConverterApp(QMainWindow):
         self.setCentralWidget(central_widget)
         self.central_widget = central_widget  # Save reference for drag events
         main_layout = QHBoxLayout(central_widget)
-        
+
         # Left side: logo + settings + preview + start/stop button
         left_layout = QVBoxLayout()
         left_layout.setContentsMargins(10, 10, 10, 10)
@@ -932,9 +932,9 @@ class VideoConverterApp(QMainWindow):
 
         # Preview goes below settings text (no special centering; align with other sidebar items)
         left_layout.addWidget(self.preview_container)
-        
+
         left_layout.addStretch()
-        
+
         # Start/Stop Button
         self.start_button = QPushButton("Start")
         # Match settings + preview width for perfect edge alignment
@@ -943,7 +943,7 @@ class VideoConverterApp(QMainWindow):
         self.start_button.setCursor(Qt.PointingHandCursor)
         self.start_button.clicked.connect(self.toggle_process)
         left_layout.addWidget(self.start_button)
-        
+
         main_layout.addLayout(left_layout)
         main_layout.addWidget(self.tabs)
 
@@ -1049,17 +1049,17 @@ class VideoConverterApp(QMainWindow):
         # self.compact_burger.setPopupMode(QToolButton.InstantPopup)
         # self.compact_burger.setCursor(Qt.PointingHandCursor)
         # self.compact_burger.setStyleSheet("""
-        #     QToolButton { 
-        #         border: none; 
-        #         background: transparent; 
+        #     QToolButton {
+        #         border: none;
+        #         background: transparent;
         #         padding: 4px;
-        #     } 
+        #     }
         #     QToolButton:hover {
         #         background: #e9ecef;
         #         border-radius: 18px;
         #     }
-        #     QToolButton::menu-indicator { 
-        #         image: none; 
+        #     QToolButton::menu-indicator {
+        #         image: none;
         #     }
         # """)
         # self.compact_burger.setFixedSize(36, 36)
@@ -1117,7 +1117,7 @@ class VideoConverterApp(QMainWindow):
         # self.compact_status_label.setAlignment(Qt.AlignCenter)
         # self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
         # compact_layout.addWidget(self.compact_status_label)
-        
+
         # compact_layout.addWidget(self.compact_start_button)
         # self.compact_widget.hide()
         # main_layout.addWidget(self.compact_widget)
@@ -1126,23 +1126,23 @@ class VideoConverterApp(QMainWindow):
         self.is_compact = False
         # At the very end of init_ui, call update_icons to ensure all icons are set for the initial state
         self.update_icons()
-        
+
         # Initialize button styles and tab highlighting for the initial state
         self.update_all_button_styles()
         self.update_highlight_colors()
-        
+
         # Initialize status labels for the initial state
         self.update_status_labels()
-        
+
         # Initialize settings display for the initial state
         self.update_settings_display()
-        
+
         # Center the main window on screen on first show
         self.center_on_screen()
-        
+
         # Enable mouse tracking on the main window for proper hover detection
         self.setMouseTracking(True)
-        
+
         # Set the initial start button state after all widgets are created
         self.set_start_button_state(is_running=self.running)
 
@@ -1634,7 +1634,7 @@ class VideoConverterApp(QMainWindow):
             else:
                 self.compact_status_label.setText("Status: Not monitoring")
                 self.compact_status_label.setStyleSheet("QLabel { color: #dc3545; font-size: 10px; background: transparent; border: none; }")
-        
+
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
         self.lock_icon_label_log_tab.setFixedSize(36, 36)
@@ -1764,7 +1764,7 @@ class VideoConverterApp(QMainWindow):
         self.update_label.setText(f"Update v{version} Available!")
         self.update_label.setToolTip(f"Click to download update")
         self.update_label.show()
-        
+
     def open_update_url(self, event):
         import webbrowser
         if self.update_url:
@@ -1852,35 +1852,35 @@ class VideoConverterApp(QMainWindow):
                 if self.tabs.tabText(i) == "Converted Files":
                     converted_tab_index = i
                     break
-            
+
             if converted_tab_index == -1:
                 return
-            
+
             # Get the tab bar and tab button
             tab_bar = self.tabs.tabBar()
             if tab_bar is None:
                 return
-            
+
             # Use a custom property animation on tab bar's style
             # Since we can't directly animate tab text, we'll use a timer-based approach
             original_text = "Converted Files"
             wiggle_chars = ["C", "o", "n", "v", "e", "r", "t", "e", "d", " ", "F", "i", "l", "e", "s"]
             wiggle_count = [0]  # Use list to allow modification in nested function
-            
+
             def do_wiggle():
                 if wiggle_count[0] >= 6:  # 3 full cycles (left-right-left-right-left-right)
                     self.tabs.setTabText(converted_tab_index, original_text)
                     return
-                
+
                 # Alternate between adding spaces at beginning and end for wiggle effect
                 if wiggle_count[0] % 2 == 0:
                     self.tabs.setTabText(converted_tab_index, " " + original_text)
                 else:
                     self.tabs.setTabText(converted_tab_index, original_text + " ")
-                
+
                 wiggle_count[0] += 1
                 QTimer.singleShot(80, do_wiggle)  # Fast wiggle every 80ms
-            
+
             do_wiggle()
         except Exception:
             pass
@@ -2311,12 +2311,12 @@ class VideoConverterApp(QMainWindow):
                 elif action.text() in ["Open Source Folder", "Open Destination Folder", "Open Backup Folder"]:
                     # Don't assign any icon to folder open actions
                     action.setIcon(QIcon())
-            
+
             # Force menu to refresh
             menu.update()
             # Force burger button to refresh
             self.burger_button.update()
-        
+
         # Update preview placeholder text color if no video is loaded
         if hasattr(self, 'preview_source_path') and hasattr(self, 'preview_label'):
             if not self.preview_source_path:
@@ -2968,19 +2968,19 @@ class VideoConverterApp(QMainWindow):
             # Simulate a check
             # For demo purposes, let's say 2.3.0 is available if we are on 2.2.0
             # Ideally perform a GET request to a version.txt URL
-            
+
             # import requests
             # resp = requests.get("https://example.com/nvc/version.txt", timeout=3)
             # latest_version = resp.text.strip()
-            
+
             # Mock result
             latest_version = "2.3.0"
             current = APP_VERSION
-            
+
             if latest_version > current:
                 reply = QMessageBox.question(
-                    self, 
-                    "Update Available", 
+                    self,
+                    "Update Available",
                     f"A new version ({latest_version}) is available.\n\nDo you want to visit the download page?",
                     QMessageBox.Yes | QMessageBox.No
                 )
@@ -2990,7 +2990,7 @@ class VideoConverterApp(QMainWindow):
                     QDesktopServices.openUrl(QUrl("https://example.com/nvc/downloads")) # Replace with actual URL
             else:
                 QMessageBox.information(self, "No Updates", "You are running the latest version.")
-                
+
         except Exception as e:
             logger.error(f"Update check failed: {e}")
             QMessageBox.warning(self, "Update Check Failed", "Could not check for updates.")
@@ -3054,7 +3054,7 @@ class VideoConverterApp(QMainWindow):
                     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3a9284, stop:1 #2d7d6f);
                 }
             """
-        
+
         # Apply the style to all QPushButton widgets in the application
         self.apply_button_style_to_all_widgets(self)
         if hasattr(self, 'pc_report_widget'):
@@ -3159,7 +3159,7 @@ class VideoConverterApp(QMainWindow):
                 theme_color = '#3CA37B'  # Green
             else:
                 theme_color = '#43a296'  # Teal
-            
+
             # Clear any pixmap, then set text and style
             self.preview_label.setPixmap(QPixmap())
             self.preview_label.setText(text)
@@ -3224,7 +3224,7 @@ class VideoConverterApp(QMainWindow):
         except Exception:
             pass
         self._set_preview_placeholder("No Preview")
-    
+
     def _start_star_field(self, theme='teal'):
         """Start animated star field in preview box."""
         # Stop any existing star field or preview
@@ -3233,11 +3233,11 @@ class VideoConverterApp(QMainWindow):
             self._stop_star_field()
         except Exception:
             pass
-        
+
         # Hide play button and scrubber
         self.play_pause_btn.hide()
         self.preview_scrubber.hide()
-        
+
         # Determine star and background colors based on theme
         from PyQt5.QtGui import QColor
         if theme == 'gray':
@@ -3249,7 +3249,7 @@ class VideoConverterApp(QMainWindow):
         else:  # green
             self.star_color = QColor('#3CA37B')  # Green stars on white
             self.star_bg_color = QColor('#FFFFFF')
-        
+
         # Initialize stars
         import random
         self.stars = []
@@ -3260,12 +3260,12 @@ class VideoConverterApp(QMainWindow):
                 'speed': random.uniform(1.0, 3.0),
                 'size': random.randint(1, 3)
             })
-        
+
         # Start animation timer
         self.star_field_timer = QTimer(self)
         self.star_field_timer.timeout.connect(self._update_star_field)
         self.star_field_timer.start(50)  # Update every 50ms
-    
+
     def _stop_star_field(self):
         """Stop star field animation."""
         if hasattr(self, 'star_field_timer'):
@@ -3276,36 +3276,36 @@ class VideoConverterApp(QMainWindow):
                 pass
         if hasattr(self, 'stars'):
             self.stars = []
-    
+
     def _update_star_field(self):
         """Update star positions and redraw."""
         import random
         from PyQt5.QtGui import QPixmap, QPainter
-        
+
         # Create a canvas with theme background color
         pixmap = QPixmap(self.preview_w, self.preview_h)
         pixmap.fill(self.star_bg_color)
-        
+
         # Draw stars
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self.star_color)
-        
+
         for star in self.stars:
             # Draw star
             painter.drawEllipse(int(star['x']), int(star['y']), star['size'], star['size'])
-            
+
             # Move star down (cascading effect)
             star['y'] += star['speed']
-            
+
             # Reset star to top when it goes off screen
             if star['y'] > self.preview_h:
                 star['y'] = -star['size']
                 star['x'] = random.randint(0, self.preview_w)
-        
+
         painter.end()
-        
+
         # Update preview label
         self.preview_label.setPixmap(pixmap)
         self.preview_label.setText("")
@@ -3553,7 +3553,7 @@ class VideoConverterApp(QMainWindow):
         else:
             # Teal for idle mode
             highlight = '#43a296'
-            
+
         if hasattr(self, 'tabs'):
             tab_style = self.tab_stylesheet_template.format(highlight=highlight)
             self.tabs.setStyleSheet(tab_style)
@@ -3625,7 +3625,7 @@ class VideoConverterApp(QMainWindow):
                     # high_scores format: [(name, score, level), ...]
                     high_score = high_scores[0][1] if high_scores else 0
                     highest_level = high_scores[0][2] if high_scores else 0
-                    
+
                     settings_text = f"""
 <div style="line-height: 1.2;">
 <b>Current Game Progress:</b><br>
@@ -3641,7 +3641,7 @@ class VideoConverterApp(QMainWindow):
                     return
                 except Exception:
                     pass  # Fall through to show video settings if game data unavailable
-            
+
             # Format settings similar to EthoVision dialog
             settings_text = f"""
 <div style="line-height: 1.2;">
@@ -3654,17 +3654,17 @@ class VideoConverterApp(QMainWindow):
 • Frame Rate: {self.settings.get('framerate', '25')} fps
 </div>
 """
-            
+
             # Add time restrictions if enabled
             if not self.settings.get('no_time_restrictions', True):
                 start_time = self.settings.get('start_time', '00:00')
                 end_time = self.settings.get('end_time', '23:59')
                 settings_text += f"• Time Window: {start_time} - {end_time}<br>"
-            
+
             # Add copy-only mode if enabled
             if self.settings.get('copy_only', False):
                 settings_text += "• Mode: Copy Only (No Conversion)<br>"
-            
+
             self.settings_display.setText(settings_text)
 
     def open_file_dialog(self):
@@ -3689,8 +3689,8 @@ class VideoConverterApp(QMainWindow):
                 self.converted_files_widget.add_queued_file(os.path.basename(file_path), self.destination_folder)
                 if show_dialog:
                     reply = QMessageBox.question(
-                        self, 
-                        "Convert Media File", 
+                        self,
+                        "Convert Media File",
                         "Do you wish to convert media file according to settings?",
                         QMessageBox.Yes | QMessageBox.No,
                         QMessageBox.Yes
@@ -3747,22 +3747,22 @@ class VideoConverterApp(QMainWindow):
 
         # Start star field animation in preview when entering game mode
         self._start_star_field(theme)
-        
+
         self.log_container.hide()
 
         self.ballbuster_widget = BallBusterWidget(theme=theme)
         self.ballbuster_widget.setAttribute(Qt.WA_DeleteOnClose)
         self.log_tab_layout.insertWidget(self.log_container_index, self.ballbuster_widget, 1) # stretch=1
         self.ballbuster_widget.setFocus()
-        
+
         # Update settings display to show game progress
         self.update_settings_display()
-        
+
         # Start a timer to update game progress in real-time
         self.game_progress_timer = QTimer(self)
         self.game_progress_timer.timeout.connect(self.update_settings_display)
         self.game_progress_timer.start(100)  # Update every 100ms for smooth score updates
-        
+
         # Disable mouse interaction for all other widgets (so they keep visual style)
         self.mouse_blocked_widgets = []
         protected = (self.ballbuster_widget, self.start_button)
@@ -3806,7 +3806,7 @@ class VideoConverterApp(QMainWindow):
 
         # Restore status labels
         self.update_status_labels()
-        
+
         # Restore settings display to show video settings
         self.update_settings_display()
 
@@ -3824,7 +3824,7 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'game_progress_timer') and self.game_progress_timer:
             self.game_progress_timer.stop()
             self.game_progress_timer = None
-        
+
         # Stop star field animation and clear preview
         try:
             self._stop_star_field()
@@ -3834,7 +3834,7 @@ class VideoConverterApp(QMainWindow):
             self._clear_preview_display()
         except Exception:
             pass
-        
+
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget:
             try:
                 self.log_tab_layout.removeWidget(self.ballbuster_widget)
@@ -3865,7 +3865,7 @@ class VideoConverterApp(QMainWindow):
 
         # Restore status labels
         self.update_status_labels()
-        
+
         # Restore settings display to show video settings
         self.update_settings_display()
 

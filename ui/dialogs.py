@@ -108,28 +108,28 @@ class InfoDialog(QDialog):
         self.setMinimumSize(400, 260)
         self.is_converting = is_converting
         self.button_style = button_style
-        
+
         # Get the appropriate info icon based on parent's state
         if parent and hasattr(parent, 'get_icon_path'):
             icon_path = parent.get_icon_path('INFO')
         else:
             icon_path = resource_path('graphics/INFO.ico')
-            
+
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
         else:
             self.setWindowIcon(QIcon(resource_path('graphics/INFO.ico')))
-            
+
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.init_ui()
 
     def init_ui(self):
         from PyQt5.QtWidgets import QScrollArea, QLabel, QPushButton
         layout = QVBoxLayout()
-        
+
         # Create horizontal layout for image and text
         content_layout = QHBoxLayout()
-        
+
         # Add dynamic ITSAVIBE image based on application state
         if self.parent() and hasattr(self.parent(), 'locked') and self.parent().locked:
             # Locked state - use grayscale
@@ -140,7 +140,7 @@ class InfoDialog(QDialog):
         else:
             # Default state - use teal
             itsavibe_image_path = resource_path('graphics/TEALITSAVIBE.png')
-            
+
         if os.path.exists(itsavibe_image_path):
             itsavibe_pixmap = QPixmap(itsavibe_image_path)
             itsavibe_label = QLabel()
@@ -148,7 +148,7 @@ class InfoDialog(QDialog):
             itsavibe_label.setAlignment(Qt.AlignCenter)
             itsavibe_label.setStyleSheet("background: transparent; border: none;")
             content_layout.addWidget(itsavibe_label)
-        
+
         # Add text on the right
         info_text = QLabel()
         info_text.setText(
@@ -163,18 +163,18 @@ class InfoDialog(QDialog):
         info_text.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         info_text.setStyleSheet("background-color: transparent; padding: 10px; border: none;")
         info_text.setOpenExternalLinks(True)
-        
+
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(info_text)
         scroll_area.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         content_layout.addWidget(scroll_area)
-        
+
         layout.addLayout(content_layout)
         ok_button = QPushButton("OK")
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)
-        
+
         # Apply button style based on parent's state
         if self.button_style:
             ok_button.setStyleSheet(self.button_style)
@@ -221,7 +221,7 @@ class InfoDialog(QDialog):
                     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a9284, stop:1 #2d7d6f);
                 }
             """)
-            
+
         layout.addWidget(ok_button, alignment=Qt.AlignCenter)
         self.setLayout(layout)
 
@@ -232,25 +232,25 @@ class LockedSettingsDialog(QDialog):
         self.setWindowTitle("Settings Locked")
         self.setFixedSize(400, 150)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        
+
         # Get the appropriate lock icon based on parent's state
         if parent and hasattr(parent, 'get_icon_path'):
             lock_icon_path = parent.get_icon_path('LOCK')
         else:
             lock_icon_path = resource_path('graphics/LOCK.ico')
-            
+
         if os.path.exists(lock_icon_path):
             self.setWindowIcon(QIcon(lock_icon_path))
         else:
             self.setWindowIcon(QIcon(resource_path('graphics/LOCK.ico')))
-        
+
         self.init_ui()
-    
+
     def init_ui(self):
         layout = QVBoxLayout()
         layout.setSpacing(20)
         layout.setContentsMargins(20, 20, 20, 20)
-        
+
         # Message text
         message_label = QLabel("Settings are locked and cannot be modified.\n\nUnlock the application first to make changes.")
         message_label.setWordWrap(True)
@@ -265,13 +265,13 @@ class LockedSettingsDialog(QDialog):
                 padding: 10px;
             }
         """)
-        
+
         # OK button
         ok_button = QPushButton("OK")
         ok_button.setFixedSize(80, 32)
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)
-        
+
         # Apply grayscale style for locked state
         ok_button.setStyleSheet("""
             QPushButton {
@@ -290,16 +290,16 @@ class LockedSettingsDialog(QDialog):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7f7f7f, stop:1 #6a6a6a);
             }
         """)
-        
+
         # Button layout
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         button_layout.addWidget(ok_button)
         button_layout.addStretch()
-        
+
         layout.addWidget(message_label)
         layout.addLayout(button_layout)
-        
+
         # Apply modern styling to the dialog
         self.setStyleSheet("""
             QDialog {
@@ -314,5 +314,5 @@ class LockedSettingsDialog(QDialog):
                 font-size: 9pt;
             }
         """)
-        
+
         self.setLayout(layout)

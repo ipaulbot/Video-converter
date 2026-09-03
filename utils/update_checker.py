@@ -18,10 +18,10 @@ class UpdateChecker(QObject):
             # response = requests.get(UPDATE_URL, timeout=5)
             # response.raise_for_status()
             # data = response.json()
-            
+
             # Mock response for demonstration
             data = {"version": "2.1", "url": "https://github.com/yourusername/NVC/releases"}
-            
+
             latest_version = data.get("version")
             download_url = data.get("url")
 
@@ -29,7 +29,7 @@ class UpdateChecker(QObject):
                 self.update_available.emit(latest_version, download_url)
             else:
                 self.no_update.emit()
-                
+
         except Exception as e:
             self.error_occurred.emit(str(e))
 
