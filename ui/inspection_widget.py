@@ -3,7 +3,7 @@ import json
 import subprocess
 
 from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout, QTabWidget, QLabel
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QCoreApplication, Qt, QThread, pyqtSignal
 
 from utils.resources import resource_path
 from ui import theme
@@ -13,6 +13,16 @@ from utils.subprocess_helpers import (
     FFPROBE_TIMEOUT,
     get_subprocess_startupinfo,
 )
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "Inspection" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("Inspection", source)
 
 class InspectionWorker(QThread):
     finished = pyqtSignal(str, str, str)
@@ -77,7 +87,7 @@ class InspectionWidget(QWidget):
         summary_drag_layout.setAlignment(Qt.AlignCenter)
 
         # Drag and drop text
-        self.summary_drag_text = QLabel("Drag and drop media files here to see summary")
+        self.summary_drag_text = QLabel(_tr("Drag and drop media files here to see summary"))
         self.summary_drag_text.setAlignment(Qt.AlignCenter)
         self.summary_drag_text.setObjectName("dragDropLabel")
         self.summary_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabel"))
@@ -138,7 +148,7 @@ class InspectionWidget(QWidget):
         json_drag_layout.setAlignment(Qt.AlignCenter)
 
         # Drag and drop text
-        self.json_drag_text = QLabel("Drag and drop media files here for detailed JSON")
+        self.json_drag_text = QLabel(_tr("Drag and drop media files here for detailed JSON"))
         self.json_drag_text.setAlignment(Qt.AlignCenter)
         self.json_drag_text.setObjectName("dragDropLabelJSON")
         self.json_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabelJSON"))
@@ -149,7 +159,7 @@ class InspectionWidget(QWidget):
         # Create info display widget and add it to the drag drop area
         self.info_display = QPlainTextEdit()
         self.info_display.setReadOnly(True)
-        self.info_display.setToolTip("Raw JSON data from ffprobe.")
+        self.info_display.setToolTip(_tr("Raw JSON data from ffprobe."))
         self.info_display.hide()  # Initially hidden
         self.info_display.setFrameStyle(0)  # Remove frame completely
         self.info_display.setStyleSheet("""
@@ -192,8 +202,8 @@ class InspectionWidget(QWidget):
         self.json_layout.addWidget(self.json_drag_drop)
         self.json_tab.setLayout(self.json_layout)
 
-        self.tabs.addTab(self.summary_tab, "Summary")
-        self.tabs.addTab(self.json_tab, "Detailed JSON")
+        self.tabs.addTab(self.summary_tab, _tr("Summary"))
+        self.tabs.addTab(self.json_tab, _tr("Detailed JSON"))
         layout.addWidget(self.tabs)
         self.setLayout(layout)
 
@@ -202,17 +212,17 @@ class InspectionWidget(QWidget):
             event.acceptProposedAction()
             self.summary_drag_drop.setStyleSheet(theme.drop_zone_active_style())
             # Keep instruction consistent
-            self.summary_drag_text.setText("Drag and drop media files here to see summary")
+            self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
         else:
             event.ignore()
 
     def summary_drag_leave(self, event):
         self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.summary_drag_text.setText("Drag and drop media files here to see summary")
+        self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
 
     def summary_drop(self, event):
         self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.summary_drag_text.setText("Drag and drop media files here to see summary")
+        self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
 
         urls = event.mimeData().urls()
         if urls:
@@ -224,17 +234,17 @@ class InspectionWidget(QWidget):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
             self.json_drag_drop.setStyleSheet(theme.drop_zone_active_style())
-            self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
+            self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
         else:
             event.ignore()
 
     def json_drag_leave(self, event):
         self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
+        self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
 
     def json_drop(self, event):
         self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
+        self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
 
         urls = event.mimeData().urls()
         if urls:

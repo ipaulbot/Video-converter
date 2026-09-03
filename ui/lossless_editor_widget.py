@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 
-from PyQt5.QtCore import QThread, pyqtSignal, Qt
+from PyQt5.QtCore import QCoreApplication, QThread, pyqtSignal, Qt
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit,
     QFileDialog, QPlainTextEdit, QComboBox, QListWidget, QMessageBox
@@ -21,6 +21,16 @@ from utils.resources import resource_path
 from utils.subprocess_helpers import get_subprocess_startupinfo
 from ui import theme
 
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "LosslessEditor" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("LosslessEditor", source)
 
 class LosslessWorker(QThread):
     log = pyqtSignal(str)
@@ -64,44 +74,44 @@ class LosslessEditorWidget(QWidget):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(10)
 
-        title = QLabel("Lossless FFmpeg Editor")
+        title = QLabel(_tr("Lossless FFmpeg Editor"))
         title.setStyleSheet(theme.tab_title_style())
         layout.addWidget(title)
 
         description = QLabel(
-            "Fast stream-copy tools for trimming, remuxing, extracting audio, removing audio, and merging clips without re-encoding."
+            _tr("Fast stream-copy tools for trimming, remuxing, extracting audio, removing audio, and merging clips without re-encoding.")
         )
         description.setWordWrap(True)
         layout.addWidget(description)
 
         file_row = QHBoxLayout()
         self.input_edit = QLineEdit()
-        self.input_edit.setPlaceholderText("Select a source media file")
-        browse_btn = QPushButton("Browse")
+        self.input_edit.setPlaceholderText(_tr("Select a source media file"))
+        browse_btn = QPushButton(_tr("Browse"))
         browse_btn.clicked.connect(self.browse_input)
-        file_row.addWidget(QLabel("Input:"))
+        file_row.addWidget(QLabel(_tr("Input:")))
         file_row.addWidget(self.input_edit)
         file_row.addWidget(browse_btn)
         layout.addLayout(file_row)
 
         time_row = QHBoxLayout()
-        self.start_edit = QLineEdit("00:00:00")
+        self.start_edit = QLineEdit(_tr("00:00:00"))
         self.end_edit = QLineEdit("")
         self.format_combo = QComboBox()
         self.format_combo.addItems(["mp4", "mkv", "mov", "avi", "m4a"])
-        time_row.addWidget(QLabel("Start:"))
+        time_row.addWidget(QLabel(_tr("Start:")))
         time_row.addWidget(self.start_edit)
-        time_row.addWidget(QLabel("End:"))
+        time_row.addWidget(QLabel(_tr("End:")))
         time_row.addWidget(self.end_edit)
-        time_row.addWidget(QLabel("Output:"))
+        time_row.addWidget(QLabel(_tr("Output:")))
         time_row.addWidget(self.format_combo)
         layout.addLayout(time_row)
 
         action_row = QHBoxLayout()
-        self.trim_btn = QPushButton("Trim Losslessly")
-        self.remux_btn = QPushButton("Remux")
-        self.extract_audio_btn = QPushButton("Extract Audio")
-        self.remove_audio_btn = QPushButton("Remove Audio")
+        self.trim_btn = QPushButton(_tr("Trim Losslessly"))
+        self.remux_btn = QPushButton(_tr("Remux"))
+        self.extract_audio_btn = QPushButton(_tr("Extract Audio"))
+        self.remove_audio_btn = QPushButton(_tr("Remove Audio"))
         for button, handler in (
             (self.trim_btn, self.trim_losslessly),
             (self.remux_btn, self.remux),
@@ -112,16 +122,16 @@ class LosslessEditorWidget(QWidget):
             action_row.addWidget(button)
         layout.addLayout(action_row)
 
-        merge_label = QLabel("Merge list:")
+        merge_label = QLabel(_tr("Merge list:"))
         layout.addWidget(merge_label)
         self.merge_list = QListWidget()
         self.merge_list.setAcceptDrops(False)
         layout.addWidget(self.merge_list)
 
         merge_row = QHBoxLayout()
-        add_merge_btn = QPushButton("Add Files")
-        clear_merge_btn = QPushButton("Clear")
-        merge_btn = QPushButton("Merge Losslessly")
+        add_merge_btn = QPushButton(_tr("Add Files"))
+        clear_merge_btn = QPushButton(_tr("Clear"))
+        merge_btn = QPushButton(_tr("Merge Losslessly"))
         add_merge_btn.clicked.connect(self.add_merge_files)
         clear_merge_btn.clicked.connect(self.merge_list.clear)
         merge_btn.clicked.connect(self.merge_losslessly)
@@ -132,7 +142,7 @@ class LosslessEditorWidget(QWidget):
 
         self.log_output = QPlainTextEdit()
         self.log_output.setReadOnly(True)
-        self.log_output.setPlaceholderText("FFmpeg output appears here.")
+        self.log_output.setPlaceholderText(_tr("FFmpeg output appears here."))
         layout.addWidget(self.log_output)
 
         self.update_button_style(self.button_style)
@@ -158,14 +168,14 @@ class LosslessEditorWidget(QWidget):
     def _ffmpeg_path(self):
         path = resource_path("ffmpeg.exe")
         if not os.path.exists(path):
-            QMessageBox.warning(self, "Missing FFmpeg", "ffmpeg.exe could not be found.")
+            QMessageBox.warning(self, _tr("Missing FFmpeg"), _tr("ffmpeg.exe could not be found."))
             return ""
         return path
 
     def _input_path(self):
         path = self.input_edit.text().strip()
         if not os.path.isfile(path):
-            QMessageBox.warning(self, "Missing Input", "Select a valid input media file first.")
+            QMessageBox.warning(self, _tr("Missing Input"), _tr("Select a valid input media file first."))
             return ""
         return path
 
@@ -225,7 +235,7 @@ class LosslessEditorWidget(QWidget):
         files = [self.merge_list.item(i).text() for i in range(self.merge_list.count())]
         files = [path for path in files if os.path.isfile(path)]
         if not ffmpeg or len(files) < 2:
-            QMessageBox.warning(self, "Merge Files", "Add at least two valid files to merge.")
+            QMessageBox.warning(self, _tr("Merge Files"), _tr("Add at least two valid files to merge."))
             return
         first = files[0]
         ext = self.format_combo.currentText()
@@ -237,4 +247,4 @@ class LosslessEditorWidget(QWidget):
                     list_file.write(format_concat_file_line(path) + "\n")
             self._run_command(build_concat_command(ffmpeg, list_file.name, output_path))
         except Exception as exc:
-            QMessageBox.warning(self, "Merge Error", str(exc))
+            QMessageBox.warning(self, _tr("Merge Error"), str(exc))

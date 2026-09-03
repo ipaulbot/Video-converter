@@ -12,6 +12,10 @@ import glob
 
 _optional_datas = [(p, 'docs/help') for p in glob.glob('docs/help/NVC *.pdf')]
 
+# Compiled translation catalogues. Only locales someone has actually
+# translated produce a .qm, so this ships whatever exists; English needs none.
+_optional_datas += [(p, 'translations') for p in glob.glob('translations/*.qm')]
+
 a = Analysis(
     ['main.py'],
     pathex=[],

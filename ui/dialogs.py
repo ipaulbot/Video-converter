@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox, QSizePolicy
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import QCoreApplication, Qt, QTimer
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import QUrl
@@ -8,6 +8,16 @@ from PyQt5.QtCore import QUrl
 from utils.logger import logger
 from ui import theme
 from utils.resources import resource_path
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "Dialogs" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("Dialogs", source)
 
 class EasterEggDialog(QDialog):
     def __init__(self):
@@ -69,7 +79,7 @@ class EasterEggDialog(QDialog):
 class ConfirmationDialog(QDialog):
     def __init__(self, action, icon_path, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Confirm")
+        self.setWindowTitle(_tr("Confirm"))
         # Use new icons from graphics folder
         if action.lower() == 'lock':
             icon_path = resource_path('graphics/LOCK.ico')
@@ -88,8 +98,8 @@ class ConfirmationDialog(QDialog):
         text_label.setWordWrap(True)
         text_label.setAlignment(Qt.AlignCenter)
         button_box = QHBoxLayout()
-        yes_button = QPushButton("Yes")
-        no_button = QPushButton("No")
+        yes_button = QPushButton(_tr("Yes"))
+        no_button = QPushButton(_tr("No"))
         yes_button.setCursor(Qt.PointingHandCursor)
         no_button.setCursor(Qt.PointingHandCursor)
         yes_button.clicked.connect(self.accept)
@@ -105,7 +115,7 @@ class ConfirmationDialog(QDialog):
 class InfoDialog(QDialog):
     def __init__(self, parent=None, is_converting=False, button_style=None):
         super().__init__(parent)
-        self.setWindowTitle("About Video Converter")
+        self.setWindowTitle(_tr("About Video Converter"))
         self.setMinimumSize(400, 260)
         self.is_converting = is_converting
         self.button_style = button_style
@@ -153,12 +163,12 @@ class InfoDialog(QDialog):
         # Add text on the right
         info_text = QLabel()
         info_text.setText(
-            """
+            _tr("""
             <b>N Video Converter 2.1.160 &nbsp;|&nbsp; Build Date: July 2025</b><br><br>
             NVC is a Python-based utility that monitors a designated source folder for incoming video files and automatically converts them to a specified output format using FFMPEG. Converted files are saved to a destination folder, while original files can be optionally moved to a backup location. The application operates continuously, enabling hands-free, real-time video processing and format standardization.<br><br>
             This application was developed by Paul Hamblin.<br>
             <a href='https://github.com/ipaulbot' style='color:#0077b5;'>GitHub Repository</a> &nbsp;|&nbsp; <a href='https://www.linkedin.com/in/paul-hamblin-69b19595/' style='color:#0077b5;'>LinkedIn Profile</a><br>
-            """
+            """)
         )
         info_text.setWordWrap(True)
         info_text.setAlignment(Qt.AlignLeft | Qt.AlignTop)
@@ -172,7 +182,7 @@ class InfoDialog(QDialog):
         content_layout.addWidget(scroll_area)
 
         layout.addLayout(content_layout)
-        ok_button = QPushButton("OK")
+        ok_button = QPushButton(_tr("OK"))
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)
 
@@ -193,7 +203,7 @@ class InfoDialog(QDialog):
 class LockedSettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Settings Locked")
+        self.setWindowTitle(_tr("Settings Locked"))
         self.setFixedSize(400, 150)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
@@ -216,7 +226,7 @@ class LockedSettingsDialog(QDialog):
         layout.setContentsMargins(20, 20, 20, 20)
 
         # Message text
-        message_label = QLabel("Settings are locked and cannot be modified.\n\nUnlock the application first to make changes.")
+        message_label = QLabel(_tr("Settings are locked and cannot be modified.\n\nUnlock the application first to make changes."))
         message_label.setWordWrap(True)
         message_label.setAlignment(Qt.AlignCenter)
         message_label.setStyleSheet("""
@@ -231,7 +241,7 @@ class LockedSettingsDialog(QDialog):
         """)
 
         # OK button
-        ok_button = QPushButton("OK")
+        ok_button = QPushButton(_tr("OK"))
         ok_button.setFixedSize(80, 32)
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)

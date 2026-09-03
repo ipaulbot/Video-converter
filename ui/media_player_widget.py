@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtCore import Qt, QTimer, QUrl
+from PyQt5.QtCore import QCoreApplication, Qt, QTimer, QUrl
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (
@@ -20,6 +20,16 @@ from PyQt5.QtWidgets import (
 
 from utils.logger import logger
 from ui import theme
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "MediaPlayer" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("MediaPlayer", source)
 
 VIDEO_NAME_FILTER = (
     "Video files (*.mp4 *.mov *.mkv *.avi *.wmv *.webm *.m4v *.mpg *.mpeg *.flv);;All files (*)"
@@ -100,7 +110,7 @@ class PlayerPanel(QWidget):
         self._video_layout.setContentsMargins(0, 0, 0, 0)
         self.video_widget = None
 
-        self.placeholder = QLabel("Drop a video here\nor click Load", self.video_container)
+        self.placeholder = QLabel(_tr("Drop a video here\nor click Load"), self.video_container)
         self.placeholder.setAlignment(Qt.AlignCenter)
         self.placeholder.setStyleSheet(
             theme.video_label_style(size=11, muted=True) + " background:transparent;")
@@ -117,25 +127,25 @@ class PlayerPanel(QWidget):
         self.offset_spin.setSingleStep(0.1)
         self.offset_spin.setDecimals(1)
         self.offset_spin.setValue(0.0)
-        self.offset_spin.setSuffix(" s")
+        self.offset_spin.setSuffix(_tr(" s"))
         self.offset_spin.setMaximumWidth(78)
         self.offset_spin.setToolTip(
-            "Sync offset for this panel. Shift this clip earlier (negative) or later "
-            "(positive) so its action lines up with the other panels."
+            _tr("Sync offset for this panel. Shift this clip earlier (negative) or later "
+            "(positive) so its action lines up with the other panels.")
         )
 
-        self.load_btn = QPushButton("Load")
+        self.load_btn = QPushButton(_tr("Load"))
         self.load_btn.setMaximumWidth(58)
         self.load_btn.setCursor(Qt.PointingHandCursor)
         self.load_btn.clicked.connect(self.browse_for_media)
 
-        self.clear_btn = QPushButton("Clear")
+        self.clear_btn = QPushButton(_tr("Clear"))
         self.clear_btn.setMaximumWidth(58)
         self.clear_btn.setCursor(Qt.PointingHandCursor)
         self.clear_btn.clicked.connect(self.clear_media)
 
         controls.addWidget(self.name_label)
-        controls.addWidget(QLabel("offset"))
+        controls.addWidget(QLabel(_tr("offset")))
         controls.addWidget(self.offset_spin)
         controls.addWidget(self.load_btn)
         controls.addWidget(self.clear_btn)
@@ -196,7 +206,9 @@ class PlayerPanel(QWidget):
             return False
         self._ensure_player().setMedia(QMediaContent(QUrl.fromLocalFile(path)))
         self._media_path = path
-        self.name_label.setText(f"Panel {self.index + 1}: {os.path.basename(path)}")
+        self.name_label.setText(
+            _tr("Panel %(number)s: %(name)s")
+            % {"number": self.index + 1, "name": os.path.basename(path)})
         self.name_label.setToolTip(path)
         self.placeholder.hide()
         return True
@@ -206,7 +218,8 @@ class PlayerPanel(QWidget):
             self.player.stop()
             self.player.setMedia(QMediaContent())
         self._media_path = ""
-        self.name_label.setText(f"Panel {self.index + 1}: empty")
+        self.name_label.setText(_tr("Panel %(number)s: empty")
+                                % {"number": self.index + 1})
         self.name_label.setToolTip("")
         self.placeholder.show()
 
@@ -247,14 +260,14 @@ class MediaPlayerWidget(QWidget):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(10)
 
-        title = QLabel("Media Player")
+        title = QLabel(_tr("Media Player"))
         title.setStyleSheet(theme.tab_title_style())
         layout.addWidget(title)
 
         description = QLabel(
-            "Load up to four clips and review them side by side. Play, pause and seek "
+            _tr("Load up to four clips and review them side by side. Play, pause and seek "
             "control every panel together; use each panel's offset to line up clips that "
-            "started at slightly different times."
+            "started at slightly different times.")
         )
         description.setWordWrap(True)
         description.setStyleSheet(theme.tab_description_style())
@@ -286,7 +299,7 @@ class MediaPlayerWidget(QWidget):
         self.position_slider.sliderMoved.connect(self.seek_all)
         self.position_slider.sliderPressed.connect(self._on_slider_pressed)
         self.position_slider.sliderReleased.connect(self._on_slider_released)
-        self.time_label = QLabel("0:00 / 0:00")
+        self.time_label = QLabel(_tr("0:00 / 0:00"))
         self.time_label.setStyleSheet(theme.video_label_style())
         self.time_label.setMinimumWidth(96)
         self.time_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -297,19 +310,19 @@ class MediaPlayerWidget(QWidget):
         button_row = QHBoxLayout()
         button_row.setSpacing(8)
 
-        self.play_btn = QPushButton("Play all")
+        self.play_btn = QPushButton(_tr("Play all"))
         self.play_btn.setCursor(Qt.PointingHandCursor)
         self.play_btn.clicked.connect(self.toggle_play_all)
 
-        self.stop_btn = QPushButton("Stop all")
+        self.stop_btn = QPushButton(_tr("Stop all"))
         self.stop_btn.setCursor(Qt.PointingHandCursor)
         self.stop_btn.clicked.connect(self.stop_all)
 
-        self.restart_btn = QPushButton("Restart")
+        self.restart_btn = QPushButton(_tr("Restart"))
         self.restart_btn.setCursor(Qt.PointingHandCursor)
         self.restart_btn.clicked.connect(self.restart_all)
 
-        speed_label = QLabel("Speed")
+        speed_label = QLabel(_tr("Speed"))
         speed_label.setStyleSheet(theme.video_label_style())
         self.speed_combo = QComboBox()
         for speed in PLAYBACK_SPEEDS:
@@ -317,7 +330,7 @@ class MediaPlayerWidget(QWidget):
         self.speed_combo.setCurrentIndex(PLAYBACK_SPEEDS.index(1.0))
         self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
 
-        panels_label = QLabel("Panels")
+        panels_label = QLabel(_tr("Panels"))
         panels_label.setStyleSheet(theme.video_label_style())
         self.panels_combo = QComboBox()
         for count in PANEL_COUNT_OPTIONS:
@@ -388,21 +401,21 @@ class MediaPlayerWidget(QWidget):
             )
             panel.player.play()
         self._is_playing = True
-        self.play_btn.setText("Pause all")
+        self.play_btn.setText(_tr("Pause all"))
 
     def pause_all(self):
         for panel in self.panels:
             if panel.player is not None:
                 panel.player.pause()
         self._is_playing = False
-        self.play_btn.setText("Play all")
+        self.play_btn.setText(_tr("Play all"))
 
     def stop_all(self):
         for panel in self.panels:
             if panel.player is not None:
                 panel.player.stop()
         self._is_playing = False
-        self.play_btn.setText("Play all")
+        self.play_btn.setText(_tr("Play all"))
         self._set_slider_value(0)
         self._update_time_label(0)
 

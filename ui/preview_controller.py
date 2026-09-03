@@ -1,3 +1,4 @@
+
 """The sidebar video preview: an ffmpeg-decoded player in a 180x101 box.
 
 Extracted from ui/main_window.py, where these 18 methods and ~150 lines of
@@ -18,7 +19,7 @@ from __future__ import annotations
 import os
 import subprocess
 
-from PyQt5.QtCore import QEvent, QObject, QProcess, QSize, Qt, QTimer
+from PyQt5.QtCore import QCoreApplication, QEvent, QObject, QProcess, QSize, Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
     QFrame,
@@ -39,6 +40,17 @@ from utils.subprocess_helpers import (
     FFPROBE_TIMEOUT,
     get_subprocess_startupinfo,
 )
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "Preview" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("Preview", source)
+
 
 
 class PreviewController(QObject):
@@ -70,7 +82,7 @@ class PreviewController(QObject):
         self.preview_layout.setContentsMargins(0,0,0,0)
 
         # 1. Preview Label (thumbnail + decoded frames)
-        self.preview_label = QLabel("No Preview")
+        self.preview_label = QLabel(_tr("No Preview"))
         self.preview_label.setAlignment(Qt.AlignCenter)
         self.preview_label.setStyleSheet(theme.preview_placeholder_style())
         self.preview_label.setMouseTracking(True)  # Enable mouse tracking
@@ -208,7 +220,11 @@ class PreviewController(QObject):
             self.preview_scrubber.show()
         self._start_preview_process(self.preview_source_path, seek_seconds=self.preview_seek_seconds)
 
-    def _set_preview_placeholder(self, text="No Preview"):
+    def _set_preview_placeholder(self, text=None):
+        # Resolved here rather than as a default argument: a default is
+        # evaluated once at import, which would freeze the startup language.
+        if text is None:
+            text = _tr("No Preview")
         try:
             # Was a fourth copy of the locked/active/idle colour chain.
             self._host._sync_theme_skin()
@@ -247,7 +263,7 @@ class PreviewController(QObject):
             self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
         except Exception:
             logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
-        self._set_preview_placeholder("No Preview")
+        self._set_preview_placeholder(_tr("No Preview"))
 
     def _start_star_field(self, theme_name=None):
         """Start animated star field in preview box."""
@@ -367,7 +383,7 @@ class PreviewController(QObject):
         """Generate and show a thumbnail for the given file."""
         try:
             if not file_path or not os.path.exists(file_path):
-                self._set_preview_placeholder("No Preview")
+                self._set_preview_placeholder(_tr("No Preview"))
                 return
 
             import tempfile
@@ -383,7 +399,7 @@ class PreviewController(QObject):
             self._preview_thumb_path = thumb_path
             ffmpeg_path = resource_path('ffmpeg.exe')
             if not os.path.exists(ffmpeg_path):
-                self._set_preview_placeholder("ffmpeg missing")
+                self._set_preview_placeholder(_tr("ffmpeg missing"))
                 return
 
             # Fill the whole preview box (cover) by scaling up and cropping (no black bars)
@@ -407,10 +423,10 @@ class PreviewController(QObject):
                 self.preview_label.setText("")
                 self.preview_label.setPixmap(pix)
             else:
-                self._set_preview_placeholder("No Preview")
+                self._set_preview_placeholder(_tr("No Preview"))
         except Exception as e:
             logger.error(f"Thumbnail generation failed: {e}")
-            self._set_preview_placeholder("No Preview")
+            self._set_preview_placeholder(_tr("No Preview"))
 
     def _stop_preview_process(self):
         try:
@@ -433,7 +449,7 @@ class PreviewController(QObject):
 
         ffmpeg_path = resource_path('ffmpeg.exe')
         if not os.path.exists(ffmpeg_path):
-            self._set_preview_placeholder("ffmpeg missing")
+            self._set_preview_placeholder(_tr("ffmpeg missing"))
             self.preview_playing = False
             self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
             return
@@ -459,7 +475,7 @@ class PreviewController(QObject):
 
         self.preview_process.start(ffmpeg_path, args)
         if not self.preview_process.waitForStarted(1500):
-            self._set_preview_placeholder("Preview failed")
+            self._set_preview_placeholder(_tr("Preview failed"))
             self.preview_playing = False
             self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
 

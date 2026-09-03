@@ -3,18 +3,35 @@ import sys
 import os
 import logging
 from PyQt5.QtWidgets import QApplication, QMessageBox
-from PyQt5.QtCore import QSharedMemory, QSystemSemaphore
+from PyQt5.QtCore import QCoreApplication, QSharedMemory, QSystemSemaphore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from ui.main_window import VideoConverterApp
 from utils.resources import resource_path
 from utils.retention import process_pending_deletions
 from utils.logger import logger
+from utils.localization import initialize_localization
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "Startup" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("Startup", source)
 
 logging.basicConfig(level=logging.INFO)
 
 def main():
     app = QApplication(sys.argv)
+
+    # Install the saved language before anything builds a widget: NVC's widgets
+    # set their text once at construction, so a translator installed later
+    # would only affect strings created after it.
+    app.language_manager = initialize_localization(app)
+
     # Single-instance guard
     semaphore = QSystemSemaphore('NVC_Semaphore', 1)
     semaphore.acquire()
@@ -31,7 +48,7 @@ def main():
             icon_path = resource_path('graphics/INFO.ico')
             pm = QPixmap(icon_path) if os.path.exists(icon_path) else None
             msg = QMessageBox()
-            msg.setWindowTitle('NVC')
+            msg.setWindowTitle(_tr('NVC'))
             # Apply title/icon for dialog
             try:
                 app_icon = resource_path('graphics/TEALNVCLOGO.ico')
@@ -43,11 +60,11 @@ def main():
                 msg.setIconPixmap(pm.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             else:
                 msg.setIcon(QMessageBox.Information)
-            msg.setText('NVC is already running.')
+            msg.setText(_tr('NVC is already running.'))
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
         except Exception:
-            QMessageBox.information(None, 'NVC', 'NVC is already running.')
+            QMessageBox.information(None, _tr('NVC'), _tr('NVC is already running.'))
         sys.exit(0)
     # Check for required resource files using absolute paths.
     required_files = [
@@ -68,7 +85,7 @@ def main():
     if missing_files:
         QMessageBox.critical(
             None,
-            "Missing Resources",
+            _tr("Missing Resources"),
             "The following required files are missing:\n" + "\n".join(missing_files)
         )
         sys.exit(1)

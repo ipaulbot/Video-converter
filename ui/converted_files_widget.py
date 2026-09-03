@@ -3,11 +3,21 @@ from PyQt5.QtWidgets import (
     QTextEdit, QDialog, QHBoxLayout, QPushButton, QLabel, QAbstractItemView, QStyledItemDelegate,
     QStyleOptionViewItem, QApplication, QStyle
 )
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import QCoreApplication, pyqtSignal, Qt
 import os
 import subprocess
 from utils.logger import logger
 
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "ConvertedFiles" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("ConvertedFiles", source)
 
 class _NoElideDelegate(QStyledItemDelegate):
     """Force no text eliding so full paths stay visible (clip instead of 'C...')."""
@@ -107,7 +117,7 @@ class ConvertedFilesWidget(QWidget):
         container_layout.setSpacing(0)
 
         # Create clear button
-        self.clear_button = QPushButton("Clear")
+        self.clear_button = QPushButton(_tr("Clear"))
         clear_button = self.clear_button
         clear_button.setFixedSize(60, 24)
         clear_button.setCursor(Qt.PointingHandCursor)
@@ -423,10 +433,14 @@ class ConvertedFilesWidget(QWidget):
                     subprocess.Popen(['xdg-open', folder])
             except Exception as e:
                 from PyQt5.QtWidgets import QMessageBox
-                QMessageBox.warning(self, "Error", f"Could not open file location: {e}")
+                QMessageBox.warning(self, _tr("Error"),
+                                _tr("Could not open file location: %(error)s")
+                                % {"error": e})
         else:
             from PyQt5.QtWidgets import QMessageBox
-            QMessageBox.warning(self, "File Not Found", f"File does not exist: {file_path}")
+            QMessageBox.warning(self, _tr("File Not Found"),
+                                _tr("File does not exist: %(path)s")
+                                % {"path": file_path})
 
     def show_context_menu(self, pos):
         index = self.table_widget.indexAt(pos)
@@ -437,11 +451,11 @@ class ConvertedFilesWidget(QWidget):
         file_path = file_item.data(Qt.UserRole)
         dest_folder = self.table_widget.item(row, 1).text()
         menu = QMenu(self)
-        open_folder_action = menu.addAction("Open Containing Folder")
-        open_log_action = menu.addAction("Open Log File")
-        copy_action = menu.addAction("Copy File Path")
+        open_folder_action = menu.addAction(_tr("Open Containing Folder"))
+        open_log_action = menu.addAction(_tr("Open Log File"))
+        copy_action = menu.addAction(_tr("Copy File Path"))
         menu.addSeparator()
-        settings_action = menu.addAction("Settings")
+        settings_action = menu.addAction(_tr("Settings"))
         action = menu.exec_(self.table_widget.viewport().mapToGlobal(pos))
         if action == open_folder_action:
             self.open_folder(dest_folder)
@@ -470,9 +484,13 @@ class ConvertedFilesWidget(QWidget):
                 elif os.name == 'posix':
                     subprocess.Popen(['xdg-open', folder_path])
             except Exception as e:
-                QMessageBox.warning(self, "Error", f"Could not open folder: {e}")
+                QMessageBox.warning(self, _tr("Error"),
+                                _tr("Could not open folder: %(error)s")
+                                % {"error": e})
         else:
-            QMessageBox.warning(self, "Folder Not Found", f"Folder does not exist: {folder_path}")
+            QMessageBox.warning(self, _tr("Folder Not Found"),
+                                _tr("Folder does not exist: %(path)s")
+                                % {"path": folder_path})
 
     def open_log_file(self, file_path):
         # Look for log in self.log_folder
@@ -489,7 +507,8 @@ class ConvertedFilesWidget(QWidget):
             with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
             dlg = QDialog(self)
-            dlg.setWindowTitle(f"Log for {os.path.basename(file_path)}")
+            dlg.setWindowTitle(_tr("Log for %(name)s")
+                           % {"name": os.path.basename(file_path)})
             dlg.resize(600, 400)
             layout = QVBoxLayout(dlg)
             text_edit = QTextEdit()
@@ -497,14 +516,16 @@ class ConvertedFilesWidget(QWidget):
             text_edit.setPlainText(content)
             layout.addWidget(text_edit)
             btn_box = QHBoxLayout()
-            ok_btn = QPushButton("OK")
+            ok_btn = QPushButton(_tr("OK"))
             ok_btn.clicked.connect(dlg.accept)
             btn_box.addStretch()
             btn_box.addWidget(ok_btn)
             layout.addLayout(btn_box)
             dlg.exec_()
         else:
-            QMessageBox.information(self, "Log Not Found", f"No log file found for {os.path.basename(file_path)}.")
+            QMessageBox.information(self, _tr("Log Not Found"),
+                                    _tr("No log file found for %(name)s.")
+                                    % {"name": os.path.basename(file_path)})
 
     def clear_table(self):
         """Clear the converted files table."""

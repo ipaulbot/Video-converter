@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QCheckBox, QFileDialog, QProgressBar, QPlainTextEdit, QGridLayout, QGraphicsOpacityEffect, QWidget, QSizePolicy
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QPropertyAnimation, QEasingCurve, QRect, QTimer, QUrl
+from PyQt5.QtCore import QCoreApplication, Qt, QThread, pyqtSignal, QPropertyAnimation, QEasingCurve, QRect, QTimer, QUrl
 from PyQt5.QtGui import QDesktopServices
 import os, json, subprocess, sys, datetime, base64
 from pc_report.orchestrator import run_all
@@ -8,6 +8,16 @@ from pc_report.render_json import render as render_json
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 
+
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "PcReport" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("PcReport", source)
 
 class _PCReportWorker(QThread):
     progress = pyqtSignal(str)
@@ -84,12 +94,12 @@ class PCReportWidget(QWidget):
         header.addWidget(self.logo_label, 0)
 
         intro = QVBoxLayout()
-        title = QLabel("PC Report")
+        title = QLabel(_tr("PC Report"))
         title.setStyleSheet("font-size: 18px; font-weight: bold; color: #43a296;")
         intro.addWidget(title)
         description = QLabel(
-            "Generate a detailed support report without leaving this tab. "
-            "The report is saved automatically, with redaction enabled for sensitive values."
+            _tr("Generate a detailed support report without leaving this tab. "
+            "The report is saved automatically, with redaction enabled for sensitive values.")
         )
         description.setWordWrap(True)
         description.setStyleSheet("color: #333; font-size: 10pt;")
@@ -99,9 +109,9 @@ class PCReportWidget(QWidget):
 
         controls = QHBoxLayout()
         controls.setSpacing(10)
-        self.btn_run = QPushButton("Generate PC Report")
-        self.btn_open = QPushButton("Open Report")
-        self.btn_folder = QPushButton("Open Folder")
+        self.btn_run = QPushButton(_tr("Generate PC Report"))
+        self.btn_open = QPushButton(_tr("Open Report"))
+        self.btn_folder = QPushButton(_tr("Open Folder"))
         for button in (self.btn_run, self.btn_open, self.btn_folder):
             button.setCursor(Qt.PointingHandCursor)
             button.setMinimumWidth(120)
@@ -122,7 +132,7 @@ class PCReportWidget(QWidget):
         self._set_progress_color('#8a8a8a' if locked else ('#92cb4f' if converting else '#43a296'))
         layout.addWidget(self.progress)
 
-        self.status_label = QLabel("Ready. Reports are saved to your Desktop by default.")
+        self.status_label = QLabel(_tr("Ready. Reports are saved to your Desktop by default."))
         self.status_label.setWordWrap(True)
         self.status_label.setStyleSheet("color: #555;")
         layout.addWidget(self.status_label)
@@ -141,7 +151,7 @@ class PCReportWidget(QWidget):
         layout.addWidget(self.output, 1)
 
         note = QLabel(
-            "Tip: the generated HTML is self-contained, so it can be attached to support tickets or opened later."
+            _tr("Tip: the generated HTML is self-contained, so it can be attached to support tickets or opened later.")
         )
         note.setWordWrap(True)
         note.setStyleSheet("color: #666; font-size: 9pt;")
@@ -215,7 +225,7 @@ class PCReportWidget(QWidget):
         self.btn_open.setEnabled(False)
         self.btn_folder.setEnabled(False)
         self.progress.show()
-        self.status_label.setText("Generating PC report inside this tab...")
+        self.status_label.setText(_tr("Generating PC report inside this tab..."))
         self.output.clear()
         self.output.appendPlainText(f"Report will be saved to: {self.report_path}")
         self.worker = _PCReportWorker(self._options(), self)
@@ -235,13 +245,14 @@ class PCReportWidget(QWidget):
                 json_path = os.path.splitext(self.report_path)[0] + '.json'
                 with open(json_path, 'w', encoding='utf-8') as jf:
                     jf.write(json_text)
-            self.status_label.setText(f"PC report complete: {self.report_path}")
+            self.status_label.setText(_tr("PC report complete: %(path)s")
+                                  % {"path": self.report_path})
             self.output.appendPlainText("")
             self.output.appendPlainText(f"Saved: {self.report_path}")
             self.btn_open.setEnabled(True)
             self.btn_folder.setEnabled(True)
         except Exception as exc:
-            self.status_label.setText("PC report generated, but saving failed.")
+            self.status_label.setText(_tr("PC report generated, but saving failed."))
             self.output.appendPlainText(f"Failed to save: {exc}")
 
     def open_report(self):
@@ -268,7 +279,7 @@ class PCReportWidget(QWidget):
 class PCReportDialog(QDialog):
     def __init__(self, parent=None, button_style=None, converting=False, locked=False):
         super().__init__(parent)
-        self.setWindowTitle('Generate PC Report')
+        self.setWindowTitle(_tr('Generate PC Report'))
         self.setModal(True)
         # Start with a compact size; will refine after loading logo
         self.setMinimumSize(300, 260)
@@ -337,8 +348,8 @@ class PCReportDialog(QDialog):
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(12)
-        self.btn_run = QPushButton('Generate')
-        self.btn_save = QPushButton('Save HTML…')
+        self.btn_run = QPushButton(_tr('Generate'))
+        self.btn_save = QPushButton(_tr('Save HTML…'))
         # Apply main-window-provided button style so colors match current mode
         if button_style:
             try:

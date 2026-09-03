@@ -3,7 +3,7 @@ import threading
 import glob
 from datetime import datetime
 
-from PyQt5.QtCore import QProcess, Qt, QSize, QTimer, QUrl, pyqtSignal
+from PyQt5.QtCore import QCoreApplication, QProcess, Qt, QSize, QTimer, QUrl, pyqtSignal
 from PyQt5.QtGui import QPixmap, QDesktopServices
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QDialog,
@@ -50,6 +50,16 @@ from utils.logger import logger
 from utils.resources import resource_path
 
 
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "Recorder" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("Recorder", source)
+
 def make_sync_offset_spinbox():
     # Compact per-source timeline nudge used to line cameras up in Combined grid.
     # Positive delays the source, negative pulls it earlier; this compensates for a
@@ -60,11 +70,11 @@ def make_sync_offset_spinbox():
     spin.setSingleStep(0.05)
     spin.setDecimals(2)
     spin.setValue(0.0)
-    spin.setSuffix(" s")
+    spin.setSuffix(_tr(" s"))
     spin.setMaximumWidth(74)
     spin.setToolTip(
-        "Sync offset for Combined grid: shift this source earlier (negative) or later "
-        "(positive) to line it up with the others."
+        _tr("Sync offset for Combined grid: shift this source earlier (negative) or later "
+        "(positive) to line it up with the others.")
     )
     return spin
 
@@ -136,7 +146,7 @@ class PTZOverlayButton(QPushButton):
         self.drag_start = None
         self.last_direction = ""
         self.setFixedSize(30, 24)
-        self.setToolTip("Drag to pan/tilt this camera")
+        self.setToolTip(_tr("Drag to pan/tilt this camera"))
         self.setProperty("skipGlobalStyle", True)
         self.setStyleSheet("""
             QPushButton {
@@ -188,7 +198,7 @@ class PTZOverlayButton(QPushButton):
 class VideoSettingsDialog(QDialog):
     def __init__(self, source_rows, output_controls=None, parent=None, button_style=None):
         super().__init__(parent)
-        self.setWindowTitle("Video Settings")
+        self.setWindowTitle(_tr("Video Settings"))
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.source_rows = source_rows
         self.output_controls = output_controls or {}
@@ -272,7 +282,8 @@ class VideoSettingsDialog(QDialog):
             camera_button = QToolButton()
             camera_button.setIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
             camera_button.setIconSize(QSize(11, 11))
-            camera_button.setToolTip(f"Camera {index + 1} settings")
+            camera_button.setToolTip(_tr("Camera %(number)s settings")
+                                     % {"number": index + 1})
             camera_button.setFixedSize(16, 16)
             camera_button.setMaximumWidth(16)
             camera_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -311,7 +322,7 @@ class VideoSettingsDialog(QDialog):
         grid.setColumnStretch(4, 0)
         layout.addLayout(grid)
 
-        preset_group = QGroupBox("Video Preset")
+        preset_group = QGroupBox(_tr("Video Preset"))
         preset_layout = QHBoxLayout()
         self.preset_layout = preset_layout
         preset_layout.setContentsMargins(6, 6, 6, 6)
@@ -323,11 +334,11 @@ class VideoSettingsDialog(QDialog):
         self.preset_path_edit = QLineEdit()
         self.preset_path_edit.setReadOnly(True)
         self.preset_path_edit.setMinimumWidth(120)
-        self.preset_load_button = QPushButton("Load")
-        self.preset_set_button = QPushButton("Set")
-        self.preset_open_bracket = QLabel("[")
-        self.preset_separator = QLabel("/")
-        self.preset_close_bracket = QLabel("]")
+        self.preset_load_button = QPushButton(_tr("Load"))
+        self.preset_set_button = QPushButton(_tr("Set"))
+        self.preset_open_bracket = QLabel(_tr("["))
+        self.preset_separator = QLabel(_tr("/"))
+        self.preset_close_bracket = QLabel(_tr("]"))
         link_style = """
             QPushButton {
                 background: transparent;
@@ -347,7 +358,7 @@ class VideoSettingsDialog(QDialog):
         self.preset_combo.currentTextChanged.connect(lambda _text: self.update_selected_preset_path())
         self.preset_load_button.clicked.connect(self.load_selected_preset)
         self.preset_set_button.clicked.connect(self.set_selected_preset)
-        preset_layout.addWidget(QLabel("Video Preset:"))
+        preset_layout.addWidget(QLabel(_tr("Video Preset:")))
         preset_layout.addWidget(self.preset_combo)
         self.preset_path_edit.hide()
         preset_action_layout = QHBoxLayout()
@@ -370,7 +381,7 @@ class VideoSettingsDialog(QDialog):
         self.update_selected_preset_path()
 
         lower_row = QHBoxLayout()
-        output_group = QGroupBox("Output settings")
+        output_group = QGroupBox(_tr("Output settings"))
         output_form = QFormLayout()
         self.output_quality_combo = QComboBox()
         self.output_quality_combo.addItems(["Default", "High", "Balanced", "Compact"])
@@ -384,15 +395,15 @@ class VideoSettingsDialog(QDialog):
         output_group.setLayout(output_form)
         lower_row.addWidget(output_group, 1)
 
-        timer_group = QGroupBox("Timer settings")
+        timer_group = QGroupBox(_tr("Timer settings"))
         timer_form = QFormLayout()
         self.time_format_combo = QComboBox()
         self.time_format_combo.addItems(["HH:mm:ss", "Seconds"])
         self.decimals_combo = QComboBox()
         self.decimals_combo.addItems(["0", "1", "2", "3"])
-        self.maximum_time_check = QCheckBox("Use maximum recording time")
+        self.maximum_time_check = QCheckBox(_tr("Use maximum recording time"))
         self.maximum_time_edit = QLineEdit()
-        self.maximum_time_edit.setPlaceholderText("01:00:00")
+        self.maximum_time_edit.setPlaceholderText(_tr("01:00:00"))
         timer_form.addRow("Time format:", self.time_format_combo)
         timer_form.addRow("Decimals:", self.decimals_combo)
         timer_form.addRow(self.maximum_time_check, self.maximum_time_edit)
@@ -401,8 +412,8 @@ class VideoSettingsDialog(QDialog):
         layout.addLayout(lower_row)
 
         help_text = QLabel(
-            "USB / DirectShow expects the Windows camera name. RTSP/IP can use an IP address or full rtsp:// URL. "
-            "Basler / GenICam expects the source string from pylon or device setup."
+            _tr("USB / DirectShow expects the Windows camera name. RTSP/IP can use an IP address or full rtsp:// URL. "
+            "Basler / GenICam expects the source string from pylon or device setup.")
         )
         help_text.setWordWrap(True)
         help_text.setStyleSheet("color: #555;")
@@ -604,8 +615,8 @@ class VideoSettingsDialog(QDialog):
             self.mode_status_labels[row_index].setText("")
             self.mode_status_labels[row_index].hide()
         if row_index < len(self.dialog_rows):
-            self.dialog_rows[row_index][4].setToolTip("Detecting supported camera modes...")
-            self.dialog_rows[row_index][5].setToolTip("Detecting supported camera modes...")
+            self.dialog_rows[row_index][4].setToolTip(_tr("Detecting supported camera modes..."))
+            self.dialog_rows[row_index][5].setToolTip(_tr("Detecting supported camera modes..."))
         if parent and hasattr(parent, "start_directshow_mode_detection"):
             parent.start_directshow_mode_detection(
                 device_name,
@@ -619,8 +630,8 @@ class VideoSettingsDialog(QDialog):
             if row_index < len(self.mode_status_labels):
                 self.mode_status_labels[row_index].setText("")
                 self.mode_status_labels[row_index].hide()
-            self.dialog_rows[row_index][4].setToolTip("Could not detect supported modes; Auto is recommended.")
-            self.dialog_rows[row_index][5].setToolTip("Could not detect supported modes; Auto is recommended.")
+            self.dialog_rows[row_index][4].setToolTip(_tr("Could not detect supported modes; Auto is recommended."))
+            self.dialog_rows[row_index][5].setToolTip(_tr("Could not detect supported modes; Auto is recommended."))
             return
         row_frame_rate = self.dialog_rows[row_index][4]
         row_resolution = self.dialog_rows[row_index][5]
@@ -649,8 +660,8 @@ class VideoSettingsDialog(QDialog):
         if row_index < len(self.mode_status_labels):
             self.mode_status_labels[row_index].setText("")
             self.mode_status_labels[row_index].hide()
-        row_frame_rate.setToolTip("Supported frame rates detected from the camera driver.")
-        row_resolution.setToolTip("Supported resolutions detected from the camera driver.")
+        row_frame_rate.setToolTip(_tr("Supported frame rates detected from the camera driver."))
+        row_resolution.setToolTip(_tr("Supported resolutions detected from the camera driver."))
 
     def apply_to_sources(self):
         for row_index, (source_row, dialog_row) in enumerate(zip(self.source_rows, self.dialog_rows)):
@@ -705,8 +716,8 @@ class VideoSettingsDialog(QDialog):
             else:
                 QMessageBox.information(
                     self,
-                    "Basler Camera Settings",
-                    "Basler / GenICam settings are managed in Basler pylon Viewer.",
+                    _tr("Basler Camera Settings"),
+                    _tr("Basler / GenICam settings are managed in Basler pylon Viewer."),
                 )
             return
         if source_type == "directshow":
@@ -716,14 +727,16 @@ class VideoSettingsDialog(QDialog):
             else:
                 QMessageBox.information(
                     self,
-                    "USB Camera Settings",
-                    f"Camera settings for {row_device.text() or row_label.text()} will use the camera driver's native controls when available.",
+                    _tr("USB Camera Settings"),
+                    _tr("Camera settings for %(device)s will use the camera "
+                        "driver's native controls when available.")
+                    % {"device": row_device.text() or row_label.text()},
                 )
             return
         if source_type == "rtsp_ip":
             self.open_rtsp_camera_settings(row_index)
             return
-        QMessageBox.information(self, "Camera Settings", "No camera-specific settings are available for this source type yet.")
+        QMessageBox.information(self, _tr("Camera Settings"), _tr("No camera-specific settings are available for this source type yet."))
 
     def apply_rtsp_settings_to_row(self, row_index, host, username="", password="", port="", path="stream"):
         if row_index < 0 or row_index >= len(self.dialog_rows):
@@ -740,13 +753,13 @@ class VideoSettingsDialog(QDialog):
             return
         _enabled, _label, _type, row_device, *_rest = self.dialog_rows[row_index]
         dialog = QDialog(self)
-        dialog.setWindowTitle("RTSP/IP Camera Settings")
+        dialog.setWindowTitle(_tr("RTSP/IP Camera Settings"))
         form = QFormLayout(dialog)
         host_edit = QLineEdit()
         current = row_device.currentText()
         current_settings = self.rtsp_settings_from_current_text(current if current != "RTSP/IP Camera" else "")
         host_edit.setText(current_settings["host"])
-        host_edit.setPlaceholderText("192.168.1.50 or rtsp://camera/stream")
+        host_edit.setPlaceholderText(_tr("192.168.1.50 or rtsp://camera/stream"))
         user_edit = QLineEdit()
         user_edit.setText(current_settings["username"])
         password_edit = QLineEdit()
@@ -840,7 +853,7 @@ class MultiSourceRecorderWidget(QWidget):
         layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
 
-        self.status_label = QLabel("Not recording")
+        self.status_label = QLabel(_tr("Not recording"))
         self.status_label.setStyleSheet("color: #666;")
 
         preview_grid = QGridLayout()
@@ -849,7 +862,8 @@ class MultiSourceRecorderWidget(QWidget):
         self.preview_boxes = []
         for index in range(4):
             preview = PreviewLabel(self, index)
-            preview.setText(f"Video {index + 1}\nNo signal")
+            preview.setText(_tr("Video %(number)s\nNo signal")
+                            % {"number": index + 1})
             preview.setAlignment(Qt.AlignCenter)
             preview.setMinimumHeight(74)
             preview.setMaximumHeight(98)
@@ -872,7 +886,7 @@ class MultiSourceRecorderWidget(QWidget):
         middle_row = QHBoxLayout()
         middle_row.setSpacing(8)
         middle_row.setAlignment(Qt.AlignTop)
-        source_group = QGroupBox("Recording properties")
+        source_group = QGroupBox(_tr("Recording properties"))
         source_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         source_grid = QGridLayout()
         source_grid.setContentsMargins(6, 6, 6, 6)
@@ -897,7 +911,7 @@ class MultiSourceRecorderWidget(QWidget):
             label = QLineEdit(f"Video {index + 1}")
             label.setMinimumWidth(60)
             label.setMaximumWidth(82)
-            label.setToolTip("Double-click to open video settings")
+            label.setToolTip(_tr("Double-click to open video settings"))
             label.mouseDoubleClickEvent = lambda event, row=index: self.open_video_settings(row)
             source_type = QComboBox()
             for item in CAMERA_SOURCE_TYPES:
@@ -908,7 +922,7 @@ class MultiSourceRecorderWidget(QWidget):
             source.setMinimumWidth(90)
             source.setMaximumWidth(160)
             source.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            source.setPlaceholderText("address, device, or URL")
+            source.setPlaceholderText(_tr("address, device, or URL"))
             source_type.currentIndexChanged.connect(
                 lambda _idx, row=index, combo=source_type, edit=source: self.update_source_placeholder(combo, edit, row)
             )
@@ -944,7 +958,7 @@ class MultiSourceRecorderWidget(QWidget):
         source_group_layout.setSpacing(2)
         source_grid.setContentsMargins(0, 0, 0, 0)
         source_group_layout.addLayout(source_grid)
-        self.video_settings_link = QPushButton("Video Settings")
+        self.video_settings_link = QPushButton(_tr("Video Settings"))
         self.video_settings_link.setMaximumWidth(110)
         self.video_settings_link.setProperty("skipGlobalStyle", True)
         self.video_settings_link.setStyleSheet("""
@@ -959,7 +973,7 @@ class MultiSourceRecorderWidget(QWidget):
             QPushButton:hover { color: #1f5c52; }
         """)
         self.video_settings_link.clicked.connect(lambda: self.open_video_settings())
-        self.recording_log_link = QPushButton("Show recording log")
+        self.recording_log_link = QPushButton(_tr("Show recording log"))
         self.recording_log_link.setMaximumWidth(130)
         self.recording_log_link.setProperty("skipGlobalStyle", True)
         self.recording_log_link.setStyleSheet(self.video_settings_link.styleSheet())
@@ -976,7 +990,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.source_grid = source_grid
         middle_row.addWidget(source_group, 2)
 
-        output_group = QGroupBox("Output settings")
+        output_group = QGroupBox(_tr("Output settings"))
         output_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         output_form = QFormLayout()
         output_form.setContentsMargins(6, 6, 6, 6)
@@ -986,10 +1000,10 @@ class MultiSourceRecorderWidget(QWidget):
         self.output_folder_edit = QLineEdit(os.path.join(os.path.expanduser("~"), "Videos"))
         self.output_folder_edit.setMinimumWidth(120)
         self.output_folder_edit.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-        self.output_folder_edit.setToolTip("Double-click to choose the recording folder")
+        self.output_folder_edit.setToolTip(_tr("Double-click to choose the recording folder"))
         self.output_folder_edit.mouseDoubleClickEvent = lambda event: self.browse_output_folder()
-        browse_btn = QPushButton("...")
-        browse_btn.setToolTip("Choose recording folder")
+        browse_btn = QPushButton(_tr("..."))
+        browse_btn.setToolTip(_tr("Choose recording folder"))
         browse_btn.setFixedSize(30, 24)
         browse_btn.setMaximumWidth(30)
         browse_btn.setProperty("skipGlobalStyle", True)
@@ -1007,17 +1021,17 @@ class MultiSourceRecorderWidget(QWidget):
         browse_btn.clicked.connect(self.browse_output_folder)
         browse_btn.hide()
         self.browse_output_button = browse_btn
-        self.open_output_folder_link = QPushButton("Open")
+        self.open_output_folder_link = QPushButton(_tr("Open"))
         self.open_output_folder_link.setMaximumWidth(44)
         self.open_output_folder_link.setProperty("skipGlobalStyle", True)
         self.open_output_folder_link.setStyleSheet(self.video_settings_link.styleSheet())
         self.open_output_folder_link.setCursor(Qt.PointingHandCursor)
-        self.open_output_folder_link.setToolTip("Open the recording folder in your file browser")
+        self.open_output_folder_link.setToolTip(_tr("Open the recording folder in your file browser"))
         self.open_output_folder_link.clicked.connect(self.open_output_folder)
         folder_line = QHBoxLayout()
         folder_line.addWidget(self.output_folder_edit)
         folder_line.addWidget(self.open_output_folder_link, 0, Qt.AlignLeft)
-        self.base_name_edit = QLineEdit("Video")
+        self.base_name_edit = QLineEdit(_tr("Video"))
         self.base_name_edit.setMaximumWidth(140)
         self.codec_combo = QComboBox()
         self.codec_combo.addItems(["copy", "h264"])
@@ -1025,7 +1039,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.output_mode_combo = QComboBox()
         self.output_mode_combo.addItems(["Separate videos", "Picture-in-picture", "Combined grid"])
         self.output_mode_combo.setMaximumWidth(140)
-        self.output_mode_combo.setToolTip("Combined output layouts are saved here, but recording currently uses the stable separate-video path.")
+        self.output_mode_combo.setToolTip(_tr("Combined output layouts are saved here, but recording currently uses the stable separate-video path."))
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
         output_form.addRow("File base name:", self.base_name_edit)
@@ -1033,7 +1047,7 @@ class MultiSourceRecorderWidget(QWidget):
         output_form.addRow("Output mode:", self.output_mode_combo)
         self.duration_edit = QLineEdit("")
         self.duration_edit.setMaximumWidth(140)
-        self.duration_edit.setPlaceholderText("blank = until stopped")
+        self.duration_edit.setPlaceholderText(_tr("blank = until stopped"))
         output_form.addRow("Timer:", self.duration_edit)
         output_group.setLayout(output_form)
         self.output_group = output_group
@@ -1043,7 +1057,7 @@ class MultiSourceRecorderWidget(QWidget):
 
         action_row = QHBoxLayout()
         self.start_btn = QPushButton("")
-        self.start_btn.setToolTip("Start recording")
+        self.start_btn.setToolTip(_tr("Start recording"))
         self.start_btn.setFixedSize(44, 44)
         self.start_btn.setMaximumWidth(44)
         self.start_btn.setProperty("skipGlobalStyle", True)
@@ -1056,7 +1070,7 @@ class MultiSourceRecorderWidget(QWidget):
             QPushButton:hover { background: #e23d3d; }
             QPushButton:disabled { background: #999; }
         """)
-        self.stop_btn = QPushButton("Stop Recording")
+        self.stop_btn = QPushButton(_tr("Stop Recording"))
         self.stop_btn.setEnabled(False)
         self.start_btn.clicked.connect(self.start_recording)
         self.stop_btn.clicked.connect(self.stop_recording)
@@ -1155,11 +1169,18 @@ class MultiSourceRecorderWidget(QWidget):
                 "stream_url": "Stream URL",
                 "file": "File / Test",
             }
-            self.preview_boxes[row_index].setText(f"Video {row_index + 1}\n{labels.get(source_type, 'Source')}\nConfigure in Video Settings")
+            self.preview_boxes[row_index].setText(
+                _tr("Video %(number)s\n%(kind)s\nConfigure the source")
+                % {"number": row_index + 1,
+                   "kind": labels.get(source_type, _tr("Source"))})
             if source_type == "directshow" and edit.text():
-                self.preview_boxes[row_index].setText(f"Video {row_index + 1}\n{edit.text()}\nOpening preview...")
+                self.preview_boxes[row_index].setText(
+                    _tr("Video %(number)s\n%(source)s\nOpening preview...")
+                    % {"number": row_index + 1, "source": edit.text()})
             elif source_type == "rtsp_ip" and edit.text():
-                self.preview_boxes[row_index].setText(f"Video {row_index + 1}\nRTSP/IP\nOpening preview...")
+                self.preview_boxes[row_index].setText(
+                    _tr("Video %(number)s\nRTSP/IP\nOpening preview...")
+                    % {"number": row_index + 1})
             self.update_ptz_overlay_for_row(row_index)
 
     def populate_directshow_devices(self, source_edit):
@@ -1446,16 +1467,20 @@ class MultiSourceRecorderWidget(QWidget):
                 and not self._is_basler_genicam_source(source_info[1] if len(source_info) > 1 else "")
             ):
                 self.preview_boxes[row_index].setText(
-                    f"Video {row_index + 1}\n"
-                    "Camera is not available as a DirectShow video device\n"
-                    "Refresh devices or check pylon/GenICam setup"
+                    _tr("Video %(number)s\n"
+                        "Camera is not available as a DirectShow video device\n"
+                        "Refresh devices or check pylon/GenICam setup")
+                    % {"number": row_index + 1}
                 )
                 return
-            self.preview_boxes[row_index].setText(f"Video {row_index + 1}\nPreview interrupted\nReconnecting...")
+            self.preview_boxes[row_index].setText(
+                _tr("Video %(number)s\nPreview interrupted\nReconnecting...")
+                % {"number": row_index + 1})
             self._schedule_preview_retry(row_index, source_info)
         elif exit_code:
             self.preview_boxes[row_index].setText(
-                f"Video {row_index + 1}\nPreview unavailable\nCamera may be in use"
+                _tr("Video %(number)s\nPreview unavailable\nCamera may be in use")
+                % {"number": row_index + 1}
             )
 
     def _directshow_device_unavailable_error(self, text):
@@ -1532,7 +1557,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.processes = []
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
-        self.status_label.setText("Not recording")
+        self.status_label.setText(_tr("Not recording"))
 
     def release_preview_processes_for_recording(self, selected=None):
         # If no selection is provided, fall back to releasing every running preview. This
@@ -1575,7 +1600,8 @@ class MultiSourceRecorderWidget(QWidget):
                     for selected_row, _label, source, *_options in (selected or [])
                 ):
                     self.preview_boxes[row_index].setText(
-                        f"Video {row_index + 1}\nRecording\nStarting live preview..."
+                        _tr("Video %(number)s\nRecording\nStarting live preview...")
+                        % {"number": row_index + 1}
                     )
             self._append_log(f"[preview {row_index + 1}] paused for recording")
         self.preview_processes = {
@@ -1611,7 +1637,7 @@ class MultiSourceRecorderWidget(QWidget):
     def open_directshow_camera_settings(self, device_name):
         device = (device_name or "").strip()
         if not device:
-            QMessageBox.information(self, "Camera Settings", "Select a USB / DirectShow camera first.")
+            QMessageBox.information(self, _tr("Camera Settings"), _tr("Select a USB / DirectShow camera first."))
             return
         command = build_directshow_camera_settings_command(resource_path("ffmpeg.exe"), device)
         QProcess.startDetached(command[0], command[1:])
@@ -1643,11 +1669,11 @@ class MultiSourceRecorderWidget(QWidget):
             return
         QMessageBox.information(
             self,
-            "Basler Camera Settings",
-            "Basler / GenICam settings are managed in Basler pylon Viewer.\n\n"
+            _tr("Basler Camera Settings"),
+            _tr("Basler / GenICam settings are managed in Basler pylon Viewer.\n\n"
             "The FFmpeg DirectShow property dialog does not reliably open Basler camera controls and can "
             "produce BindToObject errors while NVC is previewing the camera.\n\n"
-            "Open pylon Viewer to adjust exposure, gain, trigger mode, pixel format, and camera defaults.",
+            "Open pylon Viewer to adjust exposure, gain, trigger mode, pixel format, and camera defaults."),
         )
 
     def output_controls(self):
@@ -1831,7 +1857,7 @@ class MultiSourceRecorderWidget(QWidget):
 
     def build_recording_log_dialog(self):
         dialog = QDialog(self)
-        dialog.setWindowTitle("Recording Log")
+        dialog.setWindowTitle(_tr("Recording Log"))
         layout = QVBoxLayout(dialog)
         log_edit = QPlainTextEdit()
         log_edit.setReadOnly(True)
@@ -1906,15 +1932,21 @@ class MultiSourceRecorderWidget(QWidget):
         try:
             os.makedirs(folder, exist_ok=True)
         except OSError as exc:
-            QMessageBox.warning(self, "Folder unavailable", f"Could not open the recording folder:\n{exc}")
+            QMessageBox.warning(
+                self, _tr("Folder unavailable"),
+                _tr("Could not open the recording folder:\n%(error)s")
+                % {"error": exc})
             return
         if not QDesktopServices.openUrl(QUrl.fromLocalFile(folder)):
-            QMessageBox.warning(self, "Folder unavailable", f"Could not open the recording folder:\n{folder}")
+            QMessageBox.warning(
+                self, _tr("Folder unavailable"),
+                _tr("Could not open the recording folder:\n%(path)s")
+                % {"path": folder})
 
     def _ffmpeg_path(self):
         path = resource_path("ffmpeg.exe")
         if not os.path.exists(path):
-            QMessageBox.warning(self, "Missing FFmpeg", "ffmpeg.exe could not be found.")
+            QMessageBox.warning(self, _tr("Missing FFmpeg"), _tr("ffmpeg.exe could not be found."))
             return ""
         return path
 
@@ -2030,11 +2062,11 @@ class MultiSourceRecorderWidget(QWidget):
                     f"[recorder] skipped Video {row_index + 1} ({label_edit.text().strip() or 'source'}): Use is unchecked"
                 )
         if not selected:
-            QMessageBox.warning(self, "No Sources", "Enable at least one source and enter its source string.")
+            QMessageBox.warning(self, _tr("No Sources"), _tr("Enable at least one source and enter its source string."))
             return
         selected = self._deduplicate_selected_sources(selected)
         if not selected:
-            QMessageBox.warning(self, "No Sources", "Enable at least one unique source.")
+            QMessageBox.warning(self, _tr("No Sources"), _tr("Enable at least one unique source."))
             return
 
         self.clear_preview_backlog()
@@ -2049,7 +2081,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.pending_recording_start = (ffmpeg, selected, output_folder, timestamp)
         if released_directshow_preview:
             delay_ms = self._recording_start_delay_for_selection(selected)
-            self.status_label.setText("Starting recording...")
+            self.status_label.setText(_tr("Starting recording..."))
             self._append_log("[recorder] waiting for USB camera preview to release before recording")
             self._notify_workflow_availability_change()
             self.record_start_timer.start(delay_ms)
@@ -2073,7 +2105,7 @@ class MultiSourceRecorderWidget(QWidget):
             self._start_recording_processes(ffmpeg, selected, output_folder, timestamp)
         except Exception as exc:
             self._append_log(f"[recorder] failed to start: {exc}")
-            self.status_label.setText("Recording failed - check camera availability")
+            self.status_label.setText(_tr("Recording failed - check camera availability"))
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
             self._notify_workflow_availability_change()
@@ -2082,7 +2114,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.processes = []
         self.start_btn.setEnabled(False)
         self.stop_btn.setEnabled(True)
-        self.status_label.setText("Recording")
+        self.status_label.setText(_tr("Recording"))
         self._notify_workflow_availability_change()
         if self.output_mode_combo.currentText() == "Combined grid" and len(selected) > 1:
             self._start_combined_grid_process(ffmpeg, selected, output_folder, timestamp)
@@ -2187,7 +2219,9 @@ class MultiSourceRecorderWidget(QWidget):
         self.combined_preview_rows = visible_rows
         for row_index in visible_rows:
             self.preview_boxes[row_index].clear()
-            self.preview_boxes[row_index].setText(f"Video {row_index + 1}\nOpening combined preview...")
+            self.preview_boxes[row_index].setText(
+                _tr("Video %(number)s\nOpening combined preview...")
+                % {"number": row_index + 1})
 
     def _start_combined_grid_process(self, ffmpeg, selected, output_folder, timestamp, attempt=0):
         self._prepare_combined_preview_placeholders(selected)
@@ -2263,7 +2297,7 @@ class MultiSourceRecorderWidget(QWidget):
             or getattr(process, "recording_fallback_command", None)
         )
         if self.processes or has_retry:
-            self.status_label.setText("Recording")
+            self.status_label.setText(_tr("Recording"))
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
             self._notify_workflow_availability_change()
@@ -2271,7 +2305,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
         self.pending_recording_start = None
-        self.status_label.setText("Recording failed - check camera availability")
+        self.status_label.setText(_tr("Recording failed - check camera availability"))
         self._notify_workflow_availability_change()
 
     def _process_finished(self, process, name, exit_code=0):
@@ -2286,15 +2320,17 @@ class MultiSourceRecorderWidget(QWidget):
         # Stopping... we let the stop-flow decide the final status, and after the last
         # process exits the aggregate branch below paints the final state.
         if exit_code and self.processes and self.status_label.text() == "Recording":
-            self.status_label.setText(f"Recording: {name} failed - check camera availability")
+            self.status_label.setText(
+                _tr("Recording: %(name)s failed - check camera availability")
+                % {"name": name})
         if not self.processes:
             was_stopping = self.status_label.text() == "Stopping..."
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
             if exit_code and not was_stopping:
-                self.status_label.setText("Recording failed - check camera availability")
+                self.status_label.setText(_tr("Recording failed - check camera availability"))
             else:
-                self.status_label.setText("Not recording")
+                self.status_label.setText(_tr("Not recording"))
                 self.resume_previews_after_recording_stop()
             self._notify_workflow_availability_change()
 
@@ -2334,7 +2370,7 @@ class MultiSourceRecorderWidget(QWidget):
         self._append_log(
             f"[{name}] camera busy on first open; retrying combined recording after device settle window"
         )
-        self.status_label.setText("Recording")
+        self.status_label.setText(_tr("Recording"))
         self.stop_btn.setEnabled(True)
         self.start_btn.setEnabled(False)
 
@@ -2367,7 +2403,7 @@ class MultiSourceRecorderWidget(QWidget):
         remaining_commands = fallback_commands[1:]
         preview_pipe = getattr(process, "recording_preview_pipe", False)
         self._append_log(f"[{name}] retrying with safer input format after camera rejected requested settings")
-        self.status_label.setText("Recording")
+        self.status_label.setText(_tr("Recording"))
         self.stop_btn.setEnabled(True)
         self.start_btn.setEnabled(False)
         def start_retry():
@@ -2399,7 +2435,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.record_start_watchdog_timer.stop()
         self.clear_preview_backlog()
         self.stop_btn.setEnabled(False)
-        self.status_label.setText("Stopping...")
+        self.status_label.setText(_tr("Stopping..."))
         running_processes = []
         for process in list(self.processes):
             try:
@@ -2421,7 +2457,7 @@ class MultiSourceRecorderWidget(QWidget):
         if not self.processes and self.status_label.text() == "Stopping...":
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
-            self.status_label.setText("Not recording")
+            self.status_label.setText(_tr("Not recording"))
             self.resume_previews_after_recording_stop()
         self._notify_workflow_availability_change()
 
@@ -2440,7 +2476,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.processes = []
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
-        self.status_label.setText("Recording stopped (forced)")
+        self.status_label.setText(_tr("Recording stopped (forced)"))
         self.resume_previews_after_recording_stop()
         self._notify_workflow_availability_change()
 
@@ -2501,7 +2537,7 @@ class MultiSourceRecorderWidget(QWidget):
         if not self.processes and self.status_label.text() == "Stopping...":
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
-            self.status_label.setText("Recording failed - FFmpeg did not stop cleanly")
+            self.status_label.setText(_tr("Recording failed - FFmpeg did not stop cleanly"))
             # Bring back any previews that were paused for recording even though the
             # finished signal never fired — otherwise the user is stuck staring at
             # frozen tiles after a forced kill.

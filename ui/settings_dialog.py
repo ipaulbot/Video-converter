@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
     QScrollArea, QTabWidget, QTimeEdit, QSpacerItem, QSizePolicy, QWidget, QLayout,
     QSpinBox, QSlider, QToolButton, QStyle
 )
-from PyQt5.QtCore import pyqtSignal, Qt, QTime, QLocale, QSize
+from PyQt5.QtCore import QCoreApplication, pyqtSignal, Qt, QTime, QLocale, QSize
 from PyQt5.QtGui import QIcon, QFont, QPixmap
 
 from utils.config import default_settings, coerce_retention_days
@@ -15,13 +15,23 @@ from utils.resources import resource_path
 from ui.dialogs import EasterEggDialog
 from utils.paths import get_data_dir
 
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "SettingsDialog" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("SettingsDialog", source)
+
 class SettingsDialog(QDialog):
     settings_saved = pyqtSignal(dict)
     backup_usage_changed = pyqtSignal(bool)
 
     def __init__(self, current_settings, parent=None, button_style=None):
         super().__init__(parent)
-        self.setWindowTitle("Settings")
+        self.setWindowTitle(_tr("Settings"))
         # Use fixed-size dialog hint (Windows) and compute final size from content later
         self.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint, True)
 
@@ -164,12 +174,12 @@ class SettingsDialog(QDialog):
         self.create_time_tab()
         self.create_tools_tab()
 
-        self.tabs.addTab(self.general_tab, "General")
-        self.tabs.addTab(self.folders_tab, "Folders")
-        self.tabs.addTab(self.deletion_tab, "Deletion")
-        self.tabs.addTab(self.conversion_tab, "Format")
-        self.tabs.addTab(self.time_tab, "Time")
-        self.tabs.addTab(self.tools_tab, "Tools")
+        self.tabs.addTab(self.general_tab, _tr("General"))
+        self.tabs.addTab(self.folders_tab, _tr("Folders"))
+        self.tabs.addTab(self.deletion_tab, _tr("Deletion"))
+        self.tabs.addTab(self.conversion_tab, _tr("Format"))
+        self.tabs.addTab(self.time_tab, _tr("Time"))
+        self.tabs.addTab(self.tools_tab, _tr("Tools"))
 
         main_layout.addWidget(self.tabs)
         # Normalize tab heights to avoid pixel drift when switching tabs
@@ -180,22 +190,22 @@ class SettingsDialog(QDialog):
 
         button_layout = QHBoxLayout()
         button_layout.addStretch()
-        self.default_button = QPushButton("Default")
-        self.default_button.setToolTip("Reset settings to their default values.")
+        self.default_button = QPushButton(_tr("Default"))
+        self.default_button.setToolTip(_tr("Reset settings to their default values."))
         self.default_button.setCursor(Qt.PointingHandCursor)
         self.default_button.clicked.connect(self.set_defaults)
         self.default_button.setFixedWidth(90)
         button_layout.addWidget(self.default_button)
 
-        self.ok_button = QPushButton("OK")
-        self.ok_button.setToolTip("Save current settings.")
+        self.ok_button = QPushButton(_tr("OK"))
+        self.ok_button.setToolTip(_tr("Save current settings."))
         self.ok_button.setCursor(Qt.PointingHandCursor)
         self.ok_button.clicked.connect(self.save_settings)
         self.ok_button.setFixedWidth(90)
         button_layout.addWidget(self.ok_button)
 
-        self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.setToolTip("Discard changes and close dialog.")
+        self.cancel_button = QPushButton(_tr("Cancel"))
+        self.cancel_button.setToolTip(_tr("Discard changes and close dialog."))
         self.cancel_button.setCursor(Qt.PointingHandCursor)
         self.cancel_button.clicked.connect(self.reject)
         self.cancel_button.setFixedWidth(90)
@@ -244,7 +254,7 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(12, 12, 12, 12)
 
         # General Settings Group
-        general_group = QGroupBox("General Settings")
+        general_group = QGroupBox(_tr("General Settings"))
         general_layout = QVBoxLayout()
         general_layout.setSpacing(8)
         general_layout.setContentsMargins(10, 10, 10, 10)
@@ -252,10 +262,10 @@ class SettingsDialog(QDialog):
         # Add spacing after the group box title
         general_layout.addSpacing(6)
 
-        self.auto_run_checkbox = QCheckBox("Auto Run on Startup")
-        self.auto_run_checkbox.setToolTip("Run the application automatically with the previous settings at startup.")
+        self.auto_run_checkbox = QCheckBox(_tr("Auto Run on Startup"))
+        self.auto_run_checkbox.setToolTip(_tr("Run the application automatically with the previous settings at startup."))
         self.auto_run_checkbox.setChecked(self.current_settings.get('auto_run', False))
-        auto_run_info = QLabel("Automatically start the application with previous settings.")
+        auto_run_info = QLabel(_tr("Automatically start the application with previous settings."))
         auto_run_info.setWordWrap(True)
         auto_run_info.setIndent(20)
         general_layout.addWidget(self.auto_run_checkbox)
@@ -263,11 +273,11 @@ class SettingsDialog(QDialog):
 
         general_layout.addSpacing(8)
 
-        self.copy_only_checkbox = QCheckBox("Copy Only")
-        self.copy_only_checkbox.setToolTip("If enabled, files are copied without converting them.")
+        self.copy_only_checkbox = QCheckBox(_tr("Copy Only"))
+        self.copy_only_checkbox.setToolTip(_tr("If enabled, files are copied without converting them."))
         self.copy_only_checkbox.setChecked(self.current_settings.get('copy_only', False))
         self.copy_only_checkbox.stateChanged.connect(self.toggle_copy_only)
-        copy_only_info = QLabel("Copy files without converting them.")
+        copy_only_info = QLabel(_tr("Copy files without converting them."))
         copy_only_info.setWordWrap(True)
         copy_only_info.setIndent(20)
         general_layout.addWidget(self.copy_only_checkbox)
@@ -276,10 +286,10 @@ class SettingsDialog(QDialog):
         general_layout.addSpacing(8)
 
         # Close behavior option
-        self.close_on_x_checkbox = QCheckBox("Close on X (don't minimize to tray)")
-        self.close_on_x_checkbox.setToolTip("Close the application when clicking the window X button instead of minimizing to the system tray.")
+        self.close_on_x_checkbox = QCheckBox(_tr("Close on X (don't minimize to tray)"))
+        self.close_on_x_checkbox.setToolTip(_tr("Close the application when clicking the window X button instead of minimizing to the system tray."))
         self.close_on_x_checkbox.setChecked(self.current_settings.get('close_on_x', False))
-        close_on_x_info = QLabel("Close the app completely when clicking X.")
+        close_on_x_info = QLabel(_tr("Close the app completely when clicking X."))
         close_on_x_info.setWordWrap(True)
         close_on_x_info.setIndent(20)
         general_layout.addWidget(self.close_on_x_checkbox)
@@ -288,10 +298,10 @@ class SettingsDialog(QDialog):
         general_layout.addSpacing(8)
 
         # Startup (All users) option
-        self.startup_common_checkbox = QCheckBox("Launch at Windows startup (All Users)")
-        self.startup_common_checkbox.setToolTip("Launch the application automatically when Windows starts for all users.")
+        self.startup_common_checkbox = QCheckBox(_tr("Launch at Windows startup (All Users)"))
+        self.startup_common_checkbox.setToolTip(_tr("Launch the application automatically when Windows starts for all users."))
         self.startup_common_checkbox.setChecked(self.current_settings.get('startup_common', False))
-        startup_common_info = QLabel("Start the app automatically when Windows starts (requires permissions).")
+        startup_common_info = QLabel(_tr("Start the app automatically when Windows starts (requires permissions)."))
         startup_common_info.setWordWrap(True)
         startup_common_info.setIndent(20)
         general_layout.addWidget(self.startup_common_checkbox)
@@ -300,11 +310,11 @@ class SettingsDialog(QDialog):
         general_layout.addSpacing(8)
 
         # GPU Acceleration option
-        self.use_gpu_checkbox = QCheckBox("Use GPU Acceleration")
-        self.use_gpu_checkbox.setToolTip("Enable GPU acceleration if available.")
+        self.use_gpu_checkbox = QCheckBox(_tr("Use GPU Acceleration"))
+        self.use_gpu_checkbox.setToolTip(_tr("Enable GPU acceleration if available."))
         self.use_gpu_checkbox.setChecked(self.current_settings.get('use_gpu', False))
         self.use_gpu_checkbox.stateChanged.connect(self.toggle_gpu_options)
-        gpu_info = QLabel("Enable GPU acceleration for faster encoding (if supported).")
+        gpu_info = QLabel(_tr("Enable GPU acceleration for faster encoding (if supported)."))
         gpu_info.setWordWrap(True)
         gpu_info.setIndent(20)
         general_layout.addWidget(self.use_gpu_checkbox)
@@ -326,13 +336,13 @@ class SettingsDialog(QDialog):
         # Set consistent width for all dropdowns
         self.gpu_encoder_combo.setFixedWidth(90)  # Reduced from 180 to 90 (half width)
         self.gpu_encoder_combo.setStyleSheet("QComboBox { padding: 4px; }")  # Add more padding
-        gpu_form_layout.addRow(QLabel("GPU Encoder:"), self.gpu_encoder_combo)
+        gpu_form_layout.addRow(QLabel(_tr("GPU Encoder:")), self.gpu_encoder_combo)
 
         general_group.setLayout(general_layout)
         layout.addWidget(general_group)
 
         # GPU Settings Group
-        gpu_group = QGroupBox("GPU Settings")
+        gpu_group = QGroupBox(_tr("GPU Settings"))
         gpu_group.setLayout(gpu_form_layout)
         layout.addWidget(gpu_group)
 
@@ -346,7 +356,7 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(12, 12, 12, 12)
 
         # Folder Settings Group
-        folders_group = QGroupBox("Folder Settings")
+        folders_group = QGroupBox(_tr("Folder Settings"))
         folders_layout = QVBoxLayout()
         folders_layout.setSpacing(8)
         folders_layout.setContentsMargins(10, 10, 10, 10)
@@ -356,13 +366,13 @@ class SettingsDialog(QDialog):
 
         # Source Folder
         source_layout = QHBoxLayout()
-        self.source_label = QLabel("Source Folder:")
+        self.source_label = QLabel(_tr("Source Folder:"))
         self.source_label.setMinimumWidth(100)
         self.source_display = QLineEdit(self.current_settings.get('source_folder', ''))
         self.source_display.setReadOnly(True)
         # Remove gray background styling - use default white background
         self.source_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
-        self.source_button = QPushButton("Change")
+        self.source_button = QPushButton(_tr("Change"))
         self.source_button.setFixedWidth(80)
         self.source_button.setCursor(Qt.PointingHandCursor)
         self.source_button.clicked.connect(self.change_source_folder)
@@ -374,13 +384,13 @@ class SettingsDialog(QDialog):
 
         # Destination Folder
         dest_layout = QHBoxLayout()
-        self.destination_label = QLabel("Destination Folder:")
+        self.destination_label = QLabel(_tr("Destination Folder:"))
         self.destination_label.setMinimumWidth(100)
         self.destination_display = QLineEdit(self.current_settings.get('destination_folder', ''))
         self.destination_display.setReadOnly(True)
         # Remove gray background styling - use default white background
         self.destination_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
-        self.destination_button = QPushButton("Change")
+        self.destination_button = QPushButton(_tr("Change"))
         self.destination_button.setFixedWidth(80)
         self.destination_button.setCursor(Qt.PointingHandCursor)
         self.destination_button.clicked.connect(self.change_destination_folder)
@@ -392,13 +402,13 @@ class SettingsDialog(QDialog):
 
         # Backup Folder
         backup_layout = QHBoxLayout()
-        self.backup_label = QLabel("Backup Folder:")
+        self.backup_label = QLabel(_tr("Backup Folder:"))
         self.backup_label.setMinimumWidth(100)
         self.backup_display = QLineEdit(self.current_settings.get('backup_folder', ''))
         self.backup_display.setReadOnly(True)
         # Remove gray background styling - use default white background
         self.backup_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
-        self.backup_button = QPushButton("Change")
+        self.backup_button = QPushButton(_tr("Change"))
         self.backup_button.setFixedWidth(80)
         self.backup_button.setCursor(Qt.PointingHandCursor)
         self.backup_button.clicked.connect(self.change_backup_folder)
@@ -410,13 +420,13 @@ class SettingsDialog(QDialog):
 
         # Log Folder
         log_layout = QHBoxLayout()
-        self.log_label = QLabel("Log Folder:")
+        self.log_label = QLabel(_tr("Log Folder:"))
         self.log_label.setMinimumWidth(100)
         self.log_display = QLineEdit(self.current_settings.get('log_folder', get_data_dir("logs")))
         self.log_display.setReadOnly(True)
         # Remove gray background styling - use default white background
         self.log_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
-        self.log_button = QPushButton("Change")
+        self.log_button = QPushButton(_tr("Change"))
         self.log_button.setFixedWidth(80)
         self.log_button.setCursor(Qt.PointingHandCursor)
         self.log_button.clicked.connect(self.change_log_folder)
@@ -471,7 +481,7 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(12, 12, 12, 12)
 
         # Deletion Settings Group
-        deletion_group = QGroupBox("Deletion Settings")
+        deletion_group = QGroupBox(_tr("Deletion Settings"))
         deletion_layout = QVBoxLayout()
         deletion_layout.setSpacing(8)
         deletion_layout.setContentsMargins(10, 10, 10, 10)
@@ -479,11 +489,11 @@ class SettingsDialog(QDialog):
         # Add spacing after the group box title
         deletion_layout.addSpacing(6)
 
-        self.delete_after_checkbox = QCheckBox("Delete files after conversion")
-        self.delete_after_checkbox.setToolTip("If enabled, original files will be deleted after a retention period.")
+        self.delete_after_checkbox = QCheckBox(_tr("Delete files after conversion"))
+        self.delete_after_checkbox.setToolTip(_tr("If enabled, original files will be deleted after a retention period."))
         self.delete_after_checkbox.setChecked(self.current_settings.get('delete_after_conversion', False))
         self.delete_after_checkbox.stateChanged.connect(self.toggle_retention)
-        delete_info = QLabel("Delete original files after successful conversion.")
+        delete_info = QLabel(_tr("Delete original files after successful conversion."))
         delete_info.setWordWrap(True)
         delete_info.setIndent(20)
         deletion_layout.addWidget(self.delete_after_checkbox)
@@ -499,17 +509,17 @@ class SettingsDialog(QDialog):
         # Add spacing after the group box title
         retention_form_layout.addItem(QSpacerItem(0, 6))
 
-        self.retention_label = QLabel("Retention time (days):")
+        self.retention_label = QLabel(_tr("Retention time (days):"))
         self.retention_input = QSpinBox()
         self.retention_input.setRange(0, 30)
         self.retention_input.setValue(coerce_retention_days(self.current_settings.get('retention_time', 0)))
-        self.retention_input.setToolTip("Number of days to keep the original file before deletion.")
+        self.retention_input.setToolTip(_tr("Number of days to keep the original file before deletion."))
         self.retention_label.setEnabled(self.delete_after_checkbox.isChecked())
         self.retention_input.setEnabled(self.delete_after_checkbox.isChecked())
         self.retention_input.valueChanged.connect(self.retention_time_changed)
         self.retention_input.setFixedWidth(80)
         retention_form_layout.addRow(self.retention_label, self.retention_input)
-        retention_info = QLabel("Time in days to retain original files before deletion (0-30).")
+        retention_info = QLabel(_tr("Time in days to retain original files before deletion (0-30)."))
         retention_info.setWordWrap(True)
         retention_info.setIndent(20)
         deletion_layout.addLayout(retention_form_layout)
@@ -517,14 +527,14 @@ class SettingsDialog(QDialog):
 
         deletion_layout.addSpacing(8)
 
-        self.use_backup_checkbox = QCheckBox("Use Backup Folder")
-        self.use_backup_checkbox.setToolTip("If enabled, original files are moved to the backup folder instead of deletion.")
+        self.use_backup_checkbox = QCheckBox(_tr("Use Backup Folder"))
+        self.use_backup_checkbox.setToolTip(_tr("If enabled, original files are moved to the backup folder instead of deletion."))
         self.use_backup_checkbox.setChecked(self.current_settings.get('use_backup', False))
         self.use_backup_checkbox.setEnabled(
             not (self.delete_after_checkbox.isChecked() and self.retention_input.value() == 0)
         )
         self.use_backup_checkbox.stateChanged.connect(self.toggle_backup)
-        backup_info = QLabel("Move original files to a backup folder after conversion.")
+        backup_info = QLabel(_tr("Move original files to a backup folder after conversion."))
         backup_info.setWordWrap(True)
         backup_info.setIndent(20)
         deletion_layout.addWidget(self.use_backup_checkbox)
@@ -573,7 +583,7 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(12, 12, 12, 12)  # Increased from 8 to 12
 
         # Basic Format Settings Group
-        basic_group = QGroupBox("Basic Format Settings")
+        basic_group = QGroupBox(_tr("Basic Format Settings"))
         basic_layout = QVBoxLayout()
         basic_layout.setSpacing(8)  # Increased from 4 to 8
         basic_layout.setContentsMargins(10, 10, 10, 10)  # Increased from 6 to 10
@@ -585,7 +595,7 @@ class SettingsDialog(QDialog):
         basic_form_layout.setContentsMargins(10, 10, 10, 10)
         basic_form_layout.addItem(QSpacerItem(0, 6))
 
-        output_format_label = QLabel("Output Format:")
+        output_format_label = QLabel(_tr("Output Format:"))
         self.output_format_combo = QComboBox()
         self.output_format_combo.addItems(['mp4', 'mov', 'avi', 'mkv', 'flv', 'webm', 'mpeg', 'mpg', '3gp', 'ogg', 'wmv', 'm4v', 'mp3', 'gif'])
         self.output_format_combo.setCurrentText(self.current_settings.get('output_format', 'mp4'))
@@ -594,7 +604,7 @@ class SettingsDialog(QDialog):
         self.output_format_combo.setStyleSheet("QComboBox { padding: 4px; }")
         basic_form_layout.addRow(output_format_label, self.output_format_combo)
 
-        video_codec_label = QLabel("Video Codec:")
+        video_codec_label = QLabel(_tr("Video Codec:"))
         self.video_codec_combo = QComboBox()
         self.video_codec_combo.addItems(['libx264', 'mpeg4', 'libvpx', 'hevc', 'flv', 'libtheora', 'wmv2'])
         self.video_codec_combo.setCurrentText(self.current_settings.get('video_codec', 'libx264'))
@@ -602,7 +612,7 @@ class SettingsDialog(QDialog):
         self.video_codec_combo.setStyleSheet("QComboBox { padding: 4px; }")
         basic_form_layout.addRow(video_codec_label, self.video_codec_combo)
 
-        audio_codec_label = QLabel("Audio Codec:")
+        audio_codec_label = QLabel(_tr("Audio Codec:"))
         self.audio_codec_combo = QComboBox()
         self.audio_codec_combo.addItems(['aac', 'mp3', 'ac3', 'opus', 'vorbis'])
         self.audio_codec_combo.setCurrentText(self.current_settings.get('audio_codec', 'aac'))
@@ -633,12 +643,12 @@ class SettingsDialog(QDialog):
         self.gif_width_spin.setRange(64, 4096)
         self.gif_width_spin.setSingleStep(16)
         self.gif_width_spin.setValue(_coerce_int(self.current_settings.get('gif_max_width', 640), 640))
-        self.gif_loop_checkbox = QCheckBox("Loop")
+        self.gif_loop_checkbox = QCheckBox(_tr("Loop"))
         self.gif_loop_checkbox.setChecked(self.current_settings.get('gif_loop', True))
-        self.gif_quick_checkbox = QCheckBox("Quick GIF (no palette)")
+        self.gif_quick_checkbox = QCheckBox(_tr("Quick GIF (no palette)"))
         self.gif_quick_checkbox.setChecked(self.current_settings.get('gif_quick', False))
-        gif_layout.addRow(QLabel("FPS:"), self.gif_fps_spin)
-        gif_layout.addRow(QLabel("Max Width:"), self.gif_width_spin)
+        gif_layout.addRow(QLabel(_tr("FPS:")), self.gif_fps_spin)
+        gif_layout.addRow(QLabel(_tr("Max Width:")), self.gif_width_spin)
         gif_layout.addRow(self.gif_loop_checkbox)
         gif_layout.addRow(self.gif_quick_checkbox)
         self.gif_panel.setLayout(gif_layout)
@@ -663,7 +673,7 @@ class SettingsDialog(QDialog):
         layout.addSpacing(6)  # Increased from 2 to 6
 
         # Advanced Options Group
-        self.advanced_group = QGroupBox("Advanced Options")
+        self.advanced_group = QGroupBox(_tr("Advanced Options"))
         advanced_layout = QFormLayout()
         advanced_layout.setSpacing(8)  # Increased from 4 to 8
         advanced_layout.setVerticalSpacing(6)  # Increased from 2 to 6
@@ -672,7 +682,7 @@ class SettingsDialog(QDialog):
         # Add spacing after the group box title
         advanced_layout.addItem(QSpacerItem(0, 6))  # Increased from 4 to 6
 
-        size_label = QLabel("Video Size:")
+        size_label = QLabel(_tr("Video Size:"))
         self.video_size_combo = QComboBox()
         video_sizes = ["Auto", "640x480", "1280x720", "1920x1080", "3840x2160"]
         self.video_size_combo.addItems(video_sizes)
@@ -682,7 +692,7 @@ class SettingsDialog(QDialog):
         self.video_size_combo.setStyleSheet("QComboBox { padding: 4px; }")  # Add more padding
         advanced_layout.addRow(size_label, self.video_size_combo)
 
-        bitrate_label = QLabel("Bitrate:")
+        bitrate_label = QLabel(_tr("Bitrate:"))
         self.video_bitrate_combo = QComboBox()
         bitrates = ["Auto", "512k", "1000k", "1200k", "1500k", "2000k", "3000k"]
         self.video_bitrate_combo.addItems(bitrates)
@@ -692,7 +702,7 @@ class SettingsDialog(QDialog):
         self.video_bitrate_combo.setStyleSheet("QComboBox { padding: 4px; }")  # Add more padding
         advanced_layout.addRow(bitrate_label, self.video_bitrate_combo)
 
-        fr_label = QLabel("Frame Rate:")
+        fr_label = QLabel(_tr("Frame Rate:"))
         self.framerate_combo = QComboBox()
         frame_rates = ["Auto", "8", "10", "15", "20", "23.98", "24", "25", "29.97", "30", "60"]
         self.framerate_combo.addItems(frame_rates)
@@ -703,27 +713,27 @@ class SettingsDialog(QDialog):
         advanced_layout.addRow(fr_label, self.framerate_combo)
 
         # Keyframe Interval (GOP)
-        gop_label = QLabel("Keyframe Interval (GOP):")
+        gop_label = QLabel(_tr("Keyframe Interval (GOP):"))
         self.gop_spin = QSpinBox()
         self.gop_spin.setRange(0, 300)
         self.gop_spin.setSpecialValueText("Auto")
         self.gop_spin.setValue(int(self.current_settings.get('keyframe_interval', 0)))
-        self.gop_spin.setToolTip("Set the Group of Pictures (GOP) size. 0 = Auto. Lower values = better seeking/quality, Higher = better compression.")
+        self.gop_spin.setToolTip(_tr("Set the Group of Pictures (GOP) size. 0 = Auto. Lower values = better seeking/quality, Higher = better compression."))
         self.gop_spin.setFixedWidth(90)
         advanced_layout.addRow(gop_label, self.gop_spin)
 
         # Volume Control (spin only to reduce width)
-        volume_label = QLabel("Volume:")
+        volume_label = QLabel(_tr("Volume:"))
         self.volume_spin = QSpinBox()
         self.volume_spin.setRange(0, 500)
         self.volume_spin.setValue(int(self.current_settings.get('volume_percentage', 100)))
-        self.volume_spin.setSuffix("%")
+        self.volume_spin.setSuffix(_tr("%"))
         self.volume_spin.setFixedWidth(90)
-        self.volume_spin.setToolTip("Output audio volume. 100% is unchanged.")
+        self.volume_spin.setToolTip(_tr("Output audio volume. 100% is unchanged."))
         advanced_layout.addRow(volume_label, self.volume_spin)
 
         # Text Overlay
-        overlay_label = QLabel("Text Overlay:")
+        overlay_label = QLabel(_tr("Text Overlay:"))
         self.text_overlay_combo = QComboBox()
         self.text_overlay_combo.addItems([
             "None",
@@ -748,8 +758,8 @@ class SettingsDialog(QDialog):
         current_overlay = _overlay_old_to_new.get(current_overlay, current_overlay)
         self.text_overlay_combo.setCurrentText(current_overlay)
         self.text_overlay_combo.setToolTip(
-            "Burns text onto the output video.\n"
-            "Recorded options use the file's recorded time if present; otherwise file modified time."
+            _tr("Burns text onto the output video.\n"
+            "Recorded options use the file's recorded time if present; otherwise file modified time.")
         )
         self.text_overlay_combo.setFixedWidth(150)
         try:
@@ -759,11 +769,11 @@ class SettingsDialog(QDialog):
         advanced_layout.addRow(overlay_label, self.text_overlay_combo)
 
         # Console Integration (moved into Advanced)
-        console_group = QGroupBox("Console Integration")
+        console_group = QGroupBox(_tr("Console Integration"))
         console_layout = QVBoxLayout()
         console_layout.setContentsMargins(10, 10, 10, 10)
 
-        console_info = QLabel("Custom FFmpeg flags (for advanced users):")
+        console_info = QLabel(_tr("Custom FFmpeg flags (for advanced users):"))
         console_info.setStyleSheet("color: #666; font-style: italic;")
 
         # Row for input + help button
@@ -771,15 +781,15 @@ class SettingsDialog(QDialog):
         cmd_layout.setContentsMargins(0,0,0,0)
 
         self.custom_command_edit = QLineEdit(self.current_settings.get('custom_console_command', ''))
-        self.custom_command_edit.setPlaceholderText("-preset slow -profile:v high")
-        self.custom_command_edit.setToolTip("Enter raw FFmpeg arguments here. These will be appended to the command.")
+        self.custom_command_edit.setPlaceholderText(_tr("-preset slow -profile:v high"))
+        self.custom_command_edit.setToolTip(_tr("Enter raw FFmpeg arguments here. These will be appended to the command."))
 
         self.console_help_btn = QToolButton()
         self.console_help_btn.setIcon(QIcon(self.info_icon_path))
         self.console_help_btn.setIconSize(QSize(18, 18))
         self.console_help_btn.setFixedSize(28, 28)  # match main window icon buttons
         self.console_help_btn.setCursor(Qt.PointingHandCursor)
-        self.console_help_btn.setToolTip("Show help for custom commands")
+        self.console_help_btn.setToolTip(_tr("Show help for custom commands"))
         self.console_help_btn.clicked.connect(self.show_console_help)
         # Borderless to match main window icon buttons
         self.console_help_btn.setStyleSheet("""
@@ -809,7 +819,7 @@ class SettingsDialog(QDialog):
         self.advanced_group.setLayout(advanced_layout)
         # Collapsible advanced section to keep dialog compact
         self.advanced_toggle = QToolButton()
-        self.advanced_toggle.setText("Show Advanced Options")
+        self.advanced_toggle.setText(_tr("Show Advanced Options"))
         self.advanced_toggle.setCheckable(True)
         self.advanced_toggle.setChecked(False)
         self.advanced_toggle.setArrowType(Qt.RightArrow)
@@ -820,7 +830,7 @@ class SettingsDialog(QDialog):
         layout.addWidget(self.advanced_group)
 
         # Preset Management Group - compact layout
-        preset_group = QGroupBox("Presets")
+        preset_group = QGroupBox(_tr("Presets"))
         preset_layout = QVBoxLayout()
         preset_layout.setSpacing(6)
         preset_layout.setContentsMargins(10, 10, 10, 10)
@@ -831,24 +841,24 @@ class SettingsDialog(QDialog):
         preset_buttons_layout.setSpacing(6)
 
         # Ethovision preset button
-        ethovision_button = QPushButton("Ethovision")
+        ethovision_button = QPushButton(_tr("Ethovision"))
         ethovision_button.setCursor(Qt.PointingHandCursor)
         ethovision_button.clicked.connect(self.apply_ethovision_preset)
-        ethovision_button.setToolTip("Apply Ethovision-optimized settings (MP4, H.264, 1920x1080, 25fps)")
+        ethovision_button.setToolTip(_tr("Apply Ethovision-optimized settings (MP4, H.264, 1920x1080, 25fps)"))
         preset_buttons_layout.addWidget(ethovision_button)
 
         # Custom preset 1 button
-        self.custom1_button = QPushButton("Custom 1")
+        self.custom1_button = QPushButton(_tr("Custom 1"))
         self.custom1_button.setCursor(Qt.PointingHandCursor)
         self.custom1_button.clicked.connect(lambda: self.apply_custom_preset(1))
-        self.custom1_button.setToolTip("Apply Custom Preset 1")
+        self.custom1_button.setToolTip(_tr("Apply Custom Preset 1"))
         preset_buttons_layout.addWidget(self.custom1_button)
 
         # Custom preset 2 button
-        self.custom2_button = QPushButton("Custom 2")
+        self.custom2_button = QPushButton(_tr("Custom 2"))
         self.custom2_button.setCursor(Qt.PointingHandCursor)
         self.custom2_button.clicked.connect(lambda: self.apply_custom_preset(2))
-        self.custom2_button.setToolTip("Apply Custom Preset 2")
+        self.custom2_button.setToolTip(_tr("Apply Custom Preset 2"))
         preset_buttons_layout.addWidget(self.custom2_button)
 
         preset_layout.addLayout(preset_buttons_layout)
@@ -857,16 +867,16 @@ class SettingsDialog(QDialog):
         save_preset_layout = QHBoxLayout()
         save_preset_layout.setSpacing(6)
 
-        save1_button = QPushButton("Save to 1")
+        save1_button = QPushButton(_tr("Save to 1"))
         save1_button.setCursor(Qt.PointingHandCursor)
         save1_button.clicked.connect(lambda: self.save_custom_preset(1))
-        save1_button.setToolTip("Save current settings to Custom Preset 1")
+        save1_button.setToolTip(_tr("Save current settings to Custom Preset 1"))
         save_preset_layout.addWidget(save1_button)
 
-        save2_button = QPushButton("Save to 2")
+        save2_button = QPushButton(_tr("Save to 2"))
         save2_button.setCursor(Qt.PointingHandCursor)
         save2_button.clicked.connect(lambda: self.save_custom_preset(2))
-        save2_button.setToolTip("Save current settings to Custom Preset 2")
+        save2_button.setToolTip(_tr("Save current settings to Custom Preset 2"))
         save_preset_layout.addWidget(save2_button)
 
         preset_layout.addLayout(save_preset_layout)
@@ -881,9 +891,9 @@ class SettingsDialog(QDialog):
 
     def show_console_help(self):
         msg = QMessageBox(self)
-        msg.setWindowTitle("Console Command Help")
+        msg.setWindowTitle(_tr("Console Command Help"))
         msg.setText(
-            "Custom FFmpeg Flags Tutorial:\n\n"
+            _tr("Custom FFmpeg Flags Tutorial:\n\n"
             "You can enter raw FFmpeg flags here to override or extend defaults.\n\n"
             "Examples:\n"
             "• -preset slow  (Better compression, slower speed)\n"
@@ -891,7 +901,7 @@ class SettingsDialog(QDialog):
             "• -movflags +faststart  (Optimize MP4 for web streaming)\n"
             "• -metadata title=\"My Video\"  (Add metadata)\n\n"
             "Note: These flags are appended to the command. "
-            "Conflicts with other settings may cause conversion failure."
+            "Conflicts with other settings may cause conversion failure.")
         )
         msg.setIconPixmap(QPixmap(self.info_icon_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         msg.setWindowIcon(QIcon(self.info_icon_path))
@@ -904,7 +914,7 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(12, 12, 12, 12)
 
         # Time Settings Group
-        time_group = QGroupBox("Time Settings")
+        time_group = QGroupBox(_tr("Time Settings"))
         time_layout = QVBoxLayout()
         time_layout.setSpacing(8)
         time_layout.setContentsMargins(10, 10, 10, 10)
@@ -912,13 +922,13 @@ class SettingsDialog(QDialog):
         # Add spacing after the group box title
         time_layout.addSpacing(6)
 
-        time_info = QLabel("Restrict conversion to specific times of the day.")
+        time_info = QLabel(_tr("Restrict conversion to specific times of the day."))
         time_info.setWordWrap(True)
         time_info.setIndent(20)
 
-        self.no_time_restrictions_checkbox = QCheckBox("No Time Restrictions")
+        self.no_time_restrictions_checkbox = QCheckBox(_tr("No Time Restrictions"))
         self.no_time_restrictions_checkbox.setChecked(self.current_settings.get('no_time_restrictions', True))
-        self.no_time_restrictions_checkbox.setToolTip("If enabled, conversions can occur at any time.")
+        self.no_time_restrictions_checkbox.setToolTip(_tr("If enabled, conversions can occur at any time."))
         self.no_time_restrictions_checkbox.toggled.connect(self.toggle_time_restrictions)
 
         locale = QLocale()
@@ -926,16 +936,16 @@ class SettingsDialog(QDialog):
         time_display_format = 'hh:mm AP' if 'AP' in system_time_format or 'ap' in system_time_format else 'HH:mm'
 
         time_selection_layout = QHBoxLayout()
-        start_time_label = QLabel("Start Time:")
+        start_time_label = QLabel(_tr("Start Time:"))
         self.start_time_edit = QTimeEdit()
         self.start_time_edit.setDisplayFormat(time_display_format)
         self.start_time_edit.setTime(QTime.fromString(self.current_settings.get('start_time', '00:00'), "HH:mm"))
-        self.start_time_edit.setToolTip("Conversions will not start before this time if restrictions enabled.")
-        end_time_label = QLabel("End Time:")
+        self.start_time_edit.setToolTip(_tr("Conversions will not start before this time if restrictions enabled."))
+        end_time_label = QLabel(_tr("End Time:"))
         self.end_time_edit = QTimeEdit()
         self.end_time_edit.setDisplayFormat(time_display_format)
         self.end_time_edit.setTime(QTime.fromString(self.current_settings.get('end_time', '23:59'), "HH:mm"))
-        self.end_time_edit.setToolTip("Conversions will not occur after this time if restrictions enabled.")
+        self.end_time_edit.setToolTip(_tr("Conversions will not occur after this time if restrictions enabled."))
 
         time_selection_layout.addWidget(start_time_label)
         time_selection_layout.addWidget(self.start_time_edit)
@@ -981,13 +991,13 @@ class SettingsDialog(QDialog):
         layout.setSpacing(10)
         layout.setContentsMargins(12, 12, 12, 12)
 
-        group = QGroupBox("Main Window Tool Tabs")
+        group = QGroupBox(_tr("Main Window Tool Tabs"))
         group_layout = QVBoxLayout()
         group_layout.setSpacing(8)
         group_layout.setContentsMargins(10, 14, 10, 10)
 
         intro = QLabel(
-            "Choose which tools appear as tabs in the main window. Hidden tools stay available here and can be shown again any time."
+            _tr("Choose which tools appear as tabs in the main window. Hidden tools stay available here and can be shown again any time.")
         )
         intro.setWordWrap(True)
         group_layout.addWidget(intro)
@@ -1007,9 +1017,9 @@ class SettingsDialog(QDialog):
             checkbox = QCheckBox(label)
             checkbox.setChecked(bool(visible_tabs.get(key, default_settings["visible_tool_tabs"].get(key, False))))
             if key in ("conversion_log", "converted_files", "video_inspection"):
-                checkbox.setToolTip("Visible by default. You can hide it, but keeping core workflow tabs visible is recommended.")
+                checkbox.setToolTip(_tr("Visible by default. You can hide it, but keeping core workflow tabs visible is recommended."))
             else:
-                checkbox.setToolTip("Show this optional tool as a main-window tab.")
+                checkbox.setToolTip(_tr("Show this optional tool as a main-window tab."))
             self.tool_tab_checkboxes[key] = checkbox
             group_layout.addWidget(checkbox)
 
@@ -1024,18 +1034,18 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout()
         layout.setSpacing(8)
         layout.setContentsMargins(12, 12, 12, 12)
-        group = QGroupBox("Behavior")
+        group = QGroupBox(_tr("Behavior"))
         form = QFormLayout()
         form.setSpacing(8)
         form.setVerticalSpacing(6)
         form.setContentsMargins(10, 10, 10, 10)
         form.addItem(QSpacerItem(0, 6))
         # Close behavior
-        self.close_on_x_checkbox = QCheckBox("Close on X (don't minimize to tray)")
+        self.close_on_x_checkbox = QCheckBox(_tr("Close on X (don't minimize to tray)"))
         self.close_on_x_checkbox.setChecked(self.current_settings.get('close_on_x', False))
         form.addRow(self.close_on_x_checkbox)
         # Startup (All users)
-        self.startup_common_checkbox = QCheckBox("Launch at Windows startup (All Users)")
+        self.startup_common_checkbox = QCheckBox(_tr("Launch at Windows startup (All Users)"))
         self.startup_common_checkbox.setChecked(self.current_settings.get('startup_common', False))
         form.addRow(self.startup_common_checkbox)
         group.setLayout(form)
@@ -1176,8 +1186,9 @@ class SettingsDialog(QDialog):
         # Store in current_settings for persistence
         preset_key = f'custom_preset_{preset_num}'
         self.current_settings[preset_key] = settings
-        QMessageBox.information(self, "Preset Saved",
-                               f"Current format settings saved to Custom Preset {preset_num}.")
+        QMessageBox.information(self, _tr("Preset Saved"),
+                               _tr("Current format settings saved to Custom Preset %(number)s.")
+                               % {"number": preset_num})
 
     def apply_custom_preset(self, preset_num):
         """Apply a custom preset."""
@@ -1186,9 +1197,11 @@ class SettingsDialog(QDialog):
         if preset_settings:
             self.apply_format_settings(preset_settings)
         else:
-            QMessageBox.information(self, "No Preset",
-                                   f"Custom Preset {preset_num} has not been saved yet.\n\n"
-                                   f"Configure your desired settings and click 'Save to {preset_num}' to create it.")
+            QMessageBox.information(self, _tr("No Preset"),
+                                   _tr("Custom Preset %(number)s has not been saved yet.\n\n"
+                                       "Configure your desired settings and click 'Save to %(number)s' "
+                                       "to create it.")
+                                   % {"number": preset_num})
 
     def set_defaults(self):
         from utils.config import default_settings

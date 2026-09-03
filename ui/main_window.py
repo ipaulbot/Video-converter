@@ -6,13 +6,16 @@ import sys
 from datetime import datetime
 
 from PyQt5.QtWidgets import (
+    QActionGroup,
     QMainWindow, QWidget, QLabel, QPushButton, QTabWidget,
     QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QStyle, QMenu,
     QPlainTextEdit, QMessageBox, QSpacerItem, QSizePolicy, QProgressBar,
     QAction, QToolBar, QToolButton, QFrame, QStackedWidget, QGridLayout,
     QApplication, QStackedLayout, QSlider, QScrollArea
 )
-from PyQt5.QtCore import Qt, QTimer, QThreadPool, pyqtSignal, QSize, QEvent, QUrl, QProcess, QPoint, QPropertyAnimation, QEasingCurve
+from PyQt5.QtCore import (QCoreApplication, Qt, QTimer, QThreadPool, pyqtSignal,
+                          QSize, QEvent, QUrl, QProcess, QPoint,
+                          QPropertyAnimation, QEasingCurve)
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QTextCursor, QPainter, QColor, QImage, QWheelEvent, QPen, QBrush
 
 # Use native Observer; fall back to PollingObserver if needed.
@@ -46,6 +49,16 @@ from conversion.recording_commands import recording_layout_preview_rects
 from ui.pc_report_dialog import PCReportWidget
 from utils.update_checker import UpdateChecker, UpdateWorker
 
+
+
+def _tr(source: str) -> str:
+    """Translate this module's strings under the stable "MainWindow" context.
+
+    The argument must always be a plain string literal -- never an f-string or
+    a variable. See utils/localization.py for why.
+    """
+    return QCoreApplication.translate("MainWindow", source)
+
 SUPPORTED_FORMATS = (
     '.mp4', '.avi', '.wmv', '.mkv', '.flv', '.webm', '.mov', '.mpeg',
     '.mpg', '.m4v', '.3gp', '.ts', '.vob', '.rm', '.rmvb', '.asf',
@@ -74,7 +87,8 @@ class VideoConverterApp(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f"Video Converter v{APP_VERSION}")
+        self.setWindowTitle(_tr("Video Converter v%(version)s")
+                            % {"version": APP_VERSION})
         self.setMinimumHeight(520)  # Keep the designed baseline while allowing the window to resize.
         self.setMinimumWidth(900)  # Increased minimum width for more space
 
@@ -202,7 +216,7 @@ class VideoConverterApp(QMainWindow):
             }
         """)
         self.logo_label.setCursor(Qt.PointingHandCursor)
-        self.logo_label.setToolTip("Click to open settings")
+        self.logo_label.setToolTip(_tr("Click to open settings"))
         self.logo_label.mousePressEvent = self.logo_clicked
         self.logo_pixmap = None
         self.grayscale_logo_pixmap = None
@@ -215,7 +229,7 @@ class VideoConverterApp(QMainWindow):
         self.preview = PreviewController(self)
 
         # Update Checker Label (hidden by default, shown if update available)
-        self.update_label = QLabel("Update Available!")
+        self.update_label = QLabel(_tr("Update Available!"))
         self.update_label.setAlignment(Qt.AlignCenter)
         self.update_label.setStyleSheet("background: #ffcc00; color: #333; padding: 4px; border-radius: 4px; font-weight: bold;")
         self.update_label.setCursor(Qt.PointingHandCursor)
@@ -359,7 +373,7 @@ class VideoConverterApp(QMainWindow):
         overlay_layout.setAlignment(Qt.AlignCenter)
 
         # Drag and drop text
-        self.drag_drop_text = QLabel("Drag and drop media files here\nor select source folder to start monitoring and converting")
+        self.drag_drop_text = QLabel(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         self.drag_drop_text.setAlignment(Qt.AlignCenter)
         self.drag_drop_text.setStyleSheet("""
             QLabel { 
@@ -412,7 +426,7 @@ class VideoConverterApp(QMainWindow):
             lock_label.setAlignment(Qt.AlignCenter)
             lock_label.setProperty("wiggleTarget", True)
             lock_label.setCursor(Qt.PointingHandCursor)
-            lock_label.setToolTip("Lock/Unlock settings")
+            lock_label.setToolTip(_tr("Lock/Unlock settings"))
             lock_label.mousePressEvent = self.lock_icon_clicked
             lock_label.setStyleSheet("""
                 QLabel { 
@@ -434,7 +448,7 @@ class VideoConverterApp(QMainWindow):
             file_label.setFixedSize(36, 36)
             file_label.setAlignment(Qt.AlignCenter)
             file_label.setCursor(Qt.PointingHandCursor)
-            file_label.setToolTip("Select media files to convert")
+            file_label.setToolTip(_tr("Select media files to convert"))
             file_label.mousePressEvent = lambda event: self.open_file_dialog()
             file_label.setStyleSheet("""
                 QLabel { 
@@ -459,7 +473,7 @@ class VideoConverterApp(QMainWindow):
             broom_label.setFixedSize(36, 36)
             broom_label.setAlignment(Qt.AlignCenter)
             broom_label.setCursor(Qt.PointingHandCursor)
-            broom_label.setToolTip("Clear log")
+            broom_label.setToolTip(_tr("Clear log"))
             broom_label.mousePressEvent = clear_callback
             broom_label.setStyleSheet("""
                 QLabel { 
@@ -514,7 +528,7 @@ class VideoConverterApp(QMainWindow):
         # Forward wheel events from the scroll area to the log text for smooth scrolling
         self.log_tab_scroll.wheelEvent = lambda e: self._forward_log_wheel(e)
         self.log_tab_scroll.installEventFilter(self)
-        self.tabs.addTab(self.log_tab_scroll, "Conversion Log")
+        self.tabs.addTab(self.log_tab_scroll, _tr("Conversion Log"))
 
         # Converted Files Tab
         self.converted_files_tab = QWidget()
@@ -562,7 +576,7 @@ class VideoConverterApp(QMainWindow):
         self.converted_tab_scroll.setAcceptDrops(True)
         self.converted_tab_scroll.dragEnterEvent = lambda e: self.converted_files_widget.dragEnterEvent(e)
         self.converted_tab_scroll.dropEvent = lambda e: self.converted_files_widget.dropEvent(e)
-        self.tabs.addTab(self.converted_tab_scroll, "Converted Files")
+        self.tabs.addTab(self.converted_tab_scroll, _tr("Converted Files"))
 
         # Inspection Tab
         self.inspection_tab = QWidget()
@@ -627,7 +641,7 @@ class VideoConverterApp(QMainWindow):
             QScrollBar { width: 0px; height: 0px; }
         """)
         self.inspection_tab_scroll.setWidget(self.inspection_tab)
-        self.tabs.addTab(self.inspection_tab_scroll, "Video Inspection Tool")
+        self.tabs.addTab(self.inspection_tab_scroll, _tr("Video Inspection Tool"))
 
         # PC Report Tab
         converting_or_monitoring = bool(self.running or getattr(self, 'is_converting', False))
@@ -651,7 +665,7 @@ class VideoConverterApp(QMainWindow):
         self.pc_report_tab_scroll.setWidgetResizable(True)
         self.pc_report_tab_scroll.setFrameStyle(0)
         self.pc_report_tab_scroll.setWidget(self.pc_report_tab)
-        self.tabs.addTab(self.pc_report_tab_scroll, "PC Report")
+        self.tabs.addTab(self.pc_report_tab_scroll, _tr("PC Report"))
 
         # Lossless Editor Tab
         self.lossless_editor_widget = LosslessEditorWidget(
@@ -672,7 +686,7 @@ class VideoConverterApp(QMainWindow):
         self.lossless_editor_tab_scroll.setWidgetResizable(True)
         self.lossless_editor_tab_scroll.setFrameStyle(0)
         self.lossless_editor_tab_scroll.setWidget(self.lossless_editor_tab)
-        self.tabs.addTab(self.lossless_editor_tab_scroll, "Lossless Editor")
+        self.tabs.addTab(self.lossless_editor_tab_scroll, _tr("Lossless Editor"))
 
         # Multi-Source Recorder Tab
         self.multi_source_recorder_widget = MultiSourceRecorderWidget(
@@ -697,7 +711,7 @@ class VideoConverterApp(QMainWindow):
         self.multi_source_recorder_tab_scroll.setWidgetResizable(True)
         self.multi_source_recorder_tab_scroll.setFrameStyle(0)
         self.multi_source_recorder_tab_scroll.setWidget(self.multi_source_recorder_tab)
-        self.tabs.addTab(self.multi_source_recorder_tab_scroll, "Multi-Source Recorder")
+        self.tabs.addTab(self.multi_source_recorder_tab_scroll, _tr("Multi-Source Recorder"))
 
         # Media Player Tab. The player tree (4 video panels) is heavy and the tab is
         # hidden by default, so it is built lazily the first time the tab is shown via
@@ -708,7 +722,7 @@ class VideoConverterApp(QMainWindow):
         media_player_layout = QVBoxLayout(self.media_player_tab)
         media_player_layout.setContentsMargins(11, 11, 11, 11)
         self.media_player_layout = media_player_layout
-        self.media_player_placeholder = QLabel("Loading media player…")
+        self.media_player_placeholder = QLabel(_tr("Loading media player…"))
         self.media_player_placeholder.setAlignment(Qt.AlignCenter)
         media_player_layout.addWidget(self.media_player_placeholder)
         self.lock_icon_label_media_player_tab = QLabel()
@@ -720,7 +734,7 @@ class VideoConverterApp(QMainWindow):
         self.media_player_tab_scroll.setWidgetResizable(True)
         self.media_player_tab_scroll.setFrameStyle(0)
         self.media_player_tab_scroll.setWidget(self.media_player_tab)
-        self.tabs.addTab(self.media_player_tab_scroll, "Media Player")
+        self.tabs.addTab(self.media_player_tab_scroll, _tr("Media Player"))
 
         self.tool_tab_widgets = {
             "conversion_log": self.log_tab_scroll,
@@ -780,7 +794,7 @@ class VideoConverterApp(QMainWindow):
         self.settings_display.enterEvent = self.settings_display_enter
         self.settings_display.leaveEvent = self.settings_display_leave
         self.settings_display.setCursor(Qt.PointingHandCursor)  # Show hand cursor on hover
-        self.settings_display.setToolTip("Open Settings")  # Add tooltip
+        self.settings_display.setToolTip(_tr("Open Settings"))  # Add tooltip
         left_layout.addWidget(self.settings_display)
 
         # Preview goes below settings text (no special centering; align with other sidebar items)
@@ -789,10 +803,10 @@ class VideoConverterApp(QMainWindow):
         left_layout.addStretch()
 
         # Start/Stop Button
-        self.start_button = QPushButton("Start")
+        self.start_button = QPushButton(_tr("Start"))
         # Match settings + preview width for perfect edge alignment
         self.start_button.setFixedWidth(180)
-        self.start_button.setToolTip("Start or stop the automatic conversion process.")
+        self.start_button.setToolTip(_tr("Start or stop the automatic conversion process."))
         self.start_button.setCursor(Qt.PointingHandCursor)
         self.start_button.clicked.connect(self.toggle_process)
         left_layout.addWidget(self.start_button)
@@ -810,18 +824,19 @@ class VideoConverterApp(QMainWindow):
         # Create the dropdown menu
         burger_menu = QMenu()
         # Add actions without icons initially - they will be set by update_icons()
-        burger_menu.addAction("Info", self.show_info)
-        burger_menu.addAction("Help", self.open_help_document)
+        burger_menu.addAction(_tr("Info"), self.show_info)
+        burger_menu.addAction(_tr("Help"), self.open_help_document)
         burger_menu.addSeparator()
         burger_menu.addSeparator()
-        burger_menu.addAction("Open Source Folder", self.open_source_folder_in_explorer)
-        burger_menu.addAction("Open Destination Folder", self.open_destination_folder_in_explorer)
-        burger_menu.addAction("Open Backup Folder", self.open_backup_folder_in_explorer)
+        burger_menu.addAction(_tr("Open Source Folder"), self.open_source_folder_in_explorer)
+        burger_menu.addAction(_tr("Open Destination Folder"), self.open_destination_folder_in_explorer)
+        burger_menu.addAction(_tr("Open Backup Folder"), self.open_backup_folder_in_explorer)
         burger_menu.addSeparator()
-        burger_menu.addAction("Settings", self.show_settings)
-        burger_menu.addAction("Check for Updates", self.check_for_updates)
+        burger_menu.addAction(_tr("Settings"), self.show_settings)
+        self._add_language_menu(burger_menu)
+        burger_menu.addAction(_tr("Check for Updates"), self.check_for_updates)
         burger_menu.addSeparator()
-        burger_menu.addAction("Quit", self.quit_application)
+        burger_menu.addAction(_tr("Quit"), self.quit_application)
         self.burger_button.setMenu(burger_menu)
         # Set the burger icon for the initial state
         burger_icon_path = self.get_icon_path('BURGER')
@@ -1104,7 +1119,7 @@ class VideoConverterApp(QMainWindow):
     def set_start_button_state(self, is_running):
         if self.locked:
             self.start_button.setEnabled(False)
-            self.start_button.setText("Locked")
+            self.start_button.setText(_tr("Locked"))
             # Modern grayscale style for locked state
             self.start_button.setStyleSheet("""
                 QPushButton {
@@ -1119,13 +1134,13 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
             """)
-            self.start_button.setToolTip("Application is locked.")
+            self.start_button.setToolTip(_tr("Application is locked."))
             return
         recorder_mode = self.is_recorder_tab_active() and not is_running and not getattr(self, 'is_converting', False)
         recorder_recording = recorder_mode and self.is_recorder_recording()
         if self.is_recorder_tab_active() and getattr(self, 'is_converting', False) and not is_running and not recorder_recording:
             self.start_button.setEnabled(False)
-            self.start_button.setText("Converting...")
+            self.start_button.setText(_tr("Converting..."))
             self.start_button.setStyleSheet("""
                 QPushButton {
                     background: #F0F0F0;
@@ -1139,7 +1154,7 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
             """)
-            self.start_button.setToolTip("Recording is unavailable while conversion is running.")
+            self.start_button.setToolTip(_tr("Recording is unavailable while conversion is running."))
             return
         self.start_button.setEnabled(True)
         recorder = getattr(self, 'multi_source_recorder_widget', None)
@@ -1155,7 +1170,7 @@ class VideoConverterApp(QMainWindow):
         )
         if recorder_starting:
             self.start_button.setEnabled(False)
-            self.start_button.setText("Starting...")
+            self.start_button.setText(_tr("Starting..."))
             self.start_button.setStyleSheet("""
                 QPushButton {
                     background: #F0F0F0;
@@ -1169,11 +1184,11 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
             """)
-            self.start_button.setToolTip("Releasing the camera preview before recording starts.")
+            self.start_button.setToolTip(_tr("Releasing the camera preview before recording starts."))
             return
         if recorder_stopping:
             self.start_button.setEnabled(False)
-            self.start_button.setText("Stopping...")
+            self.start_button.setText(_tr("Stopping..."))
             self.start_button.setStyleSheet("""
                 QPushButton {
                     background: #F0F0F0;
@@ -1187,7 +1202,7 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
             """)
-            self.start_button.setToolTip("Finishing and saving the active recording.")
+            self.start_button.setToolTip(_tr("Finishing and saving the active recording."))
             return
         if is_running or recorder_recording:
             self.start_button.setText("Stop Recording" if recorder_mode else "Stop")
@@ -1213,9 +1228,9 @@ class VideoConverterApp(QMainWindow):
                 }
             """)
             if recorder_mode:
-                self.start_button.setToolTip("Stop the active multi-source recording.")
+                self.start_button.setToolTip(_tr("Stop the active multi-source recording."))
             else:
-                self.start_button.setToolTip("Stop monitoring the source folder for files to convert.")
+                self.start_button.setToolTip(_tr("Stop monitoring the source folder for files to convert."))
         else:
             self.start_button.setText("Start Recording" if recorder_mode else "Start")
             # Update log display based on monitoring state
@@ -1240,9 +1255,9 @@ class VideoConverterApp(QMainWindow):
                 }
             """)
             if recorder_mode:
-                self.start_button.setToolTip("Start recording from the enabled recorder sources.")
+                self.start_button.setToolTip(_tr("Start recording from the enabled recorder sources."))
             else:
-                self.start_button.setToolTip("Start monitoring the source folder for files to convert.")
+                self.start_button.setToolTip(_tr("Start monitoring the source folder for files to convert."))
         self.update_icons()
         # After updating main start_button, also update compact
         if hasattr(self, 'compact_start_button'):
@@ -1303,13 +1318,13 @@ class VideoConverterApp(QMainWindow):
     def set_status_label(self, label, is_running):
         label.setTextFormat(Qt.RichText)
         if self.locked:
-            label.setText("Status: Locked <font color='#888888'>●</font>")  # Gray
+            label.setText(_tr("Status: Locked <font color='#888888'>●</font>"))  # Gray
         elif self.queue.active_count > 0:
-            label.setText("Status: Converting <font color='#00cc00'>●</font>")  # Green
+            label.setText(_tr("Status: Converting <font color='#00cc00'>●</font>"))  # Green
         elif self.running:
-            label.setText("Status: Monitoring <font color='#FFD700'>●</font>")  # Yellow
+            label.setText(_tr("Status: Monitoring <font color='#FFD700'>●</font>"))  # Yellow
         else:
-            label.setText("Status: Not monitoring <font color='#43a296'>●</font>")  # Teal
+            label.setText(_tr("Status: Not monitoring <font color='#43a296'>●</font>"))  # Teal
 
     def is_recorder_tab_active(self):
         return (
@@ -1344,9 +1359,9 @@ class VideoConverterApp(QMainWindow):
             recording = self.is_recorder_recording()
             recorder.setEnabled(not conversion_busy or recording)
             if conversion_busy and not recording and hasattr(recorder, 'status_label'):
-                recorder.status_label.setText("Unavailable while conversion is running")
+                recorder.status_label.setText(_tr("Unavailable while conversion is running"))
             elif not recording and hasattr(recorder, 'status_label') and "Unavailable" in recorder.status_label.text():
-                recorder.status_label.setText("Not recording")
+                recorder.status_label.setText(_tr("Not recording"))
             self.update_recorder_footer_status()
         self._apply_recording_tab_lock()
         if hasattr(self, 'start_button'):
@@ -1461,13 +1476,13 @@ class VideoConverterApp(QMainWindow):
         recorder = getattr(self, 'multi_source_recorder_widget', None)
         status_text = recorder.status_label.text() if recorder and hasattr(recorder, 'status_label') else ""
         if "failed" in status_text.lower():
-            label.setText("Status: Recording failed <font color='#dc3545'>●</font>")
+            label.setText(_tr("Status: Recording failed <font color='#dc3545'>●</font>"))
         elif status_text == "Starting recording...":
-            label.setText("Status: Starting <font color='#ffc107'>●</font>")
+            label.setText(_tr("Status: Starting <font color='#ffc107'>●</font>"))
         elif self.is_recorder_recording():
-            label.setText("Status: Recording <font color='#00cc00'>●</font>")
+            label.setText(_tr("Status: Recording <font color='#00cc00'>●</font>"))
         else:
-            label.setText("Status: Not recording <font color='#43a296'>●</font>")
+            label.setText(_tr("Status: Not recording <font color='#43a296'>●</font>"))
 
     def update_status_labels(self):
         self.set_status_label(self.status_label_log_tab, self.status_running)
@@ -1476,16 +1491,16 @@ class VideoConverterApp(QMainWindow):
         # Update compact mode status
         if hasattr(self, 'compact_status_label'):
             if self.locked:
-                self.compact_status_label.setText("Status: Locked")
+                self.compact_status_label.setText(_tr("Status: Locked"))
                 self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
             elif self.queue.active_count > 0:
-                self.compact_status_label.setText("Status: Converting")
+                self.compact_status_label.setText(_tr("Status: Converting"))
                 self.compact_status_label.setStyleSheet("QLabel { color: #28a745; font-size: 10px; background: transparent; border: none; }")
             elif self.running:
-                self.compact_status_label.setText("Status: Monitoring")
+                self.compact_status_label.setText(_tr("Status: Monitoring"))
                 self.compact_status_label.setStyleSheet("QLabel { color: #ffc107; font-size: 10px; background: transparent; border: none; }")
             else:
-                self.compact_status_label.setText("Status: Not monitoring")
+                self.compact_status_label.setText(_tr("Status: Not monitoring"))
                 self.compact_status_label.setStyleSheet("QLabel { color: #dc3545; font-size: 10px; background: transparent; border: none; }")
 
         # When setting the lock icon label, always set fixed size and alignment
@@ -1508,11 +1523,11 @@ class VideoConverterApp(QMainWindow):
         # Always use teal logo for tray icon
         tray_icon_path = self.icon_color if os.path.exists(self.icon_color) else self.icon_gray
         self.tray_icon.setIcon(QIcon(tray_icon_path))
-        self.tray_icon.setToolTip("Video Converter Application")
+        self.tray_icon.setToolTip(_tr("Video Converter Application"))
         tray_menu = QMenu()
-        show_action = tray_menu.addAction("Show")
+        show_action = tray_menu.addAction(_tr("Show"))
         show_action.triggered.connect(self.show_window)
-        quit_action = tray_menu.addAction("Quit")
+        quit_action = tray_menu.addAction(_tr("Quit"))
         quit_action.triggered.connect(self.quit_application)
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.activated.connect(self.on_tray_icon_activated)
@@ -1615,8 +1630,9 @@ class VideoConverterApp(QMainWindow):
 
     def on_update_available(self, version, url):
         self.update_url = url
-        self.update_label.setText(f"Update v{version} Available!")
-        self.update_label.setToolTip(f"Click to download update")
+        self.update_label.setText(_tr("Update v%(version)s Available!")
+                                  % {"version": version})
+        self.update_label.setToolTip(_tr("Click to download update"))
         self.update_label.show()
 
     def open_update_url(self, event):
@@ -1745,8 +1761,8 @@ class VideoConverterApp(QMainWindow):
             self._wiggle_lock_icon()
             dlg = QMessageBox(self)
             dlg.setIcon(QMessageBox.Information)
-            dlg.setWindowTitle("Locked")
-            dlg.setText("The application is locked. Unlock to change settings.")
+            dlg.setWindowTitle(_tr("Locked"))
+            dlg.setText(_tr("The application is locked. Unlock to change settings."))
             info_icon_path = resource_path('graphics/GRAYSCALEINFO.ico')
             if os.path.exists(info_icon_path):
                 dlg.setWindowIcon(QIcon(info_icon_path))
@@ -1815,7 +1831,7 @@ class VideoConverterApp(QMainWindow):
         if not (os.path.exists(self.source_folder) and os.path.exists(self.destination_folder)):
             logger.info("Source or Destination folder is missing.")
             self.append_log("Source or Destination folder is missing.", is_error=True)
-            QMessageBox.critical(self, "Missing Folders", "Please select valid Source and Destination folders.")
+            QMessageBox.critical(self, _tr("Missing Folders"), _tr("Please select valid Source and Destination folders."))
             return
         self.running = True
         self.status_running = True
@@ -1995,7 +2011,7 @@ class VideoConverterApp(QMainWindow):
             label.setFixedSize(36, 36)
             label.setAlignment(Qt.AlignCenter)
             label.setCursor(Qt.PointingHandCursor)
-            label.setToolTip('Play BallBuster XT')
+            label.setToolTip(_tr('Play BallBuster XT'))
             # Match visual style of other circular footer icons
             label.setStyleSheet("""
                 QLabel {
@@ -2223,8 +2239,9 @@ class VideoConverterApp(QMainWindow):
         label = "media file" if count == 1 else f"{count} media files"
         reply = QMessageBox.question(
             self,
-            "Convert Media Files",
-            f"Do you wish to convert {label} according to settings?",
+            _tr("Convert Media Files"),
+            _tr("Do you wish to convert %(what)s according to settings?")
+            % {"what": label},
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.Yes
         )
@@ -2233,8 +2250,8 @@ class VideoConverterApp(QMainWindow):
         if not self.settings.get('dont_show_drop_dialog', False):
             dont_show_reply = QMessageBox.question(
                 self,
-                "Don't Show Again",
-                "Don't show me this dialog again?",
+                _tr("Don't Show Again"),
+                _tr("Don't show me this dialog again?"),
                 QMessageBox.Yes | QMessageBox.No,
                 QMessageBox.No
             )
@@ -2247,7 +2264,10 @@ class VideoConverterApp(QMainWindow):
         valid_paths = collect_supported_media_paths(dropped_paths, SUPPORTED_FORMATS)
         if not valid_paths:
             unsupported_list = "\n".join(dropped_paths)
-            QMessageBox.warning(self, "Unsupported Files", f"No supported video files found in:\n{unsupported_list}")
+            QMessageBox.warning(
+                self, _tr("Unsupported Files"),
+                _tr("No supported video files found in:\n%(paths)s")
+                % {"paths": unsupported_list})
             logger.info(f"No supported files found in dropped paths:\n{unsupported_list}")
             return
 
@@ -2403,6 +2423,47 @@ class VideoConverterApp(QMainWindow):
         self.update_status_labels()  # Update status when conversion finishes
         self.update_log_display()  # Update log display after conversion completes
 
+    def _add_language_menu(self, parent_menu):
+        """Add a Language submenu, unless only one language is available.
+
+        Draft translations are hidden unless NVC_I18N_PREVIEW=1, so unreviewed
+        strings do not reach a user who did not ask to see them.
+        """
+        from utils import localization
+
+        codes = localization.selectable_locales()
+        if len(codes) < 2:
+            return
+
+        current = localization.saved_locale()
+        submenu = parent_menu.addMenu(_tr("Language"))
+        group = QActionGroup(submenu)
+        group.setExclusive(True)
+        for code in codes:
+            spec = localization.locale_spec(code)
+            label = spec.native_name
+            if spec.review_status != "production":
+                label = _tr("%(language)s (draft)") % {"language": spec.native_name}
+            action = submenu.addAction(label)
+            action.setCheckable(True)
+            action.setChecked(code == current)
+            group.addAction(action)
+            action.triggered.connect(
+                lambda _checked, c=code: self._choose_language(c))
+
+    def _choose_language(self, code):
+        """Save the chosen language and say when it will take effect."""
+        from utils import localization
+
+        if code == localization.saved_locale():
+            return
+        localization.save_locale(code)
+        spec = localization.locale_spec(code)
+        logger.info("Language set to %s; takes effect on next start.", code)
+        QMessageBox.information(
+            self, _tr("Language"),
+            localization.language_restart_message(spec.native_name))
+
     def show_info(self):
         dialog = InfoDialog(self, is_converting=self.running, button_style=getattr(self, 'current_button_style', None))
         self.center_dialog(dialog)
@@ -2422,16 +2483,16 @@ class VideoConverterApp(QMainWindow):
         else:
             logger.warning("No help document found in docs/help or alongside the app.")
             QMessageBox.warning(
-                self, "Help Document Not Found",
-                "The help document could not be found.\n\n"
+                self, _tr("Help Document Not Found"),
+                _tr("The help document could not be found.\n\n"
                 "Build it with:\n"
-                "  python docs/help/source/build_help_docs.py")
+                "  python docs/help/source/build_help_docs.py"))
 
     def open_source_folder_in_explorer(self):
         from PyQt5.QtCore import QUrl
         from PyQt5.QtGui import QDesktopServices
         if not self.source_folder or not os.path.exists(self.source_folder):
-            QMessageBox.warning(self, "Folder Not Found", "Source folder path does not exist.")
+            QMessageBox.warning(self, _tr("Folder Not Found"), _tr("Source folder path does not exist."))
             return
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.source_folder))
 
@@ -2439,7 +2500,7 @@ class VideoConverterApp(QMainWindow):
         from PyQt5.QtCore import QUrl
         from PyQt5.QtGui import QDesktopServices
         if not self.destination_folder or not os.path.exists(self.destination_folder):
-            QMessageBox.warning(self, "Folder Not Found", "Destination folder path does not exist.")
+            QMessageBox.warning(self, _tr("Folder Not Found"), _tr("Destination folder path does not exist."))
             return
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.destination_folder))
 
@@ -2447,7 +2508,7 @@ class VideoConverterApp(QMainWindow):
         from PyQt5.QtCore import QUrl
         from PyQt5.QtGui import QDesktopServices
         if not self.backup_folder or not os.path.exists(self.backup_folder):
-            QMessageBox.warning(self, "Folder Not Found", "Backup folder path does not exist.")
+            QMessageBox.warning(self, _tr("Folder Not Found"), _tr("Backup folder path does not exist."))
             return
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.backup_folder))
 
@@ -2598,7 +2659,7 @@ class VideoConverterApp(QMainWindow):
             """)
             self.drag_drop_overlay.show()
             # Keep instruction consistent while hovering
-            self.drag_drop_text.setText("Drag and drop media files here\nor select source folder to start monitoring and converting")
+            self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         else:
             event.ignore()
 
@@ -2632,7 +2693,7 @@ class VideoConverterApp(QMainWindow):
                 }
             """)
         # Always reset to default instruction after drag leave
-        self.drag_drop_text.setText("Drag and drop media files here\nor select source folder to start monitoring and converting")
+        self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         # Always show the overlay
         self.drag_drop_overlay.show()
 
@@ -2734,7 +2795,7 @@ class VideoConverterApp(QMainWindow):
         if widget and hasattr(widget, 'output'):
             widget.output.clear()
             if hasattr(widget, 'status_label'):
-                widget.status_label.setText("Ready. Reports are saved to your Desktop by default.")
+                widget.status_label.setText(_tr("Ready. Reports are saved to your Desktop by default."))
 
     def clear_lossless_editor_tab(self, event=None):
         widget = getattr(self, 'lossless_editor_widget', None)
@@ -2746,7 +2807,7 @@ class VideoConverterApp(QMainWindow):
         if widget:
             widget.log_lines = []
             if hasattr(widget, 'status_label'):
-                widget.status_label.setText("Not recording")
+                widget.status_label.setText(_tr("Not recording"))
 
     def clear_media_player_tab(self, event=None):
         widget = getattr(self, 'media_player_widget', None)
@@ -2760,13 +2821,13 @@ class VideoConverterApp(QMainWindow):
         menu = QMenu(self)
         lock_text = "Unlock" if getattr(self, 'locked', False) else "Lock"
         lock_action = menu.addAction(lock_text)
-        upload_action = menu.addAction("Upload")
-        clear_action = menu.addAction("Clear Log")
+        upload_action = menu.addAction(_tr("Upload"))
+        clear_action = menu.addAction(_tr("Clear Log"))
         menu.addSeparator()
-        settings_action = menu.addAction("Settings")
+        settings_action = menu.addAction(_tr("Settings"))
         menu.addSeparator()
-        copy_action = menu.addAction("Copy")
-        select_all_action = menu.addAction("Select All")
+        copy_action = menu.addAction(_tr("Copy"))
+        select_all_action = menu.addAction(_tr("Select All"))
         chosen = menu.exec_(global_pos)
         if chosen == lock_action:
             self.toggle_lock()
@@ -2792,13 +2853,13 @@ class VideoConverterApp(QMainWindow):
         menu = QMenu(self)
         lock_text = "Unlock" if getattr(self, 'locked', False) else "Lock"
         lock_action = menu.addAction(lock_text)
-        upload_action = menu.addAction("Upload")
-        clear_action = menu.addAction("Clear Inspection")
+        upload_action = menu.addAction(_tr("Upload"))
+        clear_action = menu.addAction(_tr("Clear Inspection"))
         menu.addSeparator()
-        settings_action = menu.addAction("Settings")
+        settings_action = menu.addAction(_tr("Settings"))
         menu.addSeparator()
-        copy_action = menu.addAction("Copy")
-        select_all_action = menu.addAction("Select All")
+        copy_action = menu.addAction(_tr("Copy"))
+        select_all_action = menu.addAction(_tr("Select All"))
         chosen = menu.exec_(global_pos)
         if chosen == lock_action:
             self.toggle_lock()
@@ -2841,8 +2902,10 @@ class VideoConverterApp(QMainWindow):
             if latest_version > current:
                 reply = QMessageBox.question(
                     self,
-                    "Update Available",
-                    f"A new version ({latest_version}) is available.\n\nDo you want to visit the download page?",
+                    _tr("Update Available"),
+                    _tr("A new version (%(version)s) is available.\n\n"
+                        "Do you want to visit the download page?")
+                    % {"version": latest_version},
                     QMessageBox.Yes | QMessageBox.No
                 )
                 if reply == QMessageBox.Yes:
@@ -2850,11 +2913,11 @@ class VideoConverterApp(QMainWindow):
                     from PyQt5.QtCore import QUrl
                     QDesktopServices.openUrl(QUrl("https://example.com/nvc/downloads")) # Replace with actual URL
             else:
-                QMessageBox.information(self, "No Updates", "You are running the latest version.")
+                QMessageBox.information(self, _tr("No Updates"), _tr("You are running the latest version."))
 
         except Exception as e:
             logger.error(f"Update check failed: {e}")
-            QMessageBox.warning(self, "Update Check Failed", "Could not check for updates.")
+            QMessageBox.warning(self, _tr("Update Check Failed"), _tr("Could not check for updates."))
 
     def update_all_button_styles(self):
         """Restyle the primary buttons for the current lock/activity state.
@@ -3131,8 +3194,8 @@ class VideoConverterApp(QMainWindow):
                 if show_dialog:
                     reply = QMessageBox.question(
                         self,
-                        "Convert Media File",
-                        "Do you wish to convert media file according to settings?",
+                        _tr("Convert Media File"),
+                        _tr("Do you wish to convert media file according to settings?"),
                         QMessageBox.Yes | QMessageBox.No,
                         QMessageBox.Yes
                     )
@@ -3141,8 +3204,8 @@ class VideoConverterApp(QMainWindow):
                     if not self.settings.get('dont_show_drop_dialog', False):
                         dont_show_reply = QMessageBox.question(
                             self,
-                            "Don't Show Again",
-                            "Don't show me this dialog again?",
+                            _tr("Don't Show Again"),
+                            _tr("Don't show me this dialog again?"),
                             QMessageBox.Yes | QMessageBox.No,
                             QMessageBox.No
                         )
@@ -3154,7 +3217,10 @@ class VideoConverterApp(QMainWindow):
                 unsupported_files.append(file_path)
         if unsupported_files:
             unsupported_list = "\n".join(unsupported_files)
-            QMessageBox.warning(self, "Unsupported Files", f"The following files are not supported:\n{unsupported_list}")
+            QMessageBox.warning(
+                self, _tr("Unsupported Files"),
+                _tr("The following files are not supported:\n%(paths)s")
+                % {"paths": unsupported_list})
             logger.info(f"Unsupported files selected:\n{unsupported_list}")
 
     def open_inspection_file_dialog(self):
@@ -3218,7 +3284,7 @@ class VideoConverterApp(QMainWindow):
 
         self.ballbuster_widget.destroyed.connect(self.restore_log_view)
         # Update status label to Gaming
-        self.status_label_log_tab.setText("Status: Gaming <font color='#43a296'>●</font>")
+        self.status_label_log_tab.setText(_tr("Status: Gaming <font color='#43a296'>●</font>"))
 
         # Transform Start button into Exit Game
         try:
@@ -3227,8 +3293,8 @@ class VideoConverterApp(QMainWindow):
             logger.debug("launch_ballbuster_game: suppressed error", exc_info=True)
         # Ensure the button is clickable even in locked (gray) mode
         self.start_button.setEnabled(True)
-        self.start_button.setText("Exit Game")
-        self.start_button.setToolTip("Click to exit the Easter Egg and return to the log view.")
+        self.start_button.setText(_tr("Exit Game"))
+        self.start_button.setToolTip(_tr("Click to exit the Easter Egg and return to the log view."))
         self.start_button.clicked.connect(self.exit_game)
         # Refresh sidebar logo to BallBuster version
         self.update_icons()
