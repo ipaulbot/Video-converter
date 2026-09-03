@@ -20,6 +20,8 @@ a = Analysis(
         ('graphics', 'graphics'),
         ('Paradise.mp3', '.'),
     ] + _optional_datas,
+    # ui.extras holds the easter-egg game (~2,200 lines). To ship without it,
+    # add 'ui.extras' to excludes and drop Paradise.mp3 from datas.
     hiddenimports=['PyQt5.QtMultimedia'],
     hookspath=[],
     hooksconfig={},

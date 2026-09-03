@@ -481,6 +481,21 @@ def dialog_button_style(s: Skin | None = None) -> str:
     )
 
 
+# The easter-egg game and the star field predate this module and identify
+# their palettes as 'teal' / 'green' / 'gray'. Kept as a translation rather
+# than renaming them inside the game, which uses the strings throughout.
+LEGACY_SKIN_NAMES: Final[dict[str, str]] = {
+    IDLE.name: "teal",
+    ACTIVE.name: "green",
+    LOCKED.name: "gray",
+}
+
+
+def legacy_skin_name(s: Skin | None = None) -> str:
+    """The 'teal'/'green'/'gray' name for a skin."""
+    return LEGACY_SKIN_NAMES[(s or skin()).name]
+
+
 def skin_for_state(*, locked: bool, active: bool = False) -> Skin:
     """The skin matching a set of state flags, without changing the global one."""
     if locked:

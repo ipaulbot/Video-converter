@@ -1970,14 +1970,9 @@ class VideoConverterApp(QMainWindow):
         QTimer.singleShot(3000, self.launch_ballbuster_game)
 
     def get_game_icon_path(self):
-        """Return the appropriate controller-circle icon based on current app state."""
-        from utils.resources import resource_path
-        if self.locked:
-            return resource_path('graphics/grayscalegame.ico')
-        elif self.is_active_workflow_visual_state():
-            return resource_path('graphics/greengame.ico')
-        else:
-            return resource_path('graphics/game.ico')
+        """The controller-circle icon for the current lock/activity state."""
+        self._sync_theme_skin()
+        return theme.menu_icon('GAME')
 
     def add_game_icons(self):
         """Insert the BallBuster XT launcher icon into each footer to the left of the status label."""
@@ -3173,22 +3168,20 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None:
             return # Game already running
 
-        from ui.ballbuster_widget import BallBusterWidget
+        from ui.extras import BallBusterWidget
 
-        # Determine color theme based on app state
-        if self.running or self.active_conversion_count > 0:
-            theme = 'green'
-        elif self.locked:
-            theme = 'gray'
-        else:
-            theme = 'teal'
+        # The game names its palettes 'teal' / 'green' / 'gray'; the theme
+        # translates. This was a seventh copy of the locked/active/idle chain,
+        # in a local called `theme` that shadowed the theme module itself.
+        self._sync_theme_skin()
+        skin_name = theme.legacy_skin_name()
 
-        # Start star field animation in preview when entering game mode
-        self._start_star_field(theme)
+        # The star field follows the current skin on its own now.
+        self._start_star_field()
 
         self.log_container.hide()
 
-        self.ballbuster_widget = BallBusterWidget(theme=theme)
+        self.ballbuster_widget = BallBusterWidget(theme=skin_name)
         self.ballbuster_widget.setAttribute(Qt.WA_DeleteOnClose)
         self.log_tab_layout.insertWidget(self.log_container_index, self.ballbuster_widget, 1) # stretch=1
         self.ballbuster_widget.setFocus()

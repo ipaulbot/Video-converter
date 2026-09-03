@@ -77,8 +77,16 @@ class ConversionWorker(QRunnable):
                             add_pending_deletion(self.file_path, deletion_time.timestamp())
                         except Exception:
                             logger.debug("ConversionWorker.run: suppressed error", exc_info=True)
-                        # Also schedule best-effort timer for current session
-                        threading.Timer(retention_days * 86400, self.delete_file, args=[self.file_path]).start()
+                        # Also schedule a best-effort timer for this session.
+                        # It MUST be a daemon: retention runs up to 30 days, and
+                        # a non-daemon Timer blocks interpreter exit for its whole
+                        # delay, so closing NVC would hang. Nothing is lost --
+                        # add_pending_deletion above persists the deletion, and
+                        # main.py processes overdue ones at startup.
+                        timer = threading.Timer(retention_days * 86400,
+                                                self.delete_file, args=[self.file_path])
+                        timer.daemon = True
+                        timer.start()
                         deletion_info['scheduled_deletion'] = deletion_time.strftime('%Y-%m-%d %H:%M:%S')
                         self.signals.log.emit(f"Scheduled deletion of {self.file_path} at {deletion_info['scheduled_deletion']}.")
                     else:
@@ -292,18 +300,25 @@ class ConversionWorker(QRunnable):
             return 0
 
     def time_to_seconds(self, time_str):
-        # Format: HH:MM:SS.xx or MM:SS.xx
-        parts = time_str.split(':')
+        """Parse an ffmpeg progress timestamp: HH:MM:SS.xx, MM:SS.xx or SS.xx.
+
+        Returns 0 for anything else. The bare-seconds branch is guarded on
+        exactly one part: it used to be the `else`, so a four-part string
+        returned its first component as a whole number of seconds, which would
+        make the progress bar jump rather than fail.
+        """
+        parts = str(time_str).split(':')
         try:
             if len(parts) == 3:
                 h, m, s = parts
                 return int(h) * 3600 + int(m) * 60 + float(s)
-            elif len(parts) == 2:
+            if len(parts) == 2:
                 m, s = parts
                 return int(m) * 60 + float(s)
-            else:
+            if len(parts) == 1:
                 return float(parts[0])
-        except Exception:
+            return 0
+        except (TypeError, ValueError):
             return 0
 
     def move_to_backup(self, file_path):
