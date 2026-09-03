@@ -2559,16 +2559,23 @@ class VideoConverterApp(QMainWindow):
         dialog.exec_()
 
     def open_help_document(self):
-        help_pdf_path = resource_path('help_document.pdf')
-        help_html_path = resource_path('help_document.html')
-        help_path = help_pdf_path if os.path.exists(help_pdf_path) else help_html_path
-        if os.path.exists(help_path):
+        # Prefers the generated manual from docs/help (see
+        # utils/help_resolution.py) and falls back to the legacy hand-written
+        # help_document.pdf/.html when no generated one has been shipped.
+        from utils.help_resolution import resolve_help_document
+        help_path = resolve_help_document()
+        if help_path is not None:
             from PyQt5.QtCore import QUrl
             from PyQt5.QtGui import QDesktopServices
-            QDesktopServices.openUrl(QUrl.fromLocalFile(help_path))
+            logger.info(f"Opening help document {help_path.name}")
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(help_path)))
         else:
-            logger.info(f"Help document not found at {help_pdf_path} or {help_html_path}.")
-            QMessageBox.warning(self, "Help Document Not Found", "The help document could not be found.")
+            logger.warning("No help document found in docs/help or alongside the app.")
+            QMessageBox.warning(
+                self, "Help Document Not Found",
+                "The help document could not be found.\n\n"
+                "Build it with:\n"
+                "  python docs/help/source/build_help_docs.py")
 
     def open_source_folder_in_explorer(self):
         from PyQt5.QtCore import QUrl

@@ -5,7 +5,7 @@ description = "NVC — video conversion, inspection, recording and PC reporting"
 requires-python = ">=3.12"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "docs/help/source"]
 # The offscreen platform and the QApplication singleton are set up in
 # conftest.py at the project root; no env var is needed on the command line.
 addopts = "-q"

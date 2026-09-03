@@ -5,11 +5,18 @@ import os
 # They are real packages and PyInstaller already freezes them into the archive;
 # listing them as data copied the source tree into the bundle a second time.
 #
-# help_document.pdf is included only when it exists. ui/main_window.py's
-# open_help_document() prefers the PDF and falls back to help_document.html, so
-# without this entry a frozen build could never use the PDF at all.
-_optional_datas = [
-    (name, '.') for name in ('help_document.pdf',) if os.path.exists(name)
+# The generated manuals from docs/help are the primary help documents; see
+# utils/help_resolution.py for the lookup. They are shipped into a docs/help
+# subfolder so the same relative layout works frozen and from source.
+import glob
+
+_optional_datas = [(p, 'docs/help') for p in glob.glob('docs/help/NVC *.pdf')]
+
+# The legacy hand-written help document remains as a fallback for a build made
+# before the manuals were generated. Included only when present.
+_optional_datas += [
+    (name, '.') for name in ('help_document.pdf', 'help_document.html')
+    if os.path.exists(name)
 ]
 
 a = Analysis(
@@ -18,7 +25,6 @@ a = Analysis(
     binaries=[('ffmpeg.exe', '.'), ('ffprobe.exe', '.')],
     datas=[
         ('graphics', 'graphics'),
-        ('help_document.html', '.'),
         ('Paradise.mp3', '.'),
     ] + _optional_datas,
     hiddenimports=['PyQt5.QtMultimedia'],
