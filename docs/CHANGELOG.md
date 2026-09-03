@@ -64,3 +64,9 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - "Check for Updates" no longer reports a fake update and no longer offers to
   open a placeholder download page. It now says update checking is not
   configured for this build. See `utils/update_checker.py` to enable it.
+- Dutch and Simplified Chinese are now selectable from the Language menu,
+  covering the core interface. Anything not yet translated shows English.
+- The Info window now reports the real version and build date; it had been
+  showing 2.1.160 / July 2025.
+- Fixed the test suite reading and writing the real user's settings, which
+  could change which tool tabs the app showed.

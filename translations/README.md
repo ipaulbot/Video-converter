@@ -9,14 +9,22 @@ translated text, so **they are committed and must not be deleted**.
 | Locale | File | Status |
 |---|---|---|
 | English | `nvc_en.ts` | Source language. Needs no translation and no `.qm`. |
-| Dutch | `nvc_nl.ts` | **Draft.** 2 of 200 strings translated, as a worked example. |
-| Simplified Chinese | `nvc_zh_CN.ts` | **Draft.** Not started. |
+| Dutch | `nvc_nl.ts` | Selectable. 146 of 365 strings — the core interface. |
+| Simplified Chinese | `nvc_zh_CN.ts` | Selectable. 146 of 365 strings — the core interface. |
 
-Draft locales are hidden from the Language menu unless you set
-`NVC_I18N_PREVIEW=1`, so unreviewed strings cannot reach someone who did not
-ask to see them. A locale becomes selectable by changing its `review_status`
-to `"production"` in `utils/localization.py`, which is a deliberate decision
-for a human to make after reviewing the file — not something the build does.
+**Both need a native-speaker review before reaching customers.** The
+translated set covers what a user meets in normal operation — tabs, buttons,
+menus, settings labels, status text and dialogs — and Qt falls back to the
+English source for anything else, so the remaining 219 strings show English
+rather than a blank.
+
+`review_status` in `utils/localization.py` records where a locale stands.
+Moving one back to `"draft"` hides it from the Language menu again unless
+`NVC_I18N_PREVIEW=1` is set — useful if a review turns up problems.
+
+The manuals under `docs/help` are still English-only. That is handled rather
+than broken: `utils/help_resolution.py` falls back to the English manual for a
+locale that has none, so Help opens in every language.
 
 ## Translating
 
