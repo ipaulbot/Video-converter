@@ -55,3 +55,7 @@ Use this file to track user-visible fixes, improvements, and feature work.
   Qt catalogues under `translations/`. English is unchanged. Dutch and
   Simplified Chinese exist as draft catalogues awaiting translation, hidden
   unless `NVC_I18N_PREVIEW=1`. See `translations/README.md`.
+- Moved the remaining stylesheet colours onto theme tokens. Changing the brand
+  accent is now a single edit in `ui/theme.py`.
+- Fixed the Settings dialog not showing its green active state while a
+  conversion ran with monitoring stopped.
