@@ -51,3 +51,7 @@ Use this file to track user-visible fixes, improvements, and feature work.
   deletion timer was blocking interpreter exit for up to 30 days.
 - Fixed two files with the same name in different folders writing each other's
   conversion log.
+- The interface is now translatable: 367 user-facing strings are extracted into
+  Qt catalogues under `translations/`. English is unchanged. Dutch and
+  Simplified Chinese exist as draft catalogues awaiting translation, hidden
+  unless `NVC_I18N_PREVIEW=1`. See `translations/README.md`.
