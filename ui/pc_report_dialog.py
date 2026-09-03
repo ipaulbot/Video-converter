@@ -7,6 +7,7 @@ from pc_report.render_html import render as render_html
 from pc_report.render_json import render as render_json
 from utils.file_naming import get_unique_path
 from utils.logger import logger
+from ui import theme
 
 
 
@@ -95,14 +96,14 @@ class PCReportWidget(QWidget):
 
         intro = QVBoxLayout()
         title = QLabel(_tr("PC Report"))
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #43a296;")
+        title.setStyleSheet(theme.qss("font-size: 18px; font-weight: bold; color: $accent;"))
         intro.addWidget(title)
         description = QLabel(
             _tr("Generate a detailed support report without leaving this tab. "
             "The report is saved automatically, with redaction enabled for sensitive values.")
         )
         description.setWordWrap(True)
-        description.setStyleSheet("color: #333; font-size: 10pt;")
+        description.setStyleSheet(theme.qss("color: $text_body; font-size: 10pt;"))
         intro.addWidget(description)
         header.addLayout(intro, 1)
         layout.addLayout(header)
@@ -129,12 +130,13 @@ class PCReportWidget(QWidget):
         self.progress = QProgressBar()
         self.progress.setRange(0, 0)
         self.progress.hide()
-        self._set_progress_color('#8a8a8a' if locked else ('#92cb4f' if converting else '#43a296'))
+        self._set_progress_color(
+            theme.skin_for_state(locked=locked, active=converting).accent)
         layout.addWidget(self.progress)
 
         self.status_label = QLabel(_tr("Ready. Reports are saved to your Desktop by default."))
         self.status_label.setWordWrap(True)
-        self.status_label.setStyleSheet("color: #555;")
+        self.status_label.setStyleSheet(theme.qss("color: $grey_700;"))
         layout.addWidget(self.status_label)
 
         self.output = QPlainTextEdit()
@@ -154,7 +156,7 @@ class PCReportWidget(QWidget):
             _tr("Tip: the generated HTML is self-contained, so it can be attached to support tickets or opened later.")
         )
         note.setWordWrap(True)
-        note.setStyleSheet("color: #666; font-size: 9pt;")
+        note.setStyleSheet(theme.qss("color: $grey_650; font-size: 9pt;"))
         layout.addWidget(note)
 
         self.btn_run.clicked.connect(self.on_run)
@@ -272,7 +274,8 @@ class PCReportWidget(QWidget):
         if self.button_style:
             for button in (self.btn_run, self.btn_open, self.btn_folder):
                 button.setStyleSheet(self.button_style)
-        self._set_progress_color('#8a8a8a' if locked else ('#92cb4f' if converting else '#43a296'))
+        self._set_progress_color(
+            theme.skin_for_state(locked=locked, active=converting).accent)
         self._set_logo()
 
 
@@ -385,12 +388,9 @@ class PCReportDialog(QDialog):
                 }}
                 """
             )
-        if locked:
-            _set_progress_color('#8a8a8a')  # gray for locked
-        elif converting:
-            _set_progress_color('#92cb4f')  # green while monitoring/converting
-        else:
-            _set_progress_color('#43a296')  # teal when idle
+        # Was another copy of the locked/active/idle chain; the theme owns it.
+        _set_progress_color(
+            theme.skin_for_state(locked=locked, active=converting).accent)
         self.progress.hide()
         layout.addWidget(self.progress)
 

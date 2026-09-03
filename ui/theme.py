@@ -86,6 +86,49 @@ VIDEO_TEXT: Final[str] = "#cfd6da"        # labels on a dark panel
 VIDEO_TEXT_MUTED: Final[str] = "#8a9298"  # placeholder text on a dark panel
 
 
+# ---------------------------------------------------------------------------
+# Named values for colours that were scattered as literals through the UI.
+# Naming them is the point: each was previously a magic hex in one or more
+# stylesheets, so changing one meant finding every spelling of it.
+# ---------------------------------------------------------------------------
+# A neutral grey ramp, numbered by lightness (higher = darker), for chrome
+# that is deliberately not part of a skin's palette.
+GREY_950: Final[str] = "#050505"
+GREY_900: Final[str] = "#222222"
+GREY_800: Final[str] = "#444444"
+GREY_700: Final[str] = "#555555"
+GREY_650: Final[str] = "#666666"
+GREY_600: Final[str] = "#777777"
+GREY_550: Final[str] = "#888888"
+GREY_500: Final[str] = "#999999"
+GREY_300: Final[str] = "#c0c0c0"
+GREY_280: Final[str] = "#c8c8c8"
+GREY_260: Final[str] = "#cfcfcf"
+GREY_240: Final[str] = "#d5d5d5"
+GREY_100: Final[str] = "#f2f2f2"
+GREY_050: Final[str] = "#f8f9fa"
+BLACK: Final[str] = "#000000"
+INK_SLATE: Final[str] = "#495057"
+
+# The active and locked accents, for chrome that must stay that colour rather
+# than follow the current skin -- a "recording" indicator is green whatever
+# the theme is doing, so it cannot use $accent.
+ACTIVE_ACCENT: Final[str] = "#92cb4f"
+ACTIVE_ACCENT_DARK: Final[str] = "#33a16d"
+ACTIVE_ACCENT_BRIGHT: Final[str] = "#9dd55a"
+LOCKED_ACCENT: Final[str] = "#8a8a8a"
+RECORDING: Final[str] = "#00cc00"
+ACCENT_DEEP: Final[str] = "#1f5c52"
+
+# Semantic variants beyond the base set above.
+DANGER_MID: Final[str] = "#e23d3d"
+DANGER_DEEP: Final[str] = "#d92828"
+DANGER_MUTED: Final[str] = "#a94442"
+WARNING_BRIGHT: Final[str] = "#ffcc00"
+WARNING_GOLD: Final[str] = "#ffd700"
+DARK_PANEL: Final[str] = "#222b30"
+
+
 @dataclass(frozen=True)
 class Skin:
     """One complete visual state. Fields are grouped by role, not by colour."""
@@ -726,3 +769,64 @@ def window_style() -> str:
         f"QToolTip {{ background: {s.panel_bg}; color: {s.text_body}; "
         f"border: 1px solid {s.panel_border}; padding: 4px; }}"
     )
+
+# ---------------------------------------------------------------------------
+# QSS templates
+# ---------------------------------------------------------------------------
+# QSS is almost entirely braces, so an f-string template has to double every
+# one of them -- easy to get wrong, and Qt discards a malformed stylesheet
+# silently rather than raising. string.Template's $name syntax leaves braces
+# alone, so a stylesheet can be migrated to tokens without touching its
+# structure. (VIO uses f-strings for this; $tokens are safer at NVC's scale.)
+def token_map(s: Skin | None = None) -> dict:
+    """Every name usable in a qss() template."""
+    s = s or skin()
+    values = {field: getattr(s, field) for field in s.__dataclass_fields__}
+    values.update(
+        success=SUCCESS, warning=WARNING, danger=DANGER,
+        danger_strong=DANGER_STRONG, info=INFO,
+        video_bg=VIDEO_BG, video_panel_bg=VIDEO_PANEL_BG,
+        video_border=VIDEO_BORDER, video_text=VIDEO_TEXT,
+        video_text_muted=VIDEO_TEXT_MUTED,
+        font_ui=FONT_UI, font_mono=FONT_MONO,
+        radius_sm=RADIUS_SM, radius_md=RADIUS_MD, radius_lg=RADIUS_LG,
+        pad_sm=PAD_SM, pad_md=PAD_MD, pad_lg=PAD_LG,
+        font_sm=FONT_SM, font_base=FONT_BASE, font_lg=FONT_LG,
+        grey_950=GREY_950, grey_900=GREY_900, grey_800=GREY_800,
+        grey_700=GREY_700, grey_650=GREY_650, grey_600=GREY_600,
+        grey_550=GREY_550, grey_500=GREY_500, grey_300=GREY_300,
+        grey_280=GREY_280, grey_260=GREY_260, grey_240=GREY_240,
+        grey_100=GREY_100, grey_050=GREY_050, black=BLACK,
+        ink_slate=INK_SLATE,
+        active_accent=ACTIVE_ACCENT, active_accent_dark=ACTIVE_ACCENT_DARK,
+        active_accent_bright=ACTIVE_ACCENT_BRIGHT,
+        locked_accent=LOCKED_ACCENT, recording=RECORDING,
+        accent_deep=ACCENT_DEEP,
+        danger_mid=DANGER_MID, danger_deep=DANGER_DEEP,
+        danger_muted=DANGER_MUTED,
+        warning_bright=WARNING_BRIGHT, warning_gold=WARNING_GOLD,
+        dark_panel=DARK_PANEL,
+    )
+    return values
+
+
+def qss(template: str, s: Skin | None = None, **extra) -> str:
+    """Expand $token references in a QSS template against the current skin.
+
+        widget.setStyleSheet(theme.qss("QFrame { background: $panel_bg; }"))
+
+    Raises on an unknown token rather than leaving it in place: a stray
+    `$acccent` would otherwise reach Qt, which would drop the whole rule
+    without complaint.
+    """
+    from string import Template
+
+    values = token_map(s)
+    values.update(extra)
+    try:
+        return Template(template).substitute(values)
+    except KeyError as exc:
+        raise KeyError(
+            f"unknown theme token ${exc.args[0]} in a QSS template; "
+            f"known tokens are {sorted(values)}"
+        ) from None

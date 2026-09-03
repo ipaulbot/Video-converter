@@ -108,19 +108,19 @@ class VideoConverterApp(QMainWindow):
         self.file_detected.connect(self.convert_file)
 
         # Use modern clean stylesheet
-        modern_stylesheet = """
+        modern_stylesheet = theme.qss("""
             QWidget {
-                background: #F5F5F5;
-                color: #333333;
+                background: $window_bg;
+                color: $text_body;
                 font-family: 'Segoe UI', 'Arial', sans-serif;
                 font-size: 9pt;
             }
             QMainWindow, QDialog {
-                background: #F5F5F5;
+                background: $window_bg;
             }
             QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #43a296, stop:1 #3a9284);
-                border: 1px solid #2d7d6f;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent, stop:1 $accent_pressed);
+                border: 1px solid $accent_dark;
                 border-radius: 6px;
                 padding: 8px 16px;
                 min-width: 100px;
@@ -129,20 +129,20 @@ class VideoConverterApp(QMainWindow):
                 color: white;
             }
             QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4bb3a7, stop:1 #43a296);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_hover, stop:1 $accent);
             }
             QPushButton:pressed {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a9284, stop:1 #2d7d6f);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_pressed, stop:1 $accent_dark);
             }
             QTabWidget::pane {
-                border: 1px solid #E0E0E0;
+                border: 1px solid $separator;
                 background: white;
                 border-radius: 8px;
                 margin-top: 4px;
             }
             QTabBar::tab {
-                background: #F0F0F0;
-                border: 1px solid #E0E0E0;
+                background: $panel_alt_bg;
+                border: 1px solid $separator;
                 border-bottom: none;
                 padding: 8px 16px;
                 margin-right: 2px;
@@ -152,39 +152,39 @@ class VideoConverterApp(QMainWindow):
             }
             QTabBar::tab:selected {
                 background: white;
-                border-bottom: 2px solid #43a296;
+                border-bottom: 2px solid $accent;
             }
             QPlainTextEdit {
                 background: white;
-                border: 1px solid #E0E0E0;
+                border: 1px solid $separator;
                 border-radius: 4px;
             }
             QMenuBar, QMenu {
                 background: white;
-                border: 1px solid #E0E0E0;
+                border: 1px solid $separator;
                 border-radius: 4px;
             }
             QMenu::item:selected {
-                background: #43a296;
+                background: $accent;
                 color: white;
             }
             QProgressBar {
-                border: 1px solid #E0E0E0;
-                background: #F5F5F5;
+                border: 1px solid $separator;
+                background: $window_bg;
                 border-radius: 4px;
                 text-align: center;
                 font-family: 'Segoe UI', 'Arial', sans-serif;
                 font-size: 9pt;
                 font-weight: normal;
-                color: #333333;
+                color: $text_body;
                 height: 20px;
             }
             QProgressBar::chunk {
-                background-color: #43a296;
+                background-color: $accent;
                 border-radius: 3px;
                 margin: 1px;
             }
-        """
+        """)
         self.setStyleSheet(modern_stylesheet)
 
         # Set new logo as window icon
@@ -204,17 +204,17 @@ class VideoConverterApp(QMainWindow):
         self.logo_label.setAlignment(Qt.AlignCenter)
         # Ensure padding is 0 to save space
         self.logo_label.setContentsMargins(0,0,0,0)
-        self.logo_label.setStyleSheet("""
+        self.logo_label.setStyleSheet(theme.qss("""
             QLabel { 
                 background: transparent; 
                 border: none; 
                 padding: 0px;
             }
             QLabel:hover { 
-                background: #e9ecef;
+                background: $inner_border;
                 border-radius: 25px;
             }
-        """)
+        """))
         self.logo_label.setCursor(Qt.PointingHandCursor)
         self.logo_label.setToolTip(_tr("Click to open settings"))
         self.logo_label.mousePressEvent = self.logo_clicked
@@ -231,7 +231,7 @@ class VideoConverterApp(QMainWindow):
         # Update Checker Label (hidden by default, shown if update available)
         self.update_label = QLabel(_tr("Update Available!"))
         self.update_label.setAlignment(Qt.AlignCenter)
-        self.update_label.setStyleSheet("background: #ffcc00; color: #333; padding: 4px; border-radius: 4px; font-weight: bold;")
+        self.update_label.setStyleSheet(theme.qss("background: $warning_bright; color: $text_body; padding: 4px; border-radius: 4px; font-weight: bold;"))
         self.update_label.setCursor(Qt.PointingHandCursor)
         self.update_label.hide()
         self.update_label.mousePressEvent = self.open_update_url
@@ -266,16 +266,7 @@ class VideoConverterApp(QMainWindow):
 
         # Store the full tab stylesheet as a template
         self.tab_stylesheet_template = (
-            "QTabBar {{ color: #333; }} "
-            "QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: #F0F0F0; border: 1px solid #E0E0E0; border-bottom: none; margin-right: 2px; font-weight: normal; color: #333; }} "
-            "QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: #333; }} "
-            "QTabBar::tab:selected:focus {{ color: #333; }} "
-            "QTabBar::tab:selected:!focus {{ color: #333; }} "
-            "QTabBar::tab:selected:active {{ color: #333; }} "
-            "QTabBar::tab:!selected {{ background: #F0F0F0; border: 1px solid #E0E0E0; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: #333; }} "
-            "QTabBar::tab:!selected:focus {{ color: #333; }} "
-            "QTabBar::tab:!selected:active {{ color: #333; }} "
-            "QTabWidget::pane {{ margin: 4px; border-radius: 8px; }}"
+            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border-radius: 8px; }}")
         )
         # Set initial tab stylesheet with teal underline
         self.tabs = QTabWidget()
@@ -293,9 +284,9 @@ class VideoConverterApp(QMainWindow):
             lambda pos: self.show_log_context_menu_global(self.console_output.mapToGlobal(pos))
         )
         # Clean modern styling for log output (scrollable, scrollbar hidden)
-        self.console_output.setStyleSheet("""
+        self.console_output.setStyleSheet(theme.qss("""
             QPlainTextEdit {
-                border: 1px solid #E0E0E0;
+                border: 1px solid $separator;
                 border-radius: 6px;
                 background: white;
                 padding: 8px;
@@ -319,12 +310,12 @@ class VideoConverterApp(QMainWindow):
                 border: none;
                 height: 0px;
             }
-            """)
+            """))
 
         # Create a container widget for the log area with overlay
         self.log_container = QFrame()
         self.log_container.setFrameStyle(QFrame.Box)
-        self.log_container.setStyleSheet("QFrame { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
+        self.log_container.setStyleSheet(theme.qss("QFrame { border: 1px solid $separator; border-radius: 6px; background: white; }"))
         self.log_container.setContextMenuPolicy(Qt.CustomContextMenu)
         self.log_container.customContextMenuRequested.connect(
             lambda pos: self.show_log_context_menu_global(self.log_container.mapToGlobal(pos))
@@ -343,18 +334,18 @@ class VideoConverterApp(QMainWindow):
 
         # Create drag and drop overlay widget with absolute positioning
         self.drag_drop_overlay = QWidget(self.log_container)
-        self.drag_drop_overlay.setStyleSheet("""
+        self.drag_drop_overlay.setStyleSheet(theme.qss("""
             QWidget { 
                 background: white; 
-                border: 2px dashed #dee2e6; 
+                border: 2px dashed $panel_border; 
                 border-radius: 8px; 
                 margin: 10px;
             }
             QWidget:hover {
-                border-color: #43a296;
+                border-color: $accent;
                 background: rgba(67, 162, 150, 0.1);
             }
-        """)
+        """))
         # Allow context menu on overlay to fall back to log actions
         self.drag_drop_overlay.setContextMenuPolicy(Qt.CustomContextMenu)
         self.drag_drop_overlay.customContextMenuRequested.connect(
@@ -375,16 +366,16 @@ class VideoConverterApp(QMainWindow):
         # Drag and drop text
         self.drag_drop_text = QLabel(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         self.drag_drop_text.setAlignment(Qt.AlignCenter)
-        self.drag_drop_text.setStyleSheet("""
+        self.drag_drop_text.setStyleSheet(theme.qss("""
             QLabel { 
-                color: #6c757d; 
+                color: $text_muted; 
                 font-size: 12px; 
                 background: rgba(255,255,255,0.85); 
                 border-radius: 8px;
                 border: none;
                 padding: 12px;
             }
-        """)
+        """))
         self.drag_drop_text.setWordWrap(True)
 
         overlay_layout.addWidget(self.drag_drop_text)
@@ -428,17 +419,17 @@ class VideoConverterApp(QMainWindow):
             lock_label.setCursor(Qt.PointingHandCursor)
             lock_label.setToolTip(_tr("Lock/Unlock settings"))
             lock_label.mousePressEvent = self.lock_icon_clicked
-            lock_label.setStyleSheet("""
+            lock_label.setStyleSheet(theme.qss("""
                 QLabel { 
                     background: transparent; 
                     border: none; 
                     padding: 4px;
                 }
                 QLabel:hover {
-                    background: #e9ecef;
+                    background: $inner_border;
                     border-radius: 18px;
                 }
-            """)
+            """))
             # File icon button (dynamic)
             file_icon_path = self.get_icon_path('FILE')
             file_label = QLabel()
@@ -450,17 +441,17 @@ class VideoConverterApp(QMainWindow):
             file_label.setCursor(Qt.PointingHandCursor)
             file_label.setToolTip(_tr("Select media files to convert"))
             file_label.mousePressEvent = lambda event: self.open_file_dialog()
-            file_label.setStyleSheet("""
+            file_label.setStyleSheet(theme.qss("""
                 QLabel { 
                     background: transparent; 
                     border: none; 
                     padding: 4px;
                 }
                 QLabel:hover {
-                    background: #e9ecef;
+                    background: $inner_border;
                     border-radius: 18px;
                 }
-            """)
+            """))
             # Broom icon
             if self.locked:
                 broom_icon_path = resource_path('graphics/GRAYSCALEBROOM.ico')
@@ -475,17 +466,17 @@ class VideoConverterApp(QMainWindow):
             broom_label.setCursor(Qt.PointingHandCursor)
             broom_label.setToolTip(_tr("Clear log"))
             broom_label.mousePressEvent = clear_callback
-            broom_label.setStyleSheet("""
+            broom_label.setStyleSheet(theme.qss("""
                 QLabel { 
                     background: transparent; 
                     border: none; 
                     padding: 4px;
                 }
                 QLabel:hover {
-                    background: #e9ecef;
+                    background: $inner_border;
                     border-radius: 18px;
                 }
-            """)
+            """))
             # Save references for update_lock_state_ui if needed
             if status_label is self.status_label_log_tab:
                 self.file_label_log_tab = file_label
@@ -552,7 +543,7 @@ class VideoConverterApp(QMainWindow):
         except Exception:
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         # Clean modern styling for converted files widget
-        self.converted_files_widget.setStyleSheet("QTableWidget { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
+        self.converted_files_widget.setStyleSheet(theme.qss("QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
         converted_layout.addWidget(self.converted_files_widget)
         # Initialize footer widgets before make_footer
         self.lock_icon_label_converted_tab = QLabel()
@@ -585,7 +576,7 @@ class VideoConverterApp(QMainWindow):
         inspection_layout.setContentsMargins(11, 11, 11, 11)
         self.inspection_widget = InspectionWidget()
         # Clean modern styling for inspection widget
-        self.inspection_widget.setStyleSheet("QWidget { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
+        self.inspection_widget.setStyleSheet(theme.qss("QWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
         # Context menu for inspection texts/areas
         try:
             self.inspection_widget.summary_text.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -776,9 +767,9 @@ class VideoConverterApp(QMainWindow):
         # Current settings display in sidebar
         self.settings_display = QLabel()
         self.settings_display.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.settings_display.setStyleSheet("""
+        self.settings_display.setStyleSheet(theme.qss("""
             QLabel { 
-                color: #495057; 
+                color: $ink_slate; 
                 font-size: 9pt; 
                 background: transparent; 
                 border: none;
@@ -786,7 +777,7 @@ class VideoConverterApp(QMainWindow):
                 padding: 0px;
                 text-align: justify;
             }
-        """)
+        """))
         self.settings_display.setWordWrap(True)
         self.settings_display.setFixedWidth(180)
         # Make it clickable with hover effects
@@ -848,7 +839,7 @@ class VideoConverterApp(QMainWindow):
         top_right_layout.setSpacing(4)
         top_right_layout.addWidget(self.burger_button)
         self.tabs.setCornerWidget(top_right_widget, Qt.TopRightCorner)
-        self.burger_button.setStyleSheet("""
+        self.burger_button.setStyleSheet(theme.qss("""
             QToolButton { 
                 background: transparent; 
                 border: none; 
@@ -857,13 +848,13 @@ class VideoConverterApp(QMainWindow):
                 spacing: 0px;
             }
             QToolButton:hover {
-                background: #e9ecef;
+                background: $inner_border;
                 border-radius: 18px;
             }
             QToolButton::menu-indicator { 
                 image: none; 
             }
-        """)
+        """))
         # React to tab changes (e.g., restore log view, keep UI in sync)
         try:
             self.tabs.currentChanged.connect(self.on_tab_changed)
@@ -1084,32 +1075,32 @@ class VideoConverterApp(QMainWindow):
             if not self.drag_drop_overlay.isHidden():
                 if self.running or self.is_converting or has_log_content:
                     # Semi-transparent overlay when monitoring, converting, or has log content
-                    self.drag_drop_overlay.setStyleSheet("""
+                    self.drag_drop_overlay.setStyleSheet(theme.qss("""
                         QWidget { 
                             background: rgba(255, 255, 255, 0.5); 
-                            border: 2px dashed #dee2e6; 
+                            border: 2px dashed $panel_border; 
                             border-radius: 8px; 
                             margin: 10px;
                         }
                         QWidget:hover {
-                            border-color: #43a296;
+                            border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """)
+                    """))
                 else:
                     # Fully opaque overlay when idle and no log content
-                    self.drag_drop_overlay.setStyleSheet("""
+                    self.drag_drop_overlay.setStyleSheet(theme.qss("""
                         QWidget { 
                             background: white; 
-                            border: 2px dashed #dee2e6; 
+                            border: 2px dashed $panel_border; 
                             border-radius: 8px; 
                             margin: 10px;
                         }
                         QWidget:hover {
-                            border-color: #43a296;
+                            border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """)
+                    """))
                 # Hide the overlay text ONLY if conversion is running or after a drop
                 if self.is_converting:
                     self.drag_drop_text.hide()
@@ -1121,11 +1112,11 @@ class VideoConverterApp(QMainWindow):
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Locked"))
             # Modern grayscale style for locked state
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: #F0F0F0;
-                    color: #999;
-                    border: 1px solid #E0E0E0;
+                    background: $panel_alt_bg;
+                    color: $grey_500;
+                    border: 1px solid $separator;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1133,7 +1124,7 @@ class VideoConverterApp(QMainWindow):
                     font-weight: bold;
                     font-size: 10pt;
                 }
-            """)
+            """))
             self.start_button.setToolTip(_tr("Application is locked."))
             return
         recorder_mode = self.is_recorder_tab_active() and not is_running and not getattr(self, 'is_converting', False)
@@ -1141,11 +1132,11 @@ class VideoConverterApp(QMainWindow):
         if self.is_recorder_tab_active() and getattr(self, 'is_converting', False) and not is_running and not recorder_recording:
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Converting..."))
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: #F0F0F0;
-                    color: #999;
-                    border: 1px solid #E0E0E0;
+                    background: $panel_alt_bg;
+                    color: $grey_500;
+                    border: 1px solid $separator;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1153,7 +1144,7 @@ class VideoConverterApp(QMainWindow):
                     font-weight: bold;
                     font-size: 10pt;
                 }
-            """)
+            """))
             self.start_button.setToolTip(_tr("Recording is unavailable while conversion is running."))
             return
         self.start_button.setEnabled(True)
@@ -1171,11 +1162,11 @@ class VideoConverterApp(QMainWindow):
         if recorder_starting:
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Starting..."))
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: #F0F0F0;
-                    color: #999;
-                    border: 1px solid #E0E0E0;
+                    background: $panel_alt_bg;
+                    color: $grey_500;
+                    border: 1px solid $separator;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1183,17 +1174,17 @@ class VideoConverterApp(QMainWindow):
                     font-weight: bold;
                     font-size: 10pt;
                 }
-            """)
+            """))
             self.start_button.setToolTip(_tr("Releasing the camera preview before recording starts."))
             return
         if recorder_stopping:
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Stopping..."))
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: #F0F0F0;
-                    color: #999;
-                    border: 1px solid #E0E0E0;
+                    background: $panel_alt_bg;
+                    color: $grey_500;
+                    border: 1px solid $separator;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1201,17 +1192,17 @@ class VideoConverterApp(QMainWindow):
                     font-weight: bold;
                     font-size: 10pt;
                 }
-            """)
+            """))
             self.start_button.setToolTip(_tr("Finishing and saving the active recording."))
             return
         if is_running or recorder_recording:
             self.start_button.setText("Stop Recording" if recorder_mode else "Stop")
             # Update log display based on monitoring state
             self.update_log_display()
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #92cb4f, stop:1 #33a16d);
-                    border: 1px solid #2d7d6f;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 $active_accent, stop:1 $active_accent_dark);
+                    border: 1px solid $accent_dark;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1221,12 +1212,12 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
                 QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #9dd55a, stop:1 #92cb4f);
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 $active_accent_bright, stop:1 $active_accent);
                 }
                 QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #33a16d, stop:1 #2d7d6f);
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 $active_accent_dark, stop:1 $accent_dark);
                 }
-            """)
+            """))
             if recorder_mode:
                 self.start_button.setToolTip(_tr("Stop the active multi-source recording."))
             else:
@@ -1235,10 +1226,10 @@ class VideoConverterApp(QMainWindow):
             self.start_button.setText("Start Recording" if recorder_mode else "Start")
             # Update log display based on monitoring state
             self.update_log_display()
-            self.start_button.setStyleSheet("""
+            self.start_button.setStyleSheet(theme.qss("""
                 QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #43a296, stop:1 #3a9284);
-                    border: 1px solid #2d7d6f;
+                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent, stop:1 $accent_pressed);
+                    border: 1px solid $accent_dark;
                     border-radius: 6px;
                     padding: 10px 20px;
                     min-width: 120px;
@@ -1248,12 +1239,12 @@ class VideoConverterApp(QMainWindow):
                     font-size: 10pt;
                 }
                 QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4bb3a7, stop:1 #43a296);
+                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_hover, stop:1 $accent);
                 }
                 QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a9284, stop:1 #2d7d6f);
+                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_pressed, stop:1 $accent_dark);
                 }
-            """)
+            """))
             if recorder_mode:
                 self.start_button.setToolTip(_tr("Start recording from the enabled recorder sources."))
             else:
@@ -1492,16 +1483,16 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'compact_status_label'):
             if self.locked:
                 self.compact_status_label.setText(_tr("Status: Locked"))
-                self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
+                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $text_muted; font-size: 10px; background: transparent; border: none; }"))
             elif self.queue.active_count > 0:
                 self.compact_status_label.setText(_tr("Status: Converting"))
-                self.compact_status_label.setStyleSheet("QLabel { color: #28a745; font-size: 10px; background: transparent; border: none; }")
+                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $success; font-size: 10px; background: transparent; border: none; }"))
             elif self.running:
                 self.compact_status_label.setText(_tr("Status: Monitoring"))
-                self.compact_status_label.setStyleSheet("QLabel { color: #ffc107; font-size: 10px; background: transparent; border: none; }")
+                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $warning; font-size: 10px; background: transparent; border: none; }"))
             else:
                 self.compact_status_label.setText(_tr("Status: Not monitoring"))
-                self.compact_status_label.setStyleSheet("QLabel { color: #dc3545; font-size: 10px; background: transparent; border: none; }")
+                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $danger; font-size: 10px; background: transparent; border: none; }"))
 
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
@@ -1769,18 +1760,18 @@ class VideoConverterApp(QMainWindow):
                 dlg.setIconPixmap(QPixmap(info_icon_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             elif os.path.exists(getattr(self, 'icon_gray', '')):
                 dlg.setWindowIcon(QIcon(self.icon_gray))
-            dlg.setStyleSheet("""
-                QMessageBox { background: #f2f2f2; }
-                QLabel { color: #666; }
+            dlg.setStyleSheet(theme.qss("""
+                QMessageBox { background: $grey_100; }
+                QLabel { color: $grey_650; }
                 QPushButton {
-                    background: #e0e0e0;
-                    border: 1px solid #c0c0c0;
+                    background: $separator;
+                    border: 1px solid $grey_300;
                     border-radius: 6px;
                     padding: 6px 12px;
-                    color: #555;
+                    color: $grey_700;
                 }
-                QPushButton:hover { background: #d5d5d5; }
-            """)
+                QPushButton:hover { background: $grey_240; }
+            """))
             dlg.exec_()
             self._wiggle_lock_icon()
         except Exception:
@@ -1920,14 +1911,14 @@ class VideoConverterApp(QMainWindow):
                     self.drag_drop_text.hide()
                 if hasattr(self, 'drag_drop_overlay'):
                     # Light translucent background
-                    self.drag_drop_overlay.setStyleSheet("""
+                    self.drag_drop_overlay.setStyleSheet(theme.qss("""
                         QWidget {
                             background: rgba(255, 255, 255, 0.5);
-                            border: 2px dashed #dee2e6;
+                            border: 2px dashed $panel_border;
                             border-radius: 8px;
                             margin: 10px;
                         }
-                    """)
+                    """))
                     self.drag_drop_overlay.show()
         except Exception:
             logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
@@ -2013,17 +2004,17 @@ class VideoConverterApp(QMainWindow):
             label.setCursor(Qt.PointingHandCursor)
             label.setToolTip(_tr('Play BallBuster XT'))
             # Match visual style of other circular footer icons
-            label.setStyleSheet("""
+            label.setStyleSheet(theme.qss("""
                 QLabel {
                     background: transparent;
                     border: none;
                     padding: 4px;
                 }
                 QLabel:hover {
-                    background: #e9ecef;
+                    background: $inner_border;
                     border-radius: 18px;
                 }
-            """)
+            """))
             label.mousePressEvent = lambda event, self=self: self._play_ballbuster_intro()
             # Insert right before the status label (last widget in footer)
             footer.insertWidget(footer.count() - 1, label)
@@ -2638,7 +2629,7 @@ class VideoConverterApp(QMainWindow):
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-            self.central_widget.setStyleSheet("background-color: #e0e0e0;")
+            self.central_widget.setStyleSheet(theme.qss("background-color: $separator;"))
         else:
             event.ignore()
 
@@ -2649,14 +2640,14 @@ class VideoConverterApp(QMainWindow):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
             # Show overlay with drop styling
-            self.drag_drop_overlay.setStyleSheet("""
+            self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: rgba(67, 162, 150, 0.1); 
-                    border: 2px solid #43a296; 
+                    border: 2px solid $accent; 
                     border-radius: 8px; 
                     margin: 10px;
                 }
-            """)
+            """))
             self.drag_drop_overlay.show()
             # Keep instruction consistent while hovering
             self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
@@ -2667,31 +2658,31 @@ class VideoConverterApp(QMainWindow):
         # Restore appropriate styling based on current state
         has_log_content = len(self.console_output.toPlainText().strip()) > 0
         if self.running or self.is_converting or has_log_content:
-            self.drag_drop_overlay.setStyleSheet("""
+            self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
-                    border: 2px dashed #dee2e6; 
+                    border: 2px dashed $panel_border; 
                     border-radius: 8px; 
                     margin: 10px;
                 }
                 QWidget:hover {
-                    border-color: #43a296;
+                    border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """)
+            """))
         else:
-            self.drag_drop_overlay.setStyleSheet("""
+            self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
-                    border: 2px dashed #dee2e6; 
+                    border: 2px dashed $panel_border; 
                     border-radius: 8px; 
                     margin: 10px;
                 }
                 QWidget:hover {
-                    border-color: #43a296;
+                    border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """)
+            """))
         # Always reset to default instruction after drag leave
         self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         # Always show the overlay
@@ -2701,31 +2692,31 @@ class VideoConverterApp(QMainWindow):
         # Restore appropriate styling based on current state
         has_log_content = len(self.console_output.toPlainText().strip()) > 0
         if self.running or self.is_converting or has_log_content:
-            self.drag_drop_overlay.setStyleSheet("""
+            self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
-                    border: 2px dashed #dee2e6; 
+                    border: 2px dashed $panel_border; 
                     border-radius: 8px; 
                     margin: 10px;
                 }
                 QWidget:hover {
-                    border-color: #43a296;
+                    border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """)
+            """))
         else:
-            self.drag_drop_overlay.setStyleSheet("""
+            self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
-                    border: 2px dashed #dee2e6; 
+                    border: 2px dashed $panel_border; 
                     border-radius: 8px; 
                     margin: 10px;
                 }
                 QWidget:hover {
-                    border-color: #43a296;
+                    border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """)
+            """))
         # After drop, hide only the text, keep the overlay visible
         self.drag_drop_text.hide()
         self.drag_drop_overlay.show()
@@ -2954,14 +2945,14 @@ class VideoConverterApp(QMainWindow):
         if overlay is not None and obj == overlay:
             if event.type() == QEvent.Enter:
                 # Mouse entered the overlay - show hover effect (keep dashed border)
-                self.drag_drop_overlay.setStyleSheet("""
+                self.drag_drop_overlay.setStyleSheet(theme.qss("""
                     QWidget { 
                         background: rgba(67, 162, 150, 0.1); 
-                        border: 2px dashed #43a296; 
+                        border: 2px dashed $accent; 
                         border-radius: 8px; 
                         margin: 10px;
                     }
-                """)
+                """))
                 return False  # Let the event continue
             elif event.type() == QEvent.Leave:
                 # Mouse left the overlay - restore normal styling

@@ -286,3 +286,98 @@ class IconTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StaleHostAttributeTests(unittest.TestCase):
+    """Guard the failure mode that let a real bug ship silently.
+
+    ui/settings_dialog.py asked its parent for `active_conversion_count`,
+    which the Phase 4 queue extraction removed. Because the call used
+    `getattr(parent, name, 0)`, it degraded to "no conversions running"
+    instead of raising, so the dialog quietly stopped showing its green
+    active state. A defensive default on an attribute that is supposed to
+    exist hides exactly this.
+    """
+
+    # Attributes the UI reads off the main window with a getattr default.
+    # Every one of these must actually exist, or the default is silently
+    # standing in for a rename.
+    EXPECTED_ON_MAIN_WINDOW = (
+        "locked", "running", "is_converting", "queue",
+        "is_active_workflow_visual_state",
+    )
+
+    def test_attributes_read_defensively_actually_exist(self):
+        import os
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from ui.main_window import VideoConverterApp
+
+        window = VideoConverterApp()
+        try:
+            for name in self.EXPECTED_ON_MAIN_WINDOW:
+                self.assertTrue(hasattr(window, name),
+                                f"VideoConverterApp has no {name!r}, but the UI "
+                                f"reads it with a getattr default")
+        finally:
+            window.close()
+            window.deleteLater()
+
+    def test_no_module_still_asks_for_the_removed_counter(self):
+        """active_conversion_count was replaced by queue.active_count."""
+        import pathlib
+        root = pathlib.Path(__file__).resolve().parents[1]
+        offenders = []
+        for path in list((root / "ui").rglob("*.py")) + [root / "main.py"]:
+            if path.name.startswith("test_"):
+                continue
+            for lineno, line in enumerate(
+                    path.read_text(encoding="utf-8").splitlines(), 1):
+                if "active_conversion_count" in line and not line.strip().startswith("#"):
+                    offenders.append(f"{path.relative_to(root).as_posix()}:{lineno}")
+        self.assertEqual(offenders, [],
+                         f"use queue.active_count instead: {offenders}")
+
+
+class NoDuplicatedStateChainTests(unittest.TestCase):
+    """The locked/active/idle decision must live in one place.
+
+    It was originally spread across ten separate if/elif chains -- in
+    get_icon_path, update_highlight_colors, update_preview_controls_style,
+    update_all_button_styles, _set_preview_placeholder, _start_star_field,
+    get_game_icon_path, launch_ballbuster_game, SettingsDialog.__init__ and
+    PCReportWidget -- each independently re-deriving the same three colours.
+    One of them had already drifted onto an attribute that no longer existed.
+    """
+
+    STATE_COLOURS = ("#43a296", "#92cb4f", "#8a8a8a")
+
+    def test_no_module_hardcodes_all_three_state_colours(self):
+        """A file naming all three is almost certainly re-deriving the chain."""
+        import pathlib
+        root = pathlib.Path(__file__).resolve().parents[1]
+        offenders = []
+        for path in list((root / "ui").rglob("*.py")):
+            if path.name.startswith("test_") or path.name == "theme.py":
+                continue
+            if "extras" in path.parts:      # the game keeps its own palette
+                continue
+            # Ignore commented-out lines, which are not live code.
+            live = [line for line in path.read_text(encoding="utf-8").lower().splitlines()
+                    if not line.strip().startswith("#")]
+            joined = chr(10).join(live)
+            if all(colour in joined for colour in self.STATE_COLOURS):
+                offenders.append(path.relative_to(root).as_posix())
+        self.assertEqual(
+            offenders, [],
+            "these re-derive the state chain; use theme.skin_for_state() or "
+            f"theme.highlight_color() instead: {offenders}")
+
+    def test_skin_for_state_is_the_single_decision(self):
+        for locked, active, expected in (
+            (False, False, theme.IDLE),
+            (False, True, theme.ACTIVE),
+            (True, False, theme.LOCKED),
+            (True, True, theme.LOCKED),      # locked wins
+        ):
+            self.assertIs(theme.skin_for_state(locked=locked, active=active),
+                          expected, (locked, active))

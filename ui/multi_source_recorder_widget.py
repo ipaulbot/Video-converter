@@ -48,6 +48,7 @@ from conversion.ptz_controls import (
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
+from ui import theme
 
 
 
@@ -148,18 +149,18 @@ class PTZOverlayButton(QPushButton):
         self.setFixedSize(30, 24)
         self.setToolTip(_tr("Drag to pan/tilt this camera"))
         self.setProperty("skipGlobalStyle", True)
-        self.setStyleSheet("""
+        self.setStyleSheet(theme.qss("""
             QPushButton {
                 background: rgba(255, 255, 255, 180);
-                color: #222;
-                border: 1px solid #777;
+                color: $grey_900;
+                border: 1px solid $grey_600;
                 border-radius: 3px;
                 padding: 1px;
                 font-size: 7pt;
                 font-weight: bold;
             }
             QPushButton:hover { background: rgba(255, 255, 255, 220); }
-        """)
+        """))
         self.hide()
 
     def mousePressEvent(self, event):
@@ -288,7 +289,7 @@ class VideoSettingsDialog(QDialog):
             camera_button.setMaximumWidth(16)
             camera_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
             camera_button.setProperty("skipGlobalStyle", True)
-            camera_button.setStyleSheet("""
+            camera_button.setStyleSheet(theme.qss("""
                 QToolButton {
                     background: transparent;
                     border: none;
@@ -297,8 +298,8 @@ class VideoSettingsDialog(QDialog):
                     min-width: 16px;
                     max-width: 16px;
                 }
-                QToolButton:hover { background: #e8f3f1; }
-            """)
+                QToolButton:hover { background: $accent_tint; }
+            """))
             camera_button.clicked.connect(
                 lambda _checked=False, row=index: self.open_camera_settings(row)
             )
@@ -309,7 +310,7 @@ class VideoSettingsDialog(QDialog):
             grid.addWidget(row_audio_device, index + 1, 8)
             grid.addWidget(row_offset, index + 1, 9)
             mode_status = QLabel("")
-            mode_status.setStyleSheet("color: #777; font-size: 8pt;")
+            mode_status.setStyleSheet(theme.qss("color: $grey_600; font-size: 8pt;"))
             mode_status.hide()
             self.camera_settings_buttons.append(camera_button)
             self.mode_status_labels.append(mode_status)
@@ -339,17 +340,17 @@ class VideoSettingsDialog(QDialog):
         self.preset_open_bracket = QLabel(_tr("["))
         self.preset_separator = QLabel(_tr("/"))
         self.preset_close_bracket = QLabel(_tr("]"))
-        link_style = """
+        link_style = theme.qss("""
             QPushButton {
                 background: transparent;
-                color: #2d7d6f;
+                color: $accent_dark;
                 border: none;
                 text-decoration: underline;
                 padding: 0px;
                 text-align: left;
             }
-            QPushButton:hover { color: #1f5c52; }
-        """
+            QPushButton:hover { color: $accent_deep; }
+        """)
         self.preset_load_button.setMaximumWidth(48)
         self.preset_set_button.setMaximumWidth(38)
         for button in (self.preset_load_button, self.preset_set_button):
@@ -416,7 +417,7 @@ class VideoSettingsDialog(QDialog):
             "Basler / GenICam expects the source string from pylon or device setup.")
         )
         help_text.setWordWrap(True)
-        help_text.setStyleSheet("color: #555;")
+        help_text.setStyleSheet(theme.qss("color: $grey_700;"))
         layout.addWidget(help_text)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel | QDialogButtonBox.Apply)
@@ -854,7 +855,7 @@ class MultiSourceRecorderWidget(QWidget):
         layout.setSpacing(4)
 
         self.status_label = QLabel(_tr("Not recording"))
-        self.status_label.setStyleSheet("color: #666;")
+        self.status_label.setStyleSheet(theme.qss("color: $grey_650;"))
 
         preview_grid = QGridLayout()
         preview_grid.setSpacing(3)
@@ -868,14 +869,14 @@ class MultiSourceRecorderWidget(QWidget):
             preview.setMinimumHeight(74)
             preview.setMaximumHeight(98)
             preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-            preview.setStyleSheet("""
+            preview.setStyleSheet(theme.qss("""
                 QLabel {
-                    background: #050505;
-                    color: #f2f2f2;
-                    border: 1px solid #cfcfcf;
+                    background: $grey_950;
+                    color: $grey_100;
+                    border: 1px solid $grey_260;
                     font-size: 9pt;
                 }
-            """)
+            """))
             ptz_button = PTZOverlayButton(self, index, preview)
             ptz_button.move((preview.width() - ptz_button.width()) // 2, (preview.minimumHeight() - ptz_button.height()) // 2)
             preview_grid.addWidget(preview, index // 2, index % 2)
@@ -896,7 +897,7 @@ class MultiSourceRecorderWidget(QWidget):
         headers = self.recording_property_headers
         for col, text in enumerate(headers):
             label = QLabel(text)
-            label.setStyleSheet("font-weight: bold; color: #444;")
+            label.setStyleSheet(theme.qss("font-weight: bold; color: $grey_800;"))
             source_grid.addWidget(label, 0, col)
 
         for index in range(4):
@@ -961,17 +962,17 @@ class MultiSourceRecorderWidget(QWidget):
         self.video_settings_link = QPushButton(_tr("Video Settings"))
         self.video_settings_link.setMaximumWidth(110)
         self.video_settings_link.setProperty("skipGlobalStyle", True)
-        self.video_settings_link.setStyleSheet("""
+        self.video_settings_link.setStyleSheet(theme.qss("""
             QPushButton {
                 background: transparent;
-                color: #2d7d6f;
+                color: $accent_dark;
                 border: none;
                 text-decoration: underline;
                 padding: 0px;
                 text-align: left;
             }
-            QPushButton:hover { color: #1f5c52; }
-        """)
+            QPushButton:hover { color: $accent_deep; }
+        """))
         self.video_settings_link.clicked.connect(lambda: self.open_video_settings())
         self.recording_log_link = QPushButton(_tr("Show recording log"))
         self.recording_log_link.setMaximumWidth(130)
@@ -1007,17 +1008,17 @@ class MultiSourceRecorderWidget(QWidget):
         browse_btn.setFixedSize(30, 24)
         browse_btn.setMaximumWidth(30)
         browse_btn.setProperty("skipGlobalStyle", True)
-        browse_btn.setStyleSheet("""
+        browse_btn.setStyleSheet(theme.qss("""
             QPushButton {
-                background: #43a296;
+                background: $accent;
                 color: white;
-                border: 1px solid #2d7d6f;
+                border: 1px solid $accent_dark;
                 border-radius: 4px;
                 padding: 0px;
                 font-weight: bold;
             }
-            QPushButton:hover { background: #3a9284; }
-        """)
+            QPushButton:hover { background: $accent_pressed; }
+        """))
         browse_btn.clicked.connect(self.browse_output_folder)
         browse_btn.hide()
         self.browse_output_button = browse_btn
@@ -1061,15 +1062,15 @@ class MultiSourceRecorderWidget(QWidget):
         self.start_btn.setFixedSize(44, 44)
         self.start_btn.setMaximumWidth(44)
         self.start_btn.setProperty("skipGlobalStyle", True)
-        self.start_btn.setStyleSheet("""
+        self.start_btn.setStyleSheet(theme.qss("""
             QPushButton {
                 border-radius: 22px;
-                background: #d92828;
-                border: 3px solid #c8c8c8;
+                background: $danger_deep;
+                border: 3px solid $grey_280;
             }
-            QPushButton:hover { background: #e23d3d; }
-            QPushButton:disabled { background: #999; }
-        """)
+            QPushButton:hover { background: $danger_mid; }
+            QPushButton:disabled { background: $grey_500; }
+        """))
         self.stop_btn = QPushButton(_tr("Stop Recording"))
         self.stop_btn.setEnabled(False)
         self.start_btn.clicked.connect(self.start_recording)

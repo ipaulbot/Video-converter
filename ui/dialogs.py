@@ -229,16 +229,16 @@ class LockedSettingsDialog(QDialog):
         message_label = QLabel(_tr("Settings are locked and cannot be modified.\n\nUnlock the application first to make changes."))
         message_label.setWordWrap(True)
         message_label.setAlignment(Qt.AlignCenter)
-        message_label.setStyleSheet("""
+        message_label.setStyleSheet(theme.qss("""
             QLabel {
                 font-family: 'Segoe UI', 'Arial', sans-serif;
                 font-size: 9pt;
-                color: #333333;
+                color: $text_body;
                 background: transparent;
                 border: none;
                 padding: 10px;
             }
-        """)
+        """))
 
         # OK button
         ok_button = QPushButton(_tr("OK"))
@@ -260,18 +260,18 @@ class LockedSettingsDialog(QDialog):
         layout.addLayout(button_layout)
 
         # Apply modern styling to the dialog
-        self.setStyleSheet("""
+        self.setStyleSheet(theme.qss("""
             QDialog {
-                background: #F5F5F5;
-                border: 1px solid #E0E0E0;
+                background: $window_bg;
+                border: 1px solid $separator;
                 border-radius: 8px;
             }
             QWidget {
-                background: #F5F5F5;
-                color: #333333;
+                background: $window_bg;
+                color: $text_body;
                 font-family: 'Segoe UI', 'Arial', sans-serif;
                 font-size: 9pt;
             }
-        """)
+        """))
 
         self.setLayout(layout)

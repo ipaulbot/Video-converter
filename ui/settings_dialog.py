@@ -14,6 +14,7 @@ from utils.logger import logger
 from utils.resources import resource_path
 from ui.dialogs import EasterEggDialog
 from utils.paths import get_data_dir
+from ui import theme
 
 
 
@@ -73,15 +74,17 @@ class SettingsDialog(QDialog):
             }
         """
 
-        # Determine highlight color to match app state (teal idle, green running, gray locked)
-        highlight_color = '#43a296'
-        try:
-            if parent and getattr(parent, 'locked', False):
-                highlight_color = '#8a8a8a'
-            elif parent and (getattr(parent, 'running', False) or getattr(parent, 'active_conversion_count', 0) > 0):
-                highlight_color = '#92cb4f'
-        except Exception:
-            logger.debug("SettingsDialog.__init__: suppressed error", exc_info=True)
+        # Match the app's state (teal idle, green running, grey locked). This
+        # was an eighth copy of that chain, and it asked the parent for
+        # `active_conversion_count`, which no longer exists -- the queue owns
+        # the count now. The getattr default of 0 meant the green state simply
+        # stopped being detected rather than failing, so ask the parent's own
+        # predicate instead of re-deriving it here.
+        highlight_color = theme.skin_for_state(
+            locked=bool(parent is not None and getattr(parent, 'locked', False)),
+            active=bool(parent is not None
+                        and parent.is_active_workflow_visual_state()),
+        ).accent
 
         modern_stylesheet = f"""
             QWidget {{
@@ -371,7 +374,7 @@ class SettingsDialog(QDialog):
         self.source_display = QLineEdit(self.current_settings.get('source_folder', ''))
         self.source_display.setReadOnly(True)
         # Remove gray background styling - use default white background
-        self.source_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
+        self.source_display.setStyleSheet(theme.qss("padding: 4px; background: white; border: 1px solid $separator; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;"))
         self.source_button = QPushButton(_tr("Change"))
         self.source_button.setFixedWidth(80)
         self.source_button.setCursor(Qt.PointingHandCursor)
@@ -389,7 +392,7 @@ class SettingsDialog(QDialog):
         self.destination_display = QLineEdit(self.current_settings.get('destination_folder', ''))
         self.destination_display.setReadOnly(True)
         # Remove gray background styling - use default white background
-        self.destination_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
+        self.destination_display.setStyleSheet(theme.qss("padding: 4px; background: white; border: 1px solid $separator; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;"))
         self.destination_button = QPushButton(_tr("Change"))
         self.destination_button.setFixedWidth(80)
         self.destination_button.setCursor(Qt.PointingHandCursor)
@@ -407,7 +410,7 @@ class SettingsDialog(QDialog):
         self.backup_display = QLineEdit(self.current_settings.get('backup_folder', ''))
         self.backup_display.setReadOnly(True)
         # Remove gray background styling - use default white background
-        self.backup_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
+        self.backup_display.setStyleSheet(theme.qss("padding: 4px; background: white; border: 1px solid $separator; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;"))
         self.backup_button = QPushButton(_tr("Change"))
         self.backup_button.setFixedWidth(80)
         self.backup_button.setCursor(Qt.PointingHandCursor)
@@ -425,7 +428,7 @@ class SettingsDialog(QDialog):
         self.log_display = QLineEdit(self.current_settings.get('log_folder', get_data_dir("logs")))
         self.log_display.setReadOnly(True)
         # Remove gray background styling - use default white background
-        self.log_display.setStyleSheet("padding: 4px; background: white; border: 1px solid #E0E0E0; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;")
+        self.log_display.setStyleSheet(theme.qss("padding: 4px; background: white; border: 1px solid $separator; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt;"))
         self.log_button = QPushButton(_tr("Change"))
         self.log_button.setFixedWidth(80)
         self.log_button.setCursor(Qt.PointingHandCursor)
@@ -774,7 +777,7 @@ class SettingsDialog(QDialog):
         console_layout.setContentsMargins(10, 10, 10, 10)
 
         console_info = QLabel(_tr("Custom FFmpeg flags (for advanced users):"))
-        console_info.setStyleSheet("color: #666; font-style: italic;")
+        console_info.setStyleSheet(theme.qss("color: $grey_650; font-style: italic;"))
 
         # Row for input + help button
         cmd_layout = QHBoxLayout()
@@ -970,7 +973,9 @@ class SettingsDialog(QDialog):
             parent = self.parent()
             is_monitoring = False
             if parent is not None:
-                is_monitoring = bool(getattr(parent, 'running', False) or getattr(parent, 'active_conversion_count', 0) > 0)
+                # Same stale attribute as above; use the parent's predicate.
+                is_monitoring = bool(parent is not None
+                                     and parent.is_active_workflow_visual_state())
             image_path = resource_path('graphics/greentime.png') if is_monitoring else resource_path('graphics/tealtime.png')
             if os.path.exists(image_path):
                 self.time_image_label = QLabel()

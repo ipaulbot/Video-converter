@@ -7,6 +7,7 @@ from PyQt5.QtCore import QCoreApplication, pyqtSignal, Qt
 import os
 import subprocess
 from utils.logger import logger
+from ui import theme
 
 
 
@@ -109,7 +110,7 @@ class ConvertedFilesWidget(QWidget):
         from PyQt5.QtWidgets import QFrame
         self.table_container = QFrame()
         self.table_container.setFrameStyle(QFrame.Box)
-        self.table_container.setStyleSheet("QFrame { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
+        self.table_container.setStyleSheet(theme.qss("QFrame { border: 1px solid $separator; border-radius: 6px; background: white; }"))
 
         # Create a layout for the container
         container_layout = QVBoxLayout(self.table_container)
@@ -126,18 +127,18 @@ class ConvertedFilesWidget(QWidget):
         if self.button_style:
             clear_button.setStyleSheet(self.button_style)
         else:
-            clear_button.setStyleSheet("""
+            clear_button.setStyleSheet(theme.qss("""
                 QPushButton {
                     background: transparent;
-                    border: 1px solid #dee2e6;
+                    border: 1px solid $panel_border;
                     border-radius: 4px;
                     font-size: 12px;
                     padding: 4px 8px;
                 }
                 QPushButton:hover {
-                    background: #f8f9fa;
+                    background: $grey_050;
                 }
-            """)
+            """))
         clear_button.clicked.connect(self.clear_table)
         clear_button.setProperty('skipGlobalStyle', True)
         clear_button.hide()
@@ -179,34 +180,34 @@ class ConvertedFilesWidget(QWidget):
         # self.table_widget.setCornerWidget(clear_button)
 
         # Style the table with minimal internal spacing
-        self.table_widget.setStyleSheet("""
+        self.table_widget.setStyleSheet(theme.qss("""
             QTableWidget {
                 background: white;
                 border: none;
                 border-radius: 0px;
-                gridline-color: #dee2e6;
+                gridline-color: $panel_border;
                 margin: 0px;
                 padding: 0px;
             }
             QTableWidget::item {
                 padding: 8px 12px;
-                border-bottom: 1px solid #dee2e6;
+                border-bottom: 1px solid $panel_border;
             }
             QTableWidget::item:selected {
-                background: #e9ecef;
+                background: $inner_border;
             }
             QHeaderView::section {
-                background: #f8f9fa;
+                background: $grey_050;
                 padding: 4px 12px;
-                border: 1px solid #dee2e6;
+                border: 1px solid $panel_border;
                 font-weight: bold;
                 font-size: 12px;
-                color: #6c757d;
+                color: $text_muted;
             }
             QAbstractScrollArea::corner {
                 background: white;
             }
-        """)
+        """))
 
         # Add table to container
         container_layout.addWidget(self.table_widget)
