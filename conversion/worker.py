@@ -6,12 +6,8 @@ import tempfile
 from datetime import datetime, timedelta
 import re
 
-# Helper to hide console windows on Windows
-from utils.subprocess_helpers import get_subprocess_startupinfo
-
-def _get_subprocess_startupinfo():
-    """Return (startupinfo, creationflags) that hide console windows on Windows."""
-    return get_subprocess_startupinfo()
+# Hides console windows on Windows.
+from utils.subprocess_helpers import FFPROBE_TIMEOUT, get_subprocess_startupinfo
 
 from PyQt5.QtCore import QRunnable, QObject, pyqtSignal, pyqtSlot
 
@@ -46,7 +42,7 @@ class ConversionWorker(QRunnable):
                 self.signals.log.emit("[cancel] Terminating FFmpeg…")
                 proc.terminate()
             except Exception:
-                pass
+                logger.debug("ConversionWorker.cancel: suppressed error", exc_info=True)
 
     @pyqtSlot()
     def run(self):
@@ -80,7 +76,7 @@ class ConversionWorker(QRunnable):
                         try:
                             add_pending_deletion(self.file_path, deletion_time.timestamp())
                         except Exception:
-                            pass
+                            logger.debug("ConversionWorker.run: suppressed error", exc_info=True)
                         # Also schedule best-effort timer for current session
                         threading.Timer(retention_days * 86400, self.delete_file, args=[self.file_path]).start()
                         deletion_info['scheduled_deletion'] = deletion_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -107,11 +103,15 @@ class ConversionWorker(QRunnable):
             return False
         command = [ffprobe_path, '-v', 'error', '-show_format', '-show_streams', self.file_path]
         try:
-            startupinfo, creationflags = _get_subprocess_startupinfo()
+            startupinfo, creationflags = get_subprocess_startupinfo()
             subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+                           timeout=FFPROBE_TIMEOUT,
                            startupinfo=startupinfo, creationflags=creationflags)
             return True
         except subprocess.CalledProcessError:
+            return False
+        except subprocess.TimeoutExpired:
+            logger.error("ffprobe timed out validating %s; treating as invalid.", self.file_path)
             return False
 
     def get_output_file_path(self):
@@ -129,6 +129,7 @@ class ConversionWorker(QRunnable):
             return False
         command = build_ffmpeg_command(self.settings, input_file, output_file)
         total_duration = self.get_duration(input_file)
+        startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             with subprocess.Popen(
                 command,
@@ -137,8 +138,8 @@ class ConversionWorker(QRunnable):
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
                 bufsize=1,
-                startupinfo=_get_subprocess_startupinfo()[0],
-                creationflags=_get_subprocess_startupinfo()[1]
+                startupinfo=startupinfo,
+                creationflags=creationflags
             ) as process:
                 self._process = process
                 percent = 0
@@ -147,7 +148,7 @@ class ConversionWorker(QRunnable):
                         try:
                             process.terminate()
                         except Exception:
-                            pass
+                            logger.debug("ConversionWorker.perform_conversion: suppressed error", exc_info=True)
                         # Give it up to ~3s to die, else kill
                         for _ in range(30):
                             if process.poll() is not None:
@@ -159,7 +160,7 @@ class ConversionWorker(QRunnable):
                             try:
                                 process.kill()
                             except Exception:
-                                pass
+                                logger.debug("ConversionWorker.perform_conversion: suppressed error", exc_info=True)
                         # Drain any remaining output quickly
                         try:
                             for _ in range(50):
@@ -169,7 +170,7 @@ class ConversionWorker(QRunnable):
                                 if not chunk:
                                     break
                         except Exception:
-                            pass
+                            logger.debug("ConversionWorker.perform_conversion: suppressed error", exc_info=True)
                         return False
                     line_str = line.rstrip('\n')
                     self.signals.log.emit(line_str)
@@ -207,6 +208,7 @@ class ConversionWorker(QRunnable):
         except OSError:
             pass
         palette_cmd, encode_cmd = build_gif_commands(self.settings, input_file, output_file, temp_palette)
+        startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             if palette_cmd is not None:
                 # Pass 1: palette
@@ -218,8 +220,8 @@ class ConversionWorker(QRunnable):
                     stderr=subprocess.STDOUT,
                     universal_newlines=True,
                     bufsize=1,
-                    startupinfo=_get_subprocess_startupinfo()[0],
-                    creationflags=_get_subprocess_startupinfo()[1]
+                    startupinfo=startupinfo,
+                    creationflags=creationflags
                 )
                 self._process = p1
                 for line in p1.stdout:
@@ -227,7 +229,7 @@ class ConversionWorker(QRunnable):
                         try:
                             p1.terminate()
                         except Exception:
-                            pass
+                            logger.debug("ConversionWorker.perform_gif_conversion: suppressed error", exc_info=True)
                         break
                 rc1 = p1.wait()
                 self._process = None
@@ -246,8 +248,8 @@ class ConversionWorker(QRunnable):
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
                 bufsize=1,
-                startupinfo=_get_subprocess_startupinfo()[0],
-                creationflags=_get_subprocess_startupinfo()[1]
+                startupinfo=startupinfo,
+                creationflags=creationflags
             )
             self._process = p2
             for line in p2.stdout:
@@ -255,7 +257,7 @@ class ConversionWorker(QRunnable):
                     try:
                         p2.terminate()
                     except Exception:
-                        pass
+                        logger.debug("ConversionWorker.perform_gif_conversion: suppressed error", exc_info=True)
                     break
                 self.signals.log.emit(line.rstrip('\n'))
             rc2 = p2.wait()
@@ -267,7 +269,7 @@ class ConversionWorker(QRunnable):
                 if os.path.exists(temp_palette):
                     os.remove(temp_palette)
             except Exception:
-                pass
+                logger.debug("ConversionWorker.perform_gif_conversion: suppressed error", exc_info=True)
 
     def _output_file_ready(self, output_file):
         try:
@@ -281,8 +283,9 @@ class ConversionWorker(QRunnable):
             return 0
         command = [ffprobe_path, '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_path]
         try:
-            startupinfo, creationflags = _get_subprocess_startupinfo()
+            startupinfo, creationflags = get_subprocess_startupinfo()
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+                                   timeout=FFPROBE_TIMEOUT,
                                    startupinfo=startupinfo, creationflags=creationflags)
             return float(result.stdout.strip())
         except Exception:

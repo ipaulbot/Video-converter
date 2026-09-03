@@ -45,7 +45,7 @@ class EasterEggDialog(QDialog):
 
     def play_audio(self):
         self.media_player = QMediaPlayer(self)
-        audio_file_path = resource_path('paradise.mp3')
+        audio_file_path = resource_path('Paradise.mp3')
         if os.path.exists(audio_file_path):
             url = QUrl.fromLocalFile(audio_file_path)
             media_content = QMediaContent(url)

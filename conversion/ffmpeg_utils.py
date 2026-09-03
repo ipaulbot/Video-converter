@@ -4,13 +4,26 @@ import shutil
 from datetime import datetime, timezone
 from utils.logger import logger
 from utils.resources import resource_path
-from utils.subprocess_helpers import get_subprocess_startupinfo
-from conversion.gpu_encoders import GPU_ENCODERS
+from utils.subprocess_helpers import (
+    FFMPEG_REMUX_TIMEOUT,
+    FFPROBE_TIMEOUT,
+    get_subprocess_startupinfo,
+)
+from conversion.gpu_encoders import get_supported_encoders
 
-# Helper to hide console windows on Windows
-def _get_subprocess_startupinfo():
-    """Return (startupinfo, creationflags) that hide console windows on Windows."""
-    return get_subprocess_startupinfo()
+# Detected GPU encoders, or None to resolve them on first use. Left unset so
+# that importing this module never shells out to ffmpeg; detection is cached in
+# conversion.gpu_encoders, so resolving it costs one subprocess per process.
+# Tests override this attribute directly to pin a specific encoder map.
+GPU_ENCODERS = None
+
+
+def _gpu_encoders():
+    """Return the GPU encoder map, honouring an explicit GPU_ENCODERS override."""
+    if GPU_ENCODERS is not None:
+        return GPU_ENCODERS
+    return get_supported_encoders()
+
 
 def is_within_allowed_time(settings):
     """
@@ -86,7 +99,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
 
             # Look up encoder for the specific/detected vendor
             if gpu_vendor.lower() != 'none':
-                gpu_encoder_map = GPU_ENCODERS.get(gpu_vendor.lower(), {})
+                gpu_encoder_map = _gpu_encoders().get(gpu_vendor.lower(), {})
                 codec_intent = video_codec_intent(settings.get('video_codec', 'libx264'))
                 gpu_encoder = gpu_encoder_map.get(codec_intent, '')
 
@@ -188,8 +201,9 @@ def build_ffmpeg_command(settings, input_file, output_file):
                             "-of", "default=noprint_wrappers=1:nokey=1",
                             path
                         ]
-                        startupinfo, creationflags = _get_subprocess_startupinfo()
+                        startupinfo, creationflags = get_subprocess_startupinfo()
                         res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                             timeout=FFPROBE_TIMEOUT,
                                              startupinfo=startupinfo, creationflags=creationflags, check=False)
                         raw = (res.stdout or "").strip().splitlines()
                         raw = [x.strip() for x in raw if x.strip()]
@@ -206,7 +220,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
                             # Convert to local time then to epoch seconds
                             return int(dt.astimezone().timestamp())
                 except Exception:
-                    pass
+                    logger.debug("_probe_recorded_epoch_seconds: suppressed error", exc_info=True)
                 # 2) fallback: file modified time
                 try:
                     return int(os.path.getmtime(path))
@@ -225,8 +239,9 @@ def build_ffmpeg_command(settings, input_file, output_file):
                         "-of", "default=noprint_wrappers=1:nokey=1",
                         path
                     ]
-                    startupinfo, creationflags = _get_subprocess_startupinfo()
+                    startupinfo, creationflags = get_subprocess_startupinfo()
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                         timeout=FFPROBE_TIMEOUT,
                                          startupinfo=startupinfo, creationflags=creationflags, check=False)
                     s = (res.stdout or "").strip()
                     return float(s) if s else 0.0
@@ -369,7 +384,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
             if gop > 0:
                 command.extend(['-g', str(gop)])
         except Exception:
-            pass
+            logger.debug("build_ffmpeg_command: suppressed error", exc_info=True)
 
     output_format = settings.get('output_format', 'mp4')
     if output_format:
@@ -442,12 +457,21 @@ def preprocess_file(file_path):
     fixed_file = f"{file_path}_fixed"
     command = [ffmpeg_path, '-i', file_path, '-c', 'copy', fixed_file]
     try:
-        startupinfo, creationflags = _get_subprocess_startupinfo()
+        startupinfo, creationflags = get_subprocess_startupinfo()
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+                       timeout=FFMPEG_REMUX_TIMEOUT,
                        startupinfo=startupinfo, creationflags=creationflags)
         shutil.move(fixed_file, file_path)
         logger.info(f"Preprocessed and fixed file {file_path}.")
         return True
+    except subprocess.TimeoutExpired:
+        logger.error("Preprocessing %s timed out after %ss.", file_path, FFMPEG_REMUX_TIMEOUT)
+        if os.path.exists(fixed_file):
+            try:
+                os.remove(fixed_file)
+            except OSError:
+                logger.exception("Could not remove partial remux output %s.", fixed_file)
+        return False
     except subprocess.CalledProcessError as e:
         logger.error(f"Failed to preprocess file {file_path}: {e}")
         if os.path.exists(fixed_file):
@@ -468,10 +492,14 @@ def has_audio_stream(file_path):
         file_path
     ]
     try:
-        startupinfo, creationflags = _get_subprocess_startupinfo()
+        startupinfo, creationflags = get_subprocess_startupinfo()
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+                                timeout=FFPROBE_TIMEOUT,
                                 startupinfo=startupinfo, creationflags=creationflags)
         return bool(result.stdout.strip())
+    except subprocess.TimeoutExpired:
+        logger.error("ffprobe timed out checking the audio stream of %s.", file_path)
+        return False
     except subprocess.CalledProcessError as e:
         logger.error(f"Error checking audio stream for {file_path}: {e}")
         return False

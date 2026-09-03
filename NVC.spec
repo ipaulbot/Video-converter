@@ -1,11 +1,26 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
 
+# ui/, utils/, conversion/ and pc_report/ are deliberately NOT listed in datas.
+# They are real packages and PyInstaller already freezes them into the archive;
+# listing them as data copied the source tree into the bundle a second time.
+#
+# help_document.pdf is included only when it exists. ui/main_window.py's
+# open_help_document() prefers the PDF and falls back to help_document.html, so
+# without this entry a frozen build could never use the PDF at all.
+_optional_datas = [
+    (name, '.') for name in ('help_document.pdf',) if os.path.exists(name)
+]
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[('ffmpeg.exe', '.'), ('ffprobe.exe', '.')],
-    datas=[('graphics', 'graphics'), ('ui', 'ui'), ('utils', 'utils'), ('pc_report', 'pc_report'), ('help_document.html', '.'), ('paradise.mp3', '.')],
+    datas=[
+        ('graphics', 'graphics'),
+        ('help_document.html', '.'),
+        ('Paradise.mp3', '.'),
+    ] + _optional_datas,
     hiddenimports=['PyQt5.QtMultimedia'],
     hookspath=[],
     hooksconfig={},

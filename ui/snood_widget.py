@@ -275,7 +275,7 @@ class SnoodWidget(QWidget):
             if get_best_level() < 1:
                 set_best_level(1)
         except Exception:
-            pass
+            logger.debug("SnoodWidget.__init__: suppressed error", exc_info=True)
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_tick)
@@ -370,11 +370,11 @@ class SnoodWidget(QWidget):
             images['red'] = QPixmap(red_path)
         # ping-pong special ball
         ping_map = {
-            'gray': 'grayscaleballbuster.png',
-            'teal': 'tealballbuster.png',
-            'green': 'ballbuster.png'
+            'gray': 'GRAYSCALEBALLBUSTER.png',
+            'teal': 'TEALBALLBUSTER.png',
+            'green': 'BALLBUSTER.png'
         }
-        ping_file = ping_map.get(self.theme, 'ballbuster.png')
+        ping_file = ping_map.get(self.theme, 'BALLBUSTER.png')
         for cand in [ping_file, ping_file.upper(), ping_file.capitalize()]:
             ping_path = resource_path(f'graphics/{cand}')
             if os.path.exists(ping_path):
@@ -1290,7 +1290,7 @@ class SnoodWidget(QWidget):
                 # Store a transient banner
                 self._speed_bonus_banner_until = time.time() + 1.5
         except Exception:
-            pass
+            logger.debug("SnoodWidget.maybe_level_complete: suppressed error", exc_info=True)
         # drop bumpers visually during transition
         for r in range(MAX_ROWS):
             for c in range(NUM_COLS):
@@ -1323,7 +1323,7 @@ class SnoodWidget(QWidget):
             if getattr(self, '_win_player', None):
                 self._win_player.stop()
         except Exception:
-            pass
+            logger.debug("SnoodWidget._progress_from_win: suppressed error", exc_info=True)
         self.update_high_scores(self.score)
         self.game_over = True
         self.update()
@@ -1339,7 +1339,7 @@ class SnoodWidget(QWidget):
         try:
             set_best_level(max(get_best_level(), next_idx + 1))
         except Exception:
-            pass
+            logger.debug("SnoodWidget._start_next_level: suppressed error", exc_info=True)
         # Restore shooter ball only if new level is not introducing a special ball
         if prev_current and next_idx not in self.INTRO_INFO:
             prev_current['x'] = self.width()/2
@@ -1890,14 +1890,9 @@ class SnoodWidget(QWidget):
             self.win_music_played = True
             try:
                 from utils.resources import resource_path
-                # Use a single MP3 asset: paradise.mp3
-                candidates = ['paradise.mp3', 'Paradise.mp3', 'PARADISE.MP3']
-                audio_path = ''
-                for name in candidates:
-                    p = resource_path(name)
-                    if os.path.exists(p):
-                        audio_path = p
-                        break
+                audio_path = resource_path('Paradise.mp3')
+                if not os.path.exists(audio_path):
+                    audio_path = ''
                 if audio_path:
                     from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
                     from PyQt5.QtCore import QUrl
@@ -1906,7 +1901,7 @@ class SnoodWidget(QWidget):
                     self._win_player.setVolume(80)
                     self._win_player.play()
             except Exception:
-                pass
+                logger.debug("SnoodWidget.draw_win_overlay: suppressed error", exc_info=True)
 
     def draw_game_over_overlay(self, painter):
         # centered dialog box like settings UI (no dark overlay)

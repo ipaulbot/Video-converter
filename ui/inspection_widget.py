@@ -7,7 +7,11 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 from utils.resources import resource_path
 from utils.logger import logger
-from utils.subprocess_helpers import get_subprocess_startupinfo
+from utils.subprocess_helpers import (
+    FFMPEG_RENDER_TIMEOUT,
+    FFPROBE_TIMEOUT,
+    get_subprocess_startupinfo,
+)
 
 class InspectionWorker(QThread):
     finished = pyqtSignal(str, str, str)
@@ -31,9 +35,11 @@ class InspectionWorker(QThread):
         startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                    timeout=FFPROBE_TIMEOUT,
                                     startupinfo=startupinfo, creationflags=creationflags, check=True)
             try:
                 gop_result = subprocess.run(keyframe_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                            timeout=FFMPEG_RENDER_TIMEOUT,
                                             startupinfo=startupinfo, creationflags=creationflags)
                 keyframe_csv = gop_result.stdout or ''
             except Exception:
@@ -381,12 +387,14 @@ class InspectionWidget(QWidget):
         startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                      timeout=FFPROBE_TIMEOUT,
                                       startupinfo=startupinfo, creationflags=creationflags, check=True)
             data = json.loads(result.stdout)
 
             # Get keyframe info (best effort)
             try:
                 gop_result = subprocess.run(keyframe_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                          timeout=FFMPEG_RENDER_TIMEOUT,
                                           startupinfo=startupinfo, creationflags=creationflags)
                 keyframe_info = self.analyze_keyframes(gop_result.stdout)
             except Exception:
@@ -397,6 +405,10 @@ class InspectionWidget(QWidget):
                 summary += f"\n{keyframe_info}"
 
             self.summary_text.setPlainText(summary)
+        except subprocess.TimeoutExpired:
+            self.summary_text.setPlainText(
+                f"Timed out reading this file after {FFPROBE_TIMEOUT} seconds.\n"
+                "The file may be on a slow or disconnected drive.")
         except subprocess.CalledProcessError as e:
             err_msg = f"Error inspecting file:\n{e.stderr}"
             self.summary_text.setPlainText(err_msg)
@@ -456,9 +468,14 @@ class InspectionWidget(QWidget):
         startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                      timeout=FFPROBE_TIMEOUT,
                                       startupinfo=startupinfo, creationflags=creationflags, check=True)
             raw_json = result.stdout
             self.info_display.setPlainText(raw_json)
+        except subprocess.TimeoutExpired:
+            self.info_display.setPlainText(
+                f"Timed out reading this file after {FFPROBE_TIMEOUT} seconds.\n"
+                "The file may be on a slow or disconnected drive.")
         except subprocess.CalledProcessError as e:
             err_msg = f"Error inspecting file:\n{e.stderr}"
             self.info_display.setPlainText(err_msg)
@@ -518,7 +535,7 @@ class InspectionWidget(QWidget):
                     return
                 widget = widget.parent()
         except Exception:
-            pass
+            logger.debug("InspectionWidget._notify_main_preview: suppressed error", exc_info=True)
 
     def generate_summary(self, data):
         format_info = data.get("format", {})
@@ -605,7 +622,7 @@ class InspectionWidget(QWidget):
             mins = int((duration % 3600) // 60)
             secs = int(duration % 60)
             return f"{hours:02d}:{mins:02d}:{secs:02d}"
-        except:
+        except (TypeError, ValueError):
             return "Unknown"
 
     def format_bitrate(self, bitrate_str):
@@ -613,7 +630,7 @@ class InspectionWidget(QWidget):
             br = int(bitrate_str)
             kbps = br / 1000.0
             return f"{kbps:.1f} kbps"
-        except:
+        except (TypeError, ValueError):
             return "Unknown"
 
     def format_framerate(self, fr_str):
@@ -623,7 +640,7 @@ class InspectionWidget(QWidget):
             num, den = fr_str.split('/')
             fr = float(num) / float(den)
             return f"{fr:.2f} fps"
-        except:
+        except (AttributeError, TypeError, ValueError, ZeroDivisionError):
             return "Unknown"
 
     def calculate_stream_duration(self, stream):
@@ -635,7 +652,7 @@ class InspectionWidget(QWidget):
                 try:
                     num, den = time_base.split('/')
                     dur = float(duration_ts) * (float(num)/float(den))
-                except:
+                except (AttributeError, TypeError, ValueError, ZeroDivisionError):
                     dur = None
         if dur is None:
             return "Unknown"
