@@ -528,6 +528,58 @@ def drop_zone_style(radius: int = RADIUS_LG) -> str:
     )
 
 
+def preview_box_style(radius: int = RADIUS_LG) -> str:
+    """The sidebar preview frame: a dashed drop target that accents on hover."""
+    s = skin()
+    return (
+        f"QFrame {{ background: {s.panel_bg}; "
+        f"border: 2px dashed {s.panel_border}; border-radius: {radius}px; }} "
+        f"QFrame:hover {{ border: 2px dashed {s.accent}; "
+        f"background: {rgba(s.accent, 0.05)}; }}"
+    )
+
+
+def preview_placeholder_style(color: str | None = None) -> str:
+    """The 'No Preview' text inside the preview box."""
+    return (
+        f"QLabel {{ color: {color or skin().accent}; font-size: 14px; "
+        f"font-weight: normal; background-color: transparent; border: none; }}"
+    )
+
+
+def preview_overlay_button_style(highlight: str | None = None) -> str:
+    """The small play/pause button floating over the preview thumbnail.
+
+    Sits on video, so its resting colour is a translucent black rather than a
+    skin surface; only the hover state takes the accent.
+    """
+    accent = highlight or skin().accent
+    return (
+        f"QPushButton {{ background-color: rgba(0, 0, 0, 0.6); "
+        f"border-radius: 11px; border: 1px solid rgba(255, 255, 255, 0.3); "
+        f"padding: 0px; min-width: 22px; max-width: 22px; "
+        f"min-height: 22px; max-height: 22px; }} "
+        f"QPushButton:hover {{ background-color: {rgba(accent, 0.8)}; "
+        f"border: 1px solid {accent}; border-radius: 11px; }}"
+    )
+
+
+def preview_scrubber_style(highlight: str | None = None) -> str:
+    """The thin timeline slider over the preview thumbnail."""
+    accent = highlight or skin().accent
+    return (
+        f"QSlider::groove:horizontal {{ height: 4px; "
+        f"background: rgba(255, 255, 255, 0.35); border-radius: 2px; }} "
+        f"QSlider::sub-page:horizontal {{ height: 4px; "
+        f"background: {rgba(accent, 0.9)}; border-radius: 2px; }} "
+        f"QSlider::add-page:horizontal {{ height: 4px; "
+        f"background: rgba(255, 255, 255, 0.25); border-radius: 2px; }} "
+        f"QSlider::handle:horizontal {{ width: 8px; margin: -3px 0; "
+        f"border-radius: 4px; background: rgba(255, 255, 255, 0.75); "
+        f"border: 1px solid rgba(0, 0, 0, 0.2); }}"
+    )
+
+
 def drop_zone_active_style(radius: int = RADIUS_LG) -> str:
     """A drop zone while a drag is over it: solid accent border, tinted fill."""
     s = skin()
