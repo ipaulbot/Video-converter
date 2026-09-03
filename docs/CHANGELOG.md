@@ -44,3 +44,10 @@ Use this file to track user-visible fixes, improvements, and feature work.
   if/elif chains. Appearance is unchanged.
 - Removed the superseded hand-written help document; the generated manuals are
   now the only help.
+- Split the sidebar video preview, the easter-egg game and the conversion-queue
+  bookkeeping out of the main window into their own modules, and added tests
+  for the conversion worker. No user-visible change intended.
+- Fixed closing NVC hanging after a conversion with a retention period set: the
+  deletion timer was blocking interpreter exit for up to 30 days.
+- Fixed two files with the same name in different folders writing each other's
+  conversion log.
