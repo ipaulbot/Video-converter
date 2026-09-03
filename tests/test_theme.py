@@ -381,3 +381,74 @@ class NoDuplicatedStateChainTests(unittest.TestCase):
         ):
             self.assertIs(theme.skin_for_state(locked=locked, active=active),
                           expected, (locked, active))
+
+
+class ButtonSweepTests(unittest.TestCase):
+    """theme.apply_to_buttons replaced two recursive walkers.
+
+    main_window's excluded two buttons by name (one of which has been
+    commented out of the UI for some time); settings_dialog's excluded nothing
+    at all, so any purpose-built button style in that dialog would have been
+    overwritten -- the same defect that was live in the main window's preview
+    overlay button.
+    """
+
+    def _tree(self):
+        """A root with a nested button, to prove the walk is recursive."""
+        from PyQt5.QtWidgets import QVBoxLayout
+        root = QWidget()
+        outer = QPushButton("outer", root)
+        nested_host = QWidget(root)
+        QVBoxLayout(nested_host)
+        nested = QPushButton("nested", nested_host)
+        return root, outer, nested
+
+    def test_it_styles_buttons_at_every_depth(self):
+        root, outer, nested = self._tree()
+        try:
+            count = theme.apply_to_buttons(root, "QPushButton { color: red; }")
+            self.assertEqual(count, 2)
+            self.assertIn("red", outer.styleSheet())
+            self.assertIn("red", nested.styleSheet())
+        finally:
+            root.deleteLater()
+
+    def test_an_opted_out_button_keeps_its_own_style(self):
+        root, outer, nested = self._tree()
+        try:
+            nested.setStyleSheet("QPushButton { color: blue; }")
+            theme.opt_out_of_button_style(nested)
+
+            count = theme.apply_to_buttons(root, "QPushButton { color: red; }")
+            self.assertEqual(count, 1, "the opted-out button should be skipped")
+            self.assertIn("red", outer.styleSheet())
+            self.assertIn("blue", nested.styleSheet(),
+                          "an opted-out button was overwritten")
+        finally:
+            root.deleteLater()
+
+    def test_the_opt_out_property_is_the_one_the_walkers_used(self):
+        # Buttons in the wild already set this by name; renaming the constant
+        # without updating them would silently un-protect them.
+        self.assertEqual(theme.SKIP_GLOBAL_STYLE, "skipGlobalStyle")
+
+    def test_a_tree_with_no_buttons_is_harmless(self):
+        root = QWidget()
+        try:
+            self.assertEqual(theme.apply_to_buttons(root, "x"), 0)
+        finally:
+            root.deleteLater()
+
+    def test_both_hosts_route_through_the_shared_helper(self):
+        """Neither should reimplement the traversal."""
+        import pathlib
+        root_dir = pathlib.Path(__file__).resolve().parents[1]
+        for rel, method in (("ui/main_window.py", "apply_button_style_to_all_widgets"),
+                            ("ui/settings_dialog.py", "apply_button_style_recursively")):
+            source = (root_dir / rel).read_text(encoding="utf-8")
+            start = source.index(f"def {method}(")
+            body = source[start:start + 900]
+            self.assertIn("theme.apply_to_buttons", body,
+                          f"{rel}:{method} should delegate, not walk the tree")
+            self.assertNotIn("for child in widget.children()", body,
+                             f"{rel}:{method} still has its own traversal")

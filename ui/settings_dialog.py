@@ -229,26 +229,18 @@ class SettingsDialog(QDialog):
             self.apply_button_style_to_all_buttons()
 
     def apply_button_style_to_all_buttons(self):
-        """Apply the button style to all QPushButton widgets in the dialog"""
-        # Apply to main dialog buttons
-        if hasattr(self, 'default_button'):
-            self.default_button.setStyleSheet(self.button_style)
-        if hasattr(self, 'ok_button'):
-            self.ok_button.setStyleSheet(self.button_style)
-        if hasattr(self, 'cancel_button'):
-            self.cancel_button.setStyleSheet(self.button_style)
+        """Apply the host's button style to every button in the dialog.
 
-        # Apply to all other buttons in the dialog
-        self.apply_button_style_recursively(self)
+        This used to style default/ok/cancel explicitly and then walk the tree
+        and style them a second time. Its walker also had no opt-out at all,
+        so any button here with a purpose-built look would have been
+        overwritten -- the same defect that was live in the main window.
+        """
+        return theme.apply_to_buttons(self, self.button_style)
 
     def apply_button_style_recursively(self, widget):
-        """Recursively apply button style to all QPushButton widgets"""
-        if hasattr(widget, 'children'):
-            for child in widget.children():
-                if isinstance(child, QPushButton):
-                    child.setStyleSheet(self.button_style)
-                # Recursively apply to child widgets
-                self.apply_button_style_recursively(child)
+        """Kept for callers; the traversal lives in theme.apply_to_buttons."""
+        return theme.apply_to_buttons(widget, self.button_style)
 
     def create_general_tab(self):
         self.general_tab = QWidget()

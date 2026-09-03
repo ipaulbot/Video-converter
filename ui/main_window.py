@@ -795,6 +795,9 @@ class VideoConverterApp(QMainWindow):
 
         # Start/Stop Button
         self.start_button = QPushButton(_tr("Start"))
+        # Its look is driven by set_start_button_state, so the global
+        # button sweep must not overwrite it.
+        theme.opt_out_of_button_style(self.start_button)
         # Match settings + preview width for perfect edge alignment
         self.start_button.setFixedWidth(180)
         self.start_button.setToolTip(_tr("Start or stop the automatic conversion process."))
@@ -2950,15 +2953,15 @@ class VideoConverterApp(QMainWindow):
             )
 
     def apply_button_style_to_all_widgets(self, widget):
-        """Recursively apply button style to all QPushButton widgets"""
-        if hasattr(widget, 'children'):
-            for child in widget.children():
-                if isinstance(child, QPushButton):
-                    # Don't override the start button's specific styling and also skip buttons marked to skip global style
-                    if child != self.start_button and child != getattr(self, 'compact_start_button', None) and not child.property('skipGlobalStyle'):
-                        child.setStyleSheet(self.current_button_style)
-                # Recursively apply to child widgets
-                self.apply_button_style_to_all_widgets(child)
+        """Apply the current button style beneath `widget`.
+
+        The traversal lives in theme.apply_to_buttons now, shared with
+        SettingsDialog. Buttons keep their own look by setting the
+        skipGlobalStyle property rather than by this method knowing their
+        names -- it used to exclude `compact_start_button`, which has been
+        commented out of the UI for some time.
+        """
+        return theme.apply_to_buttons(widget, self.current_button_style)
 
     def eventFilter(self, obj, event):
         """Event filter to handle mouse events on the drag drop overlay and video preview."""

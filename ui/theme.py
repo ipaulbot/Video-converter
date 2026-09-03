@@ -830,3 +830,42 @@ def qss(template: str, s: Skin | None = None, **extra) -> str:
             f"unknown theme token ${exc.args[0]} in a QSS template; "
             f"known tokens are {sorted(values)}"
         ) from None
+
+# ---------------------------------------------------------------------------
+# Applying a button style across a widget tree
+# ---------------------------------------------------------------------------
+# Buttons are created in dozens of places across the UI, so a single traversal
+# is a reasonable way to restyle them -- but it must be opt-out, or it stamps
+# over widgets that have a purpose-built style. That is not hypothetical: the
+# preview's translucent overlay button was silently given the main gradient
+# for as long as both pieces of code existed.
+#
+# A widget opts out by setting this Qt property:
+#
+#     button.setProperty(theme.SKIP_GLOBAL_STYLE, True)
+SKIP_GLOBAL_STYLE: Final[str] = "skipGlobalStyle"
+
+
+def opt_out_of_button_style(widget) -> None:
+    """Mark a widget so apply_to_buttons() leaves its stylesheet alone."""
+    widget.setProperty(SKIP_GLOBAL_STYLE, True)
+
+
+def apply_to_buttons(root, stylesheet: str) -> int:
+    """Apply `stylesheet` to every QPushButton under `root`. Returns the count.
+
+    Replaces two near-identical recursive walkers -- one in main_window that
+    excluded two buttons by name, one in settings_dialog that excluded nothing
+    at all. Exclusion is now uniform and self-describing: a button that wants
+    to keep its own look says so, rather than the walker needing to know about
+    it.
+    """
+    from PyQt5.QtWidgets import QPushButton
+
+    styled = 0
+    for child in root.children():
+        if isinstance(child, QPushButton) and not child.property(SKIP_GLOBAL_STYLE):
+            child.setStyleSheet(stylesheet)
+            styled += 1
+        styled += apply_to_buttons(child, stylesheet)
+    return styled
