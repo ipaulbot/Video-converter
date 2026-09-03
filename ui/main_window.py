@@ -1614,6 +1614,17 @@ class VideoConverterApp(QMainWindow):
             logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
 
     def check_updates(self):
+        """Check for an update in the background, if a source is configured.
+
+        Skipped entirely when it is not, rather than starting a thread to
+        reach a placeholder URL.
+        """
+        from utils import update_checker
+
+        if not update_checker.is_configured():
+            logger.info("Update checking is not configured; not starting the "
+                        "background check.")
+            return
         self.update_checker = UpdateChecker()
         self.update_checker.update_available.connect(self.on_update_available)
         self.update_thread = UpdateWorker(self.update_checker)
@@ -2876,39 +2887,49 @@ class VideoConverterApp(QMainWindow):
         pass
 
     def check_for_updates(self):
-        """Mock update checker - in a real app this would query a server."""
-        try:
-            # Simulate a check
-            # For demo purposes, let's say 2.3.0 is available if we are on 2.2.0
-            # Ideally perform a GET request to a version.txt URL
+        """Report the update state honestly, including "not configured".
 
-            # import requests
-            # resp = requests.get("https://example.com/nvc/version.txt", timeout=3)
-            # latest_version = resp.text.strip()
+        This used to hardcode `latest_version = "2.3.0"` and compare it with a
+        string comparison, so it always announced a fake update and offered to
+        open https://example.com/nvc/downloads. See utils/update_checker.py for
+        how to enable real checking.
+        """
+        from utils import update_checker
 
-            # Mock result
-            latest_version = "2.3.0"
-            current = APP_VERSION
+        if not update_checker.is_configured():
+            QMessageBox.information(
+                self, _tr("Updates Not Configured"),
+                _tr("This build cannot check for updates: no update source has "
+                    "been set.\n\nYou are running version %(version)s.")
+                % {"version": APP_VERSION})
+            return
 
-            if latest_version > current:
-                reply = QMessageBox.question(
-                    self,
-                    _tr("Update Available"),
-                    _tr("A new version (%(version)s) is available.\n\n"
-                        "Do you want to visit the download page?")
-                    % {"version": latest_version},
-                    QMessageBox.Yes | QMessageBox.No
-                )
-                if reply == QMessageBox.Yes:
-                    from PyQt5.QtGui import QDesktopServices
-                    from PyQt5.QtCore import QUrl
-                    QDesktopServices.openUrl(QUrl("https://example.com/nvc/downloads")) # Replace with actual URL
-            else:
-                QMessageBox.information(self, _tr("No Updates"), _tr("You are running the latest version."))
+        checker = update_checker.UpdateChecker()
+        checker.update_available.connect(self._prompt_for_update)
+        checker.no_update.connect(
+            lambda: QMessageBox.information(
+                self, _tr("No Updates"),
+                _tr("You are running the latest version.")))
+        checker.error_occurred.connect(
+            lambda message: QMessageBox.warning(
+                self, _tr("Update Check Failed"),
+                _tr("Could not check for updates:\n%(error)s")
+                % {"error": message}))
+        checker.check_for_updates()
 
-        except Exception as e:
-            logger.error(f"Update check failed: {e}")
-            QMessageBox.warning(self, _tr("Update Check Failed"), _tr("Could not check for updates."))
+    def _prompt_for_update(self, version, url):
+        reply = QMessageBox.question(
+            self,
+            _tr("Update Available"),
+            _tr("A new version (%(version)s) is available.\n\n"
+                "Do you want to visit the download page?")
+            % {"version": version},
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            from PyQt5.QtCore import QUrl
+            from PyQt5.QtGui import QDesktopServices
+            QDesktopServices.openUrl(QUrl(url))
 
     def update_all_button_styles(self):
         """Restyle the primary buttons for the current lock/activity state.
