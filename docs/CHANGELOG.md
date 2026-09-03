@@ -59,3 +59,8 @@ Use this file to track user-visible fixes, improvements, and feature work.
   accent is now a single edit in `ui/theme.py`.
 - Fixed the Settings dialog not showing its green active state while a
   conversion ran with monitoring stopped.
+- Fixed a corrupted scheduled-deletion list silently stopping all retention.
+  One malformed record used to block every pending deletion, permanently.
+- "Check for Updates" no longer reports a fake update and no longer offers to
+  open a placeholder download page. It now says update checking is not
+  configured for this build. See `utils/update_checker.py` to enable it.
