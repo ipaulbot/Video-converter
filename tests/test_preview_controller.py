@@ -336,3 +336,43 @@ class HostContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GlobalStyleWalkerTests(unittest.TestCase):
+    """The overlay button must survive the main window's style sweep.
+
+    VideoConverterApp.apply_button_style_to_all_widgets walks the widget tree
+    and stamps the main gradient onto every QPushButton. The preview's play
+    button is a 22px translucent circle over a video thumbnail, so it opts
+    out via the `skipGlobalStyle` property the walker checks. Without that it
+    was silently given the main gradient moments after being styled -- which
+    is what it looked like for as long as both pieces of code existed.
+    """
+
+    def test_the_play_button_opts_out_of_the_global_button_style(self):
+        host = _Host()
+        pc = PreviewController(host)
+        try:
+            self.assertTrue(pc.play_pause_btn.property("skipGlobalStyle"))
+        finally:
+            pc.shutdown()
+            host.deleteLater()
+
+    def test_it_keeps_its_own_style_in_a_real_window(self):
+        import os
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from ui.main_window import VideoConverterApp
+
+        window = VideoConverterApp()
+        try:
+            for _ in range(15):
+                app.processEvents()
+            sheet = window.play_pause_btn.styleSheet()
+            self.assertIn("border-radius: 11px", sheet,
+                          "the overlay button lost its circular shape")
+            self.assertNotIn("qlineargradient", sheet,
+                             "the main gradient overwrote the overlay style")
+        finally:
+            window.close()
+            window.deleteLater()
+            app.processEvents()

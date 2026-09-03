@@ -105,6 +105,13 @@ class PreviewController(QObject):
         self.play_pause_btn.setMouseTracking(True)
         self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
         self.play_pause_btn.setIconSize(QSize(12, 12))
+        # VideoConverterApp.apply_button_style_to_all_widgets walks the whole
+        # widget tree and stamps the main gradient onto every QPushButton it
+        # finds. This one is a 22px translucent circle floating over a video
+        # thumbnail, so it has to opt out of that, using the property the
+        # walker already checks -- otherwise its own style is overwritten
+        # moments after being set.
+        self.play_pause_btn.setProperty('skipGlobalStyle', True)
         # Styled by update_preview_controls_style() at the end of _build.
         self.play_pause_btn.hide()
         self.play_pause_btn.clicked.connect(self.toggle_preview_playback)
