@@ -1,7 +1,10 @@
 import concurrent.futures as cf
-import datetime, os
-from . import collectors as C
+import datetime
+import os
+
 from utils.logger import logger
+
+from . import collectors as C
 
 
 def run_all(options: dict, progress_cb=None):
@@ -43,8 +46,14 @@ def run_all(options: dict, progress_cb=None):
         for fut in cf.as_completed(futmap, timeout=None):
             name = futmap[fut]
             try:
-                # Raise per-collector timeout floor to 12s
-                results[name] = fut.result(timeout=12)
+                # No timeout here on purpose. as_completed only yields a
+                # future once it has finished, so a timeout on .result()
+                # can never fire -- the `timeout=12` that used to be here
+                # read like a per-collector limit but did nothing. The real
+                # limit is the subprocess timeout in pc_report.utils
+                # .run_ps_json, which is where a slow collector actually
+                # blocks.
+                results[name] = fut.result()
             except Exception as e:
                 errors[name] = str(e)
                 # Tag partial status in result placeholder
