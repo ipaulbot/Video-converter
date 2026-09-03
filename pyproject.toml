@@ -1,0 +1,44 @@
+[project]
+name = "nvc"
+version = "2.2.0"          # keep in sync with utils/version.py APP_VERSION
+description = "NVC — video conversion, inspection, recording and PC reporting"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The offscreen platform and the QApplication singleton are set up in
+# conftest.py at the project root; no env var is needed on the command line.
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py312"
+# The existing code has many long lines; E501 is disabled below rather than
+# reflowing 22k lines. Revisit once the main_window split (Phase 4) lands.
+line-length = 120
+exclude = [
+    "build",
+    "dist",
+    "__pycache__",
+    ".pytest_cache",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "F",     # pyflakes — undefined names, unused imports
+    "W",     # pycodestyle warnings
+    "I",     # import sorting
+    "UP",    # pyupgrade
+    "B",     # bugbear — mutable defaults, and B110 bare `except: pass`
+    "C4",    # comprehension simplifications
+    "PLE",   # pylint errors
+]
+ignore = [
+    "E501",  # line too long — see line-length note above
+    "E722",  # bare except — tracked as Phase 2 work, 5 sites
+    "B008",  # function call in default argument (common in Qt code)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests build widgets and poke privates freely.
+"tests/*" = ["B011"]

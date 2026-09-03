@@ -1,0 +1,9 @@
+# NVC 4 runtime dependencies. Python 3.12.
+#
+# FFmpeg is NOT a pip dependency: ffmpeg.exe and ffprobe.exe are expected in
+# the project root (and are excluded from version control by .gitignore).
+# See utils/resources.py for how they are located at runtime.
+
+PyQt5>=5.15.0
+watchdog>=4.0.0
+requests>=2.31.0
