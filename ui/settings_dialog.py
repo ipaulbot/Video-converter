@@ -1056,7 +1056,9 @@ class SettingsDialog(QDialog):
             self.advanced_group.setVisible(checked)
         if hasattr(self, 'advanced_toggle'):
             self.advanced_toggle.setArrowType(Qt.DownArrow if checked else Qt.RightArrow)
-            self.advanced_toggle.setText("Hide Advanced Options" if checked else "Show Advanced Options")
+            self.advanced_toggle.setText(
+                _tr("Hide Advanced Options") if checked
+                else _tr("Show Advanced Options"))
         # Recompute tab heights to allow growth when expanded
         self._normalize_tab_heights(include_conversion_expanded=checked)
 

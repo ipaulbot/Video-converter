@@ -12,7 +12,7 @@ from typing import Final
 # release. Deliberately separate from the application version in
 # utils/version.py: the docs and the app do not have to ship in lockstep, and
 # a docs-only correction should not imply a new build.
-DOC_VERSION: Final[str] = "2.2.0"
+DOC_VERSION: Final[str] = "2.3.0"
 
 # Locale tags the manuals can be built for. "en" is the reference locale that
 # every other bundle is validated against.

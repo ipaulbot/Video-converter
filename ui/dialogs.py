@@ -8,6 +8,7 @@ from PyQt5.QtCore import QUrl
 from utils.logger import logger
 from ui import theme
 from utils.resources import resource_path
+from utils.version import version_line
 
 
 
@@ -161,14 +162,31 @@ class InfoDialog(QDialog):
             content_layout.addWidget(itsavibe_label)
 
         # Add text on the right
+        # The version, build date and links are data, not prose: they stay out
+        # of the translatable string so a translator cannot accidentally
+        # change a version number or break a URL, and so the version never
+        # goes stale in a catalogue. This block used to hardcode
+        # "2.1.160 | Build Date: July 2025", which was wrong on both counts.
         info_text = QLabel()
         info_text.setText(
-            _tr("""
-            <b>N Video Converter 2.1.160 &nbsp;|&nbsp; Build Date: July 2025</b><br><br>
-            NVC is a Python-based utility that monitors a designated source folder for incoming video files and automatically converts them to a specified output format using FFMPEG. Converted files are saved to a destination folder, while original files can be optionally moved to a backup location. The application operates continuously, enabling hands-free, real-time video processing and format standardization.<br><br>
-            This application was developed by Paul Hamblin.<br>
-            <a href='https://github.com/ipaulbot' style='color:#0077b5;'>GitHub Repository</a> &nbsp;|&nbsp; <a href='https://www.linkedin.com/in/paul-hamblin-69b19595/' style='color:#0077b5;'>LinkedIn Profile</a><br>
-            """)
+            "<b>{version}</b><br><br>{description}<br><br>{credit}<br>"
+            "<a href='https://github.com/ipaulbot' style='color:{link}'>"
+            "{github}</a> &nbsp;|&nbsp; "
+            "<a href='https://www.linkedin.com/in/paul-hamblin-69b19595/' "
+            "style='color:{link}'>{linkedin}</a><br>".format(
+                version=version_line(),
+                link=theme.INFO,
+                description=_tr(
+                    "NVC monitors a source folder for incoming video files and "
+                    "converts them to a chosen output format using FFmpeg. "
+                    "Converted files are written to a destination folder, and "
+                    "the originals can be moved to a backup location or removed "
+                    "after a retention period. It runs continuously, so "
+                    "conversion is hands-free."),
+                credit=_tr("Developed by Paul Hamblin."),
+                github=_tr("GitHub Repository"),
+                linkedin=_tr("LinkedIn Profile"),
+            )
         )
         info_text.setWordWrap(True)
         info_text.setAlignment(Qt.AlignLeft | Qt.AlignTop)

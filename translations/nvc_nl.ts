@@ -4,83 +4,83 @@
     <context>
         <name>ConvertedFiles</name>
         <message>
-            <location filename="ui/converted_files_widget.py" line="120"/>
+            <location filename="ui/converted_files_widget.py" line="121"/>
             <source>Clear</source>
-            <translation type="unfinished"/>
+            <translation>Wissen</translation>
         </message>
         <message>
-            <location filename="ui/converted_files_widget.py" line="456"/>
+            <location filename="ui/converted_files_widget.py" line="457"/>
             <source>Copy File Path</source>
-            <translation type="unfinished"/>
+            <translation>Bestandspad kopiëren</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="438"/>
+            <source>Could not open file location: %(error)s</source>
+            <translation>Kon de bestandslocatie niet openen: %(error)s</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="489"/>
+            <source>Could not open folder: %(error)s</source>
+            <translation>Kon de map niet openen: %(error)s</translation>
         </message>
         <message>
             <location filename="ui/converted_files_widget.py" line="437"/>
-            <source>Could not open file location: %(error)s</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
             <location filename="ui/converted_files_widget.py" line="488"/>
-            <source>Could not open folder: %(error)s</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/converted_files_widget.py" line="436"/>
-            <location filename="ui/converted_files_widget.py" line="487"/>
             <source>Error</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/converted_files_widget.py" line="441"/>
-            <source>File Not Found</source>
-            <translation type="unfinished"/>
+            <translation>Fout</translation>
         </message>
         <message>
             <location filename="ui/converted_files_widget.py" line="442"/>
-            <source>File does not exist: %(path)s</source>
-            <translation type="unfinished"/>
+            <source>File Not Found</source>
+            <translation>Bestand niet gevonden</translation>
         </message>
         <message>
-            <location filename="ui/converted_files_widget.py" line="491"/>
-            <source>Folder Not Found</source>
-            <translation type="unfinished"/>
+            <location filename="ui/converted_files_widget.py" line="443"/>
+            <source>File does not exist: %(path)s</source>
+            <translation>Bestand bestaat niet: %(path)s</translation>
         </message>
         <message>
             <location filename="ui/converted_files_widget.py" line="492"/>
+            <source>Folder Not Found</source>
+            <translation>Map niet gevonden</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="493"/>
             <source>Folder does not exist: %(path)s</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/converted_files_widget.py" line="526"/>
-            <source>Log Not Found</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/converted_files_widget.py" line="510"/>
-            <source>Log for %(name)s</source>
-            <translation type="unfinished"/>
+            <translation>Map bestaat niet: %(path)s</translation>
         </message>
         <message>
             <location filename="ui/converted_files_widget.py" line="527"/>
+            <source>Log Not Found</source>
+            <translation>Logboek niet gevonden</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="511"/>
+            <source>Log for %(name)s</source>
+            <translation>Logboek voor %(name)s</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="528"/>
             <source>No log file found for %(name)s.</source>
-            <translation type="unfinished"/>
+            <translation>Geen logbestand gevonden voor %(name)s.</translation>
         </message>
         <message>
-            <location filename="ui/converted_files_widget.py" line="519"/>
+            <location filename="ui/converted_files_widget.py" line="520"/>
             <source>OK</source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/converted_files_widget.py" line="454"/>
-            <source>Open Containing Folder</source>
-            <translation type="unfinished"/>
+            <translation>OK</translation>
         </message>
         <message>
             <location filename="ui/converted_files_widget.py" line="455"/>
-            <source>Open Log File</source>
-            <translation type="unfinished"/>
+            <source>Open Containing Folder</source>
+            <translation>Bovenliggende map openen</translation>
         </message>
         <message>
-            <location filename="ui/converted_files_widget.py" line="458"/>
+            <location filename="ui/converted_files_widget.py" line="456"/>
+            <source>Open Log File</source>
+            <translation>Logbestand openen</translation>
+        </message>
+        <message>
+            <location filename="ui/converted_files_widget.py" line="459"/>
             <source>Settings</source>
             <translation>Instellingen</translation>
         </message>
@@ -88,51 +88,61 @@
     <context>
         <name>Dialogs</name>
         <message>
-            <location filename="ui/dialogs.py" line="166"/>
-            <source>
-            &lt;b&gt;N Video Converter 2.1.160 &amp;nbsp;|&amp;nbsp; Build Date: July 2025&lt;/b&gt;&lt;br&gt;&lt;br&gt;
-            NVC is a Python-based utility that monitors a designated source folder for incoming video files and automatically converts them to a specified output format using FFMPEG. Converted files are saved to a destination folder, while original files can be optionally moved to a backup location. The application operates continuously, enabling hands-free, real-time video processing and format standardization.&lt;br&gt;&lt;br&gt;
-            This application was developed by Paul Hamblin.&lt;br&gt;
-            &lt;a href='https://github.com/ipaulbot' style='color:#0077b5;'&gt;GitHub Repository&lt;/a&gt; &amp;nbsp;|&amp;nbsp; &lt;a href='https://www.linkedin.com/in/paul-hamblin-69b19595/' style='color:#0077b5;'&gt;LinkedIn Profile&lt;/a&gt;&lt;br&gt;
-            </source>
-            <translation type="unfinished"/>
-        </message>
-        <message>
-            <location filename="ui/dialogs.py" line="118"/>
+            <location filename="ui/dialogs.py" line="119"/>
             <source>About Video Converter</source>
-            <translation type="unfinished"/>
+            <translation>Over Video Converter</translation>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="82"/>
+            <location filename="ui/dialogs.py" line="83"/>
             <source>Confirm</source>
-            <translation type="unfinished"/>
+            <translation>Bevestigen</translation>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="102"/>
+            <location filename="ui/dialogs.py" line="186"/>
+            <source>Developed by Paul Hamblin.</source>
+            <translation>Ontwikkeld door Paul Hamblin.</translation>
+        </message>
+        <message>
+            <location filename="ui/dialogs.py" line="187"/>
+            <source>GitHub Repository</source>
+            <translation>GitHub-repository</translation>
+        </message>
+        <message>
+            <location filename="ui/dialogs.py" line="188"/>
+            <source>LinkedIn Profile</source>
+            <translation>LinkedIn-profiel</translation>
+        </message>
+        <message>
+            <location filename="ui/dialogs.py" line="179"/>
+            <source>NVC monitors a source folder for incoming video files and converts them to a chosen output format using FFmpeg. Converted files are written to a destination folder, and the originals can be moved to a backup location or removed after a retention period. It runs continuously, so conversion is hands-free.</source>
+            <translation>NVC controleert een bronmap op nieuwe videobestanden en converteert ze met FFmpeg naar een gekozen uitvoerformaat. Geconverteerde bestanden komen in een doelmap; de originelen kunnen naar een back-uplocatie worden verplaatst of na een bewaartermijn worden verwijderd. Het programma blijft actief, zodat converteren automatisch gebeurt.</translation>
+        </message>
+        <message>
+            <location filename="ui/dialogs.py" line="103"/>
             <source>No</source>
-            <translation type="unfinished"/>
+            <translation>Nee</translation>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="185"/>
-            <location filename="ui/dialogs.py" line="244"/>
+            <location filename="ui/dialogs.py" line="203"/>
+            <location filename="ui/dialogs.py" line="262"/>
             <source>OK</source>
-            <translation type="unfinished"/>
+            <translation>OK</translation>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="206"/>
+            <location filename="ui/dialogs.py" line="224"/>
             <source>Settings Locked</source>
-            <translation type="unfinished"/>
+            <translation>Instellingen vergrendeld</translation>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="229"/>
+            <location filename="ui/dialogs.py" line="247"/>
             <source>Settings are locked and cannot be modified.
 Unlock the application first to make changes.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/dialogs.py" line="101"/>
+            <location filename="ui/dialogs.py" line="102"/>
             <source>Yes</source>
-            <translation type="unfinished"/>
+            <translation>Ja</translation>
         </message>
     </context>
     <context>
@@ -140,7 +150,7 @@ Unlock the application first to make changes.</source>
         <message>
             <location filename="ui/inspection_widget.py" line="206"/>
             <source>Detailed JSON</source>
-            <translation type="unfinished"/>
+            <translation>Gedetailleerde JSON</translation>
         </message>
         <message>
             <location filename="ui/inspection_widget.py" line="151"/>
@@ -148,7 +158,7 @@ Unlock the application first to make changes.</source>
             <location filename="ui/inspection_widget.py" line="247"/>
             <location filename="ui/inspection_widget.py" line="237"/>
             <source>Drag and drop media files here for detailed JSON</source>
-            <translation type="unfinished"/>
+            <translation>Sleep mediabestanden hierheen voor gedetailleerde JSON</translation>
         </message>
         <message>
             <location filename="ui/inspection_widget.py" line="90"/>
@@ -156,25 +166,25 @@ Unlock the application first to make changes.</source>
             <location filename="ui/inspection_widget.py" line="225"/>
             <location filename="ui/inspection_widget.py" line="215"/>
             <source>Drag and drop media files here to see summary</source>
-            <translation type="unfinished"/>
+            <translation>Sleep mediabestanden hierheen voor een samenvatting</translation>
         </message>
         <message>
             <location filename="ui/inspection_widget.py" line="162"/>
             <source>Raw JSON data from ffprobe.</source>
-            <translation type="unfinished"/>
+            <translation>Ruwe JSON-gegevens van ffprobe.</translation>
         </message>
         <message>
             <location filename="ui/inspection_widget.py" line="205"/>
             <source>Summary</source>
-            <translation type="unfinished"/>
+            <translation>Samenvatting</translation>
         </message>
     </context>
     <context>
         <name>Localization</name>
         <message>
-            <location filename="utils/localization.py" line="149"/>
+            <location filename="utils/localization.py" line="154"/>
             <source>NVC will show %(language)s the next time it starts.</source>
-            <translation type="unfinished"/>
+            <translation>NVC gebruikt %(language)s bij de volgende start.</translation>
         </message>
     </context>
     <context>
@@ -187,174 +197,174 @@ Unlock the application first to make changes.</source>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="132"/>
             <source>Add Files</source>
-            <translation type="unfinished"/>
+            <translation>Bestanden toevoegen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="238"/>
             <source>Add at least two valid files to merge.</source>
-            <translation type="unfinished"/>
+            <translation>Voeg minstens twee geldige bestanden toe om samen te voegen.</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="90"/>
             <source>Browse</source>
-            <translation type="unfinished"/>
+            <translation>Verkennen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="133"/>
             <source>Clear</source>
-            <translation type="unfinished"/>
+            <translation>Wissen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="104"/>
             <source>End:</source>
-            <translation type="unfinished"/>
+            <translation>Einde:</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="113"/>
             <source>Extract Audio</source>
-            <translation type="unfinished"/>
+            <translation>Audio extraheren</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="145"/>
             <source>FFmpeg output appears here.</source>
-            <translation type="unfinished"/>
+            <translation>FFmpeg-uitvoer verschijnt hier.</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="82"/>
             <source>Fast stream-copy tools for trimming, remuxing, extracting audio, removing audio, and merging clips without re-encoding.</source>
-            <translation type="unfinished"/>
+            <translation>Snelle stream-copy-hulpmiddelen om clips in te korten, te remuxen, audio te extraheren of te verwijderen en samen te voegen zonder opnieuw te coderen.</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="92"/>
             <source>Input:</source>
-            <translation type="unfinished"/>
+            <translation>Invoer:</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="77"/>
             <source>Lossless FFmpeg Editor</source>
-            <translation type="unfinished"/>
+            <translation>Verliesvrije FFmpeg-editor</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="250"/>
             <source>Merge Error</source>
-            <translation type="unfinished"/>
+            <translation>Fout bij samenvoegen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="238"/>
             <source>Merge Files</source>
-            <translation type="unfinished"/>
+            <translation>Bestanden samenvoegen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="134"/>
             <source>Merge Losslessly</source>
-            <translation type="unfinished"/>
+            <translation>Verliesvrij samenvoegen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="125"/>
             <source>Merge list:</source>
-            <translation type="unfinished"/>
+            <translation>Samenvoeglijst:</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="171"/>
             <source>Missing FFmpeg</source>
-            <translation type="unfinished"/>
+            <translation>FFmpeg ontbreekt</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="178"/>
             <source>Missing Input</source>
-            <translation type="unfinished"/>
+            <translation>Ontbrekende invoer</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="106"/>
             <source>Output:</source>
-            <translation type="unfinished"/>
+            <translation>Uitvoer:</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="114"/>
             <source>Remove Audio</source>
-            <translation type="unfinished"/>
+            <translation>Audio verwijderen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="112"/>
             <source>Remux</source>
-            <translation type="unfinished"/>
+            <translation>Remuxen</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="89"/>
             <source>Select a source media file</source>
-            <translation type="unfinished"/>
+            <translation>Selecteer een bronmediabestand</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="178"/>
             <source>Select a valid input media file first.</source>
-            <translation type="unfinished"/>
+            <translation>Selecteer eerst een geldig invoermediabestand.</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="102"/>
             <source>Start:</source>
-            <translation type="unfinished"/>
+            <translation>Begin:</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="111"/>
             <source>Trim Losslessly</source>
-            <translation type="unfinished"/>
+            <translation>Verliesvrij inkorten</translation>
         </message>
         <message>
             <location filename="ui/lossless_editor_widget.py" line="171"/>
             <source>ffmpeg.exe could not be found.</source>
-            <translation type="unfinished"/>
+            <translation>ffmpeg.exe kon niet worden gevonden.</translation>
         </message>
     </context>
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="ui/main_window.py" line="2446"/>
+            <location filename="ui/main_window.py" line="2453"/>
             <source>%(language)s (draft)</source>
-            <translation type="unfinished"/>
+            <translation>%(language)s (concept)</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2906"/>
+            <location filename="ui/main_window.py" line="2929"/>
             <source>A new version (%(version)s) is available.
 Do you want to visit the download page?</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1137"/>
+            <location filename="ui/main_window.py" line="1131"/>
             <source>Application is locked.</source>
-            <translation type="unfinished"/>
+            <translation>De toepassing is vergrendeld.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2511"/>
+            <location filename="ui/main_window.py" line="2518"/>
             <source>Backup folder path does not exist.</source>
-            <translation type="unfinished"/>
+            <translation>Het pad naar de back-upmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="837"/>
+            <location filename="ui/main_window.py" line="831"/>
             <source>Check for Updates</source>
-            <translation type="unfinished"/>
+            <translation>Controleren op updates</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2857"/>
+            <location filename="ui/main_window.py" line="2864"/>
             <source>Clear Inspection</source>
-            <translation type="unfinished"/>
+            <translation>Inspectie wissen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2825"/>
+            <location filename="ui/main_window.py" line="2832"/>
             <source>Clear Log</source>
-            <translation type="unfinished"/>
+            <translation>Logboek wissen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="476"/>
+            <location filename="ui/main_window.py" line="467"/>
             <source>Clear log</source>
-            <translation type="unfinished"/>
+            <translation>Logboek wissen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1635"/>
+            <location filename="ui/main_window.py" line="1642"/>
             <source>Click to download update</source>
-            <translation type="unfinished"/>
+            <translation>Klik om de update te downloaden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3297"/>
+            <location filename="ui/main_window.py" line="3314"/>
             <source>Click to exit the Easter Egg and return to the log view.</source>
             <translation type="unfinished"/>
         </message>
@@ -364,389 +374,416 @@ Do you want to visit the download page?</source>
             <translation>Klik om instellingen te openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="531"/>
+            <location filename="ui/main_window.py" line="522"/>
             <source>Conversion Log</source>
-            <translation type="unfinished"/>
+            <translation>Conversielogboek</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3197"/>
+            <location filename="ui/main_window.py" line="3214"/>
             <source>Convert Media File</source>
-            <translation type="unfinished"/>
+            <translation>Mediabestand converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2242"/>
+            <location filename="ui/main_window.py" line="2249"/>
             <source>Convert Media Files</source>
-            <translation type="unfinished"/>
+            <translation>Mediabestanden converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="579"/>
+            <location filename="ui/main_window.py" line="570"/>
             <source>Converted Files</source>
-            <translation type="unfinished"/>
+            <translation>Geconverteerde bestanden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1143"/>
+            <location filename="ui/main_window.py" line="1137"/>
             <source>Converting...</source>
-            <translation type="unfinished"/>
+            <translation>Converteren...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2829"/>
-            <location filename="ui/main_window.py" line="2861"/>
+            <location filename="ui/main_window.py" line="2836"/>
+            <location filename="ui/main_window.py" line="2868"/>
             <source>Copy</source>
-            <translation type="unfinished"/>
+            <translation>Kopiëren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2920"/>
-            <source>Could not check for updates.</source>
-            <translation type="unfinished"/>
+            <location filename="ui/main_window.py" line="2921"/>
+            <source>Could not check for updates:
+%(error)s</source>
+            <translation>Kon niet controleren op updates:
+%(error)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2503"/>
+            <location filename="ui/main_window.py" line="2510"/>
             <source>Destination folder path does not exist.</source>
-            <translation type="unfinished"/>
+            <translation>Het pad naar de doelmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2243"/>
+            <location filename="ui/main_window.py" line="2250"/>
             <source>Do you wish to convert %(what)s according to settings?</source>
-            <translation type="unfinished"/>
+            <translation>Wilt u %(what)s converteren volgens de instellingen?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3198"/>
+            <location filename="ui/main_window.py" line="3215"/>
             <source>Do you wish to convert media file according to settings?</source>
-            <translation type="unfinished"/>
+            <translation>Wilt u het mediabestand converteren volgens de instellingen?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2253"/>
-            <location filename="ui/main_window.py" line="3207"/>
+            <location filename="ui/main_window.py" line="2260"/>
+            <location filename="ui/main_window.py" line="3224"/>
             <source>Don't Show Again</source>
-            <translation type="unfinished"/>
+            <translation>Niet meer weergeven</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2254"/>
-            <location filename="ui/main_window.py" line="3208"/>
+            <location filename="ui/main_window.py" line="2261"/>
+            <location filename="ui/main_window.py" line="3225"/>
             <source>Don't show me this dialog again?</source>
-            <translation type="unfinished"/>
+            <translation>Dit venster niet meer weergeven?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="376"/>
-            <location filename="ui/main_window.py" line="2696"/>
-            <location filename="ui/main_window.py" line="2662"/>
+            <location filename="ui/main_window.py" line="367"/>
+            <location filename="ui/main_window.py" line="2703"/>
+            <location filename="ui/main_window.py" line="2669"/>
             <source>Drag and drop media files here
 or select source folder to start monitoring and converting</source>
-            <translation type="unfinished"/>
+            <translation>Sleep mediabestanden hierheen
+of kies een bronmap om te controleren en converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3296"/>
+            <location filename="ui/main_window.py" line="3313"/>
             <source>Exit Game</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1205"/>
+            <location filename="ui/main_window.py" line="1199"/>
             <source>Finishing and saving the active recording.</source>
-            <translation type="unfinished"/>
+            <translation>De actieve opname wordt afgerond en opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2495"/>
-            <location filename="ui/main_window.py" line="2503"/>
-            <location filename="ui/main_window.py" line="2511"/>
+            <location filename="ui/main_window.py" line="2502"/>
+            <location filename="ui/main_window.py" line="2510"/>
+            <location filename="ui/main_window.py" line="2518"/>
             <source>Folder Not Found</source>
-            <translation type="unfinished"/>
+            <translation>Map niet gevonden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="828"/>
+            <location filename="ui/main_window.py" line="822"/>
             <source>Help</source>
             <translation>Help</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2486"/>
+            <location filename="ui/main_window.py" line="2493"/>
             <source>Help Document Not Found</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="827"/>
+            <location filename="ui/main_window.py" line="821"/>
             <source>Info</source>
-            <translation type="unfinished"/>
+            <translation>Info</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2439"/>
-            <location filename="ui/main_window.py" line="2464"/>
+            <location filename="ui/main_window.py" line="2446"/>
+            <location filename="ui/main_window.py" line="2471"/>
             <source>Language</source>
             <translation>Taal</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="725"/>
+            <location filename="ui/main_window.py" line="716"/>
             <source>Loading media player…</source>
-            <translation type="unfinished"/>
+            <translation>Mediaspeler laden…</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="429"/>
+            <location filename="ui/main_window.py" line="420"/>
             <source>Lock/Unlock settings</source>
-            <translation type="unfinished"/>
+            <translation>Instellingen vergrendelen/ontgrendelen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1122"/>
-            <location filename="ui/main_window.py" line="1764"/>
+            <location filename="ui/main_window.py" line="1116"/>
+            <location filename="ui/main_window.py" line="1771"/>
             <source>Locked</source>
-            <translation type="unfinished"/>
+            <translation>Vergrendeld</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="689"/>
+            <location filename="ui/main_window.py" line="680"/>
             <source>Lossless Editor</source>
-            <translation type="unfinished"/>
+            <translation>Verliesvrije editor</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="737"/>
+            <location filename="ui/main_window.py" line="728"/>
             <source>Media Player</source>
-            <translation type="unfinished"/>
+            <translation>Mediaspeler</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1834"/>
+            <location filename="ui/main_window.py" line="1841"/>
             <source>Missing Folders</source>
-            <translation type="unfinished"/>
+            <translation>Ontbrekende mappen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="714"/>
+            <location filename="ui/main_window.py" line="705"/>
             <source>Multi-Source Recorder</source>
-            <translation type="unfinished"/>
+            <translation>Multi-source recorder</translation>
         </message>
         <message>
             <location filename="ui/main_window.py" line="2916"/>
             <source>No Updates</source>
-            <translation type="unfinished"/>
+            <translation>Geen updates</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2269"/>
+            <location filename="ui/main_window.py" line="2276"/>
             <source>No supported video files found in:
 %(paths)s</source>
-            <translation type="unfinished"/>
+            <translation>Geen ondersteunde videobestanden gevonden in:
+%(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2810"/>
-            <location filename="ui/main_window.py" line="1364"/>
+            <location filename="ui/main_window.py" line="2817"/>
+            <location filename="ui/main_window.py" line="1360"/>
             <source>Not recording</source>
-            <translation type="unfinished"/>
+            <translation>Niet aan het opnemen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="833"/>
+            <location filename="ui/main_window.py" line="827"/>
             <source>Open Backup Folder</source>
-            <translation type="unfinished"/>
+            <translation>Back-upmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="832"/>
+            <location filename="ui/main_window.py" line="826"/>
             <source>Open Destination Folder</source>
-            <translation type="unfinished"/>
+            <translation>Doelmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="797"/>
+            <location filename="ui/main_window.py" line="788"/>
             <source>Open Settings</source>
-            <translation type="unfinished"/>
+            <translation>Instellingen openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="831"/>
+            <location filename="ui/main_window.py" line="825"/>
             <source>Open Source Folder</source>
-            <translation type="unfinished"/>
+            <translation>Bronmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="668"/>
+            <location filename="ui/main_window.py" line="659"/>
             <source>PC Report</source>
-            <translation type="unfinished"/>
+            <translation>PC-rapport</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2014"/>
+            <location filename="ui/main_window.py" line="2021"/>
             <source>Play BallBuster XT</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1834"/>
+            <location filename="ui/main_window.py" line="1841"/>
             <source>Please select valid Source and Destination folders.</source>
-            <translation type="unfinished"/>
+            <translation>Selecteer een geldige bron- en doelmap.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="839"/>
-            <location filename="ui/main_window.py" line="1530"/>
+            <location filename="ui/main_window.py" line="833"/>
+            <location filename="ui/main_window.py" line="1526"/>
             <source>Quit</source>
             <translation>Afsluiten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2798"/>
+            <location filename="ui/main_window.py" line="2805"/>
             <source>Ready. Reports are saved to your Desktop by default.</source>
-            <translation type="unfinished"/>
+            <translation>Gereed. Rapporten worden standaard op uw bureaublad opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1157"/>
+            <location filename="ui/main_window.py" line="1151"/>
             <source>Recording is unavailable while conversion is running.</source>
-            <translation type="unfinished"/>
+            <translation>Opnemen is niet beschikbaar terwijl een conversie loopt.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1187"/>
+            <location filename="ui/main_window.py" line="1181"/>
             <source>Releasing the camera preview before recording starts.</source>
-            <translation type="unfinished"/>
+            <translation>De camerapreview wordt vrijgegeven voordat de opname begint.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2830"/>
-            <location filename="ui/main_window.py" line="2862"/>
+            <location filename="ui/main_window.py" line="2837"/>
+            <location filename="ui/main_window.py" line="2869"/>
             <source>Select All</source>
-            <translation type="unfinished"/>
+            <translation>Alles selecteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="451"/>
+            <location filename="ui/main_window.py" line="442"/>
             <source>Select media files to convert</source>
-            <translation type="unfinished"/>
+            <translation>Selecteer mediabestanden om te converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="835"/>
-            <location filename="ui/main_window.py" line="2827"/>
-            <location filename="ui/main_window.py" line="2859"/>
+            <location filename="ui/main_window.py" line="829"/>
+            <location filename="ui/main_window.py" line="2834"/>
+            <location filename="ui/main_window.py" line="2866"/>
             <source>Settings</source>
             <translation>Instellingen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1528"/>
+            <location filename="ui/main_window.py" line="1524"/>
             <source>Show</source>
-            <translation type="unfinished"/>
+            <translation>Weergeven</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2495"/>
+            <location filename="ui/main_window.py" line="2502"/>
             <source>Source folder path does not exist.</source>
-            <translation type="unfinished"/>
+            <translation>Het pad naar de bronmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="806"/>
+            <location filename="ui/main_window.py" line="797"/>
+            <location filename="ui/main_window.py" line="1231"/>
             <source>Start</source>
             <translation>Starten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1260"/>
+            <location filename="ui/main_window.py" line="1231"/>
+            <source>Start Recording</source>
+            <translation type="unfinished"/>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1256"/>
             <source>Start monitoring the source folder for files to convert.</source>
-            <translation type="unfinished"/>
+            <translation>Begin de bronmap te controleren op bestanden om te converteren.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="809"/>
+            <location filename="ui/main_window.py" line="803"/>
             <source>Start or stop the automatic conversion process.</source>
-            <translation type="unfinished"/>
+            <translation>Start of stop het automatische conversieproces.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1258"/>
+            <location filename="ui/main_window.py" line="1254"/>
             <source>Start recording from the enabled recorder sources.</source>
-            <translation type="unfinished"/>
+            <translation>Start de opname vanaf de ingeschakelde bronnen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1173"/>
+            <location filename="ui/main_window.py" line="1167"/>
             <source>Starting...</source>
-            <translation type="unfinished"/>
+            <translation>Starten...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1497"/>
+            <location filename="ui/main_window.py" line="1493"/>
             <source>Status: Converting</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1323"/>
+            <location filename="ui/main_window.py" line="1319"/>
             <source>Status: Converting &lt;font color='#00cc00'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3287"/>
+            <location filename="ui/main_window.py" line="3304"/>
             <source>Status: Gaming &lt;font color='#43a296'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1494"/>
+            <location filename="ui/main_window.py" line="1490"/>
             <source>Status: Locked</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1321"/>
+            <location filename="ui/main_window.py" line="1317"/>
             <source>Status: Locked &lt;font color='#888888'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1500"/>
+            <location filename="ui/main_window.py" line="1496"/>
             <source>Status: Monitoring</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1325"/>
+            <location filename="ui/main_window.py" line="1321"/>
             <source>Status: Monitoring &lt;font color='#FFD700'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1503"/>
+            <location filename="ui/main_window.py" line="1499"/>
             <source>Status: Not monitoring</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1327"/>
+            <location filename="ui/main_window.py" line="1323"/>
             <source>Status: Not monitoring &lt;font color='#43a296'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1485"/>
+            <location filename="ui/main_window.py" line="1481"/>
             <source>Status: Not recording &lt;font color='#43a296'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1483"/>
+            <location filename="ui/main_window.py" line="1479"/>
             <source>Status: Recording &lt;font color='#00cc00'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1479"/>
+            <location filename="ui/main_window.py" line="1475"/>
             <source>Status: Recording failed &lt;font color='#dc3545'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1481"/>
+            <location filename="ui/main_window.py" line="1477"/>
             <source>Status: Starting &lt;font color='#ffc107'&gt;●&lt;/font&gt;</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1233"/>
+            <location filename="ui/main_window.py" line="1203"/>
+            <source>Stop</source>
+            <translation type="unfinished"/>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1203"/>
+            <source>Stop Recording</source>
+            <translation type="unfinished"/>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1228"/>
             <source>Stop monitoring the source folder for files to convert.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1231"/>
+            <location filename="ui/main_window.py" line="1226"/>
             <source>Stop the active multi-source recording.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1191"/>
+            <location filename="ui/main_window.py" line="1185"/>
             <source>Stopping...</source>
-            <translation type="unfinished"/>
+            <translation>Stoppen...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1765"/>
+            <location filename="ui/main_window.py" line="1772"/>
             <source>The application is locked. Unlock to change settings.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3222"/>
+            <location filename="ui/main_window.py" line="3239"/>
             <source>The following files are not supported:
 %(paths)s</source>
-            <translation type="unfinished"/>
+            <translation>De volgende bestanden worden niet ondersteund:
+%(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2487"/>
+            <location filename="ui/main_window.py" line="2494"/>
             <source>The help document could not be found.
 Build it with:
   python docs/help/source/build_help_docs.py</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1362"/>
+            <location filename="ui/main_window.py" line="2907"/>
+            <source>This build cannot check for updates: no update source has been set.
+You are running version %(version)s.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1358"/>
             <source>Unavailable while conversion is running</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2268"/>
-            <location filename="ui/main_window.py" line="3221"/>
+            <location filename="ui/main_window.py" line="2275"/>
+            <location filename="ui/main_window.py" line="3238"/>
             <source>Unsupported Files</source>
-            <translation type="unfinished"/>
+            <translation>Niet-ondersteunde bestanden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2905"/>
+            <location filename="ui/main_window.py" line="2928"/>
             <source>Update Available</source>
-            <translation type="unfinished"/>
+            <translation>Update beschikbaar</translation>
         </message>
         <message>
             <location filename="ui/main_window.py" line="232"/>
@@ -756,21 +793,26 @@ Build it with:
         <message>
             <location filename="ui/main_window.py" line="2920"/>
             <source>Update Check Failed</source>
-            <translation type="unfinished"/>
+            <translation>Controle op updates mislukt</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1633"/>
+            <location filename="ui/main_window.py" line="1640"/>
             <source>Update v%(version)s Available!</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2824"/>
-            <location filename="ui/main_window.py" line="2856"/>
+            <location filename="ui/main_window.py" line="2906"/>
+            <source>Updates Not Configured</source>
+            <translation>Updates niet geconfigureerd</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2831"/>
+            <location filename="ui/main_window.py" line="2863"/>
             <source>Upload</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1526"/>
+            <location filename="ui/main_window.py" line="1522"/>
             <source>Video Converter Application</source>
             <translation type="unfinished"/>
         </message>
@@ -780,14 +822,14 @@ Build it with:
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="644"/>
+            <location filename="ui/main_window.py" line="635"/>
             <source>Video Inspection Tool</source>
-            <translation type="unfinished"/>
+            <translation>Video-inspectie</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2916"/>
+            <location filename="ui/main_window.py" line="2917"/>
             <source>You are running the latest version.</source>
-            <translation type="unfinished"/>
+            <translation>U gebruikt de nieuwste versie.</translation>
         </message>
     </context>
     <context>
@@ -805,7 +847,7 @@ Build it with:
         <message>
             <location filename="ui/media_player_widget.py" line="142"/>
             <source>Clear</source>
-            <translation type="unfinished"/>
+            <translation>Wissen</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="113"/>
@@ -816,7 +858,7 @@ or click Load</source>
         <message>
             <location filename="ui/media_player_widget.py" line="137"/>
             <source>Load</source>
-            <translation type="unfinished"/>
+            <translation>Laden</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="268"/>
@@ -826,7 +868,7 @@ or click Load</source>
         <message>
             <location filename="ui/media_player_widget.py" line="263"/>
             <source>Media Player</source>
-            <translation type="unfinished"/>
+            <translation>Mediaspeler</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="210"/>
@@ -846,14 +888,14 @@ or click Load</source>
         <message>
             <location filename="ui/media_player_widget.py" line="404"/>
             <source>Pause all</source>
-            <translation type="unfinished"/>
+            <translation>Alles pauzeren</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="313"/>
             <location filename="ui/media_player_widget.py" line="411"/>
             <location filename="ui/media_player_widget.py" line="418"/>
             <source>Play all</source>
-            <translation type="unfinished"/>
+            <translation>Alles afspelen</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="321"/>
@@ -868,7 +910,7 @@ or click Load</source>
         <message>
             <location filename="ui/media_player_widget.py" line="317"/>
             <source>Stop all</source>
-            <translation type="unfinished"/>
+            <translation>Alles stoppen</translation>
         </message>
         <message>
             <location filename="ui/media_player_widget.py" line="133"/>
@@ -884,63 +926,63 @@ or click Load</source>
     <context>
         <name>PcReport</name>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="351"/>
+            <location filename="ui/pc_report_dialog.py" line="354"/>
             <source>Generate</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="112"/>
-            <location filename="ui/pc_report_dialog.py" line="282"/>
+            <location filename="ui/pc_report_dialog.py" line="113"/>
+            <location filename="ui/pc_report_dialog.py" line="285"/>
             <source>Generate PC Report</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="101"/>
+            <location filename="ui/pc_report_dialog.py" line="102"/>
             <source>Generate a detailed support report without leaving this tab. The report is saved automatically, with redaction enabled for sensitive values.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="228"/>
+            <location filename="ui/pc_report_dialog.py" line="230"/>
             <source>Generating PC report inside this tab...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="114"/>
+            <location filename="ui/pc_report_dialog.py" line="115"/>
             <source>Open Folder</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="113"/>
+            <location filename="ui/pc_report_dialog.py" line="114"/>
             <source>Open Report</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="97"/>
+            <location filename="ui/pc_report_dialog.py" line="98"/>
             <source>PC Report</source>
-            <translation type="unfinished"/>
+            <translation>PC-rapport</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="248"/>
+            <location filename="ui/pc_report_dialog.py" line="250"/>
             <source>PC report complete: %(path)s</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="255"/>
+            <location filename="ui/pc_report_dialog.py" line="257"/>
             <source>PC report generated, but saving failed.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="135"/>
+            <location filename="ui/pc_report_dialog.py" line="137"/>
             <source>Ready. Reports are saved to your Desktop by default.</source>
-            <translation type="unfinished"/>
+            <translation>Gereed. Rapporten worden standaard op uw bureaublad opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="352"/>
+            <location filename="ui/pc_report_dialog.py" line="355"/>
             <source>Save HTML…</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="154"/>
+            <location filename="ui/pc_report_dialog.py" line="156"/>
             <source>Tip: the generated HTML is self-contained, so it can be attached to support tickets or opened later.</source>
             <translation type="unfinished"/>
         </message>
@@ -949,579 +991,579 @@ or click Load</source>
         <name>Preview</name>
         <message>
             <location filename="ui/preview_controller.py" line="85"/>
-            <location filename="ui/preview_controller.py" line="227"/>
-            <location filename="ui/preview_controller.py" line="266"/>
-            <location filename="ui/preview_controller.py" line="386"/>
-            <location filename="ui/preview_controller.py" line="426"/>
-            <location filename="ui/preview_controller.py" line="429"/>
+            <location filename="ui/preview_controller.py" line="234"/>
+            <location filename="ui/preview_controller.py" line="273"/>
+            <location filename="ui/preview_controller.py" line="393"/>
+            <location filename="ui/preview_controller.py" line="433"/>
+            <location filename="ui/preview_controller.py" line="436"/>
             <source>No Preview</source>
             <translation>Geen voorbeeld</translation>
         </message>
         <message>
-            <location filename="ui/preview_controller.py" line="478"/>
+            <location filename="ui/preview_controller.py" line="485"/>
             <source>Preview failed</source>
-            <translation type="unfinished"/>
+            <translation>Voorbeeld mislukt</translation>
         </message>
         <message>
-            <location filename="ui/preview_controller.py" line="452"/>
-            <location filename="ui/preview_controller.py" line="402"/>
+            <location filename="ui/preview_controller.py" line="459"/>
+            <location filename="ui/preview_controller.py" line="409"/>
             <source>ffmpeg missing</source>
-            <translation type="unfinished"/>
+            <translation>ffmpeg ontbreekt</translation>
         </message>
     </context>
     <context>
         <name>Recorder</name>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="73"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="74"/>
             <source> s</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1005"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1006"/>
             <source>...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="340"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="341"/>
             <source>/</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="406"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="407"/>
             <source>01:00:00</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="762"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="763"/>
             <source>192.168.1.50 or rtsp://camera/stream</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="720"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="721"/>
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1673"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1674"/>
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.
 The FFmpeg DirectShow property dialog does not reliably open Basler camera controls and can produce BindToObject errors while NVC is previewing the camera.
 Open pylon Viewer to adjust exposure, gain, trigger mode, pixel format, and camera defaults.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1672"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="719"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1673"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="720"/>
             <source>Basler Camera Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="285"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="286"/>
             <source>Camera %(number)s settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="739"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="1640"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="740"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1641"/>
             <source>Camera Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="731"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="732"/>
             <source>Camera settings for %(device)s will use the camera driver's native controls when available.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1006"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1007"/>
             <source>Choose recording folder</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1042"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1043"/>
             <source>Combined output layouts are saved here, but recording currently uses the stable separate-video path.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="633"/>
             <location filename="ui/multi_source_recorder_widget.py" line="634"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="635"/>
             <source>Could not detect supported modes; Auto is recommended.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1937"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1938"/>
             <source>Could not open the recording folder:
 %(error)s</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1943"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1944"/>
             <source>Could not open the recording folder:
 %(path)s</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="618"/>
             <location filename="ui/multi_source_recorder_widget.py" line="619"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="620"/>
             <source>Detecting supported camera modes...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1003"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1004"/>
             <source>Double-click to choose the recording folder</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="914"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="915"/>
             <source>Double-click to open video settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="149"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="150"/>
             <source>Drag to pan/tilt this camera</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2065"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2066"/>
             <source>Enable at least one source and enter its source string.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2069"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2070"/>
             <source>Enable at least one unique source.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1942"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="1936"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1943"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1937"/>
             <source>Folder unavailable</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="337"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="338"/>
             <source>Load</source>
-            <translation type="unfinished"/>
+            <translation>Laden</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1949"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1950"/>
             <source>Missing FFmpeg</source>
-            <translation type="unfinished"/>
+            <translation>FFmpeg ontbreekt</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2065"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2069"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2066"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2070"/>
             <source>No Sources</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="739"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="740"/>
             <source>No camera-specific settings are available for this source type yet.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="856"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="1560"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2460"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2333"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="857"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1561"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2461"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2334"/>
             <source>Not recording</source>
-            <translation type="unfinished"/>
+            <translation>Niet aan het opnemen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1024"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1025"/>
             <source>Open</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1029"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1030"/>
             <source>Open the recording folder in your file browser</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="384"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="993"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="385"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="994"/>
             <source>Output settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="756"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="757"/>
             <source>RTSP/IP Camera Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2117"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2373"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2406"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2300"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2118"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2374"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2407"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2301"/>
             <source>Recording</source>
-            <translation type="unfinished"/>
+            <translation>Opnemen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1860"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1861"/>
             <source>Recording Log</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2540"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2541"/>
             <source>Recording failed - FFmpeg did not stop cleanly</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2308"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2108"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="2331"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2309"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2109"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2332"/>
             <source>Recording failed - check camera availability</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="889"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="890"/>
             <source>Recording properties</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2479"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2480"/>
             <source>Recording stopped (forced)</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2324"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2325"/>
             <source>Recording: %(name)s failed - check camera availability</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1640"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1641"/>
             <source>Select a USB / DirectShow camera first.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="338"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="339"/>
             <source>Set</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="976"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="977"/>
             <source>Show recording log</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1175"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1176"/>
             <source>Source</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1060"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1061"/>
             <source>Start recording</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2084"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2085"/>
             <source>Starting recording...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1073"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1074"/>
             <source>Stop Recording</source>
-            <translation type="unfinished"/>
+            <translation>Opname stoppen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2438"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2439"/>
             <source>Stopping...</source>
-            <translation type="unfinished"/>
+            <translation>Stoppen...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="663"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="664"/>
             <source>Supported frame rates detected from the camera driver.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="664"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="665"/>
             <source>Supported resolutions detected from the camera driver.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="76"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="77"/>
             <source>Sync offset for Combined grid: shift this source earlier (negative) or later (positive) to line it up with the others.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="398"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="399"/>
             <source>Timer settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="415"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="416"/>
             <source>USB / DirectShow expects the Windows camera name. RTSP/IP can use an IP address or full rtsp:// URL. Basler / GenICam expects the source string from pylon or device setup.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="730"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="731"/>
             <source>USB Camera Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="404"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="405"/>
             <source>Use maximum recording time</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1034"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1035"/>
             <source>Video</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1173"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1174"/>
             <source>Video %(number)s
 %(kind)s
 Configure the source</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1178"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1179"/>
             <source>Video %(number)s
 %(source)s
 Opening preview...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1470"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1471"/>
             <source>Video %(number)s
 Camera is not available as a DirectShow video device
 Refresh devices or check pylon/GenICam setup</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="865"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="866"/>
             <source>Video %(number)s
 No signal</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2223"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="2224"/>
             <source>Video %(number)s
 Opening combined preview...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1477"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1478"/>
             <source>Video %(number)s
 Preview interrupted
 Reconnecting...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1482"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1483"/>
             <source>Video %(number)s
 Preview unavailable
 Camera may be in use</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1182"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1183"/>
             <source>Video %(number)s
 RTSP/IP
 Opening preview...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1603"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1604"/>
             <source>Video %(number)s
 Recording
 Starting live preview...</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="325"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="326"/>
             <source>Video Preset</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="361"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="362"/>
             <source>Video Preset:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="201"/>
-            <location filename="ui/multi_source_recorder_widget.py" line="961"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="202"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="962"/>
             <source>Video Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="339"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="340"/>
             <source>[</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="341"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="342"/>
             <source>]</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="925"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="926"/>
             <source>address, device, or URL</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1050"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1051"/>
             <source>blank = until stopped</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1949"/>
+            <location filename="ui/multi_source_recorder_widget.py" line="1950"/>
             <source>ffmpeg.exe could not be found.</source>
-            <translation type="unfinished"/>
+            <translation>ffmpeg.exe kon niet worden gevonden.</translation>
         </message>
     </context>
     <context>
         <name>SettingsDialog</name>
         <message>
-            <location filename="ui/settings_dialog.py" line="730"/>
+            <location filename="ui/settings_dialog.py" line="725"/>
             <source>%</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="784"/>
+            <location filename="ui/settings_dialog.py" line="779"/>
             <source>-preset slow -profile:v high</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="676"/>
+            <location filename="ui/settings_dialog.py" line="671"/>
             <source>Advanced Options</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="854"/>
+            <location filename="ui/settings_dialog.py" line="849"/>
             <source>Apply Custom Preset 1</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="861"/>
+            <location filename="ui/settings_dialog.py" line="856"/>
             <source>Apply Custom Preset 2</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="847"/>
+            <location filename="ui/settings_dialog.py" line="842"/>
             <source>Apply Ethovision-optimized settings (MP4, H.264, 1920x1080, 25fps)</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="615"/>
+            <location filename="ui/settings_dialog.py" line="610"/>
             <source>Audio Codec:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="265"/>
+            <location filename="ui/settings_dialog.py" line="260"/>
             <source>Auto Run on Startup</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="268"/>
+            <location filename="ui/settings_dialog.py" line="263"/>
             <source>Automatically start the application with previous settings.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="405"/>
+            <location filename="ui/settings_dialog.py" line="400"/>
             <source>Backup Folder:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="586"/>
+            <location filename="ui/settings_dialog.py" line="581"/>
             <source>Basic Format Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1037"/>
+            <location filename="ui/settings_dialog.py" line="1034"/>
             <source>Behavior</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="695"/>
+            <location filename="ui/settings_dialog.py" line="690"/>
             <source>Bitrate:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="761"/>
+            <location filename="ui/settings_dialog.py" line="756"/>
             <source>Burns text onto the output video.
 Recorded options use the file's recorded time if present; otherwise file modified time.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="207"/>
+            <location filename="ui/settings_dialog.py" line="210"/>
             <source>Cancel</source>
-            <translation type="unfinished"/>
+            <translation>Annuleren</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="375"/>
-            <location filename="ui/settings_dialog.py" line="393"/>
-            <location filename="ui/settings_dialog.py" line="411"/>
-            <location filename="ui/settings_dialog.py" line="429"/>
+            <location filename="ui/settings_dialog.py" line="370"/>
+            <location filename="ui/settings_dialog.py" line="388"/>
+            <location filename="ui/settings_dialog.py" line="406"/>
+            <location filename="ui/settings_dialog.py" line="424"/>
             <source>Change</source>
-            <translation type="unfinished"/>
+            <translation>Wijzigen</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1000"/>
+            <location filename="ui/settings_dialog.py" line="997"/>
             <source>Choose which tools appear as tabs in the main window. Hidden tools stay available here and can be shown again any time.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="289"/>
-            <location filename="ui/settings_dialog.py" line="1044"/>
+            <location filename="ui/settings_dialog.py" line="284"/>
+            <location filename="ui/settings_dialog.py" line="1041"/>
             <source>Close on X (don't minimize to tray)</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="292"/>
+            <location filename="ui/settings_dialog.py" line="287"/>
             <source>Close the app completely when clicking X.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="290"/>
+            <location filename="ui/settings_dialog.py" line="285"/>
             <source>Close the application when clicking the window X button instead of minimizing to the system tray.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="894"/>
+            <location filename="ui/settings_dialog.py" line="889"/>
             <source>Console Command Help</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="772"/>
+            <location filename="ui/settings_dialog.py" line="767"/>
             <source>Console Integration</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="948"/>
+            <location filename="ui/settings_dialog.py" line="943"/>
             <source>Conversions will not occur after this time if restrictions enabled.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="943"/>
+            <location filename="ui/settings_dialog.py" line="938"/>
             <source>Conversions will not start before this time if restrictions enabled.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="276"/>
+            <location filename="ui/settings_dialog.py" line="271"/>
             <source>Copy Only</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="280"/>
+            <location filename="ui/settings_dialog.py" line="275"/>
             <source>Copy files without converting them.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1190"/>
+            <location filename="ui/settings_dialog.py" line="1189"/>
             <source>Current format settings saved to Custom Preset %(number)s.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="851"/>
+            <location filename="ui/settings_dialog.py" line="846"/>
             <source>Custom 1</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="858"/>
+            <location filename="ui/settings_dialog.py" line="853"/>
             <source>Custom 2</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="896"/>
+            <location filename="ui/settings_dialog.py" line="891"/>
             <source>Custom FFmpeg Flags Tutorial:
 You can enter raw FFmpeg flags here to override or extend defaults.
 Examples:
@@ -1533,364 +1575,370 @@ Note: These flags are appended to the command. Conflicts with other settings may
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="776"/>
+            <location filename="ui/settings_dialog.py" line="771"/>
             <source>Custom FFmpeg flags (for advanced users):</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1201"/>
+            <location filename="ui/settings_dialog.py" line="1200"/>
             <source>Custom Preset %(number)s has not been saved yet.
 Configure your desired settings and click 'Save to %(number)s' to create it.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="193"/>
+            <location filename="ui/settings_dialog.py" line="196"/>
             <source>Default</source>
-            <translation type="unfinished"/>
+            <translation>Standaard</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="492"/>
+            <location filename="ui/settings_dialog.py" line="487"/>
             <source>Delete files after conversion</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="496"/>
+            <location filename="ui/settings_dialog.py" line="491"/>
             <source>Delete original files after successful conversion.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="179"/>
+            <location filename="ui/settings_dialog.py" line="182"/>
             <source>Deletion</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="484"/>
+            <location filename="ui/settings_dialog.py" line="479"/>
             <source>Deletion Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="387"/>
+            <location filename="ui/settings_dialog.py" line="382"/>
             <source>Destination Folder:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="208"/>
+            <location filename="ui/settings_dialog.py" line="211"/>
             <source>Discard changes and close dialog.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="317"/>
+            <location filename="ui/settings_dialog.py" line="312"/>
             <source>Enable GPU acceleration for faster encoding (if supported).</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="314"/>
+            <location filename="ui/settings_dialog.py" line="309"/>
             <source>Enable GPU acceleration if available.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="944"/>
+            <location filename="ui/settings_dialog.py" line="939"/>
             <source>End Time:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="785"/>
+            <location filename="ui/settings_dialog.py" line="780"/>
             <source>Enter raw FFmpeg arguments here. These will be appended to the command.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="844"/>
+            <location filename="ui/settings_dialog.py" line="839"/>
             <source>Ethovision</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="650"/>
+            <location filename="ui/settings_dialog.py" line="645"/>
             <source>FPS:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="359"/>
+            <location filename="ui/settings_dialog.py" line="354"/>
             <source>Folder Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="178"/>
+            <location filename="ui/settings_dialog.py" line="181"/>
             <source>Folders</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="180"/>
+            <location filename="ui/settings_dialog.py" line="183"/>
             <source>Format</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="705"/>
+            <location filename="ui/settings_dialog.py" line="700"/>
             <source>Frame Rate:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="339"/>
+            <location filename="ui/settings_dialog.py" line="334"/>
             <source>GPU Encoder:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="345"/>
+            <location filename="ui/settings_dialog.py" line="340"/>
             <source>GPU Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="177"/>
+            <location filename="ui/settings_dialog.py" line="180"/>
             <source>General</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="257"/>
+            <location filename="ui/settings_dialog.py" line="252"/>
             <source>General Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="931"/>
+            <location filename="ui/settings_dialog.py" line="1060"/>
+            <source>Hide Advanced Options</source>
+            <translation type="unfinished"/>
+        </message>
+        <message>
+            <location filename="ui/settings_dialog.py" line="926"/>
             <source>If enabled, conversions can occur at any time.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="277"/>
+            <location filename="ui/settings_dialog.py" line="272"/>
             <source>If enabled, files are copied without converting them.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="531"/>
+            <location filename="ui/settings_dialog.py" line="526"/>
             <source>If enabled, original files are moved to the backup folder instead of deletion.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="493"/>
+            <location filename="ui/settings_dialog.py" line="488"/>
             <source>If enabled, original files will be deleted after a retention period.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="716"/>
+            <location filename="ui/settings_dialog.py" line="711"/>
             <source>Keyframe Interval (GOP):</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="301"/>
-            <location filename="ui/settings_dialog.py" line="1048"/>
+            <location filename="ui/settings_dialog.py" line="296"/>
+            <location filename="ui/settings_dialog.py" line="1045"/>
             <source>Launch at Windows startup (All Users)</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="302"/>
+            <location filename="ui/settings_dialog.py" line="297"/>
             <source>Launch the application automatically when Windows starts for all users.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="423"/>
+            <location filename="ui/settings_dialog.py" line="418"/>
             <source>Log Folder:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="646"/>
+            <location filename="ui/settings_dialog.py" line="641"/>
             <source>Loop</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="994"/>
+            <location filename="ui/settings_dialog.py" line="991"/>
             <source>Main Window Tool Tabs</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="651"/>
+            <location filename="ui/settings_dialog.py" line="646"/>
             <source>Max Width:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="537"/>
+            <location filename="ui/settings_dialog.py" line="532"/>
             <source>Move original files to a backup folder after conversion.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1200"/>
+            <location filename="ui/settings_dialog.py" line="1199"/>
             <source>No Preset</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="929"/>
+            <location filename="ui/settings_dialog.py" line="924"/>
             <source>No Time Restrictions</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="516"/>
+            <location filename="ui/settings_dialog.py" line="511"/>
             <source>Number of days to keep the original file before deletion.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="200"/>
+            <location filename="ui/settings_dialog.py" line="203"/>
             <source>OK</source>
-            <translation type="unfinished"/>
+            <translation>OK</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="598"/>
+            <location filename="ui/settings_dialog.py" line="593"/>
             <source>Output Format:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="732"/>
+            <location filename="ui/settings_dialog.py" line="727"/>
             <source>Output audio volume. 100% is unchanged.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1189"/>
+            <location filename="ui/settings_dialog.py" line="1188"/>
             <source>Preset Saved</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="833"/>
+            <location filename="ui/settings_dialog.py" line="828"/>
             <source>Presets</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="648"/>
+            <location filename="ui/settings_dialog.py" line="643"/>
             <source>Quick GIF (no palette)</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="194"/>
+            <location filename="ui/settings_dialog.py" line="197"/>
             <source>Reset settings to their default values.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="925"/>
+            <location filename="ui/settings_dialog.py" line="920"/>
             <source>Restrict conversion to specific times of the day.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="512"/>
+            <location filename="ui/settings_dialog.py" line="507"/>
             <source>Retention time (days):</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="266"/>
+            <location filename="ui/settings_dialog.py" line="261"/>
             <source>Run the application automatically with the previous settings at startup.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="873"/>
+            <location filename="ui/settings_dialog.py" line="868"/>
             <source>Save current settings to Custom Preset 1</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="879"/>
+            <location filename="ui/settings_dialog.py" line="874"/>
             <source>Save current settings to Custom Preset 2</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="201"/>
+            <location filename="ui/settings_dialog.py" line="204"/>
             <source>Save current settings.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="870"/>
+            <location filename="ui/settings_dialog.py" line="865"/>
             <source>Save to 1</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="876"/>
+            <location filename="ui/settings_dialog.py" line="871"/>
             <source>Save to 2</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="721"/>
+            <location filename="ui/settings_dialog.py" line="716"/>
             <source>Set the Group of Pictures (GOP) size. 0 = Auto. Lower values = better seeking/quality, Higher = better compression.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="34"/>
+            <location filename="ui/settings_dialog.py" line="35"/>
             <source>Settings</source>
             <translation>Instellingen</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="822"/>
+            <location filename="ui/settings_dialog.py" line="817"/>
+            <location filename="ui/settings_dialog.py" line="1061"/>
             <source>Show Advanced Options</source>
-            <translation type="unfinished"/>
+            <translation>Geavanceerde opties weergeven</translation>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="792"/>
+            <location filename="ui/settings_dialog.py" line="787"/>
             <source>Show help for custom commands</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1022"/>
+            <location filename="ui/settings_dialog.py" line="1019"/>
             <source>Show this optional tool as a main-window tab.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="369"/>
+            <location filename="ui/settings_dialog.py" line="364"/>
             <source>Source Folder:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="939"/>
+            <location filename="ui/settings_dialog.py" line="934"/>
             <source>Start Time:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="304"/>
+            <location filename="ui/settings_dialog.py" line="299"/>
             <source>Start the app automatically when Windows starts (requires permissions).</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="736"/>
+            <location filename="ui/settings_dialog.py" line="731"/>
             <source>Text Overlay:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="181"/>
+            <location filename="ui/settings_dialog.py" line="184"/>
             <source>Time</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="917"/>
+            <location filename="ui/settings_dialog.py" line="912"/>
             <source>Time Settings</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="522"/>
+            <location filename="ui/settings_dialog.py" line="517"/>
             <source>Time in days to retain original files before deletion (0-30).</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="182"/>
+            <location filename="ui/settings_dialog.py" line="185"/>
             <source>Tools</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="530"/>
+            <location filename="ui/settings_dialog.py" line="525"/>
             <source>Use Backup Folder</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="313"/>
+            <location filename="ui/settings_dialog.py" line="308"/>
             <source>Use GPU Acceleration</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="607"/>
+            <location filename="ui/settings_dialog.py" line="602"/>
             <source>Video Codec:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="685"/>
+            <location filename="ui/settings_dialog.py" line="680"/>
             <source>Video Size:</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="1020"/>
+            <location filename="ui/settings_dialog.py" line="1017"/>
             <source>Visible by default. You can hide it, but keeping core workflow tabs visible is recommended.</source>
             <translation type="unfinished"/>
         </message>
         <message>
-            <location filename="ui/settings_dialog.py" line="726"/>
+            <location filename="ui/settings_dialog.py" line="721"/>
             <source>Volume:</source>
             <translation type="unfinished"/>
         </message>
@@ -1912,7 +1960,7 @@ Configure your desired settings and click 'Save to %(number)s' to create it.</so
             <location filename="main.py" line="63"/>
             <location filename="main.py" line="67"/>
             <source>NVC is already running.</source>
-            <translation type="unfinished"/>
+            <translation>NVC is al actief.</translation>
         </message>
     </context>
 </TS>

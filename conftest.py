@@ -31,6 +31,17 @@ from pathlib import Path
 # Must happen before the first PyQt5 import in the process.
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+# Point NVC's data directory at a throwaway location for the whole session.
+# utils.config derives config_file from it at import time, so this has to be
+# set before anything imports it. Without this the suite reads -- and saves --
+# the real user's settings: four tests in test_single_active_workflow were
+# passing only because this developer happened to have the recorder tab
+# enabled, and a test run could change which tabs the app shows.
+import tempfile as _tempfile
+
+_TEST_DATA_DIR = _tempfile.mkdtemp(prefix="nvc-test-data-")
+os.environ["NVC_DATA_DIR"] = _TEST_DATA_DIR
+
 _ROOT = Path(__file__).resolve().parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))

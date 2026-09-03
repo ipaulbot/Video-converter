@@ -12,8 +12,20 @@ class SingleActiveWorkflowTests(unittest.TestCase):
 
     def _window_on_recorder_tab(self):
         window = VideoConverterApp()
+        # The recorder is an optional tool tab and off by default, so
+        # apply_tool_tab_visibility hides it -- and Qt silently refuses to make
+        # a hidden tab current, which left the window on tab 0 and every
+        # assertion below reading the conversion-mode button. These tests used
+        # to pass only because this developer's saved settings happened to have
+        # the recorder enabled; enable it explicitly instead.
+        window.settings.setdefault("visible_tool_tabs", {})
+        window.settings["visible_tool_tabs"]["multi_source_recorder"] = True
+        window.apply_tool_tab_visibility()
+
         recorder_index = window.tabs.indexOf(window.multi_source_recorder_tab_scroll)
         window.tabs.setCurrentIndex(recorder_index)
+        assert window.tabs.currentIndex() == recorder_index, (
+            "the recorder tab did not become current; is it still hidden?")
         window.on_tab_changed(recorder_index)
         return window
 

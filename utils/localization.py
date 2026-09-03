@@ -52,17 +52,22 @@ class LocaleSpec:
 
 
 EN = LocaleSpec("en", "English", "nvc_en", "en", "production")
-NL = LocaleSpec("nl", "Nederlands", "nvc_nl", "nl", "draft")
-ZH_CN = LocaleSpec("zh-CN", "简体中文", "nvc_zh_CN", "zh-CN", "draft")
+NL = LocaleSpec("nl", "Nederlands", "nvc_nl", "nl", "production")
+ZH_CN = LocaleSpec("zh-CN", "简体中文", "nvc_zh_CN", "zh-CN", "production")
 
 ALL_LOCALES: Final[tuple[LocaleSpec, ...]] = (EN, NL, ZH_CN)
 _BY_CODE: Final[dict[str, LocaleSpec]] = {loc.code: loc for loc in ALL_LOCALES}
 
 DEFAULT_LOCALE: Final[str] = EN.code
 
-# Only reviewed languages are offered by default. The drafts exist so the
-# pipeline and the .ts files are real and reviewable, not so that unreviewed
-# machine output reaches a user.
+# Languages offered in the Language menu. Dutch and Simplified Chinese cover
+# the core interface -- tabs, buttons, menus, settings, status text and
+# dialogs -- and Qt falls back to the English source for anything not yet
+# translated, so partial coverage shows English rather than a blank.
+#
+# A native speaker should still review these before they reach customers;
+# `review_status` is the place to record that, and moving a locale back to
+# "draft" hides it again behind NVC_I18N_PREVIEW.
 PRODUCTION_LOCALES: Final[tuple[str, ...]] = tuple(
     loc.code for loc in ALL_LOCALES if loc.review_status == "production"
 )

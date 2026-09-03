@@ -1199,7 +1199,8 @@ class VideoConverterApp(QMainWindow):
             self.start_button.setToolTip(_tr("Finishing and saving the active recording."))
             return
         if is_running or recorder_recording:
-            self.start_button.setText("Stop Recording" if recorder_mode else "Stop")
+            self.start_button.setText(
+                _tr("Stop Recording") if recorder_mode else _tr("Stop"))
             # Update log display based on monitoring state
             self.update_log_display()
             self.start_button.setStyleSheet(theme.qss("""
@@ -1226,7 +1227,8 @@ class VideoConverterApp(QMainWindow):
             else:
                 self.start_button.setToolTip(_tr("Stop monitoring the source folder for files to convert."))
         else:
-            self.start_button.setText("Start Recording" if recorder_mode else "Start")
+            self.start_button.setText(
+                _tr("Start Recording") if recorder_mode else _tr("Start"))
             # Update log display based on monitoring state
             self.update_log_display()
             self.start_button.setStyleSheet(theme.qss("""

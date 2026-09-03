@@ -12,6 +12,20 @@ def get_data_dir(subfolder: Optional[str] = None) -> str:
     If *subfolder* is provided (e.g. "logs", "game"), it is created beneath
     the root directory and that path is returned.
     """
+    # An explicit override wins. The test suite points this at a temporary
+    # directory so running tests cannot read or rewrite the real user's
+    # settings -- which it previously did, silently changing which tabs were
+    # visible.
+    override = os.environ.get("NVC_DATA_DIR")
+    if override:
+        base = override
+        os.makedirs(base, exist_ok=True)
+        if subfolder:
+            full = os.path.join(base, subfolder)
+            os.makedirs(full, exist_ok=True)
+            return full
+        return base
+
     if os.name == "nt":
         appdata = os.environ.get("APPDATA")
         if not appdata:
