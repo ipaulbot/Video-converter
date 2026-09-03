@@ -1,6 +1,7 @@
 import concurrent.futures as cf
 import datetime, os
 from . import collectors as C
+from utils.logger import logger
 
 
 def run_all(options: dict, progress_cb=None):
@@ -53,7 +54,7 @@ def run_all(options: dict, progress_cb=None):
                 try:
                     progress_cb(name, completed, total)
                 except Exception:
-                    pass
+                    logger.debug("run_all: suppressed error", exc_info=True)
     meta = {
         'generated_at': datetime.datetime.now().isoformat(),
         'machine': os.environ.get('COMPUTERNAME','')

@@ -3,6 +3,7 @@ import os
 from typing import List, Tuple, Dict, Any
 
 from .paths import get_data_dir
+from utils.logger import logger
 
 SYSTEM_FILE_NAME = "system.nvc"
 
@@ -81,6 +82,6 @@ def set_best_level(level: int) -> None:
         state["best_level"] = int(level)
         _write_state(state)
     except Exception:
-        pass
+        logger.debug("set_best_level: suppressed error", exc_info=True)
 
 

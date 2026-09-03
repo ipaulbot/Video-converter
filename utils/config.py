@@ -109,8 +109,13 @@ def load_settings():
             path = merged.get(key)
             if path:
                 os.makedirs(path, exist_ok=True)
-    except Exception:
-        pass
+    except OSError:
+        # Not fatal here, but conversions will fail later with a less obvious
+        # message, so name the folder that could not be created.
+        logger.warning("Could not create one of the configured folders: %s",
+                       {k: merged.get(k) for k in
+                        ("source_folder", "destination_folder", "backup_folder")},
+                       exc_info=True)
     return merged
 
 def save_settings(settings):

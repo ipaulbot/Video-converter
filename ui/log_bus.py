@@ -2,6 +2,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from collections import deque
 from threading import Lock
 from typing import List
+from utils.logger import logger
 
 
 class LogBus(QObject):
@@ -18,7 +19,7 @@ class LogBus(QObject):
             with self._lock:
                 self._buf.append(line)
         except Exception:
-            pass
+            logger.debug("LogBus.append: suppressed error", exc_info=True)
 
     def drain(self, max_items: int = 500) -> List[str]:
         out: List[str] = []
@@ -51,4 +52,4 @@ class LogBus(QObject):
             try:
                 self.lines_ready.emit(lines)
             except Exception:
-                pass
+                logger.debug("LogBus._emit_batched: suppressed error", exc_info=True)

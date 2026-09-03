@@ -2452,7 +2452,7 @@ class MultiSourceRecorderWidget(QWidget):
         try:
             process.write(b"q\n")
         except Exception:
-            pass
+            logger.debug("MultiSourceRecorderWidget._write_recording_quit: suppressed error", exc_info=True)
 
     def _finish_recording_quit(self, process):
         try:
@@ -2465,7 +2465,7 @@ class MultiSourceRecorderWidget(QWidget):
             if hasattr(process, "closeWriteChannel"):
                 process.closeWriteChannel()
         except Exception:
-            pass
+            logger.debug("MultiSourceRecorderWidget._finish_recording_quit: suppressed error", exc_info=True)
         # Keep stop snappy: on Windows QProcess.terminate() behaves like TerminateProcess,
         # so we follow the graceful q with a short window for FFmpeg to finalize the
         # MP4 moov atom, then escalate.
@@ -2514,7 +2514,7 @@ class MultiSourceRecorderWidget(QWidget):
             try:
                 host.update_single_workflow_availability()
             except Exception:
-                pass
+                logger.debug("MultiSourceRecorderWidget._notify_workflow_availability_change: suppressed error", exc_info=True)
             return
 
         # Fallback for tests/legacy construction paths where no explicit host was
@@ -2531,7 +2531,7 @@ class MultiSourceRecorderWidget(QWidget):
                 try:
                     ancestor.update_single_workflow_availability()
                 except Exception:
-                    pass
+                    logger.debug("MultiSourceRecorderWidget._notify_workflow_availability_change: suppressed error", exc_info=True)
                 return
             parent_attr = getattr(ancestor, "parent", None)
             if not callable(parent_attr):

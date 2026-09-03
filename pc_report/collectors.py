@@ -2,6 +2,7 @@ import os
 import re
 import datetime
 from .utils import run_ps_json
+from utils.logger import logger
 
 NVC_RELATED_TERMS = (
     'noldus',
@@ -327,7 +328,7 @@ def collect_nvc_specific():
         if total_memory:
             hw_info['RAM_GB'] = round(total_memory / (1024 ** 3), 2)
     except Exception:
-        pass
+        logger.debug("collect_nvc_specific: suppressed error", exc_info=True)
 
     return {
         'noldus_software': programs or [],
@@ -424,19 +425,19 @@ def collect_programs():
                     inst = f"{s[0:4]}-{s[4:6]}-{s[6:8]}"
             _add(it.get('Name'), it.get('Version'), inst, it.get('Publisher'), it.get('Uninstall'))
         except Exception:
-            pass
+            logger.debug("collect_programs: suppressed error", exc_info=True)
 
     for it in pkg_list:
         try:
             _add(it.get('Name'), it.get('Version'), it.get('InstallDate') or '', it.get('Publisher') or '', '')
         except Exception:
-            pass
+            logger.debug("collect_programs: suppressed error", exc_info=True)
 
     for it in appx_list:
         try:
             _add(it.get('Name'), it.get('Version'), it.get('InstallDate') or '', it.get('Publisher') or '', '')
         except Exception:
-            pass
+            logger.debug("collect_programs: suppressed error", exc_info=True)
 
     # Deduplicate by (Name, Version, Publisher)
     seen = set()

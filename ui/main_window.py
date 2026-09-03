@@ -2,7 +2,6 @@ import os
 import shutil
 import subprocess
 import threading
-import importlib.util
 import sys
 from datetime import datetime
 
@@ -30,6 +29,11 @@ from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.media_files import collect_supported_media_paths
+from utils.subprocess_helpers import (
+    FFMPEG_RENDER_TIMEOUT,
+    FFPROBE_TIMEOUT,
+    get_subprocess_startupinfo,
+)
 from conversion.worker import ConversionWorker, WorkerSignals
 from conversion.ffmpeg_utils import is_within_allowed_time
 from ui.log_bus import LogBus
@@ -394,7 +398,7 @@ class VideoConverterApp(QMainWindow):
                     self.console_output.setTextCursor(cursor)
                     self.console_output.ensureCursorVisible()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp._deliver: suppressed error", exc_info=True)
         self.log_bus.start_delivery(_deliver, interval_ms=75)
 
         # Store the full tab stylesheet as a template
@@ -676,14 +680,14 @@ class VideoConverterApp(QMainWindow):
             from utils.paths import get_data_dir
             self.converted_files_widget.set_log_folder(get_data_dir("logs"))
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         # Preview on selection in converted list
         try:
             self.converted_files_widget.preview_requested.connect(
                 lambda path: self.preview_file(path) if path else self._clear_preview_display()
             )
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         # Clean modern styling for converted files widget
         self.converted_files_widget.setStyleSheet("QTableWidget { border: 1px solid #E0E0E0; border-radius: 6px; background: white; }")
         converted_layout.addWidget(self.converted_files_widget)
@@ -751,7 +755,7 @@ class VideoConverterApp(QMainWindow):
                 )
             )
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         inspection_layout.addWidget(self.inspection_widget)
         # Initialize footer widgets before make_footer
         self.lock_icon_label_inspection_tab = QLabel()
@@ -891,7 +895,7 @@ class VideoConverterApp(QMainWindow):
                 self._refresh_recorder_layout_preview_if_active
             )
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
 
         central_widget = QWidget()
         central_widget.setMouseTracking(True)  # Enable mouse tracking for hover events
@@ -1000,7 +1004,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self.tabs.currentChanged.connect(self.on_tab_changed)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         # Add Compact Mode toggle to burger menu
         # self.compact_mode_action = burger_menu.addAction("Compact Mode")
         # self.compact_mode_action.setCheckable(True)
@@ -1696,19 +1700,19 @@ class VideoConverterApp(QMainWindow):
         try:
             self._stop_preview_process()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         try:
             recorder = getattr(self, 'multi_source_recorder_widget', None)
             if recorder and hasattr(recorder, 'shutdown'):
                 recorder.shutdown()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         try:
             player = getattr(self, 'media_player_widget', None)
             if player and hasattr(player, 'shutdown'):
                 player.shutdown()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         # Wait for the update-check QThread to finish. If the window (and thus the QThread
         # wrapper) is destroyed while the thread is still running, Qt aborts the process
         # ("QThread: Destroyed while thread is still running") - a non-deterministic crash
@@ -1719,7 +1723,7 @@ class VideoConverterApp(QMainWindow):
                 update_thread.quit()
                 update_thread.wait(3000)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         # Hide the system tray icon so it unregisters from the Windows shell. It is parented
         # to the window, so Qt frees it with the window; we must NOT deleteLater() it here or
         # the later deferred-delete would fire on an already-freed child.
@@ -1728,30 +1732,30 @@ class VideoConverterApp(QMainWindow):
             if tray is not None:
                 tray.hide()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         try:
             if self.folder_observer:
                 self.folder_observer.stop()
                 self.folder_observer.join(timeout=3)
                 self.folder_observer = None
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         for timer_name in ('preview_ui_timer', 'star_field_timer', 'game_progress_timer'):
             timer = getattr(self, timer_name, None)
             try:
                 if timer:
                     timer.stop()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         for worker in list(getattr(self, 'conversion_workers', {}).values()):
             try:
                 worker.cancel()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         try:
             self.threadpool.waitForDone(3000)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
 
     def check_updates(self):
         self.update_checker = UpdateChecker()
@@ -1778,12 +1782,12 @@ class VideoConverterApp(QMainWindow):
         try:
             self.append_log("Preview Error: Playback failed. Falling back to thumbnail.", is_error=True)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.handle_media_error: suppressed error", exc_info=True)
         try:
             if getattr(self, 'preview_source_path', ''):
                 self._generate_and_show_thumbnail(self.preview_source_path)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.handle_media_error: suppressed error", exc_info=True)
 
     def show_thumbnail_fallback(self):
         """Backward compatible wrapper for older callers."""
@@ -1812,12 +1816,12 @@ class VideoConverterApp(QMainWindow):
             self.console_output.setTextCursor(cursor)
             self.console_output.ensureCursorVisible()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.append_log: suppressed error", exc_info=True)
         # Keep overlay styling/state in sync as logs arrive
         try:
             self.update_log_display()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.append_log: suppressed error", exc_info=True)
 
     def _wiggle_lock_icon(self):
         """Animate visible lock icons to indicate locked state when actions are blocked."""
@@ -1841,7 +1845,7 @@ class VideoConverterApp(QMainWindow):
                 anim.setKeyValueAt(1.0, start_pos)
                 anim.start(QPropertyAnimation.DeleteWhenStopped)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._wiggle_lock_icon: suppressed error", exc_info=True)
 
     def _wiggle_converted_tab(self):
         """Animate the 'Converted Files' tab text to indicate a file has been converted."""
@@ -1883,7 +1887,7 @@ class VideoConverterApp(QMainWindow):
 
             do_wiggle()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._wiggle_converted_tab: suppressed error", exc_info=True)
 
     def _show_locked_dialog(self):
         """Consistent locked dialog with grayscale styling and wiggle before/after."""
@@ -1914,7 +1918,7 @@ class VideoConverterApp(QMainWindow):
             dlg.exec_()
             self._wiggle_lock_icon()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._show_locked_dialog: suppressed error", exc_info=True)
 
     # Remove update_conversion_status and update_percentage methods
 
@@ -2066,7 +2070,7 @@ class VideoConverterApp(QMainWindow):
                     """)
                     self.drag_drop_overlay.show()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
         from utils.resources import resource_path
         binary_path = resource_path('graphics/balls/BallbusterXT.txt')
         try:
@@ -2114,7 +2118,7 @@ class VideoConverterApp(QMainWindow):
                 rank = 'Master Ballbuster'
             self.append_log(f'Welcome back {rank}')
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
         from PyQt5.QtCore import QTimer, QCoreApplication
         QCoreApplication.processEvents()
         QTimer.singleShot(3000, self.launch_ballbuster_game)
@@ -2189,11 +2193,11 @@ class VideoConverterApp(QMainWindow):
         in_game = hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None
         if in_game:
             if self.locked:
-                return resource_path('graphics/GRAYSCALeballbuster.png')
+                return resource_path('graphics/GRAYSCALEBALLBUSTER.png')
             elif self.is_active_workflow_visual_state():
-                return resource_path('graphics/ballbuster.png')
+                return resource_path('graphics/BALLBUSTER.png')
             else:
-                return resource_path('graphics/tealballbuster.png')
+                return resource_path('graphics/TEALBALLBUSTER.png')
         # Normal NVC logos
         if self.locked:
             return resource_path('graphics/GRAYSCALENVCLOGO.ico')
@@ -2341,7 +2345,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self._stop_star_field()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.preview_file: suppressed error", exc_info=True)
         self._set_preview_placeholder(text="Loading preview…")
         self._generate_and_show_thumbnail(self.preview_source_path)
         # Ensure overlay is on top and can receive hover events
@@ -2373,7 +2377,7 @@ class VideoConverterApp(QMainWindow):
             try:
                 self.append_log("Files queued. Start conversion after unlocking/starting.")
             except Exception:
-                pass
+                logger.debug("VideoConverterApp._handle_converted_tab_drop: suppressed error", exc_info=True)
 
     def _confirm_dropped_conversion(self, count, show_dialog):
         if not show_dialog:
@@ -2669,7 +2673,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self.setGeometry(prev_geom)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.apply_window_flags_based_on_settings: suppressed error", exc_info=True)
 
         # If it was visible before, keep it visible. Restore to Normal unless it was minimized/maximized.
         if was_visible:
@@ -2711,7 +2715,7 @@ class VideoConverterApp(QMainWindow):
             frame_geo.moveCenter(center_point)
             self.move(frame_geo.topLeft())
         except Exception:
-            pass
+            logger.debug("VideoConverterApp.center_on_screen: suppressed error", exc_info=True)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -2919,12 +2923,12 @@ class VideoConverterApp(QMainWindow):
             try:
                 self.console_output.copy()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.show_log_context_menu_global: suppressed error", exc_info=True)
         elif chosen == select_all_action:
             try:
                 self.console_output.selectAll()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.show_log_context_menu_global: suppressed error", exc_info=True)
 
     def show_inspection_context_menu_global(self, global_pos, text_widget=None):
         """Context menu on inspection tab to mirror conversion log options."""
@@ -2951,12 +2955,12 @@ class VideoConverterApp(QMainWindow):
             try:
                 text_widget.copy()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.show_inspection_context_menu_global: suppressed error", exc_info=True)
         elif chosen == select_all_action and text_widget:
             try:
                 text_widget.selectAll()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp.show_inspection_context_menu_global: suppressed error", exc_info=True)
 
     def set_menu_icons(self):
         # Update burger icon for locked/unlocked state if desired (optional)
@@ -3196,18 +3200,18 @@ class VideoConverterApp(QMainWindow):
             QApplication.sendEvent(viewport, new_event)
             event.accept()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._forward_log_wheel: suppressed error", exc_info=True)
 
     def _clear_preview_display(self):
         """Fully reset sidebar preview (thumbnail/timeline/buttons/state)."""
         try:
             self._stop_preview_process()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
         try:
             self._stop_star_field()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
         self.preview_source_path = ""
         self.preview_playing = False
         self.preview_seek_seconds = 0.0
@@ -3217,12 +3221,12 @@ class VideoConverterApp(QMainWindow):
             self.preview_scrubber.hide()
             self.preview_scrubber.setValue(0)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
         try:
             self.play_pause_btn.hide()
             self.play_pause_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
         self._set_preview_placeholder("No Preview")
 
     def _start_star_field(self, theme='teal'):
@@ -3232,7 +3236,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self._stop_star_field()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._start_star_field: suppressed error", exc_info=True)
 
         # Hide play button and scrubber
         self.play_pause_btn.hide()
@@ -3273,7 +3277,7 @@ class VideoConverterApp(QMainWindow):
                 self.star_field_timer.stop()
                 self.star_field_timer.deleteLater()
             except Exception:
-                pass
+                logger.debug("VideoConverterApp._stop_star_field: suppressed error", exc_info=True)
         if hasattr(self, 'stars'):
             self.stars = []
 
@@ -3323,11 +3327,10 @@ class VideoConverterApp(QMainWindow):
                 '-of', 'default=noprint_wrappers=1:nokey=1',
                 file_path
             ]
-            startupinfo = None
-            if os.name == 'nt':
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, startupinfo=startupinfo, check=False)
+            startupinfo, creationflags = get_subprocess_startupinfo()
+            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                 timeout=FFPROBE_TIMEOUT,
+                                 startupinfo=startupinfo, creationflags=creationflags, check=False)
             s = (res.stdout or "").strip()
             if not s:
                 return 0.0
@@ -3349,7 +3352,7 @@ class VideoConverterApp(QMainWindow):
                 if old and os.path.exists(old):
                     os.remove(old)
             except Exception:
-                pass
+                logger.debug("VideoConverterApp._generate_and_show_thumbnail: suppressed error", exc_info=True)
 
             thumb_path = os.path.join(tempfile.gettempdir(), "nvc_preview.jpg")
             self._preview_thumb_path = thumb_path
@@ -3369,12 +3372,10 @@ class VideoConverterApp(QMainWindow):
                 thumb_path
             ]
 
-            startupinfo = None
-            if os.name == 'nt':
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startupinfo, check=False)
+            startupinfo, creationflags = get_subprocess_startupinfo()
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=FFMPEG_RENDER_TIMEOUT,
+                           startupinfo=startupinfo, creationflags=creationflags, check=False)
 
             if os.path.exists(thumb_path):
                 pix = QPixmap(thumb_path)
@@ -3392,11 +3393,11 @@ class VideoConverterApp(QMainWindow):
                 self.preview_process.kill()
                 self.preview_process.waitForFinished(500)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._stop_preview_process: suppressed error", exc_info=True)
         try:
             self._preview_buf = bytearray()
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._stop_preview_process: suppressed error", exc_info=True)
 
     def _start_preview_process(self, file_path, seek_seconds=0.0):
         """Start ffmpeg rawvideo decode for in-panel playback."""
@@ -3450,7 +3451,7 @@ class VideoConverterApp(QMainWindow):
             frac = min(1.0, max(0.0, self.preview_seek_seconds / float(self.preview_duration_sec)))
             self.preview_scrubber.setValue(int(frac * 1000))
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._tick_preview_ui: suppressed error", exc_info=True)
 
     def _on_preview_scrub_start(self):
         if not self.preview_source_path:
@@ -3499,17 +3500,16 @@ class VideoConverterApp(QMainWindow):
                 '-vf', vf,
                 img_path
             ]
-            startupinfo = None
-            if os.name == 'nt':
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startupinfo, check=False)
+            startupinfo, creationflags = get_subprocess_startupinfo()
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=FFMPEG_RENDER_TIMEOUT,
+                           startupinfo=startupinfo, creationflags=creationflags, check=False)
             if os.path.exists(img_path):
                 pix = QPixmap(img_path)
                 self.preview_label.setText("")
                 self.preview_label.setPixmap(pix)
         except Exception:
-            pass
+            logger.debug("VideoConverterApp._render_frame_at: suppressed error", exc_info=True)
 
     def _on_preview_bytes(self):
         """Consume rawvideo frames from ffmpeg."""
@@ -3785,7 +3785,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self.start_button.clicked.disconnect()
         except Exception:
-            pass
+            logger.debug("launch_ballbuster_game: suppressed error", exc_info=True)
         # Ensure the button is clickable even in locked (gray) mode
         self.start_button.setEnabled(True)
         self.start_button.setText("Exit Game")
@@ -3799,7 +3799,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self.start_button.clicked.disconnect(self.exit_game)
         except Exception:
-            pass
+            logger.debug("launch_ballbuster_game: suppressed error", exc_info=True)
         if self.start_button.receivers(self.start_button.clicked) == 0:
             self.start_button.clicked.connect(self.toggle_process)
         self.set_start_button_state(is_running=self.running)
@@ -3829,11 +3829,11 @@ class VideoConverterApp(QMainWindow):
         try:
             self._stop_star_field()
         except Exception:
-            pass
+            logger.debug("restore_log_view: suppressed error", exc_info=True)
         try:
             self._clear_preview_display()
         except Exception:
-            pass
+            logger.debug("restore_log_view: suppressed error", exc_info=True)
 
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget:
             try:
@@ -3858,7 +3858,7 @@ class VideoConverterApp(QMainWindow):
         try:
             self.start_button.clicked.disconnect(self.exit_game)
         except Exception:
-            pass
+            logger.debug("restore_log_view: suppressed error", exc_info=True)
         if self.start_button.receivers(self.start_button.clicked) == 0:
             self.start_button.clicked.connect(self.toggle_process)
         self.set_start_button_state(is_running=self.running)

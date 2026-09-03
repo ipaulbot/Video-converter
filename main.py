@@ -9,6 +9,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from ui.main_window import VideoConverterApp
 from utils.resources import resource_path
 from utils.retention import process_pending_deletions
+from utils.logger import logger
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,7 +38,7 @@ def main():
                 if os.path.exists(app_icon):
                     msg.setWindowIcon(QIcon(app_icon))
             except Exception:
-                pass
+                logger.debug("main: suppressed error", exc_info=True)
             if pm:
                 msg.setIconPixmap(pm.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             else:
@@ -78,7 +79,8 @@ def main():
     try:
         process_pending_deletions(log_cb=lambda m: None)
     except Exception:
-        pass
+        # Overdue files the user scheduled for deletion stay on disk.
+        logger.exception("Could not process pending deletions from a previous session.")
     window.show()
     sys.exit(app.exec_())
 

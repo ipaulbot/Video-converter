@@ -71,7 +71,7 @@ class SettingsDialog(QDialog):
             elif parent and (getattr(parent, 'running', False) or getattr(parent, 'active_conversion_count', 0) > 0):
                 highlight_color = '#92cb4f'
         except Exception:
-            pass
+            logger.debug("SettingsDialog.__init__: suppressed error", exc_info=True)
 
         modern_stylesheet = f"""
             QWidget {{
@@ -209,7 +209,7 @@ class SettingsDialog(QDialog):
             self.adjustSize()
             self.setFixedSize(self.size())
         except Exception:
-            pass
+            logger.debug("SettingsDialog.init_ui: suppressed error", exc_info=True)
 
         # Apply button style to all buttons if provided
         if self.button_style:
@@ -755,7 +755,7 @@ class SettingsDialog(QDialog):
         try:
             self.text_overlay_combo.view().setMinimumWidth(180)
         except Exception:
-            pass
+            logger.debug("SettingsDialog.create_conversion_tab: suppressed error", exc_info=True)
         advanced_layout.addRow(overlay_label, self.text_overlay_combo)
 
         # Console Integration (moved into Advanced)
@@ -971,7 +971,7 @@ class SettingsDialog(QDialog):
                 self.time_image_label.setStyleSheet("background: transparent; border: none;")
                 layout.addWidget(self.time_image_label, 0, Qt.AlignRight | Qt.AlignBottom)
         except Exception:
-            pass
+            logger.debug("SettingsDialog.create_time_tab: suppressed error", exc_info=True)
 
         self.time_tab.setLayout(layout)
 
@@ -1065,7 +1065,7 @@ class SettingsDialog(QDialog):
                     self.advanced_toggle.setChecked(False)
                     self._toggle_advanced(False)
         except Exception:
-            pass
+            logger.debug("SettingsDialog._on_tab_changed: suppressed error", exc_info=True)
 
     def toggle_copy_only(self, state):
         # Placeholder: Add any UI changes if "Copy Only" is enabled.
@@ -1134,7 +1134,7 @@ class SettingsDialog(QDialog):
             settings['gif_loop'] = bool(self.gif_loop_checkbox.isChecked())
             settings['gif_quick'] = bool(self.gif_quick_checkbox.isChecked())
         except Exception:
-            pass
+            logger.debug("SettingsDialog.get_current_format_settings: suppressed error", exc_info=True)
         return settings
 
     def apply_format_settings(self, settings):
@@ -1168,7 +1168,7 @@ class SettingsDialog(QDialog):
             if 'gif_quick' in settings:
                 self.gif_quick_checkbox.setChecked(bool(settings['gif_quick']))
         except Exception:
-            pass
+            logger.debug("SettingsDialog.apply_format_settings: suppressed error", exc_info=True)
 
     def save_custom_preset(self, preset_num):
         """Save current format settings to a custom preset."""
@@ -1222,7 +1222,7 @@ class SettingsDialog(QDialog):
             self.tabs.setMaximumHeight(total_h)
             self.tabs.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         except Exception:
-            pass
+            logger.debug("SettingsDialog._normalize_tab_heights: suppressed error", exc_info=True)
 
     def _compute_info_icon_path(self, parent=None):
         """
@@ -1235,7 +1235,7 @@ class SettingsDialog(QDialog):
             if parent and hasattr(parent, 'get_icon_path'):
                 return parent.get_icon_path('INFO')
         except Exception:
-            pass
+            logger.debug("SettingsDialog._compute_info_icon_path: suppressed error", exc_info=True)
         return resource_path('graphics/INFO.ico')
 
     def save_settings(self):
@@ -1264,7 +1264,7 @@ class SettingsDialog(QDialog):
             self.current_settings['gif_loop'] = bool(self.gif_loop_checkbox.isChecked())
             self.current_settings['gif_quick'] = bool(self.gif_quick_checkbox.isChecked())
         except Exception:
-            pass
+            logger.debug("SettingsDialog.save_settings: suppressed error", exc_info=True)
         self.current_settings['no_time_restrictions'] = self.no_time_restrictions_checkbox.isChecked()
         self.current_settings['start_time'] = self.start_time_edit.time().toString("HH:mm")
         self.current_settings['end_time'] = self.end_time_edit.time().toString("HH:mm")
@@ -1273,7 +1273,7 @@ class SettingsDialog(QDialog):
             self.current_settings['close_on_x'] = bool(self.close_on_x_checkbox.isChecked())
             self.current_settings['startup_common'] = bool(self.startup_common_checkbox.isChecked())
         except Exception:
-            pass
+            logger.debug("SettingsDialog.save_settings: suppressed error", exc_info=True)
         # Save GPU settings
         self.current_settings['use_gpu'] = self.use_gpu_checkbox.isChecked()
         self.current_settings['gpu_encoder'] = self.gpu_encoder_combo.currentText()

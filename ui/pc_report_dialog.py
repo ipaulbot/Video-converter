@@ -6,6 +6,7 @@ from pc_report.orchestrator import run_all
 from pc_report.render_html import render as render_html
 from pc_report.render_json import render as render_json
 from utils.file_naming import get_unique_path
+from utils.logger import logger
 
 
 class _PCReportWorker(QThread):
@@ -132,7 +133,7 @@ class PCReportWidget(QWidget):
         try:
             self.output.setLineWrapMode(QPlainTextEdit.WidgetWidth)
         except Exception:
-            pass
+            logger.debug("PCReportWidget.__init__: suppressed error", exc_info=True)
         self.output.setPlainText(
             "Press Generate PC Report to collect OS, hardware, driver, codec, NVC dependency, "
             "network, service, process, and security details. The app stays usable while the report runs."
@@ -163,7 +164,7 @@ class PCReportWidget(QWidget):
             if os.path.exists(logo_path):
                 self.logo_label.setPixmap(QPixmap(logo_path).scaledToWidth(120, Qt.SmoothTransformation))
         except Exception:
-            pass
+            logger.debug("PCReportWidget._set_logo: suppressed error", exc_info=True)
 
     def _set_progress_color(self, hex_color: str):
         self.progress.setStyleSheet(
@@ -344,7 +345,7 @@ class PCReportDialog(QDialog):
                 self.btn_run.setStyleSheet(button_style)
                 self.btn_save.setStyleSheet(button_style)
             except Exception:
-                pass
+                logger.debug("PCReportDialog.__init__: suppressed error", exc_info=True)
         # Ensure buttons have enough width and don't overlap
         self.btn_run.setMinimumWidth(140)
         self.btn_save.setMinimumWidth(140)
@@ -392,7 +393,7 @@ class PCReportDialog(QDialog):
         try:
             self.output.setLineWrapMode(QPlainTextEdit.WidgetWidth)
         except Exception:
-            pass
+            logger.debug("PCReportDialog.__init__: suppressed error", exc_info=True)
         self.output.setPlainText(self.instructions_text)
         layout.addWidget(self.output)
 
@@ -411,7 +412,7 @@ class PCReportDialog(QDialog):
             self.output.clear()
             self.output.appendPlainText("Generating…")
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_run: suppressed error", exc_info=True)
         opts = {
             'updates': True,
             'programs': True,
@@ -433,7 +434,7 @@ class PCReportDialog(QDialog):
         try:
             self.worker.progress.connect(lambda msg: self.output.appendPlainText(msg))
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_run: suppressed error", exc_info=True)
         # Start pulsing heart underlay
         try:
             self.heart_label.show()
@@ -448,11 +449,11 @@ class PCReportDialog(QDialog):
             try:
                 self._heart_anim.setEasingCurve(QEasingCurve.InOutSine)
             except Exception:
-                pass
+                logger.debug("PCReportDialog.on_run: suppressed error", exc_info=True)
             self._heart_anim.setLoopCount(-1)
             self._heart_anim.start()
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_run: suppressed error", exc_info=True)
         self.worker.start()
 
     def on_finished(self, html, json_text):
@@ -466,7 +467,7 @@ class PCReportDialog(QDialog):
             self.output.appendPlainText("PC Report complete.")
             self.output.appendPlainText("Click 'Save HTML…' to save your report.")
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_finished: suppressed error", exc_info=True)
         self.btn_save.setEnabled(True)
         # Emphasize Save button for user action
         try:
@@ -474,7 +475,7 @@ class PCReportDialog(QDialog):
             self.btn_save.setDefault(True)
             self.btn_save.setFocus()
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_finished: suppressed error", exc_info=True)
         # Start jiggle cycle: once immediately, then every 10s up to 4 times
         try:
             self._run_save_jiggle()
@@ -485,7 +486,7 @@ class PCReportDialog(QDialog):
             self._save_jiggle_timer.stop()
             self._save_jiggle_timer.start(10_000)
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_finished: suppressed error", exc_info=True)
         # Solid heart on completion
         try:
             if self._heart_anim is not None:
@@ -493,7 +494,7 @@ class PCReportDialog(QDialog):
             self._heart_effect.setOpacity(1.0)
             self.heart_label.show()
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_finished: suppressed error", exc_info=True)
 
     def _run_save_jiggle(self):
         g = self.btn_save.geometry()
@@ -520,7 +521,7 @@ class PCReportDialog(QDialog):
                 if self._save_jiggle_timer:
                     self._save_jiggle_timer.stop()
             except Exception:
-                pass
+                logger.debug("PCReportDialog._on_jiggle_timeout: suppressed error", exc_info=True)
 
     def on_save(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save HTML Report', os.path.expanduser('~\\Desktop\\PC_Report.html'), 'HTML Files (*.html)')
@@ -541,6 +542,6 @@ class PCReportDialog(QDialog):
             if self._save_jiggle_timer:
                 self._save_jiggle_timer.stop()
         except Exception:
-            pass
+            logger.debug("PCReportDialog.on_save: suppressed error", exc_info=True)
 
 

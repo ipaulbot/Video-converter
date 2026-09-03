@@ -3,6 +3,7 @@ import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from utils.version import APP_VERSION
+from utils.logger import logger
 
 # Replace with your actual version file URL
 UPDATE_URL = "https://raw.githubusercontent.com/yourusername/NVC/main/version.json"
@@ -38,7 +39,7 @@ class UpdateChecker(QObject):
             l_parts = [int(x) for x in latest.split('.')]
             c_parts = [int(x) for x in current.split('.')]
             return l_parts > c_parts
-        except:
+        except (AttributeError, TypeError, ValueError):
             return False
 
 class UpdateWorker(QThread):

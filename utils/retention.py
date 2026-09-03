@@ -4,6 +4,7 @@ import time
 from typing import List, Dict
 
 from utils.paths import get_data_dir
+from utils.logger import logger
 
 _PENDING_FILE = os.path.join(get_data_dir(), 'pending_deletions.json')
 
@@ -26,14 +27,17 @@ def _write_pending(items: List[Dict[str, str]]) -> None:
         try:
             os.fsync(f.fileno())
         except Exception:
-            pass
+            logger.debug("_write_pending: suppressed error", exc_info=True)
     try:
         os.replace(tmp, _PENDING_FILE)
     except Exception:
+        # The scheduled-deletion list was not updated, so files the user asked
+        # to be removed later will simply never be removed. Worth reporting.
+        logger.exception("Could not update the pending-deletion list at %s.", _PENDING_FILE)
         try:
             os.remove(tmp)
-        except Exception:
-            pass
+        except OSError:
+            logger.debug("_write_pending: could not remove temp file", exc_info=True)
 
 def add_pending_deletion(path: str, due_utc_epoch: float) -> None:
     items = _read_pending()
@@ -68,7 +72,7 @@ def process_pending_deletions(log_cb=None) -> int:
                     try:
                         log_cb(f"[retention] Deleted overdue file: {path}")
                     except Exception:
-                        pass
+                        logger.debug("process_pending_deletions: suppressed error", exc_info=True)
             except Exception:
                 # Keep entry to retry later
                 remaining.append(it)

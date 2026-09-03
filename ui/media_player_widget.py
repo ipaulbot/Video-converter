@@ -18,6 +18,8 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from utils.logger import logger
+
 VIDEO_NAME_FILTER = (
     "Video files (*.mp4 *.mov *.mkv *.avi *.wmv *.webm *.m4v *.mpg *.mpeg *.flv);;All files (*)"
 )
@@ -470,7 +472,7 @@ class MediaPlayerWidget(QWidget):
         try:
             self.sync_timer.stop()
         except Exception:
-            pass
+            logger.debug("MediaPlayerWidget.shutdown: suppressed error", exc_info=True)
         for panel in self.panels:
             if panel.player is None:
                 continue
@@ -482,4 +484,4 @@ class MediaPlayerWidget(QWidget):
                 panel.player.setMedia(QMediaContent())
                 panel.player.setVideoOutput(None)
             except Exception:
-                pass
+                logger.debug("MediaPlayerWidget.shutdown: suppressed error", exc_info=True)

@@ -1,6 +1,7 @@
 from .utils import bytes_human, bitrate_to_mbps
 from .privacy import mask_mac, mask_string, redact_user_paths, redact_payload
 from utils.resources import resource_path
+from utils.logger import logger
 
 def render(meta, data, options):
     redact = options.get('redact', True)
@@ -66,7 +67,7 @@ def render(meta, data, options):
             if isinstance(block, dict) and block.get('status') == 'partial':
                 return title + " <span style='color:#cc7a00;font-size:12px'>(partial)</span>"
         except Exception:
-            pass
+            logger.debug("_badge: suppressed error", exc_info=True)
         return title
 
     # --- Noldus NVC Summary Report ---
@@ -185,7 +186,7 @@ def render(meta, data, options):
                             ms = int(m.group(1))
                             return _dt.datetime.fromtimestamp(ms/1000.0)
                         except Exception:
-                            pass
+                            logger.debug("parse_to_dt: suppressed error", exc_info=True)
                     # try msjson or cim inside norm_time; but return parsed here where possible
                     # ISO
                     if 'T' in s:
@@ -197,7 +198,7 @@ def render(meta, data, options):
                                 dt = dt.astimezone().replace(tzinfo=None)
                             return dt
                         except Exception:
-                            pass
+                            logger.debug("parse_to_dt: suppressed error", exc_info=True)
                     # CIM yyyymmddHHMMSS...
                     if len(s) >= 14 and s[:14].isdigit():
                         return _dt.datetime(int(s[0:4]), int(s[4:6]), int(s[6:8]), int(s[8:10]), int(s[10:12]), int(s[12:14]))
@@ -535,7 +536,7 @@ def render(meta, data, options):
                 c = (int(t) / 10.0) - 273.15
                 s['CurrentTemperature'] = f"{c:.1f} °C"
             except Exception:
-                pass
+                logger.debug("sens_row: suppressed error", exc_info=True)
             return s
         sections.append(('Sensors', table([sens_row(dict(x)) for x in sensors], ['InstanceName','CurrentTemperature'])))
 

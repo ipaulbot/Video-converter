@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import pyqtSignal, Qt
 import os
 import subprocess
+from utils.logger import logger
 
 
 class _NoElideDelegate(QStyledItemDelegate):
@@ -162,7 +163,7 @@ class ConvertedFilesWidget(QWidget):
             header.resizeSection(0, 240)
             header.resizeSection(1, 420)
         except Exception:
-            pass
+            logger.debug("ConvertedFilesWidget.init_ui: suppressed error", exc_info=True)
 
         # Add clear button to table corner widget to eliminate spacing
         # self.table_widget.setCornerWidget(clear_button)
@@ -366,7 +367,7 @@ class ConvertedFilesWidget(QWidget):
                 try:
                     self.table_widget.item(row, 0).setToolTip(file_name_only)
                 except Exception:
-                    pass
+                    logger.debug("ConvertedFilesWidget.add_converted_file: suppressed error", exc_info=True)
                 # Refresh destination/path display
                 try:
                     dest_item = self.table_widget.item(row, 1)
@@ -374,7 +375,7 @@ class ConvertedFilesWidget(QWidget):
                         dest_item.setText(destination_folder)
                         dest_item.setToolTip(destination_folder)
                 except Exception:
-                    pass
+                    logger.debug("ConvertedFilesWidget.add_converted_file: suppressed error", exc_info=True)
             else:
                 row = self.table_widget.rowCount()
                 self.table_widget.insertRow(row)
@@ -451,7 +452,7 @@ class ConvertedFilesWidget(QWidget):
                 from PyQt5.QtWidgets import QApplication
                 QApplication.clipboard().setText(file_path or "")
             except Exception:
-                pass
+                logger.debug("ConvertedFilesWidget.show_context_menu: suppressed error", exc_info=True)
         elif action == settings_action:
             # Access parent window's show_settings method
             parent_window = self.parent()
@@ -523,7 +524,7 @@ class ConvertedFilesWidget(QWidget):
                     try:
                         os.remove(os.path.join(self.log_folder, fname))
                     except Exception:
-                        pass
+                        logger.debug("ConvertedFilesWidget.clear_logs: suppressed error", exc_info=True)
 
     def closeEvent(self, event):
         self.clear_logs()
@@ -542,7 +543,7 @@ class ConvertedFilesWidget(QWidget):
             if file_path:
                 self.preview_requested.emit(file_path)
         except Exception:
-            pass
+            logger.debug("ConvertedFilesWidget._handle_selection_changed: suppressed error", exc_info=True)
 
     def _format_path_for_display(self, path, max_chars=0):
         """Return full path; kept for future custom formatting."""

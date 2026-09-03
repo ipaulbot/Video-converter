@@ -29,13 +29,12 @@ select = [
     "W",     # pycodestyle warnings
     "I",     # import sorting
     "UP",    # pyupgrade
-    "B",     # bugbear — mutable defaults, and B110 bare `except: pass`
+    "B",     # bugbear — mutable defaults, unused loop vars
     "C4",    # comprehension simplifications
     "PLE",   # pylint errors
 ]
 ignore = [
     "E501",  # line too long — see line-length note above
-    "E722",  # bare except — tracked as Phase 2 work, 5 sites
     "B008",  # function call in default argument (common in Qt code)
 ]
 
