@@ -30,6 +30,7 @@ from utils.logger import logger
 from utils.resources import resource_path
 from utils.media_files import collect_supported_media_paths
 from ui import theme
+from conversion.queue_state import Admission, ConversionQueueState
 from utils.subprocess_helpers import (
     FFMPEG_RENDER_TIMEOUT,
     FFPROBE_TIMEOUT,
@@ -88,8 +89,8 @@ class VideoConverterApp(QMainWindow):
         # Ensure state flags defined before any dependent calls
         self.running = False
         self.status_running = False
-        self.active_conversion_count = 0
-        self.in_flight_conversions = set()
+        # Queue bookkeeping lives in ConversionQueueState (Qt-free and tested).
+        self.queue = ConversionQueueState()
         self.file_detected.connect(self.convert_file)
 
         # Use modern clean stylesheet
@@ -231,9 +232,6 @@ class VideoConverterApp(QMainWindow):
         self.folder_observer = None
         self.watchdog_handler = None
 
-        self.per_file_logs = {}  # file_path -> list of log lines
-        self.manual_queue = []   # files dropped into Converted tab while idle
-        self.conversion_workers = {}
         # Central log bus for conversion output with batched delivery
         self.log_bus = LogBus(maxlen=5000)
         def _deliver(lines):
@@ -1306,7 +1304,7 @@ class VideoConverterApp(QMainWindow):
         label.setTextFormat(Qt.RichText)
         if self.locked:
             label.setText("Status: Locked <font color='#888888'>●</font>")  # Gray
-        elif self.active_conversion_count > 0:
+        elif self.queue.active_count > 0:
             label.setText("Status: Converting <font color='#00cc00'>●</font>")  # Green
         elif self.running:
             label.setText("Status: Monitoring <font color='#FFD700'>●</font>")  # Yellow
@@ -1335,7 +1333,7 @@ class VideoConverterApp(QMainWindow):
     def is_active_workflow_visual_state(self):
         return bool(
             getattr(self, 'running', False)
-            or getattr(self, 'active_conversion_count', 0) > 0
+            or self.queue.active_count > 0
             or self.is_recorder_recording()
         )
 
@@ -1480,7 +1478,7 @@ class VideoConverterApp(QMainWindow):
             if self.locked:
                 self.compact_status_label.setText("Status: Locked")
                 self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
-            elif self.active_conversion_count > 0:
+            elif self.queue.active_count > 0:
                 self.compact_status_label.setText("Status: Converting")
                 self.compact_status_label.setStyleSheet("QLabel { color: #28a745; font-size: 10px; background: transparent; border: none; }")
             elif self.running:
@@ -1599,7 +1597,7 @@ class VideoConverterApp(QMainWindow):
                     timer.stop()
             except Exception:
                 logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
-        for worker in list(getattr(self, 'conversion_workers', {}).values()):
+        for worker in self.queue.workers():
             try:
                 worker.cancel()
             except Exception:
@@ -2211,8 +2209,7 @@ class VideoConverterApp(QMainWindow):
                 self.convert_file(path)
             else:
                 # Idle or locked: queue for later when Start is pressed (after unlock)
-                if path not in self.manual_queue:
-                    self.manual_queue.append(path)
+                self.queue.queue_manual(path)
         # Gentle reminder only when not auto-converting
         if not self.running or self.locked:
             try:
@@ -2261,8 +2258,7 @@ class VideoConverterApp(QMainWindow):
         for file_path in valid_paths:
             self.converted_files_widget.add_queued_file(os.path.basename(file_path), self.destination_folder)
             if self.locked:
-                if file_path not in self.manual_queue:
-                    self.manual_queue.append(file_path)
+                self.queue.queue_manual(file_path)
             else:
                 self.convert_file(file_path, force=True)
         if self.locked:
@@ -2270,15 +2266,26 @@ class VideoConverterApp(QMainWindow):
 
     def convert_file(self, file_path, force=False):
         """Start the conversion process for a single file."""
-        file_path = os.path.abspath(file_path)
-        if self.locked and not force:
+        file_path = self.queue.normalize(file_path)
+
+        # The four admission rules now live in ConversionQueueState.admit,
+        # which is unit-tested; this method keeps only the UI response to each.
+        verdict = self.queue.admit(
+            file_path,
+            locked=bool(self.locked),
+            running=bool(self.running),
+            force=force,
+            within_allowed_time=is_within_allowed_time(self.settings),
+        )
+        if verdict is Admission.LOCKED:
             self._wiggle_lock_icon()
             logger.info("Conversion attempt blocked while locked.")
             return
-        if file_path in self.in_flight_conversions:
+        if verdict is Admission.DUPLICATE:
             logger.info(f"Skipping duplicate conversion request for {file_path}.")
             self.append_log(f"Skipping duplicate conversion request for {file_path}.")
             return
+
         # Load Preview (Always, for better UX) - thumbnail first, optional play on click
         try:
             self.preview_file(file_path)
@@ -2293,19 +2300,18 @@ class VideoConverterApp(QMainWindow):
                 self.add_game_icons()  # Insert game icons immediately
             self._play_ballbuster_intro()
             return
-        if not self.running and not force:
+        if verdict is Admission.NOT_RUNNING:
             logger.info(f"Received file {file_path} but conversion is not running. Ignoring.")
             self.append_log(f"Received file {file_path} but conversion is not running. Ignoring.")
             return
-        if not is_within_allowed_time(self.settings):
+        if verdict is Admission.OUTSIDE_TIME:
             logger.info(f"Current time outside allowed range. Skipping {file_path}.")
             self.append_log(f"Current time outside allowed range. Skipping {file_path}.")
             return
-        self.in_flight_conversions.add(file_path)
         # Update status to 'processing' in the queue
         self.converted_files_widget.update_file_status(os.path.basename(file_path), 'processing')
-        self.active_conversion_count += 1  # Track active conversions
-        self.is_converting = self.active_conversion_count > 0
+        self.queue.start(file_path)
+        self.is_converting = self.queue.is_converting
         self.update_single_workflow_availability()
         # Ensure start/stop button switches to green while conversion is active
         self.set_start_button_state(is_running=True)
@@ -2313,28 +2319,27 @@ class VideoConverterApp(QMainWindow):
         self.update_status_labels()  # Update status when conversion starts
         self.update_log_display()  # Update log display to show console during conversion
         worker_signals = WorkerSignals()
-        # Buffer for per-file log
-        self.per_file_logs[file_path] = []
+
         def per_file_log_handler(msg):
             # Route through LogBus to keep UI responsive and resilient across tab switches
             try:
                 self.log_bus.append(msg)
             except Exception:
                 self.append_log(msg)
-            self.per_file_logs[file_path].append(msg)
+            self.queue.log_line(file_path, msg)
+
         worker_signals.log.connect(per_file_log_handler)
         worker_signals.conversion_complete.connect(self.handle_conversion_complete)
         from conversion.worker import ConversionWorker
         worker = ConversionWorker(file_path, self.settings, worker_signals)
-        self.conversion_workers[file_path] = worker
+        self.queue.start(file_path, worker)
         self.threadpool.start(worker)
 
     def _process_manual_queue(self):
         """Convert any files queued while idle once monitoring starts."""
-        if not getattr(self, 'manual_queue', None):
+        pending = self.queue.take_manual()
+        if not pending:
             return
-        pending = list(dict.fromkeys(self.manual_queue))  # dedupe, preserve order
-        self.manual_queue.clear()
         for path in pending:
             try:
                 ext = os.path.splitext(path)[1].lower()
@@ -2356,36 +2361,40 @@ class VideoConverterApp(QMainWindow):
         output_file = (deletion_info or {}).get('output_file', '')
         output_file_name = os.path.basename(output_file) if output_file else f"{name}.{output_format}"
         source_file = os.path.abspath((deletion_info or {}).get('source_file', '')) if deletion_info else ''
-        if source_file:
-            self.in_flight_conversions.discard(source_file)
-            self.conversion_workers.pop(source_file, None)
+        # Buffered log lines come back with the conversion, keyed on the
+        # source path. This used to be matched by basename below, so two
+        # files called clip.mov in different folders wrote each other's log.
+        log_lines = self.queue.finish(source_file) if source_file else []
         # Update status to 'success' or 'failure' in the queue
         self.converted_files_widget.update_file_status(output_file_name, 'success' if success else 'failure')
         self.converted_files_widget.file_converted_signal.emit(output_file_name, deletion_info, self.destination_folder, success)
-        # Write per-file log if available
-        for src_path in list(self.per_file_logs.keys()):
-            if os.path.basename(src_path) == file_name:
-                try:
-                    from utils.paths import get_data_dir
-                    default_logs = get_data_dir("logs")
-                except Exception:
-                    default_logs = os.path.expanduser("~")
-                log_folder = getattr(self.converted_files_widget, 'log_folder', default_logs)
-                if not os.path.exists(log_folder):
-                    os.makedirs(log_folder, exist_ok=True)
+        # Write the per-file log, if this conversion produced any lines.
+        if log_lines:
+            try:
+                from utils.paths import get_data_dir
+                default_logs = get_data_dir("logs")
+            except Exception:
+                logger.debug("No data dir for per-file logs", exc_info=True)
+                default_logs = os.path.expanduser("~")
+            log_folder = getattr(self.converted_files_widget, 'log_folder', default_logs)
+            try:
+                os.makedirs(log_folder, exist_ok=True)
                 log_path = os.path.join(log_folder, output_file_name + '.txt')
                 with open(log_path, 'w', encoding='utf-8') as f:
-                    for line in self.per_file_logs[src_path]:
-                        f.write(line + '\n')
-                del self.per_file_logs[src_path]
+                    for line in log_lines:
+                        f.write(line + chr(10))
+            except OSError:
+                logger.exception("Could not write the per-file log for %s.",
+                                 output_file_name)
         if success:
             self.append_log("Conversion complete!", is_error=False)
             # Wiggle the Converted Files tab to draw attention
             self._wiggle_converted_tab()
         else:
             self.append_log("Conversion failed!", is_error=True)
-        self.active_conversion_count = max(0, self.active_conversion_count - 1)  # Decrement, never below 0
-        self.is_converting = self.active_conversion_count > 0
+        # queue.finish() above already removed it, and the count derives
+        # from the in-flight set, so it cannot drift or go negative.
+        self.is_converting = self.queue.is_converting
         self.update_single_workflow_availability()
         # If monitoring is not running and all conversions have finished, restore button style
         if not self.running and not self.is_converting:
@@ -3108,8 +3117,7 @@ class VideoConverterApp(QMainWindow):
         if self.locked:
             for path in collect_supported_media_paths(files, SUPPORTED_FORMATS):
                 self.converted_files_widget.add_queued_file(os.path.basename(path), self.destination_folder)
-                if path not in self.manual_queue:
-                    self.manual_queue.append(path)
+                self.queue.queue_manual(path)
             self._wiggle_lock_icon()
             self.append_log("Files queued while locked. Unlock and start conversion to process them.")
             return
