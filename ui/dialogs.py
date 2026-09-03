@@ -6,6 +6,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import QUrl
 
 from utils.logger import logger
+from ui import theme
 from utils.resources import resource_path
 
 class EasterEggDialog(QDialog):
@@ -175,52 +176,15 @@ class InfoDialog(QDialog):
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)
 
-        # Apply button style based on parent's state
+        # Apply button style based on parent's state. The parent hands down an
+        # explicit style when it has one; otherwise pick the skin from its lock
+        # state, which is what the three hardcoded stylesheets used to do.
         if self.button_style:
             ok_button.setStyleSheet(self.button_style)
-            print(f"InfoDialog: Using provided button style")
-        elif self.parent() and hasattr(self.parent(), 'locked') and self.parent().locked:
-            # Apply grayscale style for locked state
-            print(f"InfoDialog: Parent is locked, applying grayscale style")
-            ok_button.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8a8a8a, stop:1 #7f7f7f);
-                    color: #ffffff;
-                    border: 1px solid #6a6a6a;
-                    border-radius: 6px;
-                    padding: 8px 16px;
-                    min-width: 80px;
-                    min-height: 28px;
-                    font-weight: bold;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9a9a9a, stop:1 #8a8a8a);
-                }
-                QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7f7f7f, stop:1 #6a6a6a);
-                }
-            """)
         else:
-            # Default teal style
-            print(f"InfoDialog: Parent is not locked, applying teal style")
-            ok_button.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #43a296, stop:1 #3a9284);
-                    border: 1px solid #2d7d6f;
-                    border-radius: 6px;
-                    padding: 8px 16px;
-                    min-width: 80px;
-                    min-height: 28px;
-                    font-weight: bold;
-                    color: white;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4bb3a7, stop:1 #43a296);
-                }
-                QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a9284, stop:1 #2d7d6f);
-                }
-            """)
+            locked = bool(self.parent() and getattr(self.parent(), 'locked', False))
+            ok_button.setStyleSheet(
+                theme.dialog_button_style(theme.skin_for_state(locked=locked)))
 
         layout.addWidget(ok_button, alignment=Qt.AlignCenter)
         self.setLayout(layout)
@@ -272,24 +236,9 @@ class LockedSettingsDialog(QDialog):
         ok_button.setCursor(Qt.PointingHandCursor)
         ok_button.clicked.connect(self.accept)
 
-        # Apply grayscale style for locked state
-        ok_button.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8a8a8a, stop:1 #7f7f7f);
-                color: #ffffff;
-                border: 1px solid #6a6a6a;
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-weight: bold;
-                font-size: 10pt;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9a9a9a, stop:1 #8a8a8a);
-            }
-            QPushButton:pressed {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7f7f7f, stop:1 #6a6a6a);
-            }
-        """)
+        # This dialog only appears when the app is locked, so it always uses
+        # the grayscale skin regardless of the global theme.
+        ok_button.setStyleSheet(theme.dialog_button_style(theme.LOCKED))
 
         # Button layout
         button_layout = QHBoxLayout()

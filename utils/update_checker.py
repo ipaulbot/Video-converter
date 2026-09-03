@@ -1,9 +1,5 @@
-import requests
-import json
-import logging
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from utils.version import APP_VERSION
-from utils.logger import logger
 
 # Replace with your actual version file URL
 UPDATE_URL = "https://raw.githubusercontent.com/yourusername/NVC/main/version.json"

@@ -36,9 +36,32 @@ CAPTION_SIZE = 8.5
 FIGURE_BOX_H = 70 * 72 / 25.4    # 70 mm
 FOOTER_Y = 15 * 72 / 25.4
 
-ACCENT = HexColor("#2F8F86")
-INK = HexColor("#1F2A2A")
-MUTED = HexColor("#556060")
+
+def _brand_colours():
+    """Read the brand colours from the app's theme, if it is importable.
+
+    The docs build runs standalone (and in CI without PyQt5), so this falls
+    back to the same literals rather than making reportlab depend on Qt. The
+    fallback is asserted against ui/theme.py by test_help_docs.py, so the two
+    cannot drift silently.
+    """
+    try:
+        import sys
+        from pathlib import Path as _Path
+        root = _Path(__file__).resolve().parents[3]
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        from ui.theme import IDLE
+        return IDLE.accent, IDLE.text_primary, IDLE.text_body, IDLE.text_muted
+    except Exception:
+        return "#43a296", "#2d7d6f", "#333333", "#6c757d"
+
+
+_ACCENT, _HEADING, _BODY, _MUTED = _brand_colours()
+
+ACCENT = HexColor(_HEADING)
+INK = HexColor(_BODY)
+MUTED = HexColor(_MUTED)
 RULE = HexColor("#C8DEDC")
 CODE_BG = Color(0.94, 0.96, 0.96)
 PLACEHOLDER_BG = Color(0.92, 0.92, 0.92)

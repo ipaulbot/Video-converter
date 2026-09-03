@@ -12,13 +12,6 @@ import glob
 
 _optional_datas = [(p, 'docs/help') for p in glob.glob('docs/help/NVC *.pdf')]
 
-# The legacy hand-written help document remains as a fallback for a build made
-# before the manuals were generated. Included only when present.
-_optional_datas += [
-    (name, '.') for name in ('help_document.pdf', 'help_document.html')
-    if os.path.exists(name)
-]
-
 a = Analysis(
     ['main.py'],
     pathex=[],

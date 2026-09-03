@@ -313,6 +313,42 @@ class PdfBuildTests(unittest.TestCase):
         self.assertTrue(all(lines))
 
 
+class BrandColourTests(unittest.TestCase):
+    """The manuals take their accent from the app's theme.
+
+    Each builder carries a hardcoded fallback so the docs can build without
+    PyQt5 installed. That fallback is the thing that can silently drift, so it
+    is asserted against ui/theme.py here.
+    """
+
+    @unittest.skipUnless(_has("PyQt5"), "PyQt5 not installed")
+    def test_builders_resolve_the_theme_colours(self):
+        import docx_builder
+        import pdf_builder
+
+        from ui.theme import IDLE
+        for module in (pdf_builder, docx_builder):
+            self.assertEqual(module._HEADING, IDLE.text_primary, module.__name__)
+            self.assertEqual(module._BODY, IDLE.text_body, module.__name__)
+            self.assertEqual(module._MUTED, IDLE.text_muted, module.__name__)
+
+    @unittest.skipUnless(_has("PyQt5"), "PyQt5 not installed")
+    def test_hardcoded_fallbacks_match_the_theme(self):
+        """Read the literal fallbacks out of the source and compare."""
+        import re
+
+        from ui.theme import IDLE
+        expected = (IDLE.accent, IDLE.text_primary, IDLE.text_body, IDLE.text_muted)
+        for name in ("pdf_builder.py", "docx_builder.py"):
+            text = (SOURCE_DIR / name).read_text(encoding="utf-8")
+            match = re.search(r'return "#[0-9a-fA-F]{6}", "#[0-9a-fA-F]{6}", '
+                              r'"#[0-9a-fA-F]{6}", "#[0-9a-fA-F]{6}"', text)
+            self.assertIsNotNone(match, f"{name}: fallback tuple not found")
+            found = tuple(re.findall(r"#[0-9a-fA-F]{6}", match.group(0)))
+            self.assertEqual(found, expected,
+                             f"{name}'s fallback has drifted from ui/theme.py")
+
+
 class ShippedOutputTests(unittest.TestCase):
     def test_generated_files_are_named_by_the_registry(self):
         """Whatever is committed under docs/help must match the grammar."""

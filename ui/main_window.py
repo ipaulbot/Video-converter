@@ -29,6 +29,7 @@ from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.media_files import collect_supported_media_paths
+from ui import theme
 from utils.subprocess_helpers import (
     FFMPEG_RENDER_TIMEOUT,
     FFPROBE_TIMEOUT,
@@ -2021,30 +2022,24 @@ class VideoConverterApp(QMainWindow):
                 self.convert_file(file_path)
 
     def get_icon_path(self, icon_name):
-        if self.locked:
-            # When locked, always use grayscale version
-            path = resource_path(f'graphics/GRAYSCALE{icon_name}.ico')
-            logger.info(f"Locked state - {icon_name} icon path: {path}")
-            return path
-        elif self.is_active_workflow_visual_state():
-            # When monitoring/converting, use green version
-            path = resource_path(f'graphics/GREEN{icon_name}.ico')
-            logger.info(f"Monitoring state - {icon_name} icon path: {path}")
-            return path
-        else:
-            # Default state - try teal version first
-            teal_path = resource_path(f'graphics/{icon_name}.ico')
-            if os.path.exists(teal_path):
-                logger.info(f"Default state - {icon_name} icon path: {teal_path}")
-                return teal_path
-            # Special handling for BURGER icon in default state
-            if icon_name == 'BURGER':
-                # Since there's no teal BURGER.ico, use INFO.ico as fallback (teal color)
-                path = resource_path('graphics/INFO.ico')
-                logger.info(f"Default state - BURGER fallback icon path: {path}")
-                return path
-            logger.info(f"Default state - {icon_name} icon path: {teal_path}")
-            return teal_path
+        """Resolve an icon for the current lock/activity state.
+
+        The GRAYSCALE / GREEN / unprefixed naming in graphics/ is the theme's
+        icon_prefix, so this just syncs the skin and asks theme.menu_icon.
+        (It used to log at INFO on every lookup, which update_icons calls in a
+        loop -- that is now debug.)
+        """
+        self._sync_theme_skin()
+        path = theme.menu_icon(icon_name)
+        logger.debug("Icon %s in %s skin: %s", icon_name, theme.skin().name, path)
+        return path
+
+    def _sync_theme_skin(self):
+        """Point the theme at the skin matching the app's current state."""
+        return theme.theme_manager.set_state(
+            locked=bool(getattr(self, 'locked', False)),
+            active=bool(self.is_active_workflow_visual_state()),
+        )
 
     # ────────────────────────────────────────────────────────────────
     # BallBuster XT helper (intro + delayed launch)
@@ -3007,64 +3002,13 @@ class VideoConverterApp(QMainWindow):
             QMessageBox.warning(self, "Update Check Failed", "Could not check for updates.")
 
     def update_all_button_styles(self):
-        """Update all button styles based on monitoring state and lock state"""
-        if self.locked:
-            # Grayscale gradient for locked mode
-            self.current_button_style = """
-                QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8a8a8a, stop:1 #7f7f7f);
-                    color: #ffffff;
-                    border: 1px solid #6a6a6a;
-                    border-radius: 6px;
-                    padding: 8px 16px;
-                    font-weight: bold;
-                    font-size: 9pt;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9a9a9a, stop:1 #8a8a8a);
-                }
-                QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7f7f7f, stop:1 #6a6a6a);
-                }
-            """
-        elif self.is_active_workflow_visual_state():
-            # Green gradient for monitoring mode
-            self.current_button_style = """
-                QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #92cb4f, stop:1 #33a16d);
-                    border: 1px solid #2d7d6f;
-                    border-radius: 6px;
-                    padding: 8px 16px;
-                    font-weight: bold;
-                    color: white;
-                    font-size: 9pt;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #9dd55a, stop:1 #92cb4f);
-                }
-                QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #33a16d, stop:1 #2d7d6f);
-                }
-            """
-        else:
-            # Teal gradient for non-monitoring mode
-            self.current_button_style = """
-                QPushButton {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #43a296, stop:1 #3a9284);
-                    border: 1px solid #2d7d6f;
-                    border-radius: 6px;
-                    padding: 8px 16px;
-                    font-weight: bold;
-                    color: white;
-                    font-size: 9pt;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4bb3a7, stop:1 #43a296);
-                }
-                QPushButton:pressed {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3a9284, stop:1 #2d7d6f);
-                }
-            """
+        """Restyle the primary buttons for the current lock/activity state.
+
+        Was three near-identical hardcoded gradient stylesheets chosen by an
+        if/elif; the skin now carries the colours. See ui/theme.py.
+        """
+        self._sync_theme_skin()
+        self.current_button_style = theme.gradient_button_style()
 
         # Apply the style to all QPushButton widgets in the application
         self.apply_button_style_to_all_widgets(self)
@@ -3551,15 +3495,8 @@ class VideoConverterApp(QMainWindow):
         """
         Update the tab underline color based on monitoring state and lock state.
         """
-        if self.locked:
-            # Grayscale for locked mode
-            highlight = '#8a8a8a'
-        elif self.is_active_workflow_visual_state():
-            # Green for monitoring/converting
-            highlight = '#92cb4f'
-        else:
-            # Teal for idle mode
-            highlight = '#43a296'
+        self._sync_theme_skin()
+        highlight = theme.highlight_color()
 
         if hasattr(self, 'tabs'):
             tab_style = self.tab_stylesheet_template.format(highlight=highlight)
@@ -3567,12 +3504,8 @@ class VideoConverterApp(QMainWindow):
         self.update_preview_controls_style()
 
     def update_preview_controls_style(self):
-        if self.locked:
-            highlight = '#8a8a8a'
-        elif self.is_active_workflow_visual_state():
-            highlight = '#92cb4f'
-        else:
-            highlight = '#43a296'
+        self._sync_theme_skin()
+        highlight = theme.highlight_color()
 
         if hasattr(self, 'play_pause_btn'):
             self.play_pause_btn.setStyleSheet(f"""

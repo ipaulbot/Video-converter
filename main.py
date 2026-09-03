@@ -63,7 +63,6 @@ def main():
         'graphics/INFO.ico',
         'graphics/HELP.ico',
         'graphics/GEAR.ico',
-        'help_document.html'
     ]
     missing_files = [f for f in required_files if not os.path.exists(resource_path(f))]
     if missing_files:

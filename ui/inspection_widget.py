@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout, QTabWidget, QL
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 from utils.resources import resource_path
+from ui import theme
 from utils.logger import logger
 from utils.subprocess_helpers import (
     FFMPEG_RENDER_TIMEOUT,
@@ -68,18 +69,7 @@ class InspectionWidget(QWidget):
 
         # Create drag and drop area for summary
         self.summary_drag_drop = QWidget()
-        self.summary_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.summary_drag_drop.setMinimumHeight(120)
         self.summary_drag_drop.setAcceptDrops(True)
 
@@ -90,16 +80,7 @@ class InspectionWidget(QWidget):
         self.summary_drag_text = QLabel("Drag and drop media files here to see summary")
         self.summary_drag_text.setAlignment(Qt.AlignCenter)
         self.summary_drag_text.setObjectName("dragDropLabel")
-        self.summary_drag_text.setStyleSheet("""
-            QLabel#dragDropLabel { 
-                color: #6c757d; 
-                font-size: 12px; 
-                background: white; 
-                border-radius: 8px;
-                border: 1px solid #dee2e6;
-                padding: 12px;
-            }
-        """)
+        self.summary_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabel"))
         self.summary_drag_text.setWordWrap(True)
 
         summary_drag_layout.addWidget(self.summary_drag_text)
@@ -149,18 +130,7 @@ class InspectionWidget(QWidget):
 
         # Create drag and drop area for JSON
         self.json_drag_drop = QWidget()
-        self.json_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.json_drag_drop.setMinimumHeight(120)
         self.json_drag_drop.setAcceptDrops(True)
 
@@ -171,16 +141,7 @@ class InspectionWidget(QWidget):
         self.json_drag_text = QLabel("Drag and drop media files here for detailed JSON")
         self.json_drag_text.setAlignment(Qt.AlignCenter)
         self.json_drag_text.setObjectName("dragDropLabelJSON")
-        self.json_drag_text.setStyleSheet("""
-            QLabel#dragDropLabelJSON { 
-                color: #6c757d; 
-                font-size: 12px; 
-                background: white; 
-                border-radius: 8px;
-                border: 1px solid #dee2e6;
-                padding: 12px;
-            }
-        """)
+        self.json_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabelJSON"))
         self.json_drag_text.setWordWrap(True)
 
         json_drag_layout.addWidget(self.json_drag_text)
@@ -239,47 +200,18 @@ class InspectionWidget(QWidget):
     def summary_drag_enter(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-            self.summary_drag_drop.setStyleSheet("""
-                QWidget { 
-                    background: rgba(67, 162, 150, 0.1); 
-                    border: 2px solid #43a296; 
-                    border-radius: 8px; 
-                    margin: 10px;
-                }
-            """)
+            self.summary_drag_drop.setStyleSheet(theme.drop_zone_active_style())
             # Keep instruction consistent
             self.summary_drag_text.setText("Drag and drop media files here to see summary")
         else:
             event.ignore()
 
     def summary_drag_leave(self, event):
-        self.summary_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.summary_drag_text.setText("Drag and drop media files here to see summary")
 
     def summary_drop(self, event):
-        self.summary_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.summary_drag_text.setText("Drag and drop media files here to see summary")
 
         urls = event.mimeData().urls()
@@ -291,46 +223,17 @@ class InspectionWidget(QWidget):
     def json_drag_enter(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-            self.json_drag_drop.setStyleSheet("""
-                QWidget { 
-                    background: rgba(67, 162, 150, 0.1); 
-                    border: 2px solid #43a296; 
-                    border-radius: 8px; 
-                    margin: 10px;
-                }
-            """)
+            self.json_drag_drop.setStyleSheet(theme.drop_zone_active_style())
             self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
         else:
             event.ignore()
 
     def json_drag_leave(self, event):
-        self.json_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
 
     def json_drop(self, event):
-        self.json_drag_drop.setStyleSheet("""
-            QWidget { 
-                background: white; 
-                border: 2px dashed #dee2e6; 
-                border-radius: 8px; 
-                margin: 10px;
-            }
-            QWidget:hover {
-                border-color: #43a296;
-                background: rgba(67, 162, 150, 0.1);
-            }
-        """)
+        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
         self.json_drag_text.setText("Drag and drop media files here for detailed JSON")
 
         urls = event.mimeData().urls()

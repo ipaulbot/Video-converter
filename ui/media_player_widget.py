@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
 )
 
 from utils.logger import logger
+from ui import theme
 
 VIDEO_NAME_FILTER = (
     "Video files (*.mp4 *.mov *.mkv *.avi *.wmv *.webm *.m4v *.mpg *.mpeg *.flv);;All files (*)"
@@ -92,7 +93,7 @@ class PlayerPanel(QWidget):
         # load. Spawning one per panel up front allocates Windows video-surface resources
         # that accumulate across many widgets and can crash the backend on teardown.
         self.video_container = QFrame(self)
-        self.video_container.setStyleSheet("background:#101417; border-radius:6px;")
+        self.video_container.setStyleSheet(theme.video_surface_style())
         self.video_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.video_container.setMinimumHeight(120)
         self._video_layout = QVBoxLayout(self.video_container)
@@ -101,13 +102,14 @@ class PlayerPanel(QWidget):
 
         self.placeholder = QLabel("Drop a video here\nor click Load", self.video_container)
         self.placeholder.setAlignment(Qt.AlignCenter)
-        self.placeholder.setStyleSheet("color:#8a9298; font-size:11px; background:transparent;")
+        self.placeholder.setStyleSheet(
+            theme.video_label_style(size=11, muted=True) + " background:transparent;")
 
         controls = QHBoxLayout()
         controls.setSpacing(6)
 
         self.name_label = QLabel(f"Panel {self.index + 1}: empty")
-        self.name_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.name_label.setStyleSheet(theme.video_label_style())
         self.name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
         self.offset_spin = QDoubleSpinBox()
@@ -142,7 +144,7 @@ class PlayerPanel(QWidget):
         layout.addLayout(controls)
 
         frame_style = (
-            "PlayerPanel { background:#1b2227; border:1px solid #2c353b; border-radius:8px; }"
+            "PlayerPanel { " + theme.video_panel_style() + " }"
         )
         self.setStyleSheet(frame_style)
         self.setObjectName("PlayerPanel")
@@ -154,7 +156,7 @@ class PlayerPanel(QWidget):
     def _ensure_video_widget(self):
         if self.video_widget is None:
             self.video_widget = QVideoWidget(self.video_container)
-            self.video_widget.setStyleSheet("background:#101417; border-radius:6px;")
+            self.video_widget.setStyleSheet(theme.video_surface_style())
             self.video_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             self._video_layout.addWidget(self.video_widget)
             self.placeholder.raise_()
@@ -246,7 +248,7 @@ class MediaPlayerWidget(QWidget):
         layout.setSpacing(10)
 
         title = QLabel("Media Player")
-        title.setStyleSheet("font-size:18px; font-weight:bold; color:#43a296;")
+        title.setStyleSheet(theme.tab_title_style())
         layout.addWidget(title)
 
         description = QLabel(
@@ -255,7 +257,7 @@ class MediaPlayerWidget(QWidget):
             "started at slightly different times."
         )
         description.setWordWrap(True)
-        description.setStyleSheet("color:#6c757d; font-size:11px;")
+        description.setStyleSheet(theme.tab_description_style())
         layout.addWidget(description)
 
         self.grid = QGridLayout()
@@ -285,7 +287,7 @@ class MediaPlayerWidget(QWidget):
         self.position_slider.sliderPressed.connect(self._on_slider_pressed)
         self.position_slider.sliderReleased.connect(self._on_slider_released)
         self.time_label = QLabel("0:00 / 0:00")
-        self.time_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        self.time_label.setStyleSheet(theme.video_label_style())
         self.time_label.setMinimumWidth(96)
         self.time_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         seek_row.addWidget(self.position_slider, 1)
@@ -308,7 +310,7 @@ class MediaPlayerWidget(QWidget):
         self.restart_btn.clicked.connect(self.restart_all)
 
         speed_label = QLabel("Speed")
-        speed_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        speed_label.setStyleSheet(theme.video_label_style())
         self.speed_combo = QComboBox()
         for speed in PLAYBACK_SPEEDS:
             self.speed_combo.addItem(f"{speed:g}x", speed)
@@ -316,7 +318,7 @@ class MediaPlayerWidget(QWidget):
         self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
 
         panels_label = QLabel("Panels")
-        panels_label.setStyleSheet("color:#cfd6da; font-size:10px;")
+        panels_label.setStyleSheet(theme.video_label_style())
         self.panels_combo = QComboBox()
         for count in PANEL_COUNT_OPTIONS:
             self.panels_combo.addItem(str(count), count)

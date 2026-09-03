@@ -6,17 +6,15 @@ import that module: it lives in the docs tree, which is not present in a
 frozen build. The filename pattern is duplicated here instead, so keep the two
 in sync -- the pipeline's own tests pin the grammar on that side.
 
-Resolution order:
-  1. The newest generated manual matching the wanted title and language.
-  2. The legacy hand-written help_document.pdf.
-  3. The legacy hand-written help_document.html.
+The manuals are the only help documents; the hand-written
+help_document.pdf/.html they replaced were removed in favour of generated
+output.
 """
 from __future__ import annotations
 
 import re
 from pathlib import Path
 
-from utils.logger import logger
 from utils.resources import resource_path
 
 PRODUCT_NAME = "NVC"
@@ -83,14 +81,5 @@ def find_generated_manual(title: str = DEFAULT_TITLE,
 
 
 def resolve_help_document(language: str = DEFAULT_LANGUAGE) -> Path | None:
-    """Return the best available help document, or None if there is none."""
-    generated = find_generated_manual(language=language)
-    if generated is not None:
-        return generated
-
-    for legacy in ("help_document.pdf", "help_document.html"):
-        path = Path(resource_path(legacy))
-        if path.exists():
-            logger.debug("Falling back to the legacy help document %s", path.name)
-            return path
-    return None
+    """Return the generated help manual, or None when none has been built."""
+    return find_generated_manual(language=language)

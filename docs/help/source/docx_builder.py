@@ -22,8 +22,37 @@ from figures import figure_label, resolve_figure_path
 BODY_PT = 11
 CODE_PT = 9.5
 CODE_FONT = "Consolas"
-ACCENT = RGBColor(0x2F, 0x8F, 0x86)   # NVC teal, matching the app chrome
-MUTED = RGBColor(0x55, 0x60, 0x60)
+
+def _brand_colours():
+    """Read the brand colours from the app's theme, if it is importable.
+
+    The docs build runs standalone (and in CI without PyQt5), so this falls
+    back to the same literals rather than making reportlab depend on Qt. The
+    fallback is asserted against ui/theme.py by test_help_docs.py, so the two
+    cannot drift silently.
+    """
+    try:
+        import sys
+        from pathlib import Path as _Path
+        root = _Path(__file__).resolve().parents[3]
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        from ui.theme import IDLE
+        return IDLE.accent, IDLE.text_primary, IDLE.text_body, IDLE.text_muted
+    except Exception:
+        return "#43a296", "#2d7d6f", "#333333", "#6c757d"
+
+
+_ACCENT, _HEADING, _BODY, _MUTED = _brand_colours()
+
+
+def _rgb(hex_color: str) -> RGBColor:
+    v = hex_color.lstrip("#")
+    return RGBColor(int(v[0:2], 16), int(v[2:4], 16), int(v[4:6], 16))
+
+
+ACCENT = _rgb(_HEADING)   # NVC teal, read from ui/theme.py
+MUTED = _rgb(_MUTED)
 
 
 def _set_run_font(run, name: str) -> None:

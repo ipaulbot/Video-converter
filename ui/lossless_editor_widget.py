@@ -19,6 +19,7 @@ from conversion.lossless_commands import (
 from utils.file_naming import get_unique_path
 from utils.resources import resource_path
 from utils.subprocess_helpers import get_subprocess_startupinfo
+from ui import theme
 
 
 class LosslessWorker(QThread):
@@ -64,7 +65,7 @@ class LosslessEditorWidget(QWidget):
         layout.setSpacing(10)
 
         title = QLabel("Lossless FFmpeg Editor")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #43a296;")
+        title.setStyleSheet(theme.tab_title_style())
         layout.addWidget(title)
 
         description = QLabel(
