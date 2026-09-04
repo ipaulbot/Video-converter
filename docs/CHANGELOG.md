@@ -87,3 +87,8 @@ Use this file to track user-visible fixes, improvements, and feature work.
   intro, and the game's level transitions up to ten seconds out could all fire
   against a closed window. A source guard now fails the suite if a
   `QTimer.singleShot` is reintroduced anywhere.
+- Dutch and Simplified Chinese now ship as they stand, without waiting for a
+  native-speaker review. Both cover the core interface (146 of 365 strings);
+  Qt shows the English source for the rest. A review pass is still worth
+  doing, but it is no longer treated as a release blocker — an unreviewed
+  Dutch or Chinese interface is better than an entirely English one.

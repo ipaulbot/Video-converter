@@ -48,7 +48,7 @@ class LocaleSpec:
     native_name: str     # shown in the Language menu, in that language
     qm_basename: str     # translations/<qm_basename>.qm
     document_tag: str    # the matching manual in docs/help (see help_resolution)
-    review_status: str   # "production" once a human has reviewed it
+    review_status: str   # "production" to offer it in the Language menu
 
 
 EN = LocaleSpec("en", "English", "nvc_en", "en", "production")
@@ -65,9 +65,13 @@ DEFAULT_LOCALE: Final[str] = EN.code
 # dialogs -- and Qt falls back to the English source for anything not yet
 # translated, so partial coverage shows English rather than a blank.
 #
-# A native speaker should still review these before they reach customers;
-# `review_status` is the place to record that, and moving a locale back to
-# "draft" hides it again behind NVC_I18N_PREVIEW.
+# These ship as they stand. A native-speaker pass would improve the wording
+# and is worth doing, but it is not a release gate: the alternative for a
+# Dutch or Chinese user is an entirely English interface, which is worse than
+# imperfect phrasing. `review_status` decides only what the Language menu
+# offers -- set a locale to anything other than "production" to hide it again
+# behind NVC_I18N_PREVIEW, which is the lever to reach for if a translation
+# turns out to be actively wrong rather than merely unpolished.
 PRODUCTION_LOCALES: Final[tuple[str, ...]] = tuple(
     loc.code for loc in ALL_LOCALES if loc.review_status == "production"
 )

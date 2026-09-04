@@ -9,18 +9,25 @@ translated text, so **they are committed and must not be deleted**.
 | Locale | File | Status |
 |---|---|---|
 | English | `nvc_en.ts` | Source language. Needs no translation and no `.qm`. |
-| Dutch | `nvc_nl.ts` | Selectable. 146 of 365 strings — the core interface. |
-| Simplified Chinese | `nvc_zh_CN.ts` | Selectable. 146 of 365 strings — the core interface. |
+| Dutch | `nvc_nl.ts` | Shipped. 146 of 365 strings — the core interface. |
+| Simplified Chinese | `nvc_zh_CN.ts` | Shipped. 146 of 365 strings — the core interface. |
 
-**Both need a native-speaker review before reaching customers.** The
-translated set covers what a user meets in normal operation — tabs, buttons,
-menus, settings labels, status text and dialogs — and Qt falls back to the
-English source for anything else, so the remaining 219 strings show English
-rather than a blank.
+**Both ship without a native-speaker review.** That is a deliberate call, not
+an oversight: the translated set covers what a user meets in normal operation
+— tabs, buttons, menus, settings labels, status text and dialogs — and Qt
+falls back to the English source for anything else, so the remaining 219
+strings show English rather than a blank. An unreviewed Dutch interface beats
+an entirely English one for a Dutch user.
 
-`review_status` in `utils/localization.py` records where a locale stands.
-Moving one back to `"draft"` hides it from the Language menu again unless
-`NVC_I18N_PREVIEW=1` is set — useful if a review turns up problems.
+A native-speaker pass is still worth doing and will improve the wording;
+treat it as an improvement to schedule, not a blocker to clear. Corrections
+go straight into the `.ts` files and rebuild — see *Translating* below.
+
+`review_status` in `utils/localization.py` decides only what the Language
+menu offers. Setting a locale to anything other than `"production"` hides it
+again unless `NVC_I18N_PREVIEW=1` is set — that is the lever for a
+translation found to be actively wrong, not for one that is merely
+unpolished.
 
 The manuals under `docs/help` are still English-only. That is handled rather
 than broken: `utils/help_resolution.py` falls back to the English manual for a
@@ -88,4 +95,6 @@ existing translations.
 1. Add a `LocaleSpec` to `utils/localization.py` with `review_status="draft"`
    and a `document_tag` matching a manual in `docs/help`.
 2. Run `python scripts/build_translations.py` to create the `.ts`.
-3. Translate, review, then set `review_status="production"`.
+3. Translate, then set `review_status="production"` to put it in the Language
+   menu. Cover the core interface first — tabs, buttons, menus, settings,
+   status text, dialogs — since Qt shows English for the rest.
