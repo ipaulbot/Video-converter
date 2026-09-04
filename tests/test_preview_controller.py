@@ -361,6 +361,9 @@ class GlobalStyleWalkerTests(unittest.TestCase):
     def test_it_keeps_its_own_style_in_a_real_window(self):
         import os
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+        from PyQt5.QtCore import QEvent
+
         from ui.main_window import VideoConverterApp
 
         window = VideoConverterApp()
@@ -373,6 +376,15 @@ class GlobalStyleWalkerTests(unittest.TestCase):
             self.assertNotIn("qlineargradient", sheet,
                              "the main gradient overwrote the overlay style")
         finally:
+            # A full main window arms timers, a watchdog observer and an
+            # ffmpeg QProcess. shutdown() stops them; without it the objects
+            # are destroyed later by Python's GC, under a session-long
+            # QApplication, which aborts the interpreter with
+            # STATUS_STACK_BUFFER_OVERRUN partway through the suite. Every
+            # other test that builds a whole window does the same -- see
+            # test_single_active_workflow.
+            window.shutdown()
             window.close()
             window.deleteLater()
+            app.sendPostedEvents(None, QEvent.DeferredDelete)
             app.processEvents()

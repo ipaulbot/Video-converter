@@ -40,15 +40,11 @@ class MediaPlayerWidgetTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
-    def tearDown(self):
-        for widget in self.app.topLevelWidgets():
-            if isinstance(widget, MediaPlayerWidget):
-                try:
-                    widget.shutdown()
-                    widget.deleteLater()
-                except Exception:
-                    pass
-        self.app.processEvents()
+    # No tearDown: conftest's reap_hidden_top_level_widgets calls shutdown()
+    # and destroys this test's windows. What used to be here paired
+    # deleteLater() with processEvents(), which reads like a cleanup and
+    # deletes nothing -- processEvents() explicitly excludes DeferredDelete --
+    # so these widgets leaked for the whole session.
 
     def test_creates_four_panels_with_players_created_lazily(self):
         widget = MediaPlayerWidget()

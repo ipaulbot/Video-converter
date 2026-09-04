@@ -319,8 +319,16 @@ class StaleHostAttributeTests(unittest.TestCase):
                                 f"VideoConverterApp has no {name!r}, but the UI "
                                 f"reads it with a getattr default")
         finally:
+            # shutdown() stops the timers, the watchdog observer and the
+            # preview process. Leaving them armed on a hidden window that the
+            # session-long QApplication outlives aborts the interpreter with
+            # STATUS_STACK_BUFFER_OVERRUN partway through a later test file.
+            window.shutdown()
             window.close()
             window.deleteLater()
+            from PyQt5.QtCore import QEvent
+            app.sendPostedEvents(None, QEvent.DeferredDelete)
+            app.processEvents()
 
     def test_no_module_still_asks_for_the_removed_counter(self):
         """active_conversion_count was replaced by queue.active_count."""

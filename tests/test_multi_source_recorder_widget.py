@@ -3,7 +3,7 @@ from unittest.mock import patch
 import os
 import tempfile
 
-from PyQt5.QtCore import Qt, QEventLoop, QTimer
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtCore import QProcess
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QDialogButtonBox, QPushButton, QSizePolicy, QToolButton, QWidget
@@ -17,21 +17,55 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
+    def setUp(self):
+        # Anything top-level that exists now belongs to an earlier module and
+        # is not this test's to destroy.
+        self._pre_existing = list(self.app.topLevelWidgets())
+
     def tearDown(self):
-        # MultiSourceRecorderWidget instances install a 100ms QTimer in their constructor
-        # and these tests do not always call shutdown(); when many tests accumulate across
-        # modules, dangling timers can fire against partially destroyed widgets. Stop the
-        # render timer on each tracked instance so it cannot fire after teardown.
-        from ui.multi_source_recorder_widget import MultiSourceRecorderWidget as _MSRW
-        for widget in self.app.topLevelWidgets():
-            if isinstance(widget, _MSRW):
+        """Destroy the windows this test created, for real.
+
+        Every MultiSourceRecorderWidget arms a 100ms preview render timer in
+        its constructor, and most tests here never call shutdown(). Left
+        alone, 152 tests pile up ~3,900 hidden top-level widgets and ~19,000
+        widgets in total under the session-long QApplication -- at which point
+        constructing a full VideoConverterApp in a *later* module aborts the
+        interpreter with STATUS_STACK_BUFFER_OVERRUN (0xC0000409), blaming a
+        test that did nothing wrong.
+
+        This used to call deleteLater() followed by processEvents(), which
+        looks right and deletes nothing: processEvents() explicitly excludes
+        DeferredDelete events. sendPostedEvents(None, DeferredDelete) is what
+        actually runs them -- and, unlike processEvents(), it does not fire the
+        preview timers of widgets still alive from another test.
+
+        Each widget's own shutdown() runs first, so its timers are stopped and
+        any preview ffmpeg is killed rather than being destroyed underneath a
+        running QProcess. Only top-levels with no parent *widget* are touched:
+        `topLevelWidgets()` also lists child windows (a QComboBox popup, a
+        QMenu) that are destroyed with their owner anyway. `parentWidget()`
+        rather than `parent()`, because a widget parented to one of this
+        file's fake QObject containers is still a top-level window.
+        """
+        stale = [w for w in self.app.topLevelWidgets()
+                 if w not in self._pre_existing and w.parentWidget() is None]
+        for widget in stale:
+            try:
+                if hasattr(widget, "shutdown"):
+                    # Stops the three timers and kills any preview ffmpeg.
+                    # Non-blocking, unlike VideoConverterApp.shutdown().
+                    widget.shutdown()
+                widget.deleteLater()
+            except RuntimeError:  # the wrapped C++ object is already gone
+                pass
+            except Exception:
+                # A test may have patched a collaborator out from under
+                # shutdown(); the widget still has to be destroyed.
                 try:
-                    if hasattr(widget, "preview_render_timer"):
-                        widget.preview_render_timer.stop()
                     widget.deleteLater()
-                except Exception:
+                except RuntimeError:
                     pass
-        self.app.processEvents()
+        self.app.sendPostedEvents(None, QEvent.DeferredDelete)
 
     def test_uses_single_video_settings_button_instead_of_per_row_configure_buttons(self):
         widget = MultiSourceRecorderWidget()
@@ -837,7 +871,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.status_label.setText("Recording")
         scheduled = []
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._process_finished(failed, "Video_1", 1)
 
         self.assertEqual(replacements, [])
@@ -1001,6 +1035,18 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
                 self.waited_for_finish = True
                 return False
 
+            # stop_recording escalates to terminate() after 1.5s and kill()
+            # after 3s. A fake without these looks harmless -- the test itself
+            # passes -- but the escalation fires from a timer long after this
+            # test has finished, and an AttributeError escaping a Qt slot makes
+            # PyQt call qFatal(), aborting the whole run at whatever unrelated
+            # test happened to be pumping the event loop.
+            def terminate(self):
+                self.terminated = True
+
+            def kill(self):
+                self.killed = True
+
         process = SlowRecordProcess()
         widget.processes = [process]
 
@@ -1065,7 +1111,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         running = RunningProcess()
         widget.processes = [DeadProcess(), running]
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda *_args: None):
+        with patch.object(widget, "_schedule", lambda *_args: None):
             widget.stop_recording()
 
         self.assertEqual(widget.processes, [running])
@@ -2137,7 +2183,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_processes[2] = process
         widget.preview_sources[2] = ("directshow", "Basler GenICam Source", widget.preview_source_profile)
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._preview_finished(2, 1, process)
 
         self.assertIn(2, widget.preview_auto_mode_rows)
@@ -2186,7 +2232,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_sources[0] = ("directshow", "Missing Camera", widget.preview_source_profile)
         scheduled = []
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._preview_finished(0, 1, process)
 
         self.assertEqual(scheduled, [])
@@ -2207,7 +2253,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_sources[0] = ("directshow", "Basler GenICam Source", widget.preview_source_profile)
         scheduled = []
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._preview_finished(0, 1, process)
 
         self.assertEqual(len(scheduled), 1)
@@ -2247,7 +2293,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_sources[0] = ("stream", "rtsp://camera/stream", widget.preview_source_profile)
         scheduled = []
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._preview_finished(0, 1)
 
         self.assertEqual(len(scheduled), 1)
@@ -2288,7 +2334,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_sources[0] = ("stream", "rtsp://camera/stream", widget.preview_source_profile)
         scheduled = []
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._preview_finished(0, 1, stale_process)
 
         self.assertEqual(scheduled, [])
@@ -2363,7 +2409,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.preview_pending_frames[0] = b"old-frame"
         widget.refresh_previews_from_sources = lambda force_restart=False: None
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda *_args: None):
+        with patch.object(widget, "_schedule", lambda *_args: None):
             widget.stop_recording()
 
         self.assertEqual(widget.preview_buffers, {})
@@ -2513,7 +2559,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget.processes = [process]
 
         scheduled = []
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget.stop_recording()
 
         # Stop should feel snappy. q is written first, then the kill path kicks in
@@ -2577,7 +2623,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         process = FakeProcess()
         widget.processes = [process]
 
-        with patch("ui.multi_source_recorder_widget.QTimer.singleShot", lambda delay, callback: scheduled.append((delay, callback))):
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
             widget._process_finished(process, "Video_3", 0)
 
         self.assertEqual(refreshed, [])
@@ -3018,3 +3064,102 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TimerAndProcessOwnershipTests(unittest.TestCase):
+    """Nothing this widget schedules or launches may outlive it.
+
+    Both bugs pinned here presented identically and misleadingly: the process
+    aborted with STATUS_STACK_BUFFER_OVERRUN (0xC0000409), part-way through the
+    test suite, at whichever unrelated test happened to be pumping the event
+    loop -- and with no traceback, because PyQt reacts to an exception escaping
+    a Qt slot by calling qFatal(). In the running app the same two faults show
+    up as NVC dying on exit shortly after using the recorder.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def setUp(self):
+        self._pre_existing = list(self.app.topLevelWidgets())
+
+    def tearDown(self):
+        for widget in self.app.topLevelWidgets():
+            if widget not in self._pre_existing and widget.parentWidget() is None:
+                try:
+                    widget.shutdown()
+                except Exception:
+                    pass
+                widget.deleteLater()
+        self.app.sendPostedEvents(None, QEvent.DeferredDelete)
+
+    def test_the_module_schedules_nothing_through_the_static_single_shot(self):
+        """QTimer.singleShot's timer belongs to nobody, so it still fires after
+        the widget is destroyed -- and every callback here touches `self`.
+
+        _schedule() parents the timer to the widget instead, so Qt cancels it
+        on destruction. This is a source check because the failure mode is a
+        silent abort seconds later in an unrelated test, which no assertion
+        about behaviour would attribute to the right place.
+        """
+        import inspect
+
+        from ui import multi_source_recorder_widget as module
+
+        offenders = [
+            f"line {number}: {line.strip()}"
+            for number, line in enumerate(inspect.getsource(module).splitlines(), 1)
+            if "QTimer.singleShot(" in line and not line.lstrip().startswith(("#", "`"))
+        ]
+        self.assertEqual(offenders, [], "use self._schedule(...) instead")
+
+    def test_scheduled_callbacks_are_owned_by_the_widget(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+
+        timer = widget._schedule(60_000, lambda: None)
+
+        self.assertIs(timer.parent(), widget)
+        self.assertTrue(timer.isSingleShot())
+        self.assertTrue(timer.isActive())
+
+    def test_shutdown_kills_the_camera_mode_probes(self):
+        """Picking a camera in Video Settings starts an ffmpeg probe whose
+        finished handler writes back into the dialog. shutdown() used to leave
+        those running: it only walked preview_processes and processes."""
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+
+        class RunningProbe:
+            def __init__(self):
+                self.killed = False
+
+            def state(self):
+                return QProcess.Running
+
+            def kill(self):
+                self.killed = True
+
+        probe = RunningProbe()
+        widget.camera_mode_processes = [probe]
+
+        widget.shutdown()
+
+        self.assertTrue(probe.killed)
+        self.assertEqual(widget.camera_mode_processes, [])
+
+    def test_a_detection_callback_survives_a_closed_dialog(self):
+        """The probe outlives the dialog that asked for it, so its callback has
+        to tolerate the dialog's widgets being gone."""
+        widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"],
+                                           auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(),
+                                     parent=widget)
+        dialog.deleteLater()
+        self.app.sendPostedEvents(None, QEvent.DeferredDelete)
+
+        widget.camera_mode_cache.clear()
+        with patch.object(widget, "camera_mode_cache", {"directshow:Cam": ["mode"]}):
+            # Nothing to assert but "does not raise": before the fix this
+            # RuntimeError escaped a Qt slot and aborted the process.
+            widget.start_directshow_mode_detection(
+                "Cam", lambda modes: dialog.apply_detected_modes(0, modes))

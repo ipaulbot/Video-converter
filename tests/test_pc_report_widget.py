@@ -12,13 +12,10 @@ class PCReportWidgetTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
-    def tearDown(self):
-        for widget in self.app.topLevelWidgets():
-            if isinstance(widget, VideoConverterApp):
-                try:
-                    widget.shutdown()
-                except Exception:
-                    pass
+    # No tearDown: conftest's reap_hidden_top_level_widgets calls shutdown()
+    # and destroys this test's windows. What used to be here called shutdown()
+    # but never deleted anything, so every VideoConverterApp built below
+    # stayed alive for the rest of the session.
 
     def test_embedded_pc_report_widget_is_not_a_dialog(self):
         widget = PCReportWidget()

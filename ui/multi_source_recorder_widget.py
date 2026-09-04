@@ -1194,10 +1194,27 @@ class MultiSourceRecorderWidget(QWidget):
             self.directshow_devices = discover_directshow_video_devices(resource_path("ffmpeg.exe"))
         return self.directshow_devices
 
+    @staticmethod
+    def _deliver_modes(callback, modes):
+        """Hand detected camera modes back to whoever asked for them.
+
+        The requester is the Video Settings dialog, which the user may have
+        closed in the meantime -- on the cached path while a signal is still
+        being delivered, or seconds later when the ffmpeg probe finishes.
+        Writing into its deleted widgets raises RuntimeError, and an exception
+        escaping a Qt slot makes PyQt call qFatal() and abort the process. The
+        modes are cached either way, so the next open picks them up.
+        """
+        try:
+            callback(modes)
+        except RuntimeError:
+            logger.debug("Video Settings dialog closed before modes arrived",
+                         exc_info=True)
+
     def start_directshow_mode_detection(self, device_name, callback):
         cache_key = f"directshow:{device_name}"
         if cache_key in self.camera_mode_cache:
-            callback(self.camera_mode_cache[cache_key])
+            self._deliver_modes(callback, self.camera_mode_cache[cache_key])
             return
         command = build_directshow_list_options_command(resource_path("ffmpeg.exe"), device_name)
         process = QProcess(self)
@@ -1212,7 +1229,7 @@ class MultiSourceRecorderWidget(QWidget):
             modes = parse_directshow_video_options(output)
             self.camera_mode_cache[key] = modes
             self.camera_mode_processes = [item for item in self.camera_mode_processes if item is not p]
-            callback(modes)
+            self._deliver_modes(callback, modes)
 
         process.finished.connect(finish_detection)
         process.start(command[0], command[1:])
@@ -1499,7 +1516,7 @@ class MultiSourceRecorderWidget(QWidget):
         attempts = self.preview_retry_attempts.get(row_index, 0)
         self.preview_retry_attempts[row_index] = attempts + 1
         delay_ms = min(1000 * (2 ** attempts), 10000)
-        QTimer.singleShot(delay_ms, lambda row=row_index, info=source_info: self._retry_preview(row, info))
+        self._schedule(delay_ms, lambda row=row_index, info=source_info: self._retry_preview(row, info))
 
     def _retry_preview(self, row_index, source_info):
         if self.preview_sources.get(row_index) != source_info:
@@ -1538,17 +1555,46 @@ class MultiSourceRecorderWidget(QWidget):
         self.preview_retry_attempts = {}
         self.preview_auto_mode_rows = set()
 
+    def _schedule(self, msec, callback):
+        """Run `callback` after `msec`, but only while this widget lives.
+
+        `QTimer.singleShot` is a static method: the timer it creates belongs to
+        nobody, so it still fires after this widget has been destroyed. The
+        callback then touches a deleted C++ object and raises -- and an
+        exception that escapes a Qt slot makes PyQt call qFatal(), which aborts
+        the process outright (STATUS_STACK_BUFFER_OVERRUN, 0xC0000409) with no
+        traceback on stderr. Closing NVC within a few seconds of pressing Stop
+        was enough to hit it, because stop_recording schedules terminate and
+        kill escalations 1.5s and 3s out.
+
+        A QTimer parented to `self` is destroyed with `self`, so the callback
+        is simply cancelled instead.
+        """
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(callback)
+        timer.start(msec)
+        return timer
+
     def shutdown(self):
         self.pending_recording_start = None
         self.record_start_timer.stop()
         self.record_start_watchdog_timer.stop()
         self.preview_render_timer.stop()
-        for process in list(self.preview_processes.values()) + list(self.processes):
+        # camera_mode_processes belongs here too: picking a camera in Video
+        # Settings starts an ffmpeg probe whose finished handler writes back
+        # into the dialog. Left running, it fires after the dialog and this
+        # widget are gone, which aborts the process (0xC0000409) rather than
+        # raising anything catchable.
+        for process in (list(self.preview_processes.values())
+                        + list(self.processes)
+                        + list(self.camera_mode_processes)):
             try:
                 if process.state() != QProcess.NotRunning:
                     process.kill()
             except RuntimeError:
                 continue
+        self.camera_mode_processes = []
         self.preview_processes = {}
         self.preview_buffers = {}
         self.preview_pending_frames = {}
@@ -2340,7 +2386,7 @@ class MultiSourceRecorderWidget(QWidget):
         # the recording graph. Restarting the preview immediately can leave the tile stuck
         # on "Opening preview..." while the driver is still unwinding.
         if self.auto_preview and self.preview_paused_rows:
-            QTimer.singleShot(self.record_start_delay_ms, self._resume_paused_previews)
+            self._schedule(self.record_start_delay_ms, self._resume_paused_previews)
             return
         self._resume_paused_previews()
 
@@ -2380,7 +2426,7 @@ class MultiSourceRecorderWidget(QWidget):
                 return
             self._start_combined_grid_process(ffmpeg, selected, output_folder, timestamp, attempt=attempt)
 
-        QTimer.singleShot(delay_ms, start_retry)
+        self._schedule(delay_ms, start_retry)
         self._notify_workflow_availability_change()
         return True
 
@@ -2423,7 +2469,7 @@ class MultiSourceRecorderWidget(QWidget):
             )
         retry_delay_ms = getattr(process, "recording_retry_delay_ms", 1500 if preview_pipe else 0)
         if retry_delay_ms:
-            QTimer.singleShot(retry_delay_ms, start_retry)
+            self._schedule(retry_delay_ms, start_retry)
         else:
             start_retry()
         self._notify_workflow_availability_change()
@@ -2454,7 +2500,7 @@ class MultiSourceRecorderWidget(QWidget):
         # (FFmpeg ignored q AND terminate AND kill, or Qt skipped a callback) this
         # watchdog forcibly returns the UI from "Stopping..." so the user is never
         # stuck waiting indefinitely.
-        QTimer.singleShot(4000, self._stop_recording_watchdog)
+        self._schedule(4000, self._stop_recording_watchdog)
         if not self.processes and self.status_label.text() == "Stopping...":
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
@@ -2506,8 +2552,8 @@ class MultiSourceRecorderWidget(QWidget):
         # Keep stop snappy: on Windows QProcess.terminate() behaves like TerminateProcess,
         # so we follow the graceful q with a short window for FFmpeg to finalize the
         # MP4 moov atom, then escalate.
-        QTimer.singleShot(1500, lambda p=process: self._terminate_recording_process_if_running(p))
-        QTimer.singleShot(3000, lambda p=process: self._force_finish_if_running(p))
+        self._schedule(1500, lambda p=process: self._terminate_recording_process_if_running(p))
+        self._schedule(3000, lambda p=process: self._force_finish_if_running(p))
 
     def _terminate_recording_process_if_running(self, process):
         if process not in self.processes:
