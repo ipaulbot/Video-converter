@@ -1554,6 +1554,22 @@ class VideoConverterApp(QMainWindow):
             event.ignore()
             self.hide()
 
+    def _schedule(self, msec, callback):
+        """Run `callback` after `msec`, but only while this widget lives.
+
+        `QTimer.singleShot` is a static method, so the timer it creates belongs
+        to nobody and still fires after this widget has been destroyed. The
+        callback then touches a deleted C++ object and raises -- and an
+        exception escaping a Qt slot makes PyQt call qFatal(), which aborts the
+        process with no traceback. A QTimer parented to `self` is destroyed
+        with `self`, so the callback is cancelled instead.
+        """
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(callback)
+        timer.start(msec)
+        return timer
+
     def shutdown(self):
         self.running = False
         self.status_running = False
@@ -1756,7 +1772,7 @@ class VideoConverterApp(QMainWindow):
                     self.tabs.setTabText(converted_tab_index, original_text + " ")
 
                 wiggle_count[0] += 1
-                QTimer.singleShot(80, do_wiggle)  # Fast wiggle every 80ms
+                self._schedule(80, do_wiggle)  # Fast wiggle every 80ms
 
             do_wiggle()
         except Exception:
@@ -1986,9 +2002,9 @@ class VideoConverterApp(QMainWindow):
             self.append_log(f'Welcome back {rank}')
         except Exception:
             logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
-        from PyQt5.QtCore import QTimer, QCoreApplication
+        from PyQt5.QtCore import QCoreApplication
         QCoreApplication.processEvents()
-        QTimer.singleShot(3000, self.launch_ballbuster_game)
+        self._schedule(3000, self.launch_ballbuster_game)
 
     def get_game_icon_path(self):
         """The controller-circle icon for the current lock/activity state."""

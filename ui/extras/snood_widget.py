@@ -236,6 +236,22 @@ class SnoodWidget(QWidget):
     }
     ICON_DIAMETER = 60  # larger ball size
 
+    def _schedule(self, msec, callback):
+        """Run `callback` after `msec`, but only while this widget lives.
+
+        `QTimer.singleShot` is a static method, so the timer it creates belongs
+        to nobody and still fires after this widget has been destroyed. The
+        callback then touches a deleted C++ object and raises -- and an
+        exception escaping a Qt slot makes PyQt call qFatal(), which aborts the
+        process with no traceback. A QTimer parented to `self` is destroyed
+        with `self`, so the callback is cancelled instead.
+        """
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(callback)
+        timer.start(msec)
+        return timer
+
     def __init__(self, theme: str = 'green', parent=None):
         super().__init__(parent)
         self.theme = theme.lower()
@@ -1248,7 +1264,7 @@ class SnoodWidget(QWidget):
 
     def _schedule_level_overlay(self):
         """Show next-level overlay after 2-second pause, then auto-advance after 4 s."""
-        QTimer.singleShot(2000, self._begin_level_overlay)
+        self._schedule(2000, self._begin_level_overlay)
 
     def _begin_level_overlay(self):
         if self.level_transition or self.game_over:
@@ -1256,7 +1272,7 @@ class SnoodWidget(QWidget):
         self.level_transition = True
         self.transition_score = self.score
         self.can_shoot = False
-        QTimer.singleShot(7000, self._start_next_level)
+        self._schedule(7000, self._start_next_level)
 
     def maybe_level_complete(self):
         """Advance to next level when board cleared and falling animation finished."""
@@ -1273,7 +1289,7 @@ class SnoodWidget(QWidget):
             self.can_shoot = False
             # Launch win celebration effects
             self.spawn_win_celebration()
-            QTimer.singleShot(10000, self._after_win)
+            self._schedule(10000, self._after_win)
             return
         # if balls still falling (including anchored bumpers) wait until they finish
         if self.falling:

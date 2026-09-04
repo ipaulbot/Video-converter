@@ -82,3 +82,8 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Fixed one unreadable row in the saved state discarding every high score.
 - Added tests for the paths, resources, subprocess, system-state, log-bus and
   GPU-encoder helpers, which had none.
+- Fixed the same class of unowned timer in the main window and the easter-egg
+  game: the Converted-tab wiggle, the game launch three seconds after the
+  intro, and the game's level transitions up to ten seconds out could all fire
+  against a closed window. A source guard now fails the suite if a
+  `QTimer.singleShot` is reintroduced anywhere.

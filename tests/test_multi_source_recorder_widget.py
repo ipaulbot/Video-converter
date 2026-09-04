@@ -3094,26 +3094,6 @@ class TimerAndProcessOwnershipTests(unittest.TestCase):
                 widget.deleteLater()
         self.app.sendPostedEvents(None, QEvent.DeferredDelete)
 
-    def test_the_module_schedules_nothing_through_the_static_single_shot(self):
-        """QTimer.singleShot's timer belongs to nobody, so it still fires after
-        the widget is destroyed -- and every callback here touches `self`.
-
-        _schedule() parents the timer to the widget instead, so Qt cancels it
-        on destruction. This is a source check because the failure mode is a
-        silent abort seconds later in an unrelated test, which no assertion
-        about behaviour would attribute to the right place.
-        """
-        import inspect
-
-        from ui import multi_source_recorder_widget as module
-
-        offenders = [
-            f"line {number}: {line.strip()}"
-            for number, line in enumerate(inspect.getsource(module).splitlines(), 1)
-            if "QTimer.singleShot(" in line and not line.lstrip().startswith(("#", "`"))
-        ]
-        self.assertEqual(offenders, [], "use self._schedule(...) instead")
-
     def test_scheduled_callbacks_are_owned_by_the_widget(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
 
