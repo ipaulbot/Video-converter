@@ -45,25 +45,45 @@ def set_game_unlocked(unlocked: bool) -> None:
 
 
 def get_high_scores() -> List[Tuple[str, int, int]]:
+    """Return the saved high scores, skipping any row that will not parse.
+
+    The try used to wrap the whole loop, so a single malformed row -- a
+    non-numeric score in a hand-edited or partly-written file -- returned []
+    and silently discarded every score the user had earned. Each row is now
+    validated on its own.
+    """
     state = _read_state()
-    raw = state.get("high_scores") or []
-    out: List[Tuple[str, int, int]] = []
-    try:
-        for item in raw:
-            if isinstance(item, (list, tuple)) and len(item) >= 3:
-                name, score, level = item[0], int(item[1]), int(item[2])
-                out.append((str(name)[:3].upper(), score, level))
-    except Exception:
+    raw = state.get("high_scores")
+    if not isinstance(raw, (list, tuple)):
         return []
+
+    out: List[Tuple[str, int, int]] = []
+    for item in raw:
+        if not isinstance(item, (list, tuple)) or len(item) < 3:
+            continue
+        try:
+            name, score, level = str(item[0]), int(item[1]), int(item[2])
+        except (TypeError, ValueError):
+            logger.debug("Skipping an unreadable high-score row: %r", item)
+            continue
+        out.append((name[:3].upper(), score, level))
     return out
 
 
 def set_high_scores(scores: List[Tuple[str, int, int]]) -> None:
-    # Store as list of triples [name, score, level]
+    """Persist high scores as [name, score, level] triples.
+
+    A row that will not coerce is dropped rather than raising: this is called
+    from the game loop, where losing one score must not take the game with it.
+    """
     state = _read_state()
     serializable: List[List[Any]] = []
-    for name, score, level in scores:
-        serializable.append([str(name)[:3].upper(), int(score), int(level)])
+    for item in scores or []:
+        try:
+            name, score, level = item
+            serializable.append([str(name)[:3].upper(), int(score), int(level)])
+        except (TypeError, ValueError):
+            logger.debug("Skipping an unstorable high-score row: %r", item)
     state["high_scores"] = serializable
     _write_state(state)
 
