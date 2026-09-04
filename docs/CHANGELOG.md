@@ -70,3 +70,15 @@ Use this file to track user-visible fixes, improvements, and feature work.
   showing 2.1.160 / July 2025.
 - Fixed the test suite reading and writing the real user's settings, which
   could change which tool tabs the app showed.
+- Fixed NVC being able to abort on exit shortly after using the recorder. The
+  terminate and kill escalations that follow Stop Recording were scheduled on
+  timers owned by nothing, so they still fired 1.5 and 3 seconds later against
+  a destroyed window; the same applied to the preview retry timers. They are
+  owned by the recorder now and cancelled with it.
+- Fixed the ffmpeg camera-mode probe that Video Settings starts when a camera
+  is picked outliving both the dialog and the recorder. It is stopped on
+  shutdown, and its result is discarded harmlessly if the dialog has since
+  been closed.
+- Fixed one unreadable row in the saved state discarding every high score.
+- Added tests for the paths, resources, subprocess, system-state, log-bus and
+  GPU-encoder helpers, which had none.
