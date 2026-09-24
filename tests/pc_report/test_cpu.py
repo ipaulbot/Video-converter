@@ -54,6 +54,43 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(mod.microcode("0x000000B4"), "0xB4")
         self.assertEqual(mod.microcode(None), "")
 
+    def test_microcode_rejects_invalid_values_and_list_lengths(self):
+        self.assertEqual(mod.microcode([0, 0, 0, 0, 44, 0, 0, 0]), "0x2C")
+        self.assertEqual(mod.microcode([1, 2, 3]), "")
+        self.assertEqual(mod.microcode([0, 0, 0, 0, 44, 0, 0, 0, 0]), "")
+        self.assertEqual(mod.microcode(None), "")
+        self.assertEqual(mod.microcode("abc"), "")
+        self.assertEqual(mod.microcode(44), "0x2C")
+
+    def test_missing_and_nonnumeric_performance_samples_are_blank(self):
+        perf = [
+            {"Path": "% processor utility", "InstanceName": "_total", "CookedValue": None},
+            {"Path": "% processor performance", "InstanceName": "0,0"},
+            {"Path": "% processor performance", "InstanceName": "0,1", "CookedValue": "invalid"},
+        ]
+        data = mod.build(PROC, CACHES, REG, perf, FEATURES)
+        self.assertEqual(mod.flatten(data)["Processor Utility (sample)"], "")
+        self.assertEqual(
+            data["per_core"],
+            [{"Core": "0,0", "Performance": ""}, {"Core": "0,1", "Performance": ""}],
+        )
+
+    def test_single_performance_sample_dict_produces_one_core_row(self):
+        perf = {"Path": "% processor performance", "InstanceName": "0,0", "CookedValue": 101.25}
+        data = mod.build(PROC, CACHES, REG, perf, FEATURES)
+        self.assertEqual(data["per_core"], [{"Core": "0,0", "Performance": "101.2 %"}])
+
+    def test_all_aggregate_instances_are_excluded(self):
+        perf = [
+            {"Path": "% processor performance", "InstanceName": "_total", "CookedValue": 1},
+            {"Path": "% processor performance", "InstanceName": "0,_total", "CookedValue": 2},
+            {"Path": "% processor performance", "InstanceName": "_Total", "CookedValue": 3},
+            {"Path": "% processor performance", "InstanceName": "0,0", "CookedValue": 4},
+            {"Path": "% processor performance", "InstanceName": "0,10", "CookedValue": 5},
+        ]
+        data = mod.build(PROC, CACHES, REG, perf, FEATURES)
+        self.assertEqual([row["Core"] for row in data["per_core"]], ["0,0", "0,10"])
+
     def test_probe_features_returns_dict(self):
         self.assertIsInstance(mod.probe_features(), dict)
 
@@ -65,6 +102,7 @@ class FixtureTests(unittest.TestCase):
         for label in ("Name", "Cores / Threads", "Max Clock", "Instruction Sets"):
             self.assertIn(f"<th>{label}</th>", html)
         self.assertIn("<h3>Cache</h3>", html)
+        self.assertNotIn(",_total", html.casefold())
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)

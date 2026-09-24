@@ -61,7 +61,9 @@ def probe_features() -> dict[str, bool]:
 def microcode(value) -> str:
     if value in (None, ""):
         return ""
-    if isinstance(value, list) and len(value) >= 8:
+    if isinstance(value, list):
+        if len(value) != 8:
+            return ""
         try:
             n = int.from_bytes(bytes(int(b) & 0xFF for b in value[4:8]), "little")
             return f"0x{n:X}"
@@ -71,7 +73,14 @@ def microcode(value) -> str:
         n = int(str(value), 16) if str(value).lower().startswith("0x") else int(value)
         return f"0x{n:X}"
     except (TypeError, ValueError):
-        return str(value)
+        return ""
+
+
+def _pct(value) -> str:
+    try:
+        return f"{float(value):.1f} %" if value is not None else ""
+    except (TypeError, ValueError):
+        return ""
 
 
 def build(procs, caches, reg, perf, features) -> dict:
@@ -111,9 +120,12 @@ def build(procs, caches, reg, perf, features) -> dict:
     }
     total = next((s for s in rows_of(perf) if "utility" in str(s.get("Path", "")).lower()), None)
     load = {"Load": f"{p.get('LoadPercentage')} %" if p.get("LoadPercentage") is not None else "",
-            "Processor Utility (sample)": f"{float(total['CookedValue']):.1f} %" if total else ""}
-    per_core = [{"Core": s.get("InstanceName", ""), "Performance": f"{float(s.get('CookedValue') or 0):.1f} %"}
-                for s in rows_of(perf) if "performance" in str(s.get("Path", "")).lower() and s.get("InstanceName") != "_total"]
+            "Processor Utility (sample)": _pct(total.get("CookedValue")) if total else ""}
+    per_core = [{"Core": s.get("InstanceName", ""), "Performance": _pct(s.get("CookedValue"))}
+                for s in rows_of(perf)
+                if "performance" in str(s.get("Path", "")).lower()
+                and not (str(s.get("InstanceName", "")).casefold() == "_total"
+                         or str(s.get("InstanceName", "")).casefold().endswith(",_total"))]
     have = [n for n, ok in features.items() if ok]
     missing = [n for n, ok in features.items() if not ok]
     instr = {"Instruction Sets": ", ".join(have), "Not Available": ", ".join(missing)}
