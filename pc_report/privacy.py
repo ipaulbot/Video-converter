@@ -17,7 +17,7 @@ _NON_ALNUM = re.compile(r"[^a-z0-9]")
 SENSITIVE_TOKENS = (
     "serial", "productkey", "partialproductkey", "productid", "oa3x", "licensekey",
     "password", "passwd", "pwd", "token", "secret", "credential", "apikey",
-    "uuid", "assettag", "registeredowner", "owner", "username", "startname", "logonserver",
+    "uuid", "assettag", "registeredowner", "registereduser", "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "machineguid", "domainname",
     "localadministrators", "accessaccount", "accountname",
 )
@@ -43,7 +43,7 @@ def mask_string(value, keep: int = 4):
     if isinstance(value, dict):
         return {k: mask_string(v, keep) for k, v in value.items()}
     s = str(value)
-    if len(s) <= keep:
+    if len(s) <= keep + 2:
         return "*" * len(s)
     return s[:2] + "*" * max(1, len(s) - keep - 2) + s[-keep:]
 

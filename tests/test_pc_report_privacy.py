@@ -1,11 +1,22 @@
 import json
 import unittest
 
-from pc_report.privacy import redact_payload
+from pc_report.privacy import mask_string, redact_payload
 from pc_report.render_json import render
 
 
 class PcReportPrivacyTests(unittest.TestCase):
+    def test_mask_string_fully_masks_short_sensitive_strings(self):
+        self.assertEqual(mask_string("ABCDE"), "*****")
+        self.assertEqual(mask_string("ABCDEF"), "******")
+        self.assertEqual(mask_string("ABCDEFG"), "AB*DEFG")
+        self.assertEqual(mask_string("WDGS-BH0020"), "WD*****0020")
+        self.assertEqual(mask_string("ab"), "**")
+
+    def test_registered_user_is_redacted(self):
+        r = redact_payload({"RegisteredUser": "Jane Example"}, {"redact": True})
+        self.assertNotIn("Example", r["RegisteredUser"])
+
     def test_redact_payload_masks_sensitive_keys_and_user_paths(self):
         payload = {
             "licenses": {"ProductKey": "AAAAA-BBBBB-CCCCC-DDDDD"},
