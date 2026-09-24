@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from pc_report import orchestrator
+from pc_report import ps as pcps
 from pc_report import utils as pcutils
 
 
@@ -229,14 +230,14 @@ class PowerShellJsonTests(unittest.TestCase):
             self.stderr = stderr
 
     def test_valid_json_is_parsed(self):
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout='{"a": 1}')):
             data, error = pcutils.run_ps_json("Get-Thing")
         self.assertEqual(data, {"a": 1})
         self.assertIsNone(error)
 
     def test_a_non_zero_exit_returns_its_stderr(self):
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(returncode=1,
                                                        stderr="not recognised")):
             data, error = pcutils.run_ps_json("Get-Thing")
@@ -245,14 +246,14 @@ class PowerShellJsonTests(unittest.TestCase):
 
     def test_empty_output_is_neither_data_nor_an_error(self):
         # A query that legitimately matched nothing.
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout="")):
             data, error = pcutils.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIsNone(error)
 
     def test_unparseable_output_is_reported_as_a_parse_error(self):
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout="not json")):
             data, error = pcutils.run_ps_json("Get-Thing")
         self.assertIsNone(data)
@@ -260,14 +261,14 @@ class PowerShellJsonTests(unittest.TestCase):
 
     def test_a_timeout_is_reported_rather_than_raising(self):
         import subprocess as sp
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           side_effect=sp.TimeoutExpired("powershell", 12)):
             data, error = pcutils.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIsNotNone(error)
 
     def test_a_missing_powershell_is_reported_rather_than_raising(self):
-        with patch.object(pcutils.subprocess, "run",
+        with patch.object(pcps.subprocess, "run",
                           side_effect=FileNotFoundError("powershell")):
             data, error = pcutils.run_ps_json("Get-Thing")
         self.assertIsNone(data)
@@ -281,7 +282,7 @@ class PowerShellJsonTests(unittest.TestCase):
             captured.update(kwargs)
             return self._Completed(stdout="{}")
 
-        with patch.object(pcutils.subprocess, "run", capture):
+        with patch.object(pcps.subprocess, "run", capture):
             pcutils.run_ps_json("Get-Thing", timeout=1)
         self.assertGreaterEqual(captured["timeout"], 12)
 
@@ -292,7 +293,7 @@ class PowerShellJsonTests(unittest.TestCase):
             captured.update(kwargs)
             return self._Completed(stdout="{}")
 
-        with patch.object(pcutils.subprocess, "run", capture):
+        with patch.object(pcps.subprocess, "run", capture):
             pcutils.run_ps_json("Get-Thing", timeout=60)
         self.assertEqual(captured["timeout"], 60)
 
@@ -303,7 +304,7 @@ class PowerShellJsonTests(unittest.TestCase):
             captured["cmd"] = cmd
             return self._Completed(stdout="{}")
 
-        with patch.object(pcutils.subprocess, "run", capture):
+        with patch.object(pcps.subprocess, "run", capture):
             pcutils.run_ps_json("Get-Process")
         joined = " ".join(captured["cmd"])
         self.assertIn("Get-Process", joined)
