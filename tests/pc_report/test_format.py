@@ -24,6 +24,17 @@ class DatetimeParsingTests(unittest.TestCase):
         self.assertEqual(fmt.parse_datetime({"DateTime": "20260522000000.000000+000"}),
                          datetime.datetime(2026, 5, 22))
 
+    def test_datetime_wrapper_prefers_value(self):
+        wrapper = {
+            "value": "/Date(1760673600000)/",
+            "DateTime": "Friday, October 17, 2025 12:00:00 AM",
+        }
+        self.assertEqual(fmt.parse_datetime(wrapper), datetime.datetime.fromtimestamp(1760673600))
+
+    def test_datetime_wrapper_falls_back_to_datetime(self):
+        wrapper = {"value": "junk", "DateTime": "2026-09-24T17:53:00"}
+        self.assertEqual(fmt.parse_datetime(wrapper), datetime.datetime(2026, 9, 24, 17, 53))
+
     def test_garbage_is_none(self):
         for value in (None, "", "yesterday", True, [], {}):
             self.assertIsNone(fmt.parse_datetime(value))
@@ -32,6 +43,9 @@ class DatetimeParsingTests(unittest.TestCase):
         self.assertEqual(fmt.fmt_datetime("n/a"), "n/a")
         self.assertEqual(fmt.fmt_datetime(None), "")
         self.assertEqual(fmt.fmt_datetime("20260522103000.000000+000"), "2026-05-22 10:30")
+
+    def test_fmt_date_returns_empty_for_unparseable_wrapper(self):
+        self.assertEqual(fmt.fmt_date({"value": "junk", "DateTime": "junk"}), "")
 
 
 class OtherFormattersTests(unittest.TestCase):

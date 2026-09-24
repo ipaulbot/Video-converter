@@ -1,0 +1,398 @@
+[
+ {
+  "HotFixID": "KB5066130",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1760673600000)/",
+   "DateTime": "Friday, October 17, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5027122",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1686888000000)/",
+   "DateTime": "Friday, June 16, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5000736",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1617940800000)/",
+   "DateTime": "Friday, April 9, 2021 12:00:00 AM"
+  },
+  "InstalledBy": ""
+ },
+ {
+  "HotFixID": "KB5005716",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1634529600000)/",
+   "DateTime": "Monday, October 18, 2021 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5011048",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1688356800000)/",
+   "DateTime": "Monday, July 3, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5012170",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1672635600000)/",
+   "DateTime": "Monday, January 2, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5015684",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1672635600000)/",
+   "DateTime": "Monday, January 2, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5020683",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1672635600000)/",
+   "DateTime": "Monday, January 2, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5072653",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1763528400000)/",
+   "DateTime": "Wednesday, November 19, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5126256",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1789531200000)/",
+   "DateTime": "Wednesday, September 16, 2026 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5066791",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1760760000000)/",
+   "DateTime": "Saturday, October 18, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5007273",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1639112400000)/",
+   "DateTime": "Friday, December 10, 2021 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5020372",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1672635600000)/",
+   "DateTime": "Monday, January 2, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5022924",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1680062400000)/",
+   "DateTime": "Wednesday, March 29, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5023794",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1681272000000)/",
+   "DateTime": "Wednesday, April 12, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5025315",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1683691200000)/",
+   "DateTime": "Wednesday, May 10, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5026879",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1686024000000)/",
+   "DateTime": "Tuesday, June 6, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5028318",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1689134400000)/",
+   "DateTime": "Wednesday, July 12, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5028380",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1691467200000)/",
+   "DateTime": "Tuesday, August 8, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5029709",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1694577600000)/",
+   "DateTime": "Wednesday, September 13, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5031539",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1697169600000)/",
+   "DateTime": "Friday, October 13, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5032392",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1699938000000)/",
+   "DateTime": "Tuesday, November 14, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5032907",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1702530000000)/",
+   "DateTime": "Thursday, December 14, 2023 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5034224",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1707886800000)/",
+   "DateTime": "Wednesday, February 14, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5036447",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1710302400000)/",
+   "DateTime": "Wednesday, March 13, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5037018",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1712721600000)/",
+   "DateTime": "Wednesday, April 10, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5037240",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1715832000000)/",
+   "DateTime": "Thursday, May 16, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5037995",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1718164800000)/",
+   "DateTime": "Wednesday, June 12, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5039336",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1720584000000)/",
+   "DateTime": "Wednesday, July 10, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5041579",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1723780800000)/",
+   "DateTime": "Friday, August 16, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5043935",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1726286400000)/",
+   "DateTime": "Saturday, September 14, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5043130",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1728619200000)/",
+   "DateTime": "Friday, October 11, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5046823",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1731474000000)/",
+   "DateTime": "Wednesday, November 13, 2024 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5050388",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1736830800000)/",
+   "DateTime": "Tuesday, January 14, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5050111",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1739336400000)/",
+   "DateTime": "Wednesday, February 12, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5052916",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1741838400000)/",
+   "DateTime": "Thursday, March 13, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5054682",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1744603200000)/",
+   "DateTime": "Monday, April 14, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5058526",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1747108800000)/",
+   "DateTime": "Tuesday, May 13, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5059504",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1750132800000)/",
+   "DateTime": "Tuesday, June 17, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5063706",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1752292800000)/",
+   "DateTime": "Saturday, July 12, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5063261",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1755144000000)/",
+   "DateTime": "Thursday, August 14, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5063979",
+  "Description": "Update",
+  "InstalledOn": {
+   "value": "/Date(1757736000000)/",
+   "DateTime": "Saturday, September 13, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5066790",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1760673600000)/",
+   "DateTime": "Friday, October 17, 2025 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ },
+ {
+  "HotFixID": "KB5005699",
+  "Description": "Security Update",
+  "InstalledOn": {
+   "value": "/Date(1634529600000)/",
+   "DateTime": "Monday, October 18, 2021 12:00:00 AM"
+  },
+  "InstalledBy": "NT AUTHORITY\\SYSTEM"
+ }
+]

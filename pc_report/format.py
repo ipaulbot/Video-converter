@@ -42,12 +42,16 @@ def bitrate_to_mbps(n):
 def parse_datetime(value) -> datetime.datetime | None:
     """Naive local datetime from the shapes PowerShell JSON produces, else None.
 
-    Handles ``{"DateTime": ...}`` wrappers, ``/Date(ms)/``, CIM
+    Handles ``{"value": ..., "DateTime": ...}`` wrappers, ``/Date(ms)/``, CIM
     ``yyyymmddHHMMSS.ffffff+zzz``, ``yyyymmdd``, ISO-8601, and epoch
     seconds or milliseconds.
     """
     if isinstance(value, dict):
-        value = value.get("DateTime") or value.get("value")
+        for key in ("value", "DateTime"):
+            dt = parse_datetime(value.get(key))
+            if dt is not None:
+                return dt
+        return None
     if isinstance(value, bool):
         return None
     if isinstance(value, (int, float)):
@@ -93,7 +97,7 @@ def fmt_datetime(value, fmt: str = "%Y-%m-%d %H:%M"):
     """Formatted datetime, or the input unchanged when it cannot be parsed."""
     dt = parse_datetime(value)
     if dt is None:
-        return "" if value is None else value
+        return "" if value is None or isinstance(value, dict) else value
     return dt.strftime(fmt)
 
 

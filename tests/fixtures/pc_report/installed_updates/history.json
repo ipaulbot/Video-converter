@@ -1,0 +1,4002 @@
+[
+ {
+  "Date": "/Date(1790260666000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.374.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1790244559000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.366.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1790174302000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.343.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1790174270000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.343.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1790072811000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.330.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1790020659000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.320.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1790012525000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.318.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789933655000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.304.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789933647000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26080.4) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600874000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.145 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600676000)/",
+  "Title": "2026-09 Extended Security Updates (ESU) Licensing Preparation Package for Windows 10 Version 22H2 for x64-based Systems (KB5126256)",
+  "KB": "KB5126256",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600674000)/",
+  "Title": "2026-09 .NET 9.0.20 Security Update for x64 Client (KB5126105)",
+  "KB": "KB5126105",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600667000)/",
+  "Title": "2026-09 .NET 8.0.31 Security Update for x64 Client (KB5126104)",
+  "KB": "KB5126104",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600660000)/",
+  "Title": "2026-09 .NET 10.0.12 Security Update for x64 Client (KB5126106)",
+  "KB": "KB5126106",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789600647000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.235.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789554114000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.226.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1789537563000)/",
+  "Title": "Dell, Inc. Firmware Driver Update (0.1.37.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1789492073000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.219.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1789114201000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.153.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788994870000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.130.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788568157000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.49.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788478631000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.28.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788425541000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26080.3) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788425528000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.17.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788382944000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.459.11.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788343525000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.447.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788283663000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.442.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788252583000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.438.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788197296000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.427.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788173254000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.423.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788110881000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.411.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788093237000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.407.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1788024483000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.394.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1788010741000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.393.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787931076000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.375.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787851691000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.364.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787851657000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.364.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787773447000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.350.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787700618000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.337.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787687048000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.335.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787619561000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.323.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787600646000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.321.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787545406000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.310.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787514248000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.306.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787468951000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.298.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787427847000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.290.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787389264000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.283.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787341453000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.274.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787309558000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.268.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787255066000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.259.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787227720000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.254.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787168655000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.244.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787165908000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.243.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787148382000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.241.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787143776000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.239.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787099417000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.230.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1787068705000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.225.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1787013016000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.213.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786993384000)/",
+  "Title": "2026-08 .NET 10.0.11 Security Update for x64 Client (KB5122106)",
+  "KB": "KB5122106",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786993374000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.206.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786926633000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.196.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786908015000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.193.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786840214000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.180.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786827404000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.178.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786747022000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.164.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786718966000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.159.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786587699000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.130.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786546165000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.123.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786513694000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.144 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786513488000)/",
+  "Title": "2026-08 .NET 9.0.19 Security Update for x64 Client (KB5122105)",
+  "KB": "KB5122105",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786513481000)/",
+  "Title": "2026-08 .NET 8.0.30 Security Update for x64 Client (KB5122104)",
+  "KB": "KB5122104",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786513468000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.118.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786459764000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.108.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786433919000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.103.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786373360000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.93.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786352467000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.88.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786286958000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.77.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786272645000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.75.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786200559000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.62.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786190484000)/",
+  "Title": "Intel Driver Update (12.19.2.66)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786190482000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.60.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786114161000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.47.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786058328000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.27.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786058327000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26070.9) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1786047857000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.31.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786047246000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.31.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1786047246000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26070.9) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785973137000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.11.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785960852000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.457.15.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785887001000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.499.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785880413000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.499.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785803066000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.491.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785800959000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.487.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785716663000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.474.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785715512000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.472.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785626979000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.459.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785546730000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.440.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785543862000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.440.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785463888000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.429.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785463190000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.429.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785433267000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.423.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785402078000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.419.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785346866000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.409.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785322243000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.404.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785260478000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.392.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785242544000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.388.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785087664000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.359.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1785082717000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.357.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1785001269000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.343.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784938176000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.332.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784914866000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.328.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784849461000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.286.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784828494000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.285.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784770849000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.271.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784742089000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.269.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784696118000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.259.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784655680000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.252.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784532615000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.230.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784372024000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.200.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784219944000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.168.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784159043000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.143 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784158877000)/",
+  "Title": "2026-07 .NET 9.0.18 Security Update for x64 Client (KB5104033)",
+  "KB": "KB5104033",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784158869000)/",
+  "Title": "2026-07 .NET 8.0.29 Security Update for x64 Client (KB5104032)",
+  "KB": "KB5104032",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784158857000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.153.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784133544000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.153.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784090493000)/",
+  "Title": "9P5Z076K079H-MicrosoftCorporationII.WinAppRuntime.Singleton",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1784090490000)/",
+  "Title": "9P5Z076K079H-MicrosoftCorporationII.WinAppRuntime.Singleton",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1784078250000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.143.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1784071501000)/",
+  "Title": "SAMSUNG Electronics Co., Ltd.  AndroidUsbDeviceClass Driver Update (2.21.4.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784071500000)/",
+  "Title": "SAMSUNG Electronics Co., Ltd.  Modem Driver Update (2.21.4.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1784071498000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.138.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783985927000)/",
+  "Title": "SAMSUNG Electronics Co., Ltd.  USB Driver Update (2.21.4.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783985921000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.118.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783975643000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.122.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783901228000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.102.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783889232000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.105.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783811742000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.88.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783802830000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.88.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783780870000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.84.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783726887000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.73.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783694492000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.67.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783640468000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.57.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783608068000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.50.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783581189000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.47.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783530129000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.39.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783529502000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.39.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783529502000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26060.3008) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783508323000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.455.33.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783430000000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.463.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783356727000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.455.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783348977000)/",
+  "Title": "Dell, Inc. Firmware Driver Update (0.1.36.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783348976000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.453.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783270300000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.438.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783172523000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.418.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783161878000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.416.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783081997000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.402.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1783031052000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.393.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1783002695000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.388.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782915754000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.371.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782835234000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.356.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782789200000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.345.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1782748833000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.339.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782523185000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.296.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782517600000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.287.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1782446080000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.283.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782430922000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.278.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1782385488000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.271.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1782359683000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.266.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782273286000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.248.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782223588000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.240.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1782187484000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.235.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1782144850000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.226.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781815008000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.163.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781793010000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.159.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781709760000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.138.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781693085000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.135.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781624264000)/",
+  "Title": "9PLJQ12FQ3CV-MicrosoftCorporationII.WinAppRuntime.Main.1.8",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1781624262000)/",
+  "Title": "9PLJQ12FQ3CV-MicrosoftCorporationII.WinAppRuntime.Main.1.8",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1781623358000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.121.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781616496000)/",
+  "Title": "Realtek - SoftwareComponent - 12.1620.1541.460",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781616495000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.120.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781537565000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.105.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781300365000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.51.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781224716000)/",
+  "Title": "Realtek Semiconductor Corp. Extension Driver Update (6.0.9954.1)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781224716000)/",
+  "Title": "Realtek Semiconductor Corp. Extension Driver Update (6.0.9954.1)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781224710000)/",
+  "Title": "Dell, Inc. Firmware Driver Update (0.1.35.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781213964000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.45.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781213524000)/",
+  "Title": "NVIDIA - Display - 32.0.15.7344",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Device Driver Retrieval Client"
+ },
+ {
+  "Date": "/Date(1781212284000)/",
+  "Title": "NVIDIA - Display - 32.0.15.7344",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Device Driver Retrieval Client"
+ },
+ {
+  "Date": "/Date(1781192079000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.39.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781139385000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.142 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781139211000)/",
+  "Title": "2026-06 .NET 9.0.17 Security Update for x64 Client (KB5097150)",
+  "KB": "KB5097150",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781105693000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.23.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781105059000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.23.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781105059000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26050.15) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1781095070000)/",
+  "Title": "2026-06 .NET 8.0.28 Security Update for x64 Client (KB5097149)",
+  "KB": "KB5097149",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1781095058000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.453.21.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780759364000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.294.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1780729434000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.288.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780672965000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.278.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1780650057000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.270.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780586563000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.261.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1780567904000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.256.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780413762000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.228.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1780406735000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.226.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780327362000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.211.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1780101653000)/",
+  "Title": "9WZDNCRFJBH4-Microsoft.Windows.Photos",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1780101646000)/",
+  "Title": "9WZDNCRFJBMP-MICROSOFT.WINDOWSSTORE",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1780101643000)/",
+  "Title": "9WZDNCRD29V9-MICROSOFT.MICROSOFTOFFICEHUB",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1780096369000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.167.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1780008551000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.146.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779978068000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.135.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779922124000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.131.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779861808000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.122.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779835722000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.116.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779811150000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.113.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779658799000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.78.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779618364000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.71.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779572398000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.62.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779572398000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.62.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779486759000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.45.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779469895000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.44.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779410838000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.29.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779410837000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26040.7) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779400475000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.32.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779399867000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.32.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779399867000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26040.7) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779324101000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.13.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779313463000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.13.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779289485000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.451.7.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779232944000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.698.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779203081000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.692.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779147985000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.681.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779116682000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.676.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1779065725000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.668.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1779030283000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.661.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778986224000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.653.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778943880000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.645.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778906802000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.639.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778858094000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.629.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778855167000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.141 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778855024000)/",
+  "Title": "Dell, Inc. Firmware Driver Update (0.1.34.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778855024000)/",
+  "Title": "2026-05 .NET 9.0.16 Security Update for x64 Client (KB5093448)",
+  "KB": "KB5093448",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778855017000)/",
+  "Title": "2026-05 .NET 8.0.27 Security Update for x64 Client (KB5093447)",
+  "KB": "KB5093447",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778855006000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.627.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778774713000)/",
+  "Title": "9NBLGGH4QGHW-Microsoft.MicrosoftStickyNotes",
+  "KB": "",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "Update;ScanForUpdates"
+ },
+ {
+  "Date": "/Date(1778708954000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.599.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778695104000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.595.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778594233000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.577.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778554307000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.569.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778284424000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.515.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778197094000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.500.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778193549000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.500.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778109421000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.465.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778097350000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.477.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1778024923000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.457.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1778011515000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.462.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777941357000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.442.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777903647000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.441.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777877667000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.436.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777868292000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.434.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777677621000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.383.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777674229000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.391.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777594757000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.367.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777587825000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.367.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777506170000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.357.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777501427000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.357.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777422163000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.343.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777414797000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.343.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777335960000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.330.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777287983000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.319.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777259208000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.312.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777207004000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.304.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777172802000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.296.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1777125076000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.289.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1777087034000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.281.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776916974000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.250.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776818460000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.232.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776818438000)/",
+  "Title": "Intel Corporation Extension Driver Update (32.0.101.7084)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776641946000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.183.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776590951000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.182.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776557610000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.168.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776504557000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.164.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776469418000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.150.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776418752000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.145.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776385302000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.134.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776295804000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.118.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776293281000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.120.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776269544000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.140 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776269387000)/",
+  "Title": "2026-04 .NET 9.0.15 Security Update for x64 Client (KB5086097)",
+  "KB": "KB5086097",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776269376000)/",
+  "Title": "2026-04 .NET 8.0.26 Security Update for x64 Client (KB5086096)",
+  "KB": "KB5086096",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776267626000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.116.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776127628000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26030.3011) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776127616000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.86.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1776120640000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.84.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1776041812000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.69.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775912949000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.34.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775844538000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.26.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775830583000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.449.23.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775758084000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.236.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775667214000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.230.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775667113000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.230.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775611974000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.220.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775562221000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.211.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775512914000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.199.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775482232000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.194.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775426518000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.183.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775399620000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.177.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775340735000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.164.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775244493000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.149.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775235475000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.142.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775191980000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.140.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775146861000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.132.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775110133000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.125.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1775061070000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.119.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1775029576000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.113.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774968794000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.102.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774952350000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.97.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774881848000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.87.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774624069000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.32.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774618487000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.30.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774537066000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.14.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774537059000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26020.6) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774456433000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.1.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774455132000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.447.1.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774386296000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.736.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774313552000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.724.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774299895000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.722.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774241368000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.708.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774237839000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.706.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774160842000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.693.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774152037000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.691.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1774083627000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.674.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1774018801000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.663.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773937310000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.621.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773601749000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.550.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773425698000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.513.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773340325000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.496.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773275132000)/",
+  "Title": "2026-03 .NET 9.0.14 Security Update for x64 Client (KB5081278)",
+  "KB": "KB5081278",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773253936000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.478.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773214100000)/",
+  "Title": "2026-03 .NET 8.0.25 Security Update for x64 Client (KB5081277)",
+  "KB": "KB5081277",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773214048000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.467.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773167521000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.456.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773133352000)/",
+  "Title": "2026-02 .NET 9.0.13 Security Update for x64 Client (KB5077864)",
+  "KB": "KB5077864",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773133345000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.450.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1773105798000)/",
+  "Title": "9P8K5G2MWW6Z-AppUp.IntelArcSoftware",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Acquisition;DSIC-svchost-StartProductInstallWithOptionsAsync"
+ },
+ {
+  "Date": "/Date(1773105798000)/",
+  "Title": "9NBLGGH4RV3K-Microsoft.VCLibs.140.00.UWPDesktop",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Acquisition;DSIC-svchost-StartProductInstallWithOptionsAsync"
+ },
+ {
+  "Date": "/Date(1773105798000)/",
+  "Title": "9NBLGGH3FRZM-Microsoft.VCLibs.140.00",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Acquisition;DSIC-svchost-StartProductInstallWithOptionsAsync"
+ },
+ {
+  "Date": "/Date(1773081721000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.436.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1773069109000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.435.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772847457000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.382.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772821457000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.384.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772757543000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.367.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772671510000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.351.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772652837000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.351.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772594641000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.341.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772583834000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.338.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772508240000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.323.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772503926000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.320.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772420974000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.309.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772335458000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.292.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772249034000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.280.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772238057000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.269.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772162653000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.266.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772153264000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.256.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1772076236000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.249.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1772066745000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.240.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771989874000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.232.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771979048000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.224.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771903430000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.216.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771893272000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.211.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771817059000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.197.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771808621000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.192.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771730662000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.181.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771721265000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.177.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771644264000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.161.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771633806000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.160.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771557858000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.146.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771548858000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.144.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771524140000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.139.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771463110000)/",
+  "Title": "Dell, Inc. Driver Update (0.1.33.0)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771463109000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.113.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771437742000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.121.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771374251000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.94.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771351366000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.103.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771287727000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.72.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771264946000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.84.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771243153000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.72.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771201711000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.58.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771157352000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.58.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771115005000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.44.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1771056739000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.37.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1771035568000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.29.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770965427000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.20.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770891069000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.7.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770884825000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.445.6.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770804782000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.139 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770804664000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1114.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770804664000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1114.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770761514000)/",
+  "Title": "2026-02 .NET 8.0.24 Security Update for x64 Client (KB5077863)",
+  "KB": "KB5077863",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770761502000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1107.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770761494000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.26010.5) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770680521000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1090.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770601159000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1072.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770514758000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1047.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770440335000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1038.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770428369000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1036.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770363944000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1024.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770341961000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1020.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770284726000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1007.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770255573000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.1003.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770218828000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.996.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770169227000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.990.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770139093000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.989.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1770065629000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.978.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1770056056000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.975.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769982085000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.957.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769981506000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.959.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769895026000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.939.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769880121000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.937.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769788164000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.916.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769739625000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.907.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769701779000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.903.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769655414000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.892.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769615364000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.886.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769568600000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.877.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769528965000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.868.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769489334000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.860.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769442571000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.851.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769409958000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.846.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769356762000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.840.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769337960000)/",
+  "Title": "Dell Inc. - Monitor - 1.0.0.0",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769337960000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.837.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1769040944000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.784.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1769023980000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.781.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768972102000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.770.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768873508000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.750.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768757686000)/",
+  "Title": "2026-01 .NET 8.0.23 Update for x64 Client (KB5074752)",
+  "KB": "KB5074752",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768757666000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.727.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768429742000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.671.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768343330000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.653.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768311139000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.645.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768256929000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.635.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768177113000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.613.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768170530000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.616.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768093169000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.597.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1768084128000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.599.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1768005298000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.578.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767997734000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.582.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767917779000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.561.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767911330000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.563.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767895406000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.559.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767837859000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.545.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767755419000)/",
+  "Title": "Realtek Semiconductor Corp. Driver Update (10.0.26200.1)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767755418000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.532.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767750251000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.532.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767669147000)/",
+  "Title": "Intel Driver Update (12.19.2.65)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767669144000)/",
+  "Title": "Intel - System - 2.3.20200.4422",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767669141000)/",
+  "Title": "Intel - System - 2.3.20200.4422",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767653617000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.514.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767590928000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.503.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767511171000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.491.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767479664000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.489.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767428601000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.477.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767339083000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.458.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767227898000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.420.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767217873000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.428.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767213151000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.426.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767163267000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.413.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767148962000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.409.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1767134715000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.405.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1767026515000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.388.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766994583000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.380.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766971243000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.378.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766949604000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.376.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766942922000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.374.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766891677000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.360.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 4,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766878715000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.361.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766795495000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.342.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766792310000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.342.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766712049000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.324.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766608339000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.302.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766563621000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.291.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766483458000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.280.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766436073000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.270.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766401757000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.265.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766321034000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.247.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766269678000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.235.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766239876000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.229.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766174567000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.213.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766173951000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.213.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766173951000)/",
+  "Title": "Update for Microsoft Defender Antivirus antimalware platform - KB4052623 (Version 4.18.25110.6) - Current Channel (Broad)",
+  "KB": "KB4052623",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1766001637000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.174.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1766001090000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.174.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1765909706000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.153.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1765830424000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.135.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1765748794000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.113.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1765558625000)/",
+  "Title": "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.443.60.0) - Current Channel (Broad)",
+  "KB": "KB2267602",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "Windows Defender"
+ },
+ {
+  "Date": "/Date(1765558402000)/",
+  "Title": "Realtek Semiconductor Corp. Driver Update (10.0.26200.21385)",
+  "KB": "",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ },
+ {
+  "Date": "/Date(1765433899000)/",
+  "Title": "Windows Malicious Software Removal Tool x64 - v5.138 (KB890830)",
+  "KB": "KB890830",
+  "Operation": 1,
+  "Result": 2,
+  "Client": "MoUpdateOrchestrator"
+ }
+]
