@@ -16,6 +16,15 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(data["hotfixes"][0]["KB"], "KB5062660")
         self.assertRegex(data["hotfixes"][0]["Installed On"], r"^\d{4}-\d{2}-\d{2}$")
 
+    def test_hotfixes_newest_first_undated_last(self):
+        hotfixes = [
+            {"HotFixID": "KB-UNDATED", "Description": "x", "InstalledOn": None, "InstalledBy": ""},
+            {"HotFixID": "KB-JAN", "Description": "x", "InstalledOn": "2025-01-01", "InstalledBy": ""},
+            {"HotFixID": "KB-JUNE", "Description": "x", "InstalledOn": "2025-06-01", "InstalledBy": ""},
+        ]
+        order = [r["KB"] for r in mod.build(hotfixes, [])["hotfixes"]]
+        self.assertEqual(order, ["KB-JUNE", "KB-JAN", "KB-UNDATED"])
+
     def test_history_is_newest_first_and_decoded(self):
         data = mod.build(HOTFIX, HISTORY)
         self.assertEqual(data["history"][0]["KB"], "KB5124007")

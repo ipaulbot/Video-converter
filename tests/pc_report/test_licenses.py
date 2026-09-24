@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import licenses as mod
 from tests.pc_report import support
 
@@ -21,8 +22,29 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(data["products"][0]["Partial Product Key"], "ABCDE")
 
     def test_render_masks_keys(self):
-        _data, html, _ctx = support.collect_and_render(mod.SECTION)
-        self.assertNotIn("Partial Product Key</th><td>ABCDE<", html)
+        raw = {
+            "ProductId": "00330-80000-00000-AA111",
+            "OA3xOriginalProductKey": "",
+            "OA3xOriginalProductKeyDescription": "",
+            "KeyManagementServiceMachine": "",
+            "Products": [
+                {
+                    "Name": "Windows Test",
+                    "Description": "",
+                    "LicenseStatus": 1,
+                    "PartialProductKey": "ABCDE",
+                    "ProductKeyChannel": "",
+                    "LicenseFamily": "",
+                    "GracePeriodRemaining": 0,
+                }
+            ],
+        }
+        data = mod.build(raw)
+        html = mod.render(redact_payload(data, {"redact": True}), support.render_ctx())
+        self.assertIn("<th>Partial Product Key</th>", html)
+        self.assertIn("<th>Windows Product ID</th>", html)
+        self.assertNotIn("ABCDE", html)
+        self.assertNotIn("00330-80000-00000-AA111", html)
 
 
 class FixtureTests(unittest.TestCase):

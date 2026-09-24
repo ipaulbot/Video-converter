@@ -35,7 +35,7 @@ def build(hotfixes, history) -> dict:
         "Installed On": fmt_date(h.get("InstalledOn")),
         "Installed By (account name)": h.get("InstalledBy", ""),
     } for h in rows_of(hotfixes)]
-    hot.sort(key=lambda r: (not r["Installed On"], r["Installed On"]), reverse=True)
+    hot.sort(key=lambda r: (bool(r["Installed On"]), r["Installed On"]), reverse=True)
 
     def when(row):
         return parse_datetime(row.get("Date")) or datetime.datetime.min
