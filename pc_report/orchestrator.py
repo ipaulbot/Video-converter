@@ -1,73 +1,103 @@
+"""Runs every enabled section and assembles ``(meta, results, errors)``.
+
+Sections without dependencies run first on a thread pool; a section that
+names ``after`` keys is submitted once those have finished. A section that
+raises becomes ``{"status": "partial", "error": ...}`` so the report still
+renders. The only real time bound is the subprocess timeout inside each
+query; see pc_report.ps.
+"""
+from __future__ import annotations
+
 import concurrent.futures as cf
 import datetime
 import os
+import time
 
 from utils.logger import logger
+from utils.version import APP_VERSION
 
-from . import collectors as C
+from . import ps, registry
+from .section import RunContext, SectionContext, SharedSources, is_user_admin, wrap
+
+MAX_WORKERS = 6
 
 
-def run_all(options: dict, progress_cb=None):
-    # Map names -> callables
-    tasks = {
-        'noldus_nvc_report': C.collect_nvc_specific, # New specialized section
-        'operating_system': C.collect_os,
-        'installed_updates': C.collect_updates,
-        'installed_programs': C.collect_programs,
-        'security': C.collect_security,
-        'hardware': C.collect_hardware,
-        'network': C.collect_network,
-        'network_connections': C.collect_network_connections,
-        'services': lambda: C.collect_services(limit=options.get('services_limit', 1000)),
-        'processes': lambda: C.collect_processes(limit=options.get('processes_limit', 1000)),
-        'licenses': C.collect_licenses,
-        'environment': C.collect_environment,
-        'network_info': C.collect_network_info,
-        'printers': C.collect_printers,
-        'autoruns': C.collect_autoruns,
-        'accessibility': C.collect_accessibility,
-        'drivers': C.collect_drivers,
-        'codecs': C.collect_codecs,
-        'snapins': C.collect_snapins,
-        'sensors': C.collect_sensors,
-        'devices': C.collect_devices,
-        'pci': C.collect_pci,
-        'slots': C.collect_slots,
-        'ports': C.collect_ports,
-        'virtual_machine': C.collect_virtual_machine,
-    }
-    selected = {k:v for k,v in tasks.items() if options.get(k, True)}
-    results = {}
-    errors = {}
+def _collect_one(run: RunContext, section):
+    started = time.monotonic()
+    ctx = SectionContext(run, section)
+    data = section.collect(ctx)
+    return wrap(data, ctx.notes), time.monotonic() - started
+
+
+def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_runner=None,
+            shared_loaders=None, is_admin=None):
+    options = options or {}
+    selected = registry.select(options, sections if sections is not None else registry.SECTIONS)
+    selected_keys = {s.key for s in selected}
+    run = RunContext(
+        options=options,
+        is_admin=is_user_admin() if is_admin is None else bool(is_admin),
+        results={},
+        shared=SharedSources(shared_loaders if shared_loaders is not None else ps.SHARED_LOADERS),
+        runner=runner or ps.run_ps_json,
+        text_runner=text_runner or ps.run_text,
+    )
+    results = run.results
+    errors: dict[str, str] = {}
+    elapsed: dict[str, float] = {}
     total = len(selected)
     completed = 0
-    with cf.ThreadPoolExecutor(max_workers=6) as ex:
-        futmap = {ex.submit(func): name for name, func in selected.items()}
-        for fut in cf.as_completed(futmap, timeout=None):
-            name = futmap[fut]
+    started_at = time.monotonic()
+
+    def report(section):
+        nonlocal completed
+        completed += 1
+        if progress_cb:
             try:
-                # No timeout here on purpose. as_completed only yields a
-                # future once it has finished, so a timeout on .result()
-                # can never fire -- the `timeout=12` that used to be here
-                # read like a per-collector limit but did nothing. The real
-                # limit is the subprocess timeout in pc_report.utils
-                # .run_ps_json, which is where a slow collector actually
-                # blocks.
-                results[name] = fut.result()
-            except Exception as e:
-                errors[name] = str(e)
-                # Tag partial status in result placeholder
-                results[name] = {"status":"partial","error":str(e)}
-            completed += 1
-            if progress_cb:
+                progress_cb(section.title, completed, total)
+            except Exception:
+                logger.debug("run_all: progress callback failed", exc_info=True)
+
+    def deps_done(section):
+        return all(dep in results or dep not in selected_keys for dep in section.after)
+
+    pending = list(selected)
+    running: dict[cf.Future, object] = {}
+    with cf.ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
+        while pending or running:
+            for section in [s for s in pending if deps_done(s)]:
+                pending.remove(section)
+                running[ex.submit(_collect_one, run, section)] = section
+            if not running:
+                # Nothing can start: a dependency will never complete (cycle).
+                for section in pending:
+                    message = f"dependencies never completed: {', '.join(section.after)}"
+                    results[section.key] = {"status": "partial", "error": message}
+                    errors[section.key] = message
+                    report(section)
+                break
+            done, _ = cf.wait(running, return_when=cf.FIRST_COMPLETED)
+            for fut in done:
+                section = running.pop(fut)
                 try:
-                    progress_cb(name, completed, total)
-                except Exception:
-                    logger.debug("run_all: suppressed error", exc_info=True)
+                    result, seconds = fut.result()
+                except Exception as exc:
+                    logger.warning("PC report section %s failed: %s", section.key, exc)
+                    result, seconds = {"status": "partial", "error": str(exc)}, 0.0
+                    errors[section.key] = str(exc)
+                results[section.key] = result
+                elapsed[section.key] = round(seconds, 2)
+                run.elapsed[section.key] = seconds
+                report(section)
+
     meta = {
-        'generated_at': datetime.datetime.now().isoformat(),
-        'machine': os.environ.get('COMPUTERNAME','')
+        "generated_at": datetime.datetime.now().isoformat(),
+        "machine": os.environ.get("COMPUTERNAME", ""),
+        "nvc_version": APP_VERSION,
+        "elevated": run.is_admin,
+        "elapsed_by_section": elapsed,
+        "total_seconds": round(time.monotonic() - started_at, 2),
     }
-    return meta, results, errors
+    return meta, dict(results), errors
 
 

@@ -1,162 +1,195 @@
 """Tests for pc_report/orchestrator.py and pc_report/utils.py.
 
-The orchestrator fans 25 collectors across a thread pool, each of which
-shells out to PowerShell. Neither module had tests. Nothing here runs
-PowerShell: the collectors are replaced with plain callables, and
-run_ps_json's subprocess is patched.
+The orchestrator fans sections across a thread pool, each of which can shell
+out to PowerShell. Nothing here runs PowerShell: sections use plain callables,
+and run_ps_json's subprocess is patched.
 """
 import unittest
 from unittest.mock import patch
 
-from pc_report import orchestrator
+from pc_report import orchestrator, registry
 from pc_report import ps as pcps
 from pc_report import utils as pcutils
+from pc_report.section import Section
+
+
+def _fake(key, group="Software", collect=None, after=(), default_on=True):
+    return Section(key=key, title=key.replace("_", " ").title(), group=group,
+                   collect=collect or (lambda ctx: {"ok": key}), render=lambda d, c: "",
+                   after=after, default_on=default_on)
 
 
 class RunAllTests(unittest.TestCase):
-    def _patch_collectors(self, **overrides):
-        """Replace every collector with a stub returning its own name."""
-        names = [
-            "collect_nvc_specific", "collect_os", "collect_updates",
-            "collect_programs", "collect_security", "collect_hardware",
-            "collect_network", "collect_network_connections",
-            "collect_services", "collect_processes", "collect_licenses",
-            "collect_environment", "collect_network_info", "collect_printers",
-            "collect_autoruns", "collect_accessibility", "collect_drivers",
-            "collect_codecs", "collect_snapins", "collect_sensors",
-            "collect_devices", "collect_pci", "collect_slots", "collect_ports",
-            "collect_virtual_machine",
-        ]
-        patches = []
-        for name in names:
-            fn = overrides.get(name)
-            if fn is None:
-                def fn(_name=name, **_kw):
-                    return {"ok": _name}
-            patches.append(patch.object(orchestrator.C, name, fn))
-        return patches
+    def _sections(self, **overrides):
+        base = {
+            "operating_system": _fake("operating_system"),
+            "cpu": _fake("cpu", "Hardware"),
+            "memory": _fake("memory", "Hardware"),
+            "shares": _fake("shares", "Network"),
+            "processes": _fake("processes"),
+        }
+        base.update(overrides)
+        return list(base.values())
 
-    def _run(self, options=None, progress_cb=None, **overrides):
-        patches = self._patch_collectors(**overrides)
-        for p in patches:
-            p.start()
-        try:
-            return orchestrator.run_all(options or {}, progress_cb=progress_cb)
-        finally:
-            for p in patches:
-                p.stop()
+    def _run(self, options=None, progress_cb=None, sections=None, runner=None, **kw):
+        return orchestrator.run_all(
+            options or {}, progress_cb=progress_cb,
+            sections=self._sections() if sections is None else sections,
+            runner=runner or (lambda script, timeout: (None, None)),
+            text_runner=lambda args, timeout: ("", None),
+            shared_loaders=kw.pop("shared_loaders", {}), is_admin=kw.pop("is_admin", False))
 
-    def test_every_section_runs_by_default(self):
+    def test_every_section_runs_by_default_and_is_wrapped(self):
         meta, results, errors = self._run()
         self.assertEqual(errors, {})
-        self.assertEqual(len(results), 25)
-        self.assertIn("operating_system", results)
-        self.assertIn("noldus_nvc_report", results)
+        self.assertEqual(set(results), {"operating_system", "cpu", "memory", "shares", "processes"})
+        self.assertEqual(results["cpu"], {"data": {"ok": "cpu"}, "notes": []})
 
     def test_a_section_can_be_switched_off(self):
-        _meta, results, _errors = self._run({"processes": False,
-                                             "services": False})
-        self.assertNotIn("processes", results)
-        self.assertNotIn("services", results)
-        self.assertIn("operating_system", results)
+        _meta, results, _errors = self._run({"processes": False, "shares": False})
+        self.assertEqual(set(results), {"operating_system", "cpu", "memory"})
+
+    def test_group_alias_switches_off_the_split_sections(self):
+        _meta, results, _errors = self._run({"hardware": False})
+        self.assertEqual(set(results), {"operating_system", "shares", "processes"})
 
     def test_switching_everything_off_produces_no_results(self):
-        options = dict.fromkeys(("noldus_nvc_report", "operating_system", "installed_updates", "installed_programs", "security", "hardware", "network", "network_connections", "services", "processes", "licenses", "environment", "network_info", "printers", "autoruns", "accessibility", "drivers", "codecs", "snapins", "sensors", "devices", "pci", "slots", "ports", "virtual_machine"), False)
+        options = dict.fromkeys(("operating_system", "cpu", "memory", "shares", "processes"), False)
         meta, results, errors = self._run(options)
         self.assertEqual(results, {})
         self.assertEqual(errors, {})
-        self.assertIn("generated_at", meta, "metadata is still produced")
-
-    def test_metadata_records_when_and_where(self):
-        meta, _results, _errors = self._run()
         self.assertIn("generated_at", meta)
-        self.assertIn("machine", meta)
-        # ISO-8601, so it sorts and parses.
+
+    def test_metadata(self):
+        meta, _results, _errors = self._run()
         import datetime
         datetime.datetime.fromisoformat(meta["generated_at"])
+        self.assertIn("machine", meta)
+        self.assertEqual(meta["elevated"], False)
+        self.assertEqual(set(meta["elapsed_by_section"]), {"operating_system", "cpu", "memory", "shares", "processes"})
+        self.assertIsInstance(meta["total_seconds"], float)
+        self.assertTrue(meta["nvc_version"])
 
     # -- failure isolation ----------------------------------------------
-    def test_one_failing_collector_does_not_lose_the_others(self):
-        """A single collector raising must not abandon the whole report."""
-        def exploding():
+    def test_one_failing_section_does_not_lose_the_others(self):
+        def exploding(ctx):
             raise RuntimeError("WMI is unavailable")
-
-        _meta, results, errors = self._run(collect_hardware=exploding)
-
-        self.assertIn("hardware", errors)
-        self.assertIn("WMI is unavailable", errors["hardware"])
-        self.assertEqual(len(results), 25, "every section still has an entry")
-        self.assertIn("operating_system", results)
-
-    def test_a_failed_section_is_marked_partial_in_the_results(self):
-        # The renderers read results, not errors, so the placeholder is what
-        # tells a reader that a section is incomplete rather than empty.
-        def exploding():
-            raise RuntimeError("access denied")
-
-        _meta, results, _errors = self._run(collect_security=exploding)
-        self.assertEqual(results["security"]["status"], "partial")
-        self.assertIn("access denied", results["security"]["error"])
+        _meta, results, errors = self._run(sections=self._sections(cpu=_fake("cpu", collect=exploding)))
+        self.assertIn("WMI is unavailable", errors["cpu"])
+        self.assertEqual(results["cpu"], {"status": "partial", "error": "WMI is unavailable"})
+        self.assertEqual(len(results), 5)
 
     def test_several_failures_are_all_recorded(self):
-        def exploding():
+        def exploding(ctx):
             raise OSError("nope")
+        _meta, _results, errors = self._run(sections=self._sections(
+            cpu=_fake("cpu", collect=exploding), memory=_fake("memory", collect=exploding)))
+        self.assertEqual(set(errors), {"cpu", "memory"})
 
-        _meta, _results, errors = self._run(collect_pci=exploding,
-                                            collect_slots=exploding,
-                                            collect_ports=exploding)
-        self.assertEqual(set(errors), {"pci", "slots", "ports"})
+    def test_query_errors_become_notes_not_failures(self):
+        def collect(ctx):
+            return {"value": ctx.query("thing", "Get-Thing")}
+        _meta, results, errors = self._run(sections=[_fake("cpu", collect=collect)],
+                                           runner=lambda s, t: (None, "access denied"))
+        self.assertEqual(errors, {})
+        self.assertEqual(results["cpu"], {"data": {"value": None}, "notes": ["thing: access denied"]})
 
     # -- progress -------------------------------------------------------
-    def test_progress_is_reported_once_per_section(self):
+    def test_progress_is_reported_once_per_section_with_titles(self):
         seen = []
         self._run(progress_cb=lambda name, done, total: seen.append((name, done, total)))
-        self.assertEqual(len(seen), 25)
-        self.assertEqual([d for _n, d, _t in seen], list(range(1, 26)),
-                         "the completed count should advance by one each time")
-        self.assertTrue(all(t == 25 for _n, _d, t in seen))
+        self.assertEqual(len(seen), 5)
+        self.assertEqual([d for _n, d, _t in seen], [1, 2, 3, 4, 5])
+        self.assertTrue(all(t == 5 for _n, _d, t in seen))
+        self.assertIn("Operating System", [n for n, _d, _t in seen])
 
     def test_progress_is_reported_for_failed_sections_too(self):
-        def exploding():
+        def exploding(ctx):
             raise RuntimeError("x")
-
         seen = []
         self._run(progress_cb=lambda *a: seen.append(a),
-                  collect_codecs=exploding)
-        self.assertEqual(len(seen), 25, "a failure must still advance progress")
+                  sections=self._sections(cpu=_fake("cpu", collect=exploding)))
+        self.assertEqual(len(seen), 5)
 
     def test_a_raising_progress_callback_does_not_break_the_report(self):
         def hostile(*_args):
             raise RuntimeError("the dialog closed")
-
         _meta, results, errors = self._run(progress_cb=hostile)
-        self.assertEqual(len(results), 25)
+        self.assertEqual(len(results), 5)
         self.assertEqual(errors, {})
 
-    def test_the_section_limits_are_passed_through(self):
+    # -- options reach the sections ---------------------------------------
+    def test_sections_read_limits_from_ctx_options(self):
         captured = {}
-
-        def services(limit=None):
-            captured["services"] = limit
+        def collect(ctx):
+            captured["limit"] = ctx.options.get("services_limit", 1000)
             return {}
+        self._run({"services_limit": 7}, sections=[_fake("services", collect=collect)])
+        self.assertEqual(captured["limit"], 7)
+        self._run({}, sections=[_fake("services", collect=collect)])
+        self.assertEqual(captured["limit"], 1000)
 
-        def processes(limit=None):
-            captured["processes"] = limit
-            return {}
+    # -- dependencies ------------------------------------------------------
+    def test_after_sections_see_their_dependencies_results(self):
+        def summary(ctx):
+            return {"cpu_seen": ctx.result("cpu")}
+        sections = [_fake("noldus_summary", "NVC", collect=summary, after=("cpu",)), _fake("cpu", "Hardware")]
+        _meta, results, _errors = self._run(sections=sections)
+        self.assertEqual(results["noldus_summary"]["data"], {"cpu_seen": {"ok": "cpu"}})
 
-        self._run({"services_limit": 7, "processes_limit": 9},
-                  collect_services=services, collect_processes=processes)
-        self.assertEqual(captured, {"services": 7, "processes": 9})
+    def test_a_dependency_that_is_switched_off_counts_as_satisfied(self):
+        def summary(ctx):
+            return {"cpu_seen": ctx.result("cpu")}
+        sections = [_fake("noldus_summary", "NVC", collect=summary, after=("cpu",)), _fake("cpu", "Hardware")]
+        _meta, results, _errors = self._run({"cpu": False}, sections=sections)
+        self.assertEqual(results["noldus_summary"]["data"], {"cpu_seen": None})
 
-    def test_the_limits_have_defaults(self):
-        captured = {}
+    def test_later_phase_sees_elapsed_time_for_earlier_phase(self):
+        def summary(ctx):
+            return {"cpu_elapsed": "cpu" in ctx.run.elapsed}
+        sections = [_fake("noldus_summary", "NVC", collect=summary, after=("cpu",)), _fake("cpu", "Hardware")]
+        _meta, results, _errors = self._run(sections=sections)
+        self.assertEqual(results["noldus_summary"]["data"], {"cpu_elapsed": True})
 
-        def services(limit=None):
-            captured["services"] = limit
-            return {}
+    def test_a_dependency_cycle_is_reported_not_hung(self):
+        sections = [_fake("a", after=("b",)), _fake("b", after=("a",))]
+        _meta, results, errors = self._run(sections=sections)
+        self.assertEqual(set(errors), {"a", "b"})
+        self.assertIn("never completed", results["a"]["error"])
 
-        self._run(collect_services=services)
-        self.assertEqual(captured["services"], 1000)
+    # -- shared sources ----------------------------------------------------
+    def test_shared_sources_are_loaded_once_for_the_whole_run(self):
+        calls = []
+        def loader():
+            calls.append(1)
+            return {"dx": True}, None
+        def uses_dx(ctx):
+            return {"dx": ctx.shared("dxdiag")}
+        sections = [_fake(k, "Hardware", collect=uses_dx) for k in ("video", "monitors", "sound", "cameras")]
+        _meta, results, _errors = self._run(sections=sections, shared_loaders={"dxdiag": loader})
+        self.assertEqual(len(calls), 1)
+        self.assertTrue(all(results[k]["data"] == {"dx": {"dx": True}} for k in ("video", "monitors", "sound", "cameras")))
+
+    def test_shared_source_failure_degrades_to_notes(self):
+        def loader():
+            return None, "dxdiag timed out"
+        def uses_dx(ctx):
+            return {"dx": ctx.shared("dxdiag")}
+        _meta, results, errors = self._run(sections=[_fake("video", "Hardware", collect=uses_dx)],
+                                           shared_loaders={"dxdiag": loader})
+        self.assertEqual(errors, {})
+        self.assertEqual(results["video"]["notes"], ["dxdiag: dxdiag timed out"])
+
+    # -- the real registry ----------------------------------------------------
+    def test_every_registered_section_tolerates_an_offline_machine(self):
+        """Every query answering (None, 'offline') must still yield a wrapped result, never a raise."""
+        _meta, results, errors = orchestrator.run_all(
+            {}, sections=registry.SECTIONS, runner=lambda s, t: (None, "offline"),
+            text_runner=lambda a, t: ("", "offline"),
+            shared_loaders={"dxdiag": lambda: (None, "offline"), "pnp_entities": lambda: (None, "offline")},
+            is_admin=False)
+        self.assertEqual(errors, {}, errors)
+        self.assertEqual(set(results), {s.key for s in registry.SECTIONS})
 
 
 class TimeoutLocationTests(unittest.TestCase):

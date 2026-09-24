@@ -70,6 +70,7 @@ class RunContext:
     shared: SharedSources
     runner: Callable[[str, int], tuple[Any, str | None]]
     text_runner: Callable[[list[str], int], tuple[str, str | None]]
+    elapsed: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
