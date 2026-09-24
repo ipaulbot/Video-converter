@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import time
+from collections.abc import Iterable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,20 +27,41 @@ sys.path.insert(0, str(ROOT))
 
 from pc_report import ps, registry  # noqa: E402
 from pc_report.privacy import redact_payload  # noqa: E402
-from pc_report.section import RunContext, SharedSources, is_user_admin, wrap  # noqa: E402
+from pc_report.section import RunContext, Section, SharedSources, is_user_admin, wrap  # noqa: E402
 from tests.pc_report.support import FIXTURES, RecordingSectionContext  # noqa: E402
 
+ScrubValue = tuple[str | None, str, str]
 
-def make_scrub():
+
+def _default_scrub_values() -> list[ScrubValue]:
+    return [
+        (os.environ.get("COMPUTERNAME"), "PC-NAME", "COMPUTERNAME"),
+        (getpass.getuser(), "user", "user"),
+        (os.environ.get("USERDNSDOMAIN"), "example.local", "USERDNSDOMAIN"),
+        (os.environ.get("USERDOMAIN"), "WORKGROUP", "USERDOMAIN"),
+    ]
+
+
+def make_scrub(values: Iterable[ScrubValue] | None = None):
+    if values is None:
+        values = _default_scrub_values()
     replacements = []
-    for value, token in (
-        (os.environ.get("COMPUTERNAME"), "PC-NAME"),
-        (getpass.getuser(), "user"),
-        (os.environ.get("USERDNSDOMAIN"), "example.local"),
-        (os.environ.get("USERDOMAIN"), "WORKGROUP"),
-    ):
-        if value and len(value) >= 3 and value.upper() != "WORKGROUP":
-            replacements.append((re.compile(re.escape(value), re.IGNORECASE), token))
+    for value, token, label in values:
+        if not value:
+            continue
+        if len(value) < 3:
+            print(
+                f"warning: not scrubbing short identifier {label!r}; review fixtures by hand",
+                file=sys.stderr,
+            )
+            continue
+        if value.upper() == "WORKGROUP":
+            continue
+        pattern = re.compile(
+            r"(?<![A-Za-z0-9_])" + re.escape(value) + r"(?![A-Za-z0-9_])",
+            re.IGNORECASE,
+        )
+        replacements.append((pattern, token))
 
     def scrub(text: str) -> str:
         for pattern, token in replacements:
@@ -47,6 +69,49 @@ def make_scrub():
         return text
 
     return scrub
+
+
+def dependency_depth(section: Section, by_key: dict[str, Section], seen: set[str] | None = None) -> int:
+    if not section.after:
+        return 0
+    if seen is None:
+        seen = set()
+    if section.key in seen:
+        return 0
+    seen.add(section.key)
+    depths = [dependency_depth(by_key[dep], by_key, seen) for dep in section.after if dep in by_key]
+    if not depths:
+        return 1
+    return 1 + max(depths)
+
+
+def sort_sections(sections: list[Section], order: tuple[str, ...] | None = None) -> list[Section]:
+    order = registry.ORDER if order is None else order
+    by_key = {s.key: s for s in sections}
+    order_index = {key: idx for idx, key in enumerate(order)}
+
+    def sort_key(section: Section) -> tuple[int, int]:
+        return (dependency_depth(section, by_key), order_index.get(section.key, len(order)))
+
+    return sorted(sections, key=sort_key)
+
+
+def capture(sections: list[Section], run: RunContext, out: Path, redact, scrub) -> list[str]:
+    failed: list[str] = []
+    for section in sections:
+        ctx = RecordingSectionContext(run, section, out, redact, scrub)
+        started = time.monotonic()
+        try:
+            data = section.collect(ctx)
+        except Exception as exc:  # keep capturing the rest
+            print(f"{section.key}: FAILED {exc}")
+            failed.append(section.key)
+            continue
+        run.results[section.key] = wrap(data, ctx.notes)
+        print(f"{section.key}: {time.monotonic() - started:.1f} s, {len(ctx.notes)} note(s)")
+        for note in ctx.notes:
+            print(f"   - {note}")
+    return failed
 
 
 def main(argv=None) -> int:
@@ -64,8 +129,7 @@ def main(argv=None) -> int:
             sections.append(section)
     else:
         sections = list(registry.SECTIONS)
-    # Sections that read others' results go last so their inputs exist.
-    sections.sort(key=lambda s: (bool(s.after), registry.ORDER.index(s.key)))
+    sections = sort_sections(sections)
 
     run = RunContext(options={}, is_admin=is_user_admin(), results={},
                      shared=SharedSources(ps.SHARED_LOADERS),
@@ -73,19 +137,8 @@ def main(argv=None) -> int:
     scrub = make_scrub()
     redact = lambda value: redact_payload(value, {"redact": True})  # noqa: E731
     print(f"elevated: {run.is_admin}; writing to {args.out}")
-    for section in sections:
-        ctx = RecordingSectionContext(run, section, Path(args.out), redact, scrub)
-        started = time.monotonic()
-        try:
-            data = section.collect(ctx)
-        except Exception as exc:  # keep capturing the rest
-            print(f"{section.key}: FAILED {exc}")
-            continue
-        run.results[section.key] = wrap(data, ctx.notes)
-        print(f"{section.key}: {time.monotonic() - started:.1f} s, {len(ctx.notes)} note(s)")
-        for note in ctx.notes:
-            print(f"   - {note}")
-    return 0
+    failed = capture(sections, run, Path(args.out), redact, scrub)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
