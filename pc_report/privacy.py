@@ -33,6 +33,12 @@ SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER",
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
+_COMMAND_SECRET_ARG = re.compile(
+    r"((?:--|/)[A-Za-z0-9_.-]*(?:token|secret|password|session|conversation|uuid|pipe|channel|window-config)"
+    r"[A-Za-z0-9_.-]*(?:=|\s+))(?:\"[^\"]*\"|\S+)",
+    re.IGNORECASE,
+)
+_PIPE_NAME = re.compile(r"(\\\\\.\\pipe\\)[^\s\"<>]+", re.IGNORECASE)
 
 
 def norm_key(key) -> str:
@@ -99,6 +105,14 @@ def redact_user_paths(path):
         str(path),
         flags=re.IGNORECASE,
     )
+
+
+def redact_command_line(command):
+    if not command:
+        return command
+    value = redact_user_paths(command)
+    value = _COMMAND_SECRET_ARG.sub(r"\1<redacted>", value)
+    return _PIPE_NAME.sub(r"\1<redacted>", value)
 
 
 def identity_tokens(env=None) -> list[tuple[str, str]]:
@@ -168,6 +182,8 @@ def redact_payload(data, options=None, *, env=None):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):
             return mask_string(value)
-        return redact_user_paths(value) if isinstance(value, str) else value
+        if isinstance(value, str):
+            return redact_command_line(value) if key_l == "commandline" else redact_user_paths(value)
+        return value
 
     return redact_value("", scrub_identities(data))

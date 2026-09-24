@@ -180,6 +180,23 @@ class PcReportPrivacyTests(unittest.TestCase):
         for original, row in zip(rows, redacted, strict=True):
             self.assertNotEqual(row["Value"], original["Value"], original["Name"])
 
+    def test_command_line_masks_sensitive_arguments_and_pipe_names(self):
+        command = (
+            r'worker.exe --session-id=run-123 --api-token="secret-value" '
+            r'--trace-process-track-uuid=3190708988185955192 '
+            r'--native_msg_channel=private-channel --mojo-named-platform-channel-pipe=private-pipe '
+            r'--vscode-window-config=vscode:private-window < \\.\pipe\chrome.nativeMessaging.in.unique'
+        )
+
+        redacted = redact_payload({"CommandLine": command}, {"redact": True}, env={})["CommandLine"]
+
+        self.assertIn("worker.exe", redacted)
+        for sensitive in (
+            "run-123", "secret-value", "3190708988185955192", "private-channel", "private-pipe",
+            "private-window", "nativeMessaging.in.unique",
+        ):
+            self.assertNotIn(sensitive, redacted)
+
     def test_requires_admin_sentinel_and_numbers_survive(self):
         from pc_report.section import REQUIRES_ADMIN
         payload = {"d": {"Serial Number": REQUIRES_ADMIN, "Size": 1024, "Serial Count": 3, "Ok": True}}
