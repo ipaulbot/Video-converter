@@ -1,0 +1,41 @@
+{
+ "Culture": "en-US",
+ "CultureDisplay": "English (United States)",
+ "UICulture": "en-US",
+ "UICultureDisplay": "English (United States)",
+ "SystemLocale": "en-US",
+ "SystemLocaleDisplay": "English (United States)",
+ "HomeLocation": "United States",
+ "GeoId": 244,
+ "TimeZoneId": "Eastern Standard Time",
+ "TimeZoneDisplay": "(UTC-05:00) Eastern Time (US & Canada)",
+ "BaseUtcOffset": "-05:00:00",
+ "SupportsDst": true,
+ "IsDst": true,
+ "ShortDate": "M/d/yyyy",
+ "LongDate": "dddd, MMMM d, yyyy",
+ "ShortTime": "h:mm tt",
+ "TimeFormat": "h:mm:ss tt",
+ "Decimal": ".",
+ "Thousand": ",",
+ "ListSeparator": ",",
+ "Currency": "$",
+ "Measure": "0",
+ "FirstDayOfWeek": "6",
+ "CalendarType": "1",
+ "NativeDigits": "0123456789",
+ "NegativeSign": "-",
+ "DateSample": "9/24/2026",
+ "LongDateSample": "Thursday, September 24, 2026",
+ "TimeSample": "6:35:01 PM",
+ "NumberSample": "1,234,567.89",
+ "CurrencySample": "$1,234.50",
+ "Languages": [
+  {
+   "Tag": "en-US",
+   "Name": "English",
+   "Autonym": "English (United States)",
+   "InputMethods": "0409:00000409"
+  }
+ ]
+}
