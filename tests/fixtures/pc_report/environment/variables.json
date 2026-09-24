@@ -1,0 +1,632 @@
+[
+ {
+  "Scope": "Machine",
+  "Name": "BASELIB_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\eBUS-Vision Package\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "ChocolateyInstall",
+  "Value": "C:\\ProgramData\\chocolatey"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "ComSpec",
+  "Value": "C:\\Windows\\system32\\cmd.exe"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "DAHENG_IMAVISION_MER_SETUP_PATH",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\unins000.exe"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "DriverData",
+  "Value": "C:\\Windows\\System32\\Drivers\\DriverData"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "EBUS_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\Ethernet Bus"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "ERLANG_HOME",
+  "Value": "C:\\Program Files\\erl-24.3.4"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "GALAXY_GENICAM_CACHE",
+  "Value": "C:\\ProgramData\\Galaxy\\xml\\cache"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "GALAXY_GENICAM_LOG_CONFIG",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\log\\config\\DebugLogging.properties"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "GALAXY_GENICAM_ROOT",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "GENICAM_GENTL32_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win32"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "GENICAM_GENTL64_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win64"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "IGCCSVC_DB",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "INTEL_DEV_REDIST",
+  "Value": "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "IPORT_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\eBUS-Vision Package\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "JAVA_HOME",
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "NUMBER_OF_PROCESSORS",
+  "Value": "20"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "OS",
+  "Value": "Windows_NT"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "Path",
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.1.8-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PATHEXT",
+  "Value": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PROCESSOR_ARCHITECTURE",
+  "Value": "AMD64"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PROCESSOR_IDENTIFIER",
+  "Value": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PROCESSOR_LEVEL",
+  "Value": "6"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PROCESSOR_REVISION",
+  "Value": "9a03"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PSModulePath",
+  "Value": "C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PUREGEV_ROOT",
+  "Value": "C:\\Program Files\\Pleora Technologies Inc\\eBUS Runtime\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "PYLON_DEV_DIR",
+  "Value": "C:\\Program Files\\Basler\\pylon 6\\Development\\"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "TEMP",
+  "Value": "C:\\Windows\\TEMP"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "TMP",
+  "Value": "C:\\Windows\\TEMP"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "USERNAME",
+  "Value": "******"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "windir",
+  "Value": "C:\\Windows"
+ },
+ {
+  "Scope": "Machine",
+  "Name": "ZES_ENABLE_SYSMAN",
+  "Value": "1"
+ },
+ {
+  "Scope": "User",
+  "Name": "ANDROID_HOME",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk"
+ },
+ {
+  "Scope": "User",
+  "Name": "ANDROID_SDK_ROOT",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk"
+ },
+ {
+  "Scope": "User",
+  "Name": "ChocolateyLastPathUpdate",
+  "Value": "133772043089939573"
+ },
+ {
+  "Scope": "User",
+  "Name": "JAVA_HOME",
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot"
+ },
+ {
+  "Scope": "User",
+  "Name": "OneDrive",
+  "Value": "C:\\Users\\<redacted>\\OneDrive - Noldus"
+ },
+ {
+  "Scope": "User",
+  "Name": "OneDriveCommercial",
+  "Value": "C:\\Users\\<redacted>\\OneDrive - Noldus"
+ },
+ {
+  "Scope": "User",
+  "Name": "Path",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Python312;C:\\Program Files\\Python312\\Scripts;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Windsurf\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;c:\\users\\<redacted>\\.local\\bin;c:\\users\\<redacted>\\appdata\\roaming\\python\\python312\\scripts;C:\\Users\\<redacted>\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\<redacted>\\AppData\\Local\\PowerToys\\DSCModules\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Google.PlatformTools_Microsoft.Winget.Source_8wekyb3d8bbwe\\platform-tools;;C:\\src\\flutter\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\platform-tools;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\cmdline-tools\\latest\\bin;C:\\Users\\<redacted>\\AppData\\Roaming\\npm"
+ },
+ {
+  "Scope": "User",
+  "Name": "TEMP",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Temp"
+ },
+ {
+  "Scope": "User",
+  "Name": "TMP",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Temp"
+ },
+ {
+  "Scope": "User",
+  "Name": "VIO_SNAP_HOLD_FRAMES",
+  "Value": "60"
+ },
+ {
+  "Scope": "Process",
+  "Name": "__CURSOR_SANDBOX_ENV_RESTORE",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "_ZO_DOCTOR",
+  "Value": "0"
+ },
+ {
+  "Scope": "Process",
+  "Name": "AGENT_TRANSCRIPTS",
+  "Value": "C:\\Users\\<redacted>\\.cursor\\projects\\c-Users-user-Desktop-VIO\\agent-transcripts"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ALLUSERSPROFILE",
+  "Value": "C:\\ProgramData"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ANDROID_HOME",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ANDROID_SDK_ROOT",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk"
+ },
+ {
+  "Scope": "Process",
+  "Name": "APPDATA",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Roaming"
+ },
+ {
+  "Scope": "Process",
+  "Name": "BASELIB_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\eBUS-Vision Package\\"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ChocolateyInstall",
+  "Value": "C:\\ProgramData\\chocolatey"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ChocolateyLastPathUpdate",
+  "Value": "133772043089939573"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CHROME_CRASHPAD_PIPE_NAME",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CommonProgramFiles",
+  "Value": "C:\\Program Files\\Common Files"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CommonProgramFiles(x86)",
+  "Value": "C:\\Program Files (x86)\\Common Files"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CommonProgramW6432",
+  "Value": "C:\\Program Files\\Common Files"
+ },
+ {
+  "Scope": "Process",
+  "Name": "COMPUTERNAME",
+  "Value": "PB*****DBS3"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ComSpec",
+  "Value": "C:\\Windows\\system32\\cmd.exe"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CURSOR_AGENT",
+  "Value": "1"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CURSOR_CONVERSATION_ID",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CURSOR_LAYOUT",
+  "Value": "glass"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CURSOR_RIPGREP_PATH",
+  "Value": "c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\node_modules\\@vscode\\ripgrep\\bin\\rg.exe"
+ },
+ {
+  "Scope": "Process",
+  "Name": "CURSOR_WORKSPACE_LABEL",
+  "Value": "VIO"
+ },
+ {
+  "Scope": "Process",
+  "Name": "DAHENG_IMAVISION_MER_SETUP_PATH",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\unins000.exe"
+ },
+ {
+  "Scope": "Process",
+  "Name": "DriverData",
+  "Value": "C:\\Windows\\System32\\Drivers\\DriverData"
+ },
+ {
+  "Scope": "Process",
+  "Name": "EBUS_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\Ethernet Bus"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ERLANG_HOME",
+  "Value": "C:\\Program Files\\erl-24.3.4"
+ },
+ {
+  "Scope": "Process",
+  "Name": "FORCE_COLOR",
+  "Value": "0"
+ },
+ {
+  "Scope": "Process",
+  "Name": "FPS_BROWSER_APP_PROFILE_STRING",
+  "Value": "Internet Explorer"
+ },
+ {
+  "Scope": "Process",
+  "Name": "FPS_BROWSER_USER_PROFILE_STRING",
+  "Value": "Default"
+ },
+ {
+  "Scope": "Process",
+  "Name": "GALAXY_GENICAM_CACHE",
+  "Value": "C:\\ProgramData\\Galaxy\\xml\\cache"
+ },
+ {
+  "Scope": "Process",
+  "Name": "GALAXY_GENICAM_LOG_CONFIG",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\log\\config\\DebugLogging.properties"
+ },
+ {
+  "Scope": "Process",
+  "Name": "GALAXY_GENICAM_ROOT",
+  "Value": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam"
+ },
+ {
+  "Scope": "Process",
+  "Name": "GENICAM_GENTL32_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win32"
+ },
+ {
+  "Scope": "Process",
+  "Name": "GENICAM_GENTL64_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win64"
+ },
+ {
+  "Scope": "Process",
+  "Name": "HOMEDRIVE",
+  "Value": "C:"
+ },
+ {
+  "Scope": "Process",
+  "Name": "HOMEPATH",
+  "Value": "\\Users\\<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "IGCCSVC_DB",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "INTEL_DEV_REDIST",
+  "Value": "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\"
+ },
+ {
+  "Scope": "Process",
+  "Name": "IPORT_ROOT",
+  "Value": "C:\\Program Files (x86)\\Pleora Technologies Inc\\eBUS-Vision Package\\"
+ },
+ {
+  "Scope": "Process",
+  "Name": "JAVA_HOME",
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot"
+ },
+ {
+  "Scope": "Process",
+  "Name": "LOCALAPPDATA",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local"
+ },
+ {
+  "Scope": "Process",
+  "Name": "LOGONSERVER",
+  "Value": "\\\\*******DC03"
+ },
+ {
+  "Scope": "Process",
+  "Name": "NO_COLOR",
+  "Value": "1"
+ },
+ {
+  "Scope": "Process",
+  "Name": "NUMBER_OF_PROCESSORS",
+  "Value": "20"
+ },
+ {
+  "Scope": "Process",
+  "Name": "OneDrive",
+  "Value": "C:\\Users\\<redacted>\\OneDrive - Noldus"
+ },
+ {
+  "Scope": "Process",
+  "Name": "OneDriveCommercial",
+  "Value": "C:\\Users\\<redacted>\\OneDrive - Noldus"
+ },
+ {
+  "Scope": "Process",
+  "Name": "OS",
+  "Value": "Windows_NT"
+ },
+ {
+  "Scope": "Process",
+  "Name": "Path",
+  "Value": "c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\node_modules\\@vscode\\ripgrep\\bin;C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.1.8-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Python312;C:\\Program Files\\Python312\\Scripts;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Windsurf\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;c:\\users\\<redacted>\\.local\\bin;c:\\users\\<redacted>\\appdata\\roaming\\python\\python312\\scripts;C:\\Users\\<redacted>\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\<redacted>\\AppData\\Local\\PowerToys\\DSCModules\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Google.PlatformTools_Microsoft.Winget.Source_8wekyb3d8bbwe\\platform-tools;C:\\src\\flutter\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\platform-tools;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\cmdline-tools\\latest\\bin;C:\\Users\\<redacted>\\AppData\\Roaming\\npm"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PATHEXT",
+  "Value": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW;.CPL"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PROCESSOR_ARCHITECTURE",
+  "Value": "AMD64"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PROCESSOR_IDENTIFIER",
+  "Value": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PROCESSOR_LEVEL",
+  "Value": "6"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PROCESSOR_REVISION",
+  "Value": "9a03"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ProgramData",
+  "Value": "C:\\ProgramData"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ProgramFiles",
+  "Value": "C:\\Program Files"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ProgramFiles(x86)",
+  "Value": "C:\\Program Files (x86)"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ProgramW6432",
+  "Value": "C:\\Program Files"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PSExecutionPolicyPreference",
+  "Value": "Bypass"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PSModulePath",
+  "Value": "C:\\Users\\<redacted>\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PUBLIC",
+  "Value": "C:\\Users\\<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PUREGEV_ROOT",
+  "Value": "C:\\Program Files\\Pleora Technologies Inc\\eBUS Runtime\\"
+ },
+ {
+  "Scope": "Process",
+  "Name": "PYLON_DEV_DIR",
+  "Value": "C:\\Program Files\\Basler\\pylon 6\\Development\\"
+ },
+ {
+  "Scope": "Process",
+  "Name": "SESSIONNAME",
+  "Value": "Console"
+ },
+ {
+  "Scope": "Process",
+  "Name": "SystemDrive",
+  "Value": "C:"
+ },
+ {
+  "Scope": "Process",
+  "Name": "SystemRoot",
+  "Value": "C:\\Windows"
+ },
+ {
+  "Scope": "Process",
+  "Name": "TEMP",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Temp"
+ },
+ {
+  "Scope": "Process",
+  "Name": "TERM",
+  "Value": "dumb"
+ },
+ {
+  "Scope": "Process",
+  "Name": "TMP",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Temp"
+ },
+ {
+  "Scope": "Process",
+  "Name": "USERDNSDOMAIN",
+  "Value": "NO*********OCAL"
+ },
+ {
+  "Scope": "Process",
+  "Name": "USERDOMAIN",
+  "Value": "NO***SINC"
+ },
+ {
+  "Scope": "Process",
+  "Name": "USERDOMAIN_ROAMINGPROFILE",
+  "Value": "NO***SINC"
+ },
+ {
+  "Scope": "Process",
+  "Name": "USERNAME",
+  "Value": "*****"
+ },
+ {
+  "Scope": "Process",
+  "Name": "USERPROFILE",
+  "Value": "C:\\Users\\<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VIO_SNAP_HOLD_FRAMES",
+  "Value": "60"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_CODE_CACHE_PATH",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Roaming\\Cursor\\CachedData\\2fdd31c9f33f7fbe501f2d57772dc5bf64b63620"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+  "Value": "extensionHost"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_CWD",
+  "Value": "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_ESM_ENTRYPOINT",
+  "Value": "vs/workbench/api/node/extensionHostProcess"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+  "Value": "true"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_IPC_HOOK",
+  "Value": "<redacted>"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_NLS_CONFIG",
+  "Value": "{\"userLocale\":\"en-us\",\"osLocale\":\"en-us\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"C:\\\\Users\\\\<redacted>\\\\AppData\\\\Local\\\\Programs\\\\cursor\\\\resources\\\\app\\\\out\\\\nls.messages.json\",\"locale\":\"en-us\",\"availableLanguages\":{}}"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_PID",
+  "Value": "65712"
+ },
+ {
+  "Scope": "Process",
+  "Name": "VSCODE_PROCESS_TITLE",
+  "Value": "extension-host VIO [1-2]"
+ },
+ {
+  "Scope": "Process",
+  "Name": "windir",
+  "Value": "C:\\Windows"
+ },
+ {
+  "Scope": "Process",
+  "Name": "ZES_ENABLE_SYSMAN",
+  "Value": "1"
+ }
+]

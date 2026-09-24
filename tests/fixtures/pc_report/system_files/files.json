@@ -1,0 +1,51 @@
+[
+ {
+  "Name": "hosts",
+  "Path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+  "Size": 824,
+  "Modified": "/Date(1575709964107)/",
+  "Entries": 0
+ },
+ {
+  "Name": "lmhosts.sam",
+  "Path": "C:\\Windows\\System32\\drivers\\etc\\lmhosts.sam",
+  "Size": 3683,
+  "Modified": "/Date(1575709964122)/",
+  "Entries": ""
+ },
+ {
+  "Name": "networks",
+  "Path": "C:\\Windows\\System32\\drivers\\etc\\networks",
+  "Size": 407,
+  "Modified": "/Date(1575709964122)/",
+  "Entries": ""
+ },
+ {
+  "Name": "protocol",
+  "Path": "C:\\Windows\\System32\\drivers\\etc\\protocol",
+  "Size": 1358,
+  "Modified": "/Date(1575709964122)/",
+  "Entries": ""
+ },
+ {
+  "Name": "services",
+  "Path": "C:\\Windows\\System32\\drivers\\etc\\services",
+  "Size": 17635,
+  "Modified": "/Date(1575709964122)/",
+  "Entries": ""
+ },
+ {
+  "Name": "system.ini",
+  "Path": "C:\\Windows\\system.ini",
+  "Size": 219,
+  "Modified": "/Date(1575709962747)/",
+  "Entries": ""
+ },
+ {
+  "Name": "win.ini",
+  "Path": "C:\\Windows\\win.ini",
+  "Size": 92,
+  "Modified": "/Date(1575709962747)/",
+  "Entries": ""
+ }
+]
