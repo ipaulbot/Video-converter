@@ -1,4 +1,3 @@
-import json
 import re
 import tempfile
 import unittest
@@ -91,8 +90,13 @@ class ScriptTests(unittest.TestCase):
         self.assertEqual(script_clsids, set(mod.DS_CATEGORIES))
         self.assertEqual(
             mod.DS_CATEGORIES["{33D9A760-90C8-11D0-BD43-00A0C911CE86}"],
+            "Video Compressors",
+        )
+        self.assertEqual(
+            mod.DS_CATEGORIES["{2721AE20-7E70-11D0-A5D6-28DB04C10000}"],
             "Video Compressors (Legacy)",
         )
+        self.assertIn("{2721AE20-7E70-11D0-A5D6-28DB04C10000}", mod.DIRECTSHOW_SCRIPT)
 
 
 class FixtureTests(unittest.TestCase):
@@ -100,9 +104,7 @@ class FixtureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             fixture_dir = Path(directory) / mod.SECTION.key
             fixture_dir.mkdir()
-            (fixture_dir / "directshow.json").write_text(
-                json.dumps([{"Name": "Example filter"}]), encoding="utf-8"
-            )
+            (fixture_dir / "directshow.json").write_text("[]", encoding="utf-8")
             (fixture_dir / "drivers32.json").write_text("[]", encoding="utf-8")
             (fixture_dir / "media_foundation.json").write_text("null", encoding="utf-8")
             ctx = support.FixtureSectionContext(mod.SECTION, root=Path(directory))

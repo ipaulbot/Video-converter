@@ -6,7 +6,8 @@ from ..section import Section, kv_groups, list_table, rows_of, sub_heading
 # DirectShow category CLSIDs -> human names (the ones SIW and GraphStudio show).
 DS_CATEGORIES = {
     "{083863F1-70DE-11D0-BD40-00A0C911CE86}": "DirectShow Filters",
-    "{33D9A760-90C8-11D0-BD43-00A0C911CE86}": "Video Compressors (Legacy)",
+    "{33D9A760-90C8-11D0-BD43-00A0C911CE86}": "Video Compressors",
+    "{2721AE20-7E70-11D0-A5D6-28DB04C10000}": "Video Compressors (Legacy)",
     "{33D9A761-90C8-11D0-BD43-00A0C911CE86}": "Audio Compressors",
     "{33D9A762-90C8-11D0-BD43-00A0C911CE86}": "Audio Capture Sources",
     "{860BB310-5D01-11D0-BD3B-00A0C911CE86}": "Video Capture Sources",
@@ -20,7 +21,8 @@ DS_CATEGORIES = {
 
 DIRECTSHOW_SCRIPT = r"""
 $cats = @{
-  '{083863F1-70DE-11D0-BD40-00A0C911CE86}' = 'DirectShow Filters'; '{33D9A760-90C8-11D0-BD43-00A0C911CE86}' = 'Video Compressors (Legacy)'
+  '{083863F1-70DE-11D0-BD40-00A0C911CE86}' = 'DirectShow Filters'; '{33D9A760-90C8-11D0-BD43-00A0C911CE86}' = 'Video Compressors'
+  '{2721AE20-7E70-11D0-A5D6-28DB04C10000}' = 'Video Compressors (Legacy)'
   '{33D9A761-90C8-11D0-BD43-00A0C911CE86}' = 'Audio Compressors'; '{33D9A762-90C8-11D0-BD43-00A0C911CE86}' = 'Audio Capture Sources'
   '{860BB310-5D01-11D0-BD3B-00A0C911CE86}' = 'Video Capture Sources'; '{E0F158E1-CB04-11D0-BD4E-00A0C911CE86}' = 'Audio Renderers'
   '{CC7BFB41-F175-11D1-A392-00E0291F3959}' = 'WDM Streaming Capture Devices'; '{CC7BFB46-F175-11D1-A392-00E0291F3959}' = 'WDM Streaming Rendering Devices'
@@ -183,10 +185,10 @@ def build(directshow, drivers32, media_foundation) -> dict:
 
 
 def collect(ctx):
-    directshow = ctx.query("directshow", DIRECTSHOW_SCRIPT, timeout=90)
+    directshow = ctx.query("directshow", DIRECTSHOW_SCRIPT, timeout=120)
     drivers32 = ctx.query("drivers32", DRIVERS32_SCRIPT)
     media_foundation = ctx.query("media_foundation", MF_SCRIPT, timeout=60)
-    if rows_of(directshow) and not rows_of(media_foundation):
+    if not rows_of(media_foundation):
         ctx.note("media foundation: no transforms enumerated")
     return build(directshow, drivers32, media_foundation)
 
