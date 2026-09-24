@@ -54,6 +54,35 @@ class FixtureContextTests(unittest.TestCase):
 
 
 class RecordingContextTests(unittest.TestCase):
+    def test_scrub_values_changes_string_values_not_dict_keys(self):
+        value = {"Host": ["Host", 1, {"Host": "x Host"}]}
+        scrubbed = support.scrub_values(value, lambda s: s.replace("Host", "PC"))
+        self.assertEqual(scrubbed, {"Host": ["PC", 1, {"Host": "x PC"}]})
+
+    def test_recording_scrubs_json_values_without_changing_keys(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = RunContext(
+                options={},
+                is_admin=False,
+                results={},
+                shared=SharedSources({}),
+                runner=lambda s, t: ({"Host": "Host"}, None),
+                text_runner=lambda a, t: ("", None),
+            )
+            ctx = support.RecordingSectionContext(
+                run,
+                _section(),
+                root,
+                lambda value: value,
+                lambda text: text.replace("Host", "PC-NAME"),
+            )
+
+            ctx.query("os", "x")
+
+            saved = json.loads((root / "demo" / "os.json").read_text(encoding="utf-8"))
+            self.assertEqual(saved, {"Host": "PC-NAME"})
+
     def test_records_redacted_and_scrubbed_results(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

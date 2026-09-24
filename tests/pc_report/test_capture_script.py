@@ -1,8 +1,6 @@
 import importlib.util
-import io
 import tempfile
 import unittest
-from contextlib import redirect_stderr
 from pathlib import Path
 
 from pc_report.section import RunContext, Section, SharedSources
@@ -33,12 +31,9 @@ class MakeScrubTests(unittest.TestCase):
         scrub = cap.make_scrub([("name", "user", "user")])
         self.assertEqual(scrub('{"UserName": "name"}'), '{"UserName": "user"}')
 
-    def test_short_identifier_is_not_scrubbed_and_warns(self):
-        err = io.StringIO()
-        with redirect_stderr(err):
-            scrub = cap.make_scrub([("ab", "user", "user")])
-        self.assertEqual(scrub("keep ab here"), "keep ab here")
-        self.assertIn("warning: not scrubbing short identifier 'user'", err.getvalue())
+    def test_short_identifier_is_scrubbed_as_a_whole_token(self):
+        scrub = cap.make_scrub([("ab", "user", "user")])
+        self.assertEqual(scrub("ab abc cab"), "user abc cab")
 
 
 class CaptureTests(unittest.TestCase):
@@ -72,6 +67,23 @@ class DependencyOrderTests(unittest.TestCase):
         for incoming in [(c, b, a), (b, a, c), (a, c, b)]:
             sorted_sections = cap.sort_sections(list(incoming), order=order)
             self.assertEqual([s.key for s in sorted_sections], ["a", "b", "c"])
+
+    def test_diamond_depth_is_independent_of_input_order(self):
+        a = _section(key="a", after=())
+        b = _section(key="b", after=("a",))
+        c = _section(key="c", after=("a",))
+        d = _section(key="d", after=("b", "c"))
+        order = ("a", "b", "c", "d")
+        for incoming in [(d, c, b, a), (c, d, a, b), (b, a, d, c)]:
+            by_key = {section.key: section for section in incoming}
+            self.assertEqual(cap.dependency_depth(d, by_key), 2)
+            sorted_sections = cap.sort_sections(list(incoming), order=order)
+            self.assertEqual([s.key for s in sorted_sections], ["a", "b", "c", "d"])
+
+    def test_dependency_cycle_does_not_raise(self):
+        x = _section(key="x", after=("y",))
+        y = _section(key="y", after=("x",))
+        self.assertEqual({s.key for s in cap.sort_sections([y, x], order=())}, {"x", "y"})
 
 
 if __name__ == "__main__":

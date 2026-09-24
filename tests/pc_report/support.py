@@ -16,6 +16,16 @@ def safe_name(name: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", name)
 
 
+def scrub_values(obj, scrub):
+    if isinstance(obj, dict):
+        return {key: scrub_values(value, scrub) for key, value in obj.items()}
+    if isinstance(obj, list):
+        return [scrub_values(value, scrub) for value in obj]
+    if isinstance(obj, str):
+        return scrub(obj)
+    return obj
+
+
 def _refuse(*_args, **_kwargs):
     raise AssertionError("a section test tried to run a real command; add a fixture instead")
 
@@ -72,10 +82,11 @@ class RecordingSectionContext(SectionContext):
     def _save(self, directory: Path, name: str, value, suffix: str):
         directory.mkdir(parents=True, exist_ok=True)
         if suffix == ".json":
-            text = json.dumps(self.redact(value), indent=1, default=str)
+            value = scrub_values(self.redact(value), self.scrub)
+            text = json.dumps(value, indent=1, default=str)
         else:
-            text = value or ""
-        (directory / f"{safe_name(name)}{suffix}").write_text(self.scrub(text), encoding="utf-8")
+            text = self.scrub(value or "")
+        (directory / f"{safe_name(name)}{suffix}").write_text(text, encoding="utf-8")
 
     def query(self, name, script, timeout=None):
         data = super().query(name, script, timeout)

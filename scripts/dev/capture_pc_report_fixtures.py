@@ -46,14 +46,8 @@ def make_scrub(values: Iterable[ScrubValue] | None = None):
     if values is None:
         values = _default_scrub_values()
     replacements = []
-    for value, token, label in values:
+    for value, token, _label in values:
         if not value:
-            continue
-        if len(value) < 3:
-            print(
-                f"warning: not scrubbing short identifier {label!r}; review fixtures by hand",
-                file=sys.stderr,
-            )
             continue
         if value.upper() == "WORKGROUP":
             continue
@@ -71,27 +65,43 @@ def make_scrub(values: Iterable[ScrubValue] | None = None):
     return scrub
 
 
-def dependency_depth(section: Section, by_key: dict[str, Section], seen: set[str] | None = None) -> int:
-    if not section.after:
-        return 0
-    if seen is None:
-        seen = set()
-    if section.key in seen:
-        return 0
-    seen.add(section.key)
-    depths = [dependency_depth(by_key[dep], by_key, seen) for dep in section.after if dep in by_key]
-    if not depths:
-        return 1
-    return 1 + max(depths)
+def dependency_depth(
+    section: Section,
+    by_key: dict[str, Section],
+    memo: dict[str, int] | None = None,
+) -> int:
+    memo = {} if memo is None else memo
+    visiting: set[str] = set()
+
+    def depth(key: str) -> int:
+        if key in memo:
+            return memo[key]
+        if key in visiting:
+            return 0
+        current = by_key[key]
+        if not current.after:
+            memo[key] = 0
+            return 0
+
+        visiting.add(key)
+        try:
+            result = 1 + max((depth(dep) for dep in current.after if dep in by_key), default=0)
+        finally:
+            visiting.remove(key)
+        memo[key] = result
+        return result
+
+    return depth(section.key)
 
 
 def sort_sections(sections: list[Section], order: tuple[str, ...] | None = None) -> list[Section]:
     order = registry.ORDER if order is None else order
     by_key = {s.key: s for s in sections}
     order_index = {key: idx for idx, key in enumerate(order)}
+    depth_memo: dict[str, int] = {}
 
     def sort_key(section: Section) -> tuple[int, int]:
-        return (dependency_depth(section, by_key), order_index.get(section.key, len(order)))
+        return (dependency_depth(section, by_key, depth_memo), order_index.get(section.key, len(order)))
 
     return sorted(sections, key=sort_key)
 
