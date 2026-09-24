@@ -55,6 +55,16 @@ def _row(name, version="", publisher="", install_date="", size="", arch="", scop
             "Install Source": str(install_source or ""), "Source": source, "Uninstall": str(uninstall or "")}
 
 
+def _dedupe_key(row):
+    return (row["Name"].strip().casefold(), row["Version"].strip().casefold())
+
+
+def _merge_empty_fields(keep, donor):
+    for field, value in donor.items():
+        if not str(keep.get(field) or "").strip() and str(value or "").strip():
+            keep[field] = value
+
+
 def build(registry_rows, package_rows, appx_rows) -> dict:
     rows = []
     for it in rows_of(registry_rows):
@@ -66,18 +76,19 @@ def build(registry_rows, package_rows, appx_rows) -> dict:
                          it.get("InstallLocation"), it.get("InstallSource"), "Registry", it.get("Uninstall")))
     for it in rows_of(package_rows):
         if it.get("Name"):
-            rows.append(_row(it["Name"], it.get("Version"), it.get("Publisher"),
-                             source=f"Package ({it.get('ProviderName') or 'provider'})"))
+            rows.append(_row(it["Name"], it.get("Version"), it.get("Publisher"), it.get("InstallDate"),
+                             location=it.get("InstallLocation"), source=f"Package ({it.get('ProviderName') or 'provider'})"))
     for it in rows_of(appx_rows):
         if it.get("Name"):
             rows.append(_row(it["Name"], it.get("Version"), it.get("Publisher"), it.get("InstallDate"),
                              arch=it.get("Architecture"), location=it.get("InstallLocation"), source="Microsoft Store"))
-    seen, deduped = set(), []
+    seen, deduped = {}, []
     for row in rows:
-        key = (row["Name"].lower(), row["Version"], row["Publisher"].lower())
+        key = _dedupe_key(row)
         if key in seen:
+            _merge_empty_fields(deduped[seen[key]], row)
             continue
-        seen.add(key)
+        seen[key] = len(deduped)
         deduped.append(row)
     deduped.sort(key=lambda r: r["Name"].lower())
     summary = {

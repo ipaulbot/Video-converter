@@ -38,6 +38,22 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Hidden (system components)"], 1)
         self.assertEqual(rows["Microsoft Store apps"], 1)
 
+    def test_dedupe_name_version_merges_publisher_from_registry(self):
+        reg = [{"Name": "QuickTime", "Version": "7.79", "Publisher": "Apple Inc."}]
+        pkg = [{"Name": "QuickTime", "Version": "7.79", "Publisher": "", "ProviderName": "msi"}]
+        data = mod.build(reg, pkg, [])
+        qt = [r for r in data["rows"] if r["Name"] == "QuickTime"]
+        self.assertEqual(len(qt), 1)
+        self.assertEqual(qt[0]["Publisher"], "Apple Inc.")
+
+    def test_dedupe_name_version_merges_install_date_from_package(self):
+        reg = [{"Name": "QuickTime", "Version": "7.79", "Publisher": "Apple Inc.", "InstallDate": ""}]
+        pkg = [{"Name": "QuickTime", "Version": "7.79", "Publisher": "", "ProviderName": "msi",
+                "InstallDate": "20250107"}]
+        data = mod.build(reg, pkg, [])
+        qt = next(r for r in data["rows"] if r["Name"] == "QuickTime")
+        self.assertEqual(qt["Install Date"], "2025-01-07")
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
