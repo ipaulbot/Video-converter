@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from pc_report.privacy import redact_payload
 from pc_report.section import RenderContext
@@ -18,6 +19,8 @@ OS = {"TotalVisibleMemorySize": 33357824, "FreePhysicalMemory": 20000000, "Total
       "FreeVirtualMemory": 24000000, "SizeStoredInPagingFiles": 4718592, "FreeSpaceInPagingFiles": 4600000}
 PERF = {"CommittedBytes": 15000000000, "CommitLimit": 38912000000, "AvailableBytes": 20480000000, "CacheBytes": 900000000,
         "PoolPagedBytes": 500000000, "PoolNonpagedBytes": 400000000}
+STATUS = {"MemoryLoad": 41, "TotalPhys": 34158309376, "AvailPhys": 20000000000,
+          "TotalPageFile": 40000000000, "AvailPageFile": 24000000000}
 
 
 class BuildTests(unittest.TestCase):
@@ -30,8 +33,29 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(self.rows["Slots Used"], "2 of 4")
         self.assertEqual(self.rows["Memory Type"], "DDR4")
         self.assertEqual(self.rows["Total Physical"], "31.8 GB")
-        self.assertEqual(self.rows["Memory Load"], "40.0 %")
+        self.assertEqual(self.rows["Memory Load"], "40 %")
         self.assertEqual(self.rows["Committed"], "14.0 GB of 36.2 GB")
+        self.assertEqual(self.rows["Commit Limit"], "36.2 GB")
+        self.assertEqual(self.rows["Live Source"], "Performance counters")
+
+    def test_status_supplies_live_figures_when_performance_counters_are_missing(self):
+        rows = mod.flatten(mod.build(ARR, MODS, OS, None, status=STATUS))
+        self.assertEqual(rows["Committed"], "14.9 GB of 37.3 GB")
+        self.assertEqual(rows["Commit Limit"], "37.3 GB")
+        self.assertEqual(rows["Available"], "18.6 GB")
+        self.assertEqual(rows["Memory Load"], "41 %")
+        self.assertEqual(rows["Live Source"], "GlobalMemoryStatusEx")
+        self.assertEqual(rows["System Cache"], "")
+        self.assertEqual(rows["Paged Pool"], "")
+        self.assertEqual(rows["Non-paged Pool"], "")
+
+    def test_os_supplies_live_figures_when_other_sources_are_missing(self):
+        rows = mod.flatten(mod.build(ARR, MODS, OS, None))
+        self.assertEqual(rows["Committed"], "13.4 GB of 36.2 GB")
+        self.assertEqual(rows["Commit Limit"], "36.2 GB")
+        self.assertEqual(rows["Available"], "19.1 GB")
+        self.assertEqual(rows["Memory Load"], "40 %")
+        self.assertEqual(rows["Live Source"], "Win32_OperatingSystem")
 
     def test_modules(self):
         m = self.data["modules"][1]
@@ -72,8 +96,8 @@ class BuildTests(unittest.TestCase):
         for label in (
             "Maximum Capacity", "Total Physical", "Free Physical", "Used Physical",
             "Memory Load", "Total Virtual", "Free Virtual", "Paging Files",
-            "Paging Files Free", "Committed", "Available", "System Cache",
-            "Paged Pool", "Non-paged Pool",
+            "Paging Files Free", "Committed", "Commit Limit", "Available",
+            "System Cache", "Paged Pool", "Non-paged Pool", "Live Source",
         ):
             self.assertEqual(rows[label], "", label)
 
@@ -98,10 +122,34 @@ class BuildTests(unittest.TestCase):
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
-        _data, html, ctx = support.collect_and_render(mod.SECTION)
+        with patch.object(mod, "memory_status", return_value={}):
+            _data, html, ctx = support.collect_and_render(mod.SECTION)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<th>Installed Memory</th>", html)
         self.assertIn("<th>Part Number</th>", html)
+        self.assertIn("Win32_OperatingSystem", html)
+        self.assertRegex(html, r"<th>Committed</th><td>[^<]+</td>")
+        self.assertTrue(any("Performance counters unavailable" in note for note in ctx.notes))
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)
+
+
+class MemoryStatusTests(unittest.TestCase):
+    @unittest.skipUnless(__import__("os").name == "nt", "Windows only")
+    def test_returns_expected_live_memory_fields_on_windows(self):
+        status = mod.memory_status()
+        self.assertEqual(
+            set(status),
+            {"MemoryLoad", "TotalPhys", "AvailPhys", "TotalPageFile", "AvailPageFile"},
+        )
+        self.assertGreater(status["TotalPhys"], 0)
+
+    def test_never_raises_when_probe_fails(self):
+        class ExplodingWindll:
+            @property
+            def kernel32(self):
+                raise RuntimeError("probe failed")
+
+        with patch.object(mod.ctypes, "windll", ExplodingWindll(), create=True):
+            self.assertEqual(mod.memory_status(), {})

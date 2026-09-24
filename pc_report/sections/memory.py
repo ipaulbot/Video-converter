@@ -1,8 +1,11 @@
 """Memory: array, every module with SMBIOS detail, and live OS/commit figures."""
 from __future__ import annotations
 
+import ctypes
+import os
+
 from .. import decode
-from ..format import bytes_human, kb_human, percent
+from ..format import bytes_human, kb_human
 from ..ps import cim
 from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
 
@@ -42,9 +45,63 @@ def _mts(v):
     return f"{n} MT/s" if n else ""
 
 
-def build(arrays, modules, os_, perf) -> dict:
+def memory_status() -> dict:
+    """Return live Windows memory counters without depending on the perf library."""
+    if os.name != "nt":
+        return {}
+    try:
+        class MEMORYSTATUSEX(ctypes.Structure):
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+
+        value = MEMORYSTATUSEX()
+        value.dwLength = ctypes.sizeof(value)
+        fn = ctypes.windll.kernel32.GlobalMemoryStatusEx
+        fn.argtypes = [ctypes.POINTER(MEMORYSTATUSEX)]
+        fn.restype = ctypes.c_int
+        if not fn(ctypes.byref(value)):
+            return {}
+        return {
+            "MemoryLoad": int(value.dwMemoryLoad),
+            "TotalPhys": int(value.ullTotalPhys),
+            "AvailPhys": int(value.ullAvailPhys),
+            "TotalPageFile": int(value.ullTotalPageFile),
+            "AvailPageFile": int(value.ullAvailPageFile),
+        }
+    except Exception:
+        return {}
+
+
+def _nonnegative(value):
+    n = decode.to_int(value)
+    return n if n is not None and n >= 0 else None
+
+
+def _difference(total, free):
+    total, free = _nonnegative(total), _nonnegative(free)
+    if total is None or free is None or free > total:
+        return None
+    return total - free
+
+
+def _kb_bytes(value):
+    n = _nonnegative(value)
+    return n * 1024 if n is not None else None
+
+
+def build(arrays, modules, os_, perf, status=None) -> dict:
     arr = first_dict(arrays)
     os_, perf = first_dict(os_), first_dict(perf)
+    status = first_dict(status)
     mods = []
     total = 0
     types = set()
@@ -73,9 +130,9 @@ def build(arrays, modules, os_, perf) -> dict:
     max_capacity = decode.to_int(arr.get("MaxCapacityEx"))
     if max_capacity is None:
         max_capacity = decode.to_int(arr.get("MaxCapacity"))
-    total_kb = decode.to_int(os_.get("TotalVisibleMemorySize"))
-    free_kb = decode.to_int(os_.get("FreePhysicalMemory"))
-    used_kb = (total_kb - free_kb) if total_kb is not None and free_kb is not None else None
+    total_kb = _nonnegative(os_.get("TotalVisibleMemorySize"))
+    free_kb = _nonnegative(os_.get("FreePhysicalMemory"))
+    used_kb = _difference(total_kb, free_kb)
     summary = {
         "Installed Memory": bytes_human(total) if total else "",
         "Maximum Capacity": _kb(max_capacity),
@@ -84,23 +141,53 @@ def build(arrays, modules, os_, perf) -> dict:
         "Error Correction": decode.lookup(decode.ERROR_CORRECTION, arr.get("MemoryErrorCorrection")),
         "Timings": "CAS/RAS timings and XMP profiles are read from SPD and need a vendor tool; not reported here.",
     }
-    committed = decode.to_int(perf.get("CommittedBytes"))
-    commit_limit = decode.to_int(perf.get("CommitLimit"))
+    committed = _nonnegative(perf.get("CommittedBytes"))
+    live_source = "Performance counters" if committed is not None else ""
+    if committed is None:
+        committed = _difference(status.get("TotalPageFile"), status.get("AvailPageFile"))
+        live_source = "GlobalMemoryStatusEx" if committed is not None else ""
+    if committed is None:
+        committed_kb = _difference(os_.get("TotalVirtualMemorySize"), os_.get("FreeVirtualMemory"))
+        committed = committed_kb * 1024 if committed_kb is not None else None
+        live_source = "Win32_OperatingSystem" if committed is not None else ""
+
+    commit_limit = _nonnegative(perf.get("CommitLimit"))
+    if commit_limit is None:
+        commit_limit = _nonnegative(status.get("TotalPageFile"))
+    if commit_limit is None:
+        commit_limit = _kb_bytes(os_.get("TotalVirtualMemorySize"))
+
+    available = _nonnegative(perf.get("AvailableBytes"))
+    if available is None:
+        available = _nonnegative(status.get("AvailPhys"))
+    if available is None:
+        available = _kb_bytes(os_.get("FreePhysicalMemory"))
+
+    memory_load = _nonnegative(status.get("MemoryLoad"))
+    if memory_load is not None:
+        memory_load_text = f"{memory_load} %"
+    elif used_kb is not None and total_kb:
+        memory_load_text = f"{round(100 * used_kb / total_kb)} %"
+    else:
+        memory_load_text = ""
+
     live = {
         "Total Physical": _kb(total_kb),
         "Free Physical": _kb(free_kb),
         "Used Physical": _kb(used_kb),
-        "Memory Load": percent(used_kb, total_kb) if used_kb is not None else "",
+        "Memory Load": memory_load_text,
         "Total Virtual": _kb(os_.get("TotalVirtualMemorySize")),
         "Free Virtual": _kb(os_.get("FreeVirtualMemory")),
         "Paging Files": _kb(os_.get("SizeStoredInPagingFiles")),
         "Paging Files Free": _kb(os_.get("FreeSpaceInPagingFiles")),
         "Committed": (f"{bytes_human(committed)} of {bytes_human(commit_limit)}"
-                      if committed is not None and commit_limit is not None else ""),
-        "Available": _bytes(perf.get("AvailableBytes")),
+                      if committed is not None and commit_limit is not None else _bytes(committed)),
+        "Commit Limit": _bytes(commit_limit),
+        "Available": _bytes(available),
         "System Cache": _bytes(perf.get("CacheBytes")),
         "Paged Pool": _bytes(perf.get("PoolPagedBytes")),
         "Non-paged Pool": _bytes(perf.get("PoolNonpagedBytes")),
+        "Live Source": live_source,
     }
     return {"groups": [{"title": "Summary", "rows": summary}, {"title": "Operating System View", "rows": live}],
             "modules": mods}
@@ -114,8 +201,14 @@ def flatten(data) -> dict:
 
 
 def collect(ctx):
-    return build(ctx.query("array", ARRAY_SCRIPT), ctx.query("modules", MODULE_SCRIPT),
-                 first_dict(ctx.query("os", OS_SCRIPT)), first_dict(ctx.query("perf", PERF_SCRIPT)))
+    arrays = ctx.query("array", ARRAY_SCRIPT)
+    modules = ctx.query("modules", MODULE_SCRIPT)
+    os_ = first_dict(ctx.query("os", OS_SCRIPT))
+    perf = first_dict(ctx.query("perf", PERF_SCRIPT))
+    status = memory_status()
+    if not perf:
+        ctx.note("Performance counters unavailable; live figures derived from GlobalMemoryStatusEx / Win32_OperatingSystem.")
+    return build(arrays, modules, os_, perf, status)
 
 
 def render(data, ctx):
