@@ -30,7 +30,46 @@ TPM_SCRIPT = ("Get-Tpm -ErrorAction SilentlyContinue | Select-Object TpmPresent,
 BITLOCKER_SCRIPT = ("Get-BitLockerVolume -ErrorAction SilentlyContinue | Select-Object MountPoint,VolumeType,ProtectionStatus,"
                     "LockStatus,EncryptionMethod,EncryptionPercentage,VolumeStatus,"
                     "@{n='KeyProtector';e={($_.KeyProtector | ForEach-Object { [string]$_.KeyProtectorType }) -join ', '}}")
-ADMINS_SCRIPT = "Get-LocalGroupMember -Group Administrators -ErrorAction SilentlyContinue | Select-Object Name,ObjectClass,PrincipalSource"
+LOCAL_ADMINS_SCRIPT = r"""
+$localError = ""
+try {
+  $members = @(Get-LocalGroupMember -SID 'S-1-5-32-544' -ErrorAction Stop | ForEach-Object {
+    [pscustomobject]@{
+      Name = [string]$_.Name
+      ObjectClass = [string]$_.ObjectClass
+      PrincipalSource = [string]$_.PrincipalSource
+      AdsPath = ""
+    }
+  })
+  [pscustomobject]@{ Members = @($members); Source = "LocalAccounts"; Error = "" }
+}
+catch {
+  $localError = $_.Exception.Message
+  try {
+    $members = @(([ADSI]"WinNT://./Administrators,group").psbase.Invoke("Members") | ForEach-Object {
+      $name = $_.GetType().InvokeMember("Name", "GetProperty", $null, $_, $null)
+      $objectClass = $_.GetType().InvokeMember("Class", "GetProperty", $null, $_, $null)
+      $adsPath = [string]$_.GetType().InvokeMember("ADsPath", "GetProperty", $null, $_, $null)
+      $displayName = [string]$name
+      $pathParts = ($adsPath -replace '^WinNT://', '') -split '/'
+      if ($pathParts.Count -ge 2 -and $pathParts[-2] -and $pathParts[-1]) {
+        $displayName = "$($pathParts[-2])\$($pathParts[-1])"
+      }
+      [pscustomobject]@{
+        Name = $displayName
+        ObjectClass = $objectClass
+        PrincipalSource = ""
+        AdsPath = $adsPath
+      }
+    })
+    [pscustomobject]@{ Members = @($members); Source = "ADSI"; Error = "" }
+  }
+  catch {
+    $errorMessage = "LocalAccounts: $localError; ADSI: $($_.Exception.Message)"
+    [pscustomobject]@{ Members = @(); Source = ""; Error = $errorMessage }
+  }
+}
+"""
 
 KINDS = {"AntiVirusProduct": "Antivirus", "AntiSpywareProduct": "Anti-spyware", "FirewallProduct": "Firewall"}
 FW_ACTION = {0: "Not configured", 2: "Allow", 4: "Block"}
@@ -126,10 +165,16 @@ def build(sc, defender, firewall, dg, tpm, bitlocker, admins, accounts_text) -> 
                     "Lock": str(v.get("LockStatus") or ""), "Method": decode.lookup(ENCRYPTION_METHOD, v.get("EncryptionMethod")),
                     "Encrypted": f"{v.get('EncryptionPercentage')} %" if v.get("EncryptionPercentage") is not None else "",
                     "Key Protectors": v.get("KeyProtector", "")} for v in rows_of(bitlocker)]
-    admin_rows = [{"Local Administrators": a.get("Name", ""), "Class": a.get("ObjectClass", ""),
-                   "Source": {1: "Local", 2: "Active Directory", 3: "Azure AD", 4: "Microsoft account"}.get(
-                       decode.to_int(a.get("PrincipalSource")), str(a.get("PrincipalSource") or ""))}
-                  for a in rows_of(admins)]
+    admin_result = first_dict(admins)
+    admin_error = str(admin_result.get("Error") or "") if "Members" in admin_result else ""
+    admin_members = rows_of(admin_result.get("Members")) if "Members" in admin_result else rows_of(admins)
+    if admin_error:
+        admin_rows = [{"Local Administrators": "Unavailable (see notes)", "Class": "", "Source": ""}]
+    else:
+        admin_rows = [{"Local Administrators": a.get("Name", ""), "Class": a.get("ObjectClass", ""),
+                       "Source": {1: "Local", 2: "Active Directory", 3: "Azure AD", 4: "Microsoft account"}.get(
+                           decode.to_int(a.get("PrincipalSource")), str(a.get("PrincipalSource") or ""))}
+                      for a in admin_members]
     return {
         "groups": [{"title": "Microsoft Defender", "rows": defender_rows},
                    {"title": "Virtualization-based Security", "rows": vbs},
@@ -147,13 +192,17 @@ def flatten(data) -> dict:
 
 
 def collect(ctx):
+    local_admins = ctx.query("local_admins", LOCAL_ADMINS_SCRIPT)
+    local_admins_error = str(first_dict(local_admins).get("Error") or "")
+    if local_admins_error:
+        ctx.note(f"local administrators: {local_admins_error}")
     return build(ctx.query("security_center", SC_SCRIPT),
                  first_dict(ctx.query("defender", DEFENDER_SCRIPT, timeout=30)),
                  ctx.query("firewall", FIREWALL_SCRIPT),
                  first_dict(ctx.query("device_guard", DEVICE_GUARD_SCRIPT)),
                  ctx.admin_query("tpm", TPM_SCRIPT),
                  ctx.admin_query("bitlocker", BITLOCKER_SCRIPT, timeout=30),
-                 ctx.query("local_admins", ADMINS_SCRIPT),
+                 local_admins,
                  ctx.text("net_accounts", ["net", "accounts"]))
 
 

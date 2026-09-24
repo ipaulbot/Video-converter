@@ -1,1 +1,30 @@
-null
+{
+ "Members": [
+  {
+   "Name": "PC-NAME\\Administrator",
+   "ObjectClass": "User",
+   "PrincipalSource": "",
+   "AdsPath": "WinNT://PC-NAME/Administrator"
+  },
+  {
+   "Name": "PC-NAME\\LocalAdmin",
+   "ObjectClass": "User",
+   "PrincipalSource": "",
+   "AdsPath": "WinNT://PC-NAME/LocalAdmin"
+  },
+  {
+   "Name": "EXAMPLE\\Domain Admins",
+   "ObjectClass": "Group",
+   "PrincipalSource": "",
+   "AdsPath": "WinNT://EXAMPLE/Domain Admins"
+  },
+  {
+   "Name": "WORKGROUP\\user",
+   "ObjectClass": "User",
+   "PrincipalSource": "",
+   "AdsPath": "WinNT://WORKGROUP/user"
+  }
+ ],
+ "Source": "ADSI",
+ "Error": ""
+}
