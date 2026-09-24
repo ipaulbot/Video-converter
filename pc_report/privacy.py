@@ -38,22 +38,38 @@ _COMMAND_SECRET_ARG = re.compile(
     r"(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\S+)",
     re.IGNORECASE,
 )
-_COMMAND_OPT_COMPACT_SUBSTRINGS = (
-    "token", "password", "passwd", "secret", "credential", "apikey", "accesskey",
-    "bearer", "auth", "sas", "session", "conversation", "uuid", "pipe", "channel",
-    "windowconfig",
+_CREDENTIAL_OPTION_SUBSTRINGS = (
+    "token", "password", "passwd", "pwd", "secret", "credential",
+    "apikey", "api-key", "api_key", "accesskey", "access-key", "access_key",
+    "bearer", "sas",
 )
-_COMMAND_OPT_SEGMENTS = frozenset(
-    {"token", "password", "passwd", "pwd", "secret", "credential", "key", "auth", "bearer", "sas"},
+_CLI_NON_CREDENTIAL_SUBSTRINGS = (
+    "session", "conversation", "uuid", "pipe", "channel", "windowconfig",
 )
+
+
+def _is_credential_option(name: str) -> bool:
+    """True when a lower-cased CLI option name (no -/--/ prefix) carries a secret value."""
+    lower = name.lower()
+    if any(fragment in lower for fragment in _CREDENTIAL_OPTION_SUBSTRINGS):
+        return True
+    if lower == "key" or lower.endswith("key"):
+        return True
+    if lower == "auth":
+        return True
+    if lower.startswith(("auth-", "auth_")):
+        return True
+    if lower.endswith(("-auth", "_auth")):
+        return True
+    return False
 
 
 def _command_option_is_sensitive(name: str) -> bool:
     lower = name.lower()
-    compact = _NON_ALNUM.sub("", lower)
-    if any(fragment in compact for fragment in _COMMAND_OPT_COMPACT_SUBSTRINGS):
+    if _is_credential_option(lower):
         return True
-    return any(part in _COMMAND_OPT_SEGMENTS for part in re.split(r"[-_]", lower))
+    compact = _NON_ALNUM.sub("", lower)
+    return any(fragment in compact for fragment in _CLI_NON_CREDENTIAL_SUBSTRINGS)
 
 
 def _mask_command_secret_arg(match: re.Match[str]) -> str:

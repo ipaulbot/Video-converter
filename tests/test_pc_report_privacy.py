@@ -187,6 +187,11 @@ class PcReportPrivacyTests(unittest.TestCase):
             ('tool.exe --api-key="AKIA XYZ"', "tool.exe --api-key=***"),
             ("tool.exe /password:secret1", "tool.exe /password:***"),
             ("tool.exe --Auth-Token: xyz", "tool.exe --Auth-Token: ***"),
+            ("tool.exe --pwdfile=creds.txt", "tool.exe --pwdfile=***"),
+            ("tool.exe --license-key=ABC-123", "tool.exe --license-key=***"),
+            ("tool.exe --basic-auth user:pass", "tool.exe --basic-auth ***"),
+            ('tool.exe --auth-header "Bearer x"', 'tool.exe --auth-header ***'),
+            ("tool.exe --hotkey=F5", "tool.exe --hotkey=***"),
         ]
         for raw, expected in cases:
             with self.subTest(raw=raw):
@@ -196,6 +201,8 @@ class PcReportPrivacyTests(unittest.TestCase):
             r"C:\Program Files\Keyboard\app.exe --mode=key-remap",
             r"notepad.exe C:\keys\readme.txt",
             r"C:\data\token\file.txt --verbose",
+            "tool.exe --author=jane",
+            "tool.exe --keyboard=us",
         ]
         for raw in unchanged:
             with self.subTest(raw=raw):
