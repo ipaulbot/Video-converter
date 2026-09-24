@@ -1,0 +1,1532 @@
+[
+ {
+  "CLSID": "FX:{0f3f3735-573d-9804-99e4-ab2a69ba5fd4}",
+  "Name": "",
+  "NameString": "",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{7d3830aa-e69e-4e17-8bd1-1b87b97099da}",
+  "Name": "TPM Management",
+  "NameString": "TPM Management",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.1.7)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{8A1A4AD2-7F9F-492c-9E1D-F725E3CBF2F0}",
+  "Name": "",
+  "NameString": "",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be01-7a4cbb6cba12}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be01-7a4cbb6cba13}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be02-7a4cbb7cbe11}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{b05566ad-fe9c-4363-be05-7a4cbb7cb510}",
+  "Name": "Event Viewer",
+  "NameString": "Event Viewer",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{b05566ae-fe9c-4363-be05-7a4cbb7cb510}",
+  "Name": "Event Viewer",
+  "NameString": "Event Viewer",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{c7b8fb06-bfe1-4c2e-9217-7a69a95bbac4}",
+  "Name": "Task Scheduler",
+  "NameString": "Task Scheduler",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{c7b8fb07-bfe1-4c2e-9217-7a69a95bbac4}",
+  "Name": "Task Scheduler",
+  "NameString": "Task Scheduler",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{f4d8c39a-f43d-42b4-9bdf-4e48d3044ba1}",
+  "Name": "Name Resolution Policy",
+  "NameString": "Name Resolution Policy",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{011BE22D-E453-11D1-945A-00C04FB984F9}",
+  "Name": "",
+  "NameString": "",
+  "About": "{5C0786ED-1847-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{06993B16-A5C7-47eb-B61C-B1CB7EE600AC}",
+  "Name": "Wired Network Policy Management",
+  "NameString": "Wired Network Policy Management",
+  "About": "{388D606F-AF7B-4ad2-AC22-6B4FE70CE286}",
+  "Module": "C:\\Windows\\System32\\dot3gpui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{0E752416-F29E-4195-A9DD-7F0D4D5A9D71}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{023A36FC-E9D5-419E-824A-CDC66A116E84}",
+  "Module": "C:\\Windows\\System32\\AuthFWGP.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{1BC972D6-555C-4FF7-BE2C-C584021A0A6A}",
+  "Name": "Software Installation (Users)",
+  "NameString": "Software Installation (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{1f09b058-f3fd-4a9d-a8ba-a8a05f8fe283}",
+  "Name": "DTC MMC Property-sheet extension",
+  "NameString": "DTC MMC Property-sheet extension",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\msdtcuiu.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{1F5EEC01-1214-4D94-80C5-4BDCD2014DDD}",
+  "Name": "Authorization Manager",
+  "NameString": "Authorization Manager",
+  "About": "{FA9342F0-B15B-473C-A746-14FCD4C4A6AA}",
+  "Module": "C:\\Windows\\system32\\azroleui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{2D4156A2-897A-11DB-BA21-001185AD2B89}",
+  "Name": "Network List Manager Policies",
+  "NameString": "Network List Manager Policies",
+  "About": "{2D4156A5-897A-11DB-BA21-001185AD2B89}",
+  "Module": "C:\\Windows\\System32\\nlmgp.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{2DA6AA7F-8C88-4194-A558-0D36E7FD3E64}",
+  "Name": "Wireless Network Policy Management",
+  "NameString": "Wireless Network Policy Management",
+  "About": "{DD468E14-AF42-4d63-8908-EDAC4A9E67AE}",
+  "Module": "C:\\Windows\\System32\\wlangpui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{2f893820-7089-46cc-a6e8-c4aae45f151b}",
+  "Name": "DTC MMC Snap-in",
+  "NameString": "DTC MMC Snap-in",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\msdtcuiu.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{34AB8E82-C27E-11D1-A6C0-00C04FB94F17}",
+  "Name": "Public Key Policies",
+  "NameString": "Public Key Policies",
+  "About": "{69A25C14-1811-11D2-A52B-0000F803A951}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{394C052E-B830-11D0-9A86-00C04FD8DBF7}",
+  "Name": "Classic Event Viewer Extension",
+  "NameString": "Classic Event Viewer Extension",
+  "About": "{F778C6B4-C08B-11D2-976C-00C04F79DB19}",
+  "Module": "C:\\Windows\\system32\\els.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{40B6664F-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Startup/Shutdown)",
+  "NameString": "Scripts (Startup/Shutdown)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{40B66650-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Logon/Logoff)",
+  "NameString": "Scripts (Logon/Logoff)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{40B66660-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Startup/Shutdown)",
+  "NameString": "Scripts (Startup/Shutdown)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{40B66661-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Logon/Logoff)",
+  "NameString": "Scripts (Logon/Logoff)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{4FE8C25F-C8E9-4322-98EE-A11E117CF049}",
+  "Name": "Pushed Printer Connection Extension (Computers)",
+  "NameString": "Pushed Printer Connection Extension (Computers)",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "C:\\Windows\\system32\\ppcsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{53D6AB1D-2488-11D1-A28C-00C04FB94F17}",
+  "Name": "Certificates",
+  "NameString": "Certificates",
+  "About": "{69A25C12-1811-11D2-A52B-0000F803A951}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{57C596D0-9370-40C0-BA0D-AB491B63255D}",
+  "Name": "",
+  "NameString": "",
+  "About": "{08229782-89C8-4028-BB74-75BB58EF1488}",
+  "Module": "C:\\Windows\\System32\\ipsmsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{58221C65-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Shared Folders",
+  "NameString": "Shared Folders",
+  "About": "{DB5D1FF4-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{58221C66-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Services",
+  "NameString": "Services",
+  "About": "{DB5D1FF5-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{58221C67-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Computer Management",
+  "NameString": "Computer Management",
+  "About": "{11D5C91F-0A98-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\System32\\mycomput.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{58221C69-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Shared Folders Extension",
+  "NameString": "Shared Folders Extension",
+  "About": "{DB5D1FF4-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{58221C6A-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Services Extension",
+  "NameString": "Services Extension",
+  "About": "{DB5D1FF5-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{5ADF5BF6-E452-11D1-945A-00C04FB984F9}",
+  "Name": "",
+  "NameString": "",
+  "About": "{2AABFCD0-1797-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{5C659257-E236-11D2-8899-00104B2AFB46}",
+  "Name": "WMI Control",
+  "NameString": "WMI Control",
+  "About": "{5C659258-E236-11D2-8899-00104B2AFB46}",
+  "Module": "C:\\Windows\\system32\\wbem\\wbemcntl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{5D6179C8-17EC-11D1-9AA9-00C04FD8FE93}",
+  "Name": "Local Users and Groups",
+  "NameString": "Local Users and Groups",
+  "About": "{5D6179D2-17EC-11D1-9AA9-00C04FD8FE93}",
+  "Module": "C:\\Windows\\system32\\localsec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{63E23168-BFF7-4E87-A246-EF024425E4EC}",
+  "Name": "RSOP Context Menu",
+  "NameString": "RSOP Context Menu",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{6DC3804B-7212-458D-ADB0-9A07E2AE1FA2}",
+  "Name": "Resultant Set of Policy",
+  "NameString": "Resultant Set of Policy",
+  "About": "{4F637904-2CAB-4F0E-8688-D3717EBD2975}",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{74246bfc-4c96-11d0-abef-0020af6b0b7a}",
+  "Name": "Device Manager",
+  "NameString": "Device Manager",
+  "About": "{94abaf2a-892a-11d1-bbc4-00a0c90640bf}",
+  "Module": "C:\\Windows\\System32\\devmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{7478EF61-8C46-11d1-8D99-00A0C913CAD4}",
+  "Name": "Performance Monitor",
+  "NameString": "Performance Monitor",
+  "About": "{7478EF69-8C46-11d1-8D99-00A0C913CAD4}",
+  "Module": "C:\\Windows\\System32\\wdc.dll",
+  "Version": "10.00",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{7478EF65-8C46-11d1-8D99-00A0C913CAD4}",
+  "Name": "Performance Monitor Extension",
+  "NameString": "Performance Monitor Extension",
+  "About": "{7478EF69-8C46-11d1-8D99-00A0C913CAD4}",
+  "Module": "C:\\Windows\\System32\\wdc.dll",
+  "Version": "10.00",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{7C606A3F-8AA8-4E36-92D6-2B6AFEC0B732}",
+  "Name": "Print Queue View Extension",
+  "NameString": "Print Queue View Extension",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "C:\\Windows\\system32\\pmcsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{7E45546F-6D52-4D10-B702-9C2E67232E62}",
+  "Name": "Software Installation (Computers)",
+  "NameString": "Software Installation (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}",
+  "Name": "",
+  "NameString": "",
+  "About": "{5C0786EE-1847-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{84DE202D-5D95-4764-9014-A46F994CE856}",
+  "Name": "Administrative Templates - Starter GPO (Computer)",
+  "NameString": "Administrative Templates - Starter GPO (Computer)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{84DE202E-5D95-4764-9014-A46F994CE856}",
+  "Name": "Administrative Templates - Starter GPO (User)",
+  "NameString": "Administrative Templates - Starter GPO (User)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{88E729D6-BDC1-11D1-BD2A-00C04FB9603F}",
+  "Name": "Folder Redirection Editor (Users)",
+  "NameString": "Folder Redirection Editor (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\fde.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{8EAD3A12-B2C1-11d0-83AA-00A0C92C9D5D}",
+  "Name": "Disk Management Extension",
+  "NameString": "Disk Management Extension",
+  "About": "{FAC1D9C0-0296-11d1-A840-00A0C92C9D5D}",
+  "Module": "C:\\Windows\\System32\\dmdskmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{8FC0B734-A0E1-11D1-A7D3-0000F87571E3}",
+  "Name": "Local Group Policy Editor",
+  "NameString": "Local Group Policy Editor",
+  "About": "{0FDE5092-AA2A-11D1-A7D4-0000F87571E3}",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{90087284-d6d6-11d0-8353-00a0c90640bf}",
+  "Name": "Device Manager extension",
+  "NameString": "Device Manager extension",
+  "About": "{94abaf2a-892a-11d1-bbc4-00a0c90640bf}",
+  "Module": "C:\\Windows\\System32\\devmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{93F7AA8E-CF82-4CB7-9251-48BC637A43B8}",
+  "Name": "Software Restriction Policies",
+  "NameString": "Software Restriction Policies",
+  "About": "{280A7B65-8F00-438F-989B-8EAF9E438A71}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{942A8E4F-A261-11D1-A760-00C04FB9603F}",
+  "Name": "Software Installation (Computers)",
+  "NameString": "Software Installation (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{975797FC-4E2A-11D0-B702-00C04FD8DBF7}",
+  "Name": "Classic Event Viewer",
+  "NameString": "Classic Event Viewer",
+  "About": "{F778C6B4-C08B-11D2-976C-00C04F79DB19}",
+  "Module": "C:\\Windows\\system32\\els.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{A17DA8D0-F67D-47A0-9EC4-19C486383206}",
+  "Name": "",
+  "NameString": "",
+  "About": "{08229782-89C8-4028-BB74-75BB58EF1488}",
+  "Module": "C:\\Windows\\System32\\ipsmsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{B3408A2F-8DDA-1197-FBD5-2CE69A2DEFC0}",
+  "Name": "Policy-based QoS (Computers)",
+  "NameString": "Policy-based QoS (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\eqossnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{B3408A2F-8DDA-1197-FBD5-2CE69A2DEFC1}",
+  "Name": "Policy-based QoS (Users)",
+  "NameString": "Policy-based QoS (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\eqossnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{B6F9C8AE-EF3A-41C8-A911-37370C331DD4}",
+  "Name": "Administrative Templates (Computers)",
+  "NameString": "Administrative Templates (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{B6F9C8AF-EF3A-41C8-A911-37370C331DD4}",
+  "Name": "Administrative Templates (Users)",
+  "NameString": "Administrative Templates (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{B708457E-DB61-4C55-A92F-0D4B5E9B1224}",
+  "Name": "Extended View",
+  "NameString": "Extended View",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{BACF5C8A-A3C7-11D1-A760-00C04FB9603F}",
+  "Name": "Software Installation (Users)",
+  "NameString": "Software Installation (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{BD95BA60-2E26-AAD1-AD99-00AA00B8E05A}",
+  "Name": "Service Dependencies",
+  "NameString": "Service Dependencies",
+  "About": "{A1B9E04A-3226-11D2-883E-00104B2AFB46}",
+  "Module": "C:\\Windows\\system32\\wbem\\servdeps.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C40D66A0-E90C-46C6-AA3B-473E38C72BF2}",
+  "Name": "Folder Redirection Editor (Users)",
+  "NameString": "Folder Redirection Editor (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\fde.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C4457F51-993A-4b98-A19B-EC2B4F0DA087}",
+  "Name": "",
+  "NameString": "",
+  "About": "{FD76C304-255F-4446-A895-6E1967EC4FDC}",
+  "Module": "C:\\Windows\\system32\\SrpUxNativeSnapIn.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C96401CC-0E17-11D3-885B-00C04F72C717}",
+  "Name": "Folder",
+  "NameString": "Folder",
+  "About": "{C96401CC-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C96401CF-0E17-11D3-885B-00C04F72C717}",
+  "Name": "ActiveX Control",
+  "NameString": "ActiveX Control",
+  "About": "{C96401CF-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C96401D1-0E17-11D3-885B-00C04F72C717}",
+  "Name": "Link to Web Address",
+  "NameString": "Link to Web Address",
+  "About": "{C96401D1-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{C9BC92DF-5B9A-11D1-8F00-00C04FC2C17B}",
+  "Name": "Component Services",
+  "NameString": "Component Services",
+  "About": "{D7FCB63B-5C55-11D1-8F00-00C04FC2C17B}",
+  "Module": "C:\\Windows\\System32\\comsnap.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{CB35832D-0C2C-41A9-84E1-A7CD1E0C6254}",
+  "Name": "Pushed Printer Connection Extension (Users)",
+  "NameString": "Pushed Printer Connection Extension (Users)",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "C:\\Windows\\system32\\ppcsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{D02B1F72-3407-48ae-BA88-E8213C6761F1}",
+  "Name": "Administrative Templates (Computers)",
+  "NameString": "Administrative Templates (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{D02B1F73-3407-48ae-BA88-E8213C6761F1}",
+  "Name": "Administrative Templates (Users)",
+  "NameString": "Administrative Templates (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{D06342BD-9057-4673-B43A-0E9BBBE99F11}",
+  "Name": "Print Management",
+  "NameString": "Print Management",
+  "About": "{B03B16C7-35A7-4A55-BEF1-8876E1CE2F45}",
+  "Module": "C:\\Windows\\system32\\pmcsnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{dbfca500-8c31-11d0-aa2c-00a0c92749a3}",
+  "Name": "Disk Management",
+  "NameString": "Disk Management",
+  "About": "{FAC1D9C0-0296-11d1-A840-00A0C92C9D5D}",
+  "Module": "C:\\Windows\\System32\\dmdskmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{DEA8AFA0-CC85-11d0-9CE2-0080C7221EBD}",
+  "Name": "IP Security Policy Management",
+  "NameString": "IP Security Policy Management",
+  "About": "{DEA8AFA2-CC85-11d0-9CE2-0080C7221EBD}",
+  "Module": "C:\\Windows\\System32\\ipsecsnp.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{DFFFAE4D-F0CF-46CD-9586-FE891237AB8A}",
+  "Name": "Component Services",
+  "NameString": "Component Services",
+  "About": "{D7FCB63B-5C55-11D1-8F00-00C04FC2C17B}",
+  "Module": "C:\\Windows\\System32\\comsnap.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{E25E57E9-DA9C-4A35-A0D8-CFB5EA6AF7E6}",
+  "Name": "",
+  "NameString": "",
+  "About": "{73EB8142-4A74-49FD-A0FC-05FAEED4CD51}",
+  "Module": "C:\\Windows\\system32\\AuditNativeSnapIn.dll",
+  "Version": "10.0.19041.5915 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{f4d8c39a-f43d-42b4-9bdf-4e48d3044ba0}",
+  "Name": "Name Resolution Policy",
+  "NameString": "Name Resolution Policy",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "C:\\Windows\\System32\\dnscmmc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{FE883157-CEBD-4570-B7A2-E4FE06ABE626}",
+  "Name": "",
+  "NameString": "",
+  "About": "{1B6FC61A-648A-4493-A303-A1A22B543F01}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "{fedb2179-2335-48f1-aa28-5cda35a2b36d}",
+  "Name": "ASP.NET Management Extension",
+  "NameString": "ASP.NET Management Extension",
+  "About": "{7D23CCC6-A390-406F-AB67-2F8B7558F6F7}",
+  "Module": "C:\\Windows\\Microsoft.NET\\Framework64\\v2.0.50727\\MmcAspExt.dll",
+  "Version": "2.0.50727.9149 (WinRelRS6.050727-9100)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "CLSID": "FX:{0f3f3735-573d-9804-99e4-ab2a69ba5fd4}",
+  "Name": "",
+  "NameString": "",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{7d3830aa-e69e-4e17-8bd1-1b87b97099da}",
+  "Name": "TPM Management",
+  "NameString": "TPM Management",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.1.7)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{8A1A4AD2-7F9F-492c-9E1D-F725E3CBF2F0}",
+  "Name": "",
+  "NameString": "",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be01-7a4cbb6cba12}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be01-7a4cbb6cba13}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{b05566ac-fe9c-4368-be02-7a4cbb7cbe11}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{b05566ad-fe9c-4363-be05-7a4cbb7cb510}",
+  "Name": "Event Viewer",
+  "NameString": "Event Viewer",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{b05566ae-fe9c-4363-be05-7a4cbb7cb510}",
+  "Name": "Event Viewer",
+  "NameString": "Event Viewer",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{c7b8fb06-bfe1-4c2e-9217-7a69a95bbac4}",
+  "Name": "Task Scheduler",
+  "NameString": "Task Scheduler",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{c7b8fb07-bfe1-4c2e-9217-7a69a95bbac4}",
+  "Name": "Task Scheduler",
+  "NameString": "Task Scheduler",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (2.0.0.2)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "FX:{f4d8c39a-f43d-42b4-9bdf-4e48d3044ba1}",
+  "Name": "Name Resolution Policy",
+  "NameString": "Name Resolution Policy",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "Managed (3.0.0.0)",
+  "Version": "",
+  "Company": "",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{011BE22D-E453-11D1-945A-00C04FB984F9}",
+  "Name": "",
+  "NameString": "",
+  "About": "{5C0786ED-1847-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{06993B16-A5C7-47eb-B61C-B1CB7EE600AC}",
+  "Name": "Wired Network Policy Management",
+  "NameString": "Wired Network Policy Management",
+  "About": "{388D606F-AF7B-4ad2-AC22-6B4FE70CE286}",
+  "Module": "C:\\Windows\\SysWOW64\\dot3gpui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{0E752416-F29E-4195-A9DD-7F0D4D5A9D71}",
+  "Name": "Windows Defender Firewall with Advanced Security",
+  "NameString": "Windows Defender Firewall with Advanced Security",
+  "About": "{023A36FC-E9D5-419E-824A-CDC66A116E84}",
+  "Module": "C:\\Windows\\SysWOW64\\AuthFWGP.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{1BC972D6-555C-4FF7-BE2C-C584021A0A6A}",
+  "Name": "Software Installation (Users)",
+  "NameString": "Software Installation (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{1f09b058-f3fd-4a9d-a8ba-a8a05f8fe283}",
+  "Name": "DTC MMC Property-sheet extension",
+  "NameString": "DTC MMC Property-sheet extension",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\msdtcuiu.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{1F5EEC01-1214-4D94-80C5-4BDCD2014DDD}",
+  "Name": "Authorization Manager",
+  "NameString": "Authorization Manager",
+  "About": "{FA9342F0-B15B-473C-A746-14FCD4C4A6AA}",
+  "Module": "C:\\Windows\\system32\\azroleui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{2D4156A2-897A-11DB-BA21-001185AD2B89}",
+  "Name": "Network List Manager Policies",
+  "NameString": "Network List Manager Policies",
+  "About": "{2D4156A5-897A-11DB-BA21-001185AD2B89}",
+  "Module": "C:\\Windows\\SysWOW64\\nlmgp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{2DA6AA7F-8C88-4194-A558-0D36E7FD3E64}",
+  "Name": "Wireless Network Policy Management",
+  "NameString": "Wireless Network Policy Management",
+  "About": "{DD468E14-AF42-4d63-8908-EDAC4A9E67AE}",
+  "Module": "C:\\Windows\\SysWOW64\\wlangpui.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{2f893820-7089-46cc-a6e8-c4aae45f151b}",
+  "Name": "DTC MMC Snap-in",
+  "NameString": "DTC MMC Snap-in",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\msdtcuiu.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{34AB8E82-C27E-11D1-A6C0-00C04FB94F17}",
+  "Name": "Public Key Policies",
+  "NameString": "Public Key Policies",
+  "About": "{69A25C14-1811-11D2-A52B-0000F803A951}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{394C052E-B830-11D0-9A86-00C04FD8DBF7}",
+  "Name": "Classic Event Viewer Extension",
+  "NameString": "Classic Event Viewer Extension",
+  "About": "{F778C6B4-C08B-11D2-976C-00C04F79DB19}",
+  "Module": "C:\\Windows\\system32\\els.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{40B6664F-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Startup/Shutdown)",
+  "NameString": "Scripts (Startup/Shutdown)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{40B66650-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Logon/Logoff)",
+  "NameString": "Scripts (Logon/Logoff)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{40B66660-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Startup/Shutdown)",
+  "NameString": "Scripts (Startup/Shutdown)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{40B66661-4972-11D1-A7CA-0000F87571E3}",
+  "Name": "Scripts (Logon/Logoff)",
+  "NameString": "Scripts (Logon/Logoff)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{53D6AB1D-2488-11D1-A28C-00C04FB94F17}",
+  "Name": "Certificates",
+  "NameString": "Certificates",
+  "About": "{69A25C12-1811-11D2-A52B-0000F803A951}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{57C596D0-9370-40C0-BA0D-AB491B63255D}",
+  "Name": "",
+  "NameString": "",
+  "About": "{08229782-89C8-4028-BB74-75BB58EF1488}",
+  "Module": "C:\\Windows\\SysWOW64\\ipsmsnap.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{58221C65-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Shared Folders",
+  "NameString": "Shared Folders",
+  "About": "{DB5D1FF4-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{58221C66-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Services",
+  "NameString": "Services",
+  "About": "{DB5D1FF5-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{58221C67-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Computer Management",
+  "NameString": "Computer Management",
+  "About": "{11D5C91F-0A98-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\SysWOW64\\mycomput.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{58221C69-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Shared Folders Extension",
+  "NameString": "Shared Folders Extension",
+  "About": "{DB5D1FF4-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{58221C6A-EA27-11CF-ADCF-00AA00A80033}",
+  "Name": "Services Extension",
+  "NameString": "Services Extension",
+  "About": "{DB5D1FF5-09D7-11D1-BB10-00C04FC9A3A3}",
+  "Module": "C:\\Windows\\system32\\filemgmt.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{5ADF5BF6-E452-11D1-945A-00C04FB984F9}",
+  "Name": "",
+  "NameString": "",
+  "About": "{2AABFCD0-1797-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{5C659257-E236-11D2-8899-00104B2AFB46}",
+  "Name": "WMI Control",
+  "NameString": "WMI Control",
+  "About": "{5C659258-E236-11D2-8899-00104B2AFB46}",
+  "Module": "C:\\Windows\\system32\\wbem\\wbemcntl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{5D6179C8-17EC-11D1-9AA9-00C04FD8FE93}",
+  "Name": "Local Users and Groups",
+  "NameString": "Local Users and Groups",
+  "About": "{5D6179D2-17EC-11D1-9AA9-00C04FD8FE93}",
+  "Module": "C:\\Windows\\system32\\localsec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{63E23168-BFF7-4E87-A246-EF024425E4EC}",
+  "Name": "RSOP Context Menu",
+  "NameString": "RSOP Context Menu",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{6DC3804B-7212-458D-ADB0-9A07E2AE1FA2}",
+  "Name": "Resultant Set of Policy",
+  "NameString": "Resultant Set of Policy",
+  "About": "{4F637904-2CAB-4F0E-8688-D3717EBD2975}",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{74246bfc-4c96-11d0-abef-0020af6b0b7a}",
+  "Name": "Device Manager",
+  "NameString": "Device Manager",
+  "About": "{94abaf2a-892a-11d1-bbc4-00a0c90640bf}",
+  "Module": "C:\\Windows\\System32\\devmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{7478EF61-8C46-11d1-8D99-00A0C913CAD4}",
+  "Name": "Performance Monitor",
+  "NameString": "Performance Monitor",
+  "About": "{7478EF69-8C46-11d1-8D99-00A0C913CAD4}",
+  "Module": "C:\\Windows\\System32\\wdc.dll",
+  "Version": "10.00",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{7478EF65-8C46-11d1-8D99-00A0C913CAD4}",
+  "Name": "Performance Monitor Extension",
+  "NameString": "Performance Monitor Extension",
+  "About": "{7478EF69-8C46-11d1-8D99-00A0C913CAD4}",
+  "Module": "C:\\Windows\\System32\\wdc.dll",
+  "Version": "10.00",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{7E45546F-6D52-4D10-B702-9C2E67232E62}",
+  "Name": "Software Installation (Computers)",
+  "NameString": "Software Installation (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}",
+  "Name": "",
+  "NameString": "",
+  "About": "{5C0786EE-1847-11D2-ABA2-00C04FB6C6FA}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{84DE202D-5D95-4764-9014-A46F994CE856}",
+  "Name": "Administrative Templates - Starter GPO (Computer)",
+  "NameString": "Administrative Templates - Starter GPO (Computer)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{84DE202E-5D95-4764-9014-A46F994CE856}",
+  "Name": "Administrative Templates - Starter GPO (User)",
+  "NameString": "Administrative Templates - Starter GPO (User)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{88E729D6-BDC1-11D1-BD2A-00C04FB9603F}",
+  "Name": "Folder Redirection Editor (Users)",
+  "NameString": "Folder Redirection Editor (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\SysWOW64\\fde.dll",
+  "Version": "10.0.19041.5794 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{8EAD3A12-B2C1-11d0-83AA-00A0C92C9D5D}",
+  "Name": "Disk Management Extension",
+  "NameString": "Disk Management Extension",
+  "About": "{FAC1D9C0-0296-11d1-A840-00A0C92C9D5D}",
+  "Module": "C:\\Windows\\System32\\dmdskmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{8FC0B734-A0E1-11D1-A7D3-0000F87571E3}",
+  "Name": "Local Group Policy Editor",
+  "NameString": "Local Group Policy Editor",
+  "About": "{0FDE5092-AA2A-11D1-A7D4-0000F87571E3}",
+  "Module": "C:\\Windows\\System32\\GPEdit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{90087284-d6d6-11d0-8353-00a0c90640bf}",
+  "Name": "Device Manager extension",
+  "NameString": "Device Manager extension",
+  "About": "{94abaf2a-892a-11d1-bbc4-00a0c90640bf}",
+  "Module": "C:\\Windows\\System32\\devmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{93F7AA8E-CF82-4CB7-9251-48BC637A43B8}",
+  "Name": "Software Restriction Policies",
+  "NameString": "Software Restriction Policies",
+  "About": "{280A7B65-8F00-438F-989B-8EAF9E438A71}",
+  "Module": "C:\\Windows\\system32\\certmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{942A8E4F-A261-11D1-A760-00C04FB9603F}",
+  "Name": "Software Installation (Computers)",
+  "NameString": "Software Installation (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{975797FC-4E2A-11D0-B702-00C04FD8DBF7}",
+  "Name": "Classic Event Viewer",
+  "NameString": "Classic Event Viewer",
+  "About": "{F778C6B4-C08B-11D2-976C-00C04F79DB19}",
+  "Module": "C:\\Windows\\system32\\els.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{A17DA8D0-F67D-47A0-9EC4-19C486383206}",
+  "Name": "",
+  "NameString": "",
+  "About": "{08229782-89C8-4028-BB74-75BB58EF1488}",
+  "Module": "C:\\Windows\\SysWOW64\\ipsmsnap.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{B3408A2F-8DDA-1197-FBD5-2CE69A2DEFC0}",
+  "Name": "Policy-based QoS (Computers)",
+  "NameString": "Policy-based QoS (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\eqossnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{B3408A2F-8DDA-1197-FBD5-2CE69A2DEFC1}",
+  "Name": "Policy-based QoS (Users)",
+  "NameString": "Policy-based QoS (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\eqossnap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{B6F9C8AE-EF3A-41C8-A911-37370C331DD4}",
+  "Name": "Administrative Templates (Computers)",
+  "NameString": "Administrative Templates (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{B6F9C8AF-EF3A-41C8-A911-37370C331DD4}",
+  "Name": "Administrative Templates (Users)",
+  "NameString": "Administrative Templates (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\scrptadm.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{B708457E-DB61-4C55-A92F-0D4B5E9B1224}",
+  "Name": "Extended View",
+  "NameString": "Extended View",
+  "About": "",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{BACF5C8A-A3C7-11D1-A760-00C04FB9603F}",
+  "Name": "Software Installation (Users)",
+  "NameString": "Software Installation (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\appmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C40D66A0-E90C-46C6-AA3B-473E38C72BF2}",
+  "Name": "Folder Redirection Editor (Users)",
+  "NameString": "Folder Redirection Editor (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\SysWOW64\\fde.dll",
+  "Version": "10.0.19041.5794 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C4457F51-993A-4b98-A19B-EC2B4F0DA087}",
+  "Name": "",
+  "NameString": "",
+  "About": "{FD76C304-255F-4446-A895-6E1967EC4FDC}",
+  "Module": "C:\\Windows\\system32\\SrpUxNativeSnapIn.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C96401CC-0E17-11D3-885B-00C04F72C717}",
+  "Name": "Folder",
+  "NameString": "Folder",
+  "About": "{C96401CC-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C96401CF-0E17-11D3-885B-00C04F72C717}",
+  "Name": "ActiveX Control",
+  "NameString": "ActiveX Control",
+  "About": "{C96401CF-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C96401D1-0E17-11D3-885B-00C04F72C717}",
+  "Name": "Link to Web Address",
+  "NameString": "Link to Web Address",
+  "About": "{C96401D1-0E17-11D3-885B-00C04F72C717}",
+  "Module": "C:\\Windows\\system32\\mmcndmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{C9BC92DF-5B9A-11D1-8F00-00C04FC2C17B}",
+  "Name": "Component Services",
+  "NameString": "Component Services",
+  "About": "{D7FCB63B-5C55-11D1-8F00-00C04FC2C17B}",
+  "Module": "C:\\Windows\\SysWOW64\\comsnap.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{D02B1F72-3407-48ae-BA88-E8213C6761F1}",
+  "Name": "Administrative Templates (Computers)",
+  "NameString": "Administrative Templates (Computers)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{D02B1F73-3407-48ae-BA88-E8213C6761F1}",
+  "Name": "Administrative Templates (Users)",
+  "NameString": "Administrative Templates (Users)",
+  "About": "",
+  "Module": "C:\\Windows\\System32\\AdmTmpl.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{dbfca500-8c31-11d0-aa2c-00a0c92749a3}",
+  "Name": "Disk Management",
+  "NameString": "Disk Management",
+  "About": "{FAC1D9C0-0296-11d1-A840-00A0C92C9D5D}",
+  "Module": "C:\\Windows\\System32\\dmdskmgr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{DEA8AFA0-CC85-11d0-9CE2-0080C7221EBD}",
+  "Name": "IP Security Policy Management",
+  "NameString": "IP Security Policy Management",
+  "About": "{DEA8AFA2-CC85-11d0-9CE2-0080C7221EBD}",
+  "Module": "C:\\Windows\\SysWOW64\\ipsecsnp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{DFFFAE4D-F0CF-46CD-9586-FE891237AB8A}",
+  "Name": "Component Services",
+  "NameString": "Component Services",
+  "About": "{D7FCB63B-5C55-11D1-8F00-00C04FC2C17B}",
+  "Module": "C:\\Windows\\SysWOW64\\comsnap.dll",
+  "Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{E25E57E9-DA9C-4A35-A0D8-CFB5EA6AF7E6}",
+  "Name": "",
+  "NameString": "",
+  "About": "{73EB8142-4A74-49FD-A0FC-05FAEED4CD51}",
+  "Module": "C:\\Windows\\system32\\AuditNativeSnapIn.dll",
+  "Version": "10.0.19041.5915 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{f4d8c39a-f43d-42b4-9bdf-4e48d3044ba0}",
+  "Name": "Name Resolution Policy",
+  "NameString": "Name Resolution Policy",
+  "About": "{00000000-0000-0000-0000-000000000000}",
+  "Module": "C:\\Windows\\SysWOW64\\dnscmmc.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{FE883157-CEBD-4570-B7A2-E4FE06ABE626}",
+  "Name": "",
+  "NameString": "",
+  "About": "{1B6FC61A-648A-4493-A303-A1A22B543F01}",
+  "Module": "C:\\Windows\\system32\\wsecedit.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "CLSID": "{fedb2179-2335-48f1-aa28-5cda35a2b36d}",
+  "Name": "ASP.NET Management Extension",
+  "NameString": "ASP.NET Management Extension",
+  "About": "{7D23CCC6-A390-406F-AB67-2F8B7558F6F7}",
+  "Module": "C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727\\MmcAspExt.dll",
+  "Version": "2.0.50727.9149 (WinRelRS6.050727-9100)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ }
+]

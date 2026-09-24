@@ -1,0 +1,2492 @@
+[
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "File": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\DirectShow\\DX\\Win64\\GxDirectShow.ax",
+  "Version": "1, 4, 2102, 8081",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusVideoMixer",
+  "CLSID": "{070D616A-44BC-42C8-A2FB-0CA0064B42A4}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOA0D2~1\\NOLDUS~1.AX",
+  "Version": "3.0.12.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Basler Color Space Converter",
+  "CLSID": "{11F002F1-0700-4064-9ED7-6216AB36CB92}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\BaslerCSC_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Muxer",
+  "CLSID": "{129D7E40-C10D-11D0-AFB9-00AA00B67A42}",
+  "File": "C:\\Windows\\System32\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Color Space Converter",
+  "CLSID": "{1643E180-90F5-11CE-97D5-00AA0055595A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194305,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WM ASF Reader",
+  "CLSID": "{187463A0-5BB7-11D3-ACBE-0080C75E246E}",
+  "File": "C:\\Windows\\System32\\qasf.dll",
+  "Version": "12.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Splitter",
+  "CLSID": "{1B544C20-FD0B-11CE-8C63-00AA0044B51E}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VGA 16 Color Ditherer",
+  "CLSID": "{1DA08500-9EDC-11CF-BC10-00AA00AC74F6}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SBE2MediaTypeProfile",
+  "CLSID": "{1f26a602-2b5c-4b63-b8e8-9ea5c1a7dc2e}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft DTV-DVD Video Decoder",
+  "CLSID": "{212690FB-83E5-4526-8FD7-74478B7939CD}",
+  "File": "C:\\Windows\\System32\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AC3 Parser Filter",
+  "CLSID": "{280A3020-86CF-11D1-ABE6-00A0C905F375}",
+  "File": "C:\\Windows\\System32\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSink",
+  "CLSID": "{2DB47AE5-CF39-43C2-B4D6-0CD8D90946F4}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MJPEG Decompressor",
+  "CLSID": "{301056D0-6DFF-11D2-9EEB-006008039E37}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusTee",
+  "CLSID": "{333136AC-A270-4085-A48C-3D72580B0EE7}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\TEEFIL~1\\NOLDUS~1.AX",
+  "Version": "3.0.4.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-I Stream Splitter",
+  "CLSID": "{336475D0-942A-11CE-A870-00AA002FEAB5}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SAMI (CC) Parser",
+  "CLSID": "{33FACFE0-A9BE-11D0-A520-00A0D10129C0}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VBI Codec",
+  "CLSID": "{370A1D5D-DDEB-418C-81CD-189E0D4FA443}",
+  "File": "C:\\Windows\\System32\\VBICodec.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Splitter",
+  "CLSID": "{3AE86B20-7BE8-11D1-ABE6-00A0C905F375}",
+  "File": "C:\\Windows\\System32\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Closed Captions Analysis Filter",
+  "CLSID": "{3D07A539-35CA-447C-9B05-8D85CE924F9E}",
+  "File": "C:\\Windows\\System32\\cca.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SBE2FileScan",
+  "CLSID": "{3E458037-0CA6-41aa-A594-2AA6C02D709B}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Video Encoder",
+  "CLSID": "{42150CD9-CA9A-4EA5-9939-30EE037F6E74}",
+  "File": "C:\\Windows\\System32\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Internal Script Command Renderer",
+  "CLSID": "{48025243-2D39-11CE-875D-00608CB78066}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388609,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG Audio Decoder",
+  "CLSID": "{4A2286E0-7BEF-11CE-9BD9-0000E202599C}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 57147393,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Splitter",
+  "CLSID": "{4EB31670-9FC6-11CF-AF6E-00AA00B67A42}",
+  "File": "C:\\Windows\\System32\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AxisRTPSrcFilter",
+  "CLSID": "{4F1D0C59-5ECC-4028-87F3-482191D2230F}",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AxisRTPSrcFilterX64.ax",
+  "Version": "4.1.3.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Mixing Renderer 9",
+  "CLSID": "{51B4ABF3-748F-4E3B-A276-C828330E926A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Encoder",
+  "CLSID": "{5F5AFF4A-2F7F-4279-88C2-CD88EB39D144}",
+  "File": "C:\\Windows\\System32\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ACM Wrapper",
+  "CLSID": "{6A08CF80-0E18-11CF-A24D-0020AFD79767}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Renderer",
+  "CLSID": "{6BC1CFFA-8FC1-4261-AC22-CFB4CC38DB50}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388609,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Video Stream Analyzer",
+  "CLSID": "{6CFAD761-735D-4AA5-8AFC-AF91A7D61EBA}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Line 21 Decoder",
+  "CLSID": "{6E8D4A20-310C-11D0-B79A-00AA003767A7}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Port Manager",
+  "CLSID": "{6F26A6CD-967B-47FD-874A-7AED2C9D25A2}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusMP3ParserFilter",
+  "CLSID": "{6F91E794-E6A0-4142-9293-F75778E23034}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\MP3PAR~1\\NOLDUS~1.AX",
+  "Version": "1.0.5.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 6291457,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Renderer",
+  "CLSID": "{70E102B0-5556-11CE-97C0-00AA0055595A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VPS Decoder",
+  "CLSID": "{7B3BC2A0-AA50-4ae7-BD44-B03649EC87C2}",
+  "File": "C:\\Windows\\System32\\WSTPager.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WM ASF Writer",
+  "CLSID": "{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}",
+  "File": "C:\\Windows\\System32\\qasf.dll",
+  "Version": "12.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusBuffer",
+  "CLSID": "{7C6B47BE-E0ED-451A-B2B5-A007B67CFE14}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NO78EA~1\\NOLDUS~1.AX",
+  "Version": "1.0.2.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VBI Surface Allocator",
+  "CLSID": "{814B9800-1C88-11D1-BAD9-00609744111A}",
+  "File": "C:\\Windows\\System32\\vbisurf.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AXIS Picture Events",
+  "CLSID": "{833CAF80-A132-4FEF-8188-2A6004E3F239}",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AxPicEventsFilterX64.ax",
+  "Version": "1.2.3.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File writer",
+  "CLSID": "{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusAudioLevelFilter",
+  "CLSID": "{90EC517A-CF98-4F6A-8E93-8C6736CD4E9B}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\AUDIOL~2\\NOLDUS~1.AX",
+  "Version": "1.0.4.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 6291457,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusGazeOverlay",
+  "CLSID": "{94771C5E-9355-4FA3-B786-A280B4FF7EA2}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\GAZEOV~1\\NOLDUS~1.AX",
+  "Version": "1.1.9.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusAudioSamplerFilter",
+  "CLSID": "{9976C2D1-7ECC-42D2-9094-D224A31EE8F1}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\AUDIOL~1\\NOLDUS~1.AX",
+  "Version": "2.0.7.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DVD Navigator",
+  "CLSID": "{9B8C4620-2C1A-11D0-8493-00A02438AD48}",
+  "File": "C:\\Windows\\System32\\qdvd.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Overlay Mixer2",
+  "CLSID": "{A0025E90-E45B-11D1-ABE9-00A0C905F375}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusRtspStream",
+  "CLSID": "{A734EE74-41B7-4A04-A950-638CBD905589}",
+  "File": "C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus RTSP Stream Filter 4\\NoldusRtspStreamu.ax",
+  "Version": "4.0.0.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Draw",
+  "CLSID": "{A888DF60-1E90-11CF-AC98-00AA004C0FA9}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291556,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Audio Encoder",
+  "CLSID": "{ACD453BC-C58A-44D1-BBF5-BFB325BE2D78}",
+  "File": "C:\\Windows\\System32\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WST Pager",
+  "CLSID": "{AD6C8934-F31B-4F43-B5E4-0541C1452F6F}",
+  "File": "C:\\Windows\\System32\\WSTPager.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusResizerFilter 13.1.8",
+  "CLSID": "{AD9F92A1-00B6-4B3D-987D-D48E3F56A754}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOLDUS~2\\NOLDUS~1.AX",
+  "Version": "13.1.12",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Demultiplexer",
+  "CLSID": "{AFB6C280-2C41-11D3-8A60-0000F81E0E4A}",
+  "File": "C:\\Windows\\System32\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Video Decoder",
+  "CLSID": "{B1B77C00-C3E4-11CF-AF79-00AA00B67A42}",
+  "File": "C:\\Windows\\System32\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388608,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SampleGrabber",
+  "CLSID": "{C1F400A0-3F08-11D3-9F0B-006008039E37}",
+  "File": "C:\\Windows\\System32\\qedit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Null Renderer",
+  "CLSID": "{C1F400A4-3F08-11D3-9F0B-006008039E37}",
+  "File": "C:\\Windows\\System32\\qedit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Sections and Tables",
+  "CLSID": "{C666E115-BB62-4027-A113-82D643FE2D99}",
+  "File": "C:\\Windows\\System32\\Mpeg2Data.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft AC3 Encoder",
+  "CLSID": "{C6B400E2-20A7-4E58-A2FE-24619682CE6C}",
+  "File": "C:\\Windows\\System32\\msac3enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\amd64\\ESFilter.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSource",
+  "CLSID": "{C9F5FE02-F851-4EB5-99EE-AD602AF1E619}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Smart Tee",
+  "CLSID": "{CC58E280-8AA1-11D1-B3F1-00AA003761C5}",
+  "File": "C:\\Windows\\System32\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Overlay Mixer",
+  "CLSID": "{CD8743A1-3736-11D0-9E69-00C04FD7C15B}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Decompressor",
+  "CLSID": "{CF49D4E0-1115-11CE-B03A-0020AF0BA770}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI/WAV File Source",
+  "CLSID": "{D3588AB0-0781-11CE-B03A-0020AF0BA770}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Wave Parser",
+  "CLSID": "{D51BD5A1-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MIDI Parser",
+  "CLSID": "{D51BD5A2-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Multi-file Parser",
+  "CLSID": "{D51BD5A3-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File stream renderer",
+  "CLSID": "{D51BD5A5-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusTimeStampCorrector",
+  "CLSID": "{D8945030-174F-439B-A9CD-AC4E314EC117}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\TIMEST~1\\NOLDUS~1.AX",
+  "Version": "2.0.8.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Noldus FrameCounter",
+  "CLSID": "{DB6A0513-91C9-49D1-A83E-45749924CB6F}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOD280~1\\NOLDUS~1.AX",
+  "Version": "2.0.2.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft DTV-DVD Audio Decoder",
+  "CLSID": "{E1F1A0B8-BEEE-490D-BA7C-066C40B5E2B9}",
+  "File": "C:\\Windows\\System32\\msmpeg2adec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSink2",
+  "CLSID": "{E2448508-95DA-4205-9A27-7EC81E723B1A}",
+  "File": "C:\\Windows\\System32\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Mux",
+  "CLSID": "{E2510970-F137-11CE-8B67-00AA00A3F1A6}",
+  "File": "C:\\Windows\\System32\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Line 21 Decoder 2",
+  "CLSID": "{E4206432-01A1-4BEE-B3E1-3702C8EDC574}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291458,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File Source (Async.)",
+  "CLSID": "{E436EBB5-524F-11CE-9F53-0020AF0BA770}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File Source (URL)",
+  "CLSID": "{E436EBB6-524F-11CE-9F53-0020AF0BA770}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusEVRPresenter2",
+  "CLSID": "{E94D76A2-C752-4E68-B783-4A059711B6FB}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NO0EAE~1\\NOLDUS~1.DLL",
+  "Version": "2.0.5.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusRTSPSource",
+  "CLSID": "{ECFE4D57-5031-4F06-B0BE-6694B3A45C80}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOA543~1\\NOLDUS~1.AX",
+  "Version": "6.3.2.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusSampleGrabber 15.0.2",
+  "CLSID": "{F362AEE1-72A4-4E9D-8EB9-FD154058147E}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOCD7F~1\\NOLDUS~1.AX",
+  "Version": "15.0.6.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AXIS Overlay Mixer Filter",
+  "CLSID": "{F83004AD-524B-4887-B049-2D3407161D24}",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AxisOverlayFilterX64.ax",
+  "Version": "2.7.0.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Infinite Pin Tee Filter",
+  "CLSID": "{F8388A40-D5BB-11D0-BE5A-0080C706568E}",
+  "File": "C:\\Windows\\System32\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Enhanced Video Renderer",
+  "CLSID": "{FA10746C-9B63-4B6C-BC49-FC300EA5F256}",
+  "File": "C:\\Windows\\System32\\evr.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "NoldusRTSPSource",
+  "CLSID": "{FAB73023-65C0-47DD-B5E1-8D1E6913D8F1}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NO8FA1~1\\NOLDUS~1.AX",
+  "Version": "5.0.2.0",
+  "Company": "Noldus Information Technology bv",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "BDA MPEG2 Transport Information Filter",
+  "CLSID": "{FC772AB0-0C7F-11D3-8FF2-00A0C9224CF4}",
+  "File": "C:\\Windows\\System32\\psisrndr.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG Video Decoder",
+  "CLSID": "{FEB50740-7BEF-11CE-9BD9-0000E202599C}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 1073741825,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming VBI Codec",
+  "CLSID": "{07DAD660-22F1-11d1-A9F4-00C04FBBDE8F}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "DirectShow Filters",
+  "CLSID": "{083863F1-70DE-11d0-BD40-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Tee/Splitter Devices",
+  "CLSID": "{0A4252A0-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Encoder Devices",
+  "CLSID": "{19689BF6-C384-48FD-AD51-90E58C79F70B}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "MediaLooks Filters",
+  "CLSID": "{1D0D0809-3513-244F-4B3D-2A0A1D131B17}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Stream Decompression Devices",
+  "CLSID": "{2721AE20-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Data Transforms",
+  "CLSID": "{2EB07EA0-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Video Compressors",
+  "CLSID": "{33D9A760-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Compressors",
+  "CLSID": "{33D9A761-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Capture Sources",
+  "CLSID": "{33D9A762-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "PBDA CP Filters",
+  "CLSID": "{4A56AF32-C21F-11DB-96FA-005056C00008}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Midi Renderers",
+  "CLSID": "{4EFE2452-168A-11d1-BC76-00C04FB9453B}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Capture Devices",
+  "CLSID": "{65E8773D-8F56-11D0-A3B9-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Rendering Devices",
+  "CLSID": "{65e8773e-8f56-11d0-a3b9-00a0c9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Source Filters",
+  "CLSID": "{71985F48-1CA1-11d3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Rendering Filters",
+  "CLSID": "{71985F4A-1CA1-11d3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Network Providers",
+  "CLSID": "{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Multiplexer Devices",
+  "CLSID": "{7A5DE1D3-01A1-452C-B481-4FA2B96271E8}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Video Capture Sources",
+  "CLSID": "{860BB310-5D01-11d0-BD3B-00A0C911CE86}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\amd64\\ESFEnum.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Multi-Instance Capable VBI Codecs",
+  "CLSID": "{9C24A977-0951-451A-8006-0E49BD28CD5F}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Transport Information Renderers",
+  "CLSID": "{A2E3074F-6C3D-11D3-B653-00C04F79498E}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming TV Tuner Devices",
+  "CLSID": "{A799A800-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Crossbar Devices",
+  "CLSID": "{A799A801-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming TV Audio Devices",
+  "CLSID": "{A799A802-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Mixer Devices",
+  "CLSID": "{AD809C00-7B88-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "External Renderers",
+  "CLSID": "{CC7BFB41-F175-11d1-A392-00E0291F3959}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Device Control Filters",
+  "CLSID": "{CC7BFB46-F175-11d1-A392-00E0291F3959}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Communication Transforms",
+  "CLSID": "{CF1DDA2C-9743-11D0-A3EE-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Interface Transforms",
+  "CLSID": "{CF1DDA2D-9743-11D0-A3EE-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Renderers",
+  "CLSID": "{E0F158E1-CB04-11d0-BD4E-00A0C911CE86}",
+  "File": "C:\\Windows\\System32\\devenum.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming System Devices",
+  "CLSID": "{FBF6F530-07B9-11D2-A71E-0000F8004788}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Receiver Components",
+  "CLSID": "{FD0A5AF4-B41D-11d2-9C95-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source",
+  "CLSID": "{3193F794-0CE7-485D-A61D-7289A4ADBFCE}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 2",
+  "CLSID": "{E52E7DD2-0002-4469-9E5B-C30AE8EFC8CB}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 3",
+  "CLSID": "{B676F844-A989-4603-BAA6-389F5E395CD9}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 4",
+  "CLSID": "{594EE599-5FCD-4C11-B343-5084875573E7}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "File": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\DirectShow\\DX\\Win64\\GxDirectShow.ax",
+  "Version": "1, 4, 2102, 8081",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Medialooks Screen Capture",
+  "CLSID": "{10360012-2216-4246-B3AF-5CB99BE58D62}",
+  "File": "C:\\PROGRA~1\\COMMON~1\\Noldus\\NOLDUS~1\\NOLDUS~3\\MLSCRE~1.DLL",
+  "Version": "2, 0, 3, 109",
+  "Company": "Medialooks Company",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "AXIS P5534 [x64]",
+  "CLSID": "{D9BF4085-E5A6-4320-A626-5318CB7D57D0}",
+  "File": "C:\\Program Files\\Axis Communications\\AXIS Streaming Assistant X64\\AxisRTPCapFilterX64.ax",
+  "Version": "4.2.3.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "OBS Virtual Camera",
+  "CLSID": "{A3FCE0F5-3493-419F-958A-ABA1250EC20B}",
+  "File": "C:\\Program Files\\obs-studio\\data\\obs-plugins\\win-dshow\\obs-virtualcam-module64.dll",
+  "Version": "29.0.1",
+  "Company": "OBS Project",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\amd64\\ESFilter.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": 6291456,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "SplitCam Virtual Camera",
+  "CLSID": "{D9F675A4-B126-4FFD-92DE-9FD9AD597E10}",
+  "File": "C:\\Program Files\\SplitCam\\10\\res\\virtualcam_x64.dll",
+  "Version": "",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Compressors",
+  "Name": "DV Video Encoder",
+  "CLSID": "{13AA3650-BB6F-11D0-AFB9-00AA00B67A42}",
+  "File": "C:\\Windows\\System32\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Compressors",
+  "Name": "MJPEG Compressor",
+  "CLSID": "{B80AB0A0-7416-11D2-9EEB-006008039E37}",
+  "File": "C:\\Windows\\System32\\quartz.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x64"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "File": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\DirectShow\\DX\\Win32\\GxDirectShow.ax",
+  "Version": "1, 4, 2102, 9081",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AXIS Picture Events Embedded",
+  "CLSID": "{0173EEF5-1FDE-479C-9F24-34C3CB0B3243}",
+  "File": "C:\\Program Files (x86)\\Axis Communications\\AXIS Media Control Embedded\\AxPicEventsFilterEmb.ax",
+  "Version": "1.2.3.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AXIS Overlay Mixer Filter Emb",
+  "CLSID": "{03825DEB-4BC8-4344-ACF7-EC390A8A5A21}",
+  "File": "C:\\Program Files (x86)\\Axis Communications\\AXIS Media Control Embedded\\AxisOverlayFilterEmb.ax",
+  "Version": "2.0.4.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Basler Color Space Converter",
+  "CLSID": "{11F002F1-0700-4064-9ED7-6216AB36CB92}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\BaslerCSC_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Muxer",
+  "CLSID": "{129D7E40-C10D-11D0-AFB9-00AA00B67A42}",
+  "File": "C:\\Windows\\SysWOW64\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Color Space Converter",
+  "CLSID": "{1643E180-90F5-11CE-97D5-00AA0055595A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194305,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WM ASF Reader",
+  "CLSID": "{187463A0-5BB7-11D3-ACBE-0080C75E246E}",
+  "File": "C:\\Windows\\SysWOW64\\qasf.dll",
+  "Version": "12.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Splitter",
+  "CLSID": "{1B544C20-FD0B-11CE-8C63-00AA0044B51E}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VGA 16 Color Ditherer",
+  "CLSID": "{1DA08500-9EDC-11CF-BC10-00AA00AC74F6}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SBE2MediaTypeProfile",
+  "CLSID": "{1f26a602-2b5c-4b63-b8e8-9ea5c1a7dc2e}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft DTV-DVD Video Decoder",
+  "CLSID": "{212690FB-83E5-4526-8FD7-74478B7939CD}",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "RealVideo Decoder",
+  "CLSID": "{238D0F23-5DC9-45A6-9BE2-666160C324DD}",
+  "File": "C:\\Windows\\SysWow64\\RealMediaSplitter.ax",
+  "Version": "1, 0, 1, 1",
+  "Company": "Gabest",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AC3 Parser Filter",
+  "CLSID": "{280A3020-86CF-11D1-ABE6-00A0C905F375}",
+  "File": "C:\\Windows\\SysWOW64\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSink",
+  "CLSID": "{2DB47AE5-CF39-43C2-B4D6-0CD8D90946F4}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MJPEG Decompressor",
+  "CLSID": "{301056D0-6DFF-11D2-9EEB-006008039E37}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-I Stream Splitter",
+  "CLSID": "{336475D0-942A-11CE-A870-00AA002FEAB5}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SAMI (CC) Parser",
+  "CLSID": "{33FACFE0-A9BE-11D0-A520-00A0D10129C0}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VBI Codec",
+  "CLSID": "{370A1D5D-DDEB-418C-81CD-189E0D4FA443}",
+  "File": "C:\\Windows\\SysWOW64\\VBICodec.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI MPEG File Writer",
+  "CLSID": "{37A4D802-E76C-11D2-935C-00A024E52661}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI MPEG Video Decoder",
+  "CLSID": "{37A4D808-E76C-11D2-935C-00A024E52661}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 6291455,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Splitter",
+  "CLSID": "{3AE86B20-7BE8-11D1-ABE6-00A0C905F375}",
+  "File": "C:\\Windows\\SysWOW64\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Closed Captions Analysis Filter",
+  "CLSID": "{3D07A539-35CA-447C-9B05-8D85CE924F9E}",
+  "File": "C:\\Windows\\SysWOW64\\cca.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SBE2FileScan",
+  "CLSID": "{3E458037-0CA6-41aa-A594-2AA6C02D709B}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Video Encoder",
+  "CLSID": "{42150CD9-CA9A-4EA5-9939-30EE037F6E74}",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Internal Script Command Renderer",
+  "CLSID": "{48025243-2D39-11CE-875D-00608CB78066}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388609,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG Audio Decoder",
+  "CLSID": "{4A2286E0-7BEF-11CE-9BD9-0000E202599C}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 57147393,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Splitter",
+  "CLSID": "{4EB31670-9FC6-11CF-AF6E-00AA00B67A42}",
+  "File": "C:\\Windows\\SysWOW64\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Mixing Renderer 9",
+  "CLSID": "{51B4ABF3-748F-4E3B-A276-C828330E926A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Encoder",
+  "CLSID": "{5F5AFF4A-2F7F-4279-88C2-CD88EB39D144}",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI MPEG Audio Encoder",
+  "CLSID": "{6467DD70-FBD5-11D2-B5B6-444553540000}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AxisRTPSrcFilterEmb",
+  "CLSID": "{67B1A88A-B5D2-48B1-BF93-EB74D6FCB077}",
+  "File": "C:\\Program Files (x86)\\Axis Communications\\AXIS Media Control Embedded\\AxisRTPSrcFilterEmb.ax",
+  "Version": "3.2.5.0",
+  "Company": "Axis Communications",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ACM Wrapper",
+  "CLSID": "{6A08CF80-0E18-11CF-A24D-0020AFD79767}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Renderer",
+  "CLSID": "{6BC1CFFA-8FC1-4261-AC22-CFB4CC38DB50}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388609,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Video Stream Analyzer",
+  "CLSID": "{6CFAD761-735D-4AA5-8AFC-AF91A7D61EBA}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Line 21 Decoder",
+  "CLSID": "{6E8D4A20-310C-11D0-B79A-00AA003767A7}",
+  "File": "C:\\Windows\\SysWOW64\\qdvd.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Port Manager",
+  "CLSID": "{6F26A6CD-967B-47FD-874A-7AED2C9D25A2}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Video Renderer",
+  "CLSID": "{70E102B0-5556-11CE-97C0-00AA0055595A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI MPEG Video Encoder",
+  "CLSID": "{758C0F02-DF95-11D2-8E75-00104B93CF06}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "RealMedia Source",
+  "CLSID": "{765035B3-5944-4A94-806B-20EE3415F26F}",
+  "File": "C:\\Windows\\SysWow64\\RealMediaSplitter.ax",
+  "Version": "1, 0, 1, 1",
+  "Company": "Gabest",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI MPEG Multiplexer",
+  "CLSID": "{7A10E1E1-F430-11D2-8E75-00104B93CF06}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VPS Decoder",
+  "CLSID": "{7B3BC2A0-AA50-4ae7-BD44-B03649EC87C2}",
+  "File": "C:\\Windows\\SysWOW64\\WSTPager.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WM ASF Writer",
+  "CLSID": "{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}",
+  "File": "C:\\Windows\\SysWOW64\\qasf.dll",
+  "Version": "12.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "VBI Surface Allocator",
+  "CLSID": "{814B9800-1C88-11D1-BAD9-00609744111A}",
+  "File": "C:\\Windows\\System32\\vbisurf.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File writer",
+  "CLSID": "{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI Video Scaler Filter",
+  "CLSID": "{8DA0A2A8-30CB-46F4-A28E-13B6B5AB926C}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "RealAudio Decoder",
+  "CLSID": "{941A4793-A705-4312-8DFC-C11CA05F397E}",
+  "File": "C:\\Windows\\SysWow64\\RealMediaSplitter.ax",
+  "Version": "1, 0, 1, 1",
+  "Company": "Gabest",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DVD Navigator",
+  "CLSID": "{9B8C4620-2C1A-11D0-8493-00A02438AD48}",
+  "File": "C:\\Windows\\SysWOW64\\qdvd.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Overlay Mixer2",
+  "CLSID": "{A0025E90-E45B-11D1-ABE9-00A0C905F375}",
+  "File": "C:\\Windows\\SysWOW64\\qdvd.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Draw",
+  "CLSID": "{A888DF60-1E90-11CF-AC98-00AA004C0FA9}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291556,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft MPEG-2 Audio Encoder",
+  "CLSID": "{ACD453BC-C58A-44D1-BBF5-BFB325BE2D78}",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "WST Pager",
+  "CLSID": "{AD6C8934-F31B-4F43-B5E4-0541C1452F6F}",
+  "File": "C:\\Windows\\SysWOW64\\WSTPager.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Demultiplexer",
+  "CLSID": "{AFB6C280-2C41-11D3-8A60-0000F81E0E4A}",
+  "File": "C:\\Windows\\SysWOW64\\mpg2splt.ax",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "DV Video Decoder",
+  "CLSID": "{B1B77C00-C3E4-11CF-AF79-00AA00B67A42}",
+  "File": "C:\\Windows\\SysWOW64\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 8388608,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "SampleGrabber",
+  "CLSID": "{C1F400A0-3F08-11D3-9F0B-006008039E37}",
+  "File": "C:\\Windows\\SysWOW64\\qedit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Null Renderer",
+  "CLSID": "{C1F400A4-3F08-11D3-9F0B-006008039E37}",
+  "File": "C:\\Windows\\SysWOW64\\qedit.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG-2 Sections and Tables",
+  "CLSID": "{C666E115-BB62-4027-A113-82D643FE2D99}",
+  "File": "C:\\Windows\\SysWOW64\\Mpeg2Data.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft AC3 Encoder",
+  "CLSID": "{C6B400E2-20A7-4E58-A2FE-24619682CE6C}",
+  "File": "C:\\Windows\\SysWOW64\\msac3enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\ESFilter.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSource",
+  "CLSID": "{C9F5FE02-F851-4EB5-99EE-AD602AF1E619}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Smart Tee",
+  "CLSID": "{CC58E280-8AA1-11D1-B3F1-00AA003761C5}",
+  "File": "C:\\Windows\\SysWOW64\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Overlay Mixer",
+  "CLSID": "{CD8743A1-3736-11D0-9E69-00C04FD7C15B}",
+  "File": "C:\\Windows\\SysWOW64\\qdvd.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Decompressor",
+  "CLSID": "{CF49D4E0-1115-11CE-B03A-0020AF0BA770}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI/WAV File Source",
+  "CLSID": "{D3588AB0-0781-11CE-B03A-0020AF0BA770}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "QQ Source",
+  "CLSID": "{D4DA6077-2239-4C9E-AE16-C78DD9F35631}",
+  "File": "C:\\Program Files (x86)\\4Media\\HD Video Converter\\yuvsrc.ax",
+  "Version": "1, 0, 0, 1",
+  "Company": "ImTOO Software Studio",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Wave Parser",
+  "CLSID": "{D51BD5A1-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MIDI Parser",
+  "CLSID": "{D51BD5A2-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Multi-file Parser",
+  "CLSID": "{D51BD5A3-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File stream renderer",
+  "CLSID": "{D51BD5A5-7548-11CF-A520-0080C77EF58A}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "ATI Video Rotation Filter",
+  "CLSID": "{DF90FA9A-83F4-477D-861A-B7A1285ACEEE}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Microsoft DTV-DVD Audio Decoder",
+  "CLSID": "{E1F1A0B8-BEEE-490D-BA7C-066C40B5E2B9}",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2adec.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291455,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "RealMedia Splitter",
+  "CLSID": "{E21BE468-5C18-43EB-B0CC-DB93A847D769}",
+  "File": "C:\\Windows\\SysWow64\\RealMediaSplitter.ax",
+  "Version": "1, 0, 1, 1",
+  "Company": "Gabest",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "StreamBufferSink2",
+  "CLSID": "{E2448508-95DA-4205-9A27-7EC81E723B1A}",
+  "File": "C:\\Windows\\SysWOW64\\sbe.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "AVI Mux",
+  "CLSID": "{E2510970-F137-11CE-8B67-00AA00A3F1A6}",
+  "File": "C:\\Windows\\SysWOW64\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Line 21 Decoder 2",
+  "CLSID": "{E4206432-01A1-4BEE-B3E1-3702C8EDC574}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 6291458,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File Source (Async.)",
+  "CLSID": "{E436EBB5-524F-11CE-9F53-0020AF0BA770}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "File Source (URL)",
+  "CLSID": "{E436EBB6-524F-11CE-9F53-0020AF0BA770}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 4194304,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Infinite Pin Tee Filter",
+  "CLSID": "{F8388A40-D5BB-11D0-BE5A-0080C706568E}",
+  "File": "C:\\Windows\\SysWOW64\\qcap.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "Enhanced Video Renderer",
+  "CLSID": "{FA10746C-9B63-4B6C-BC49-FC300EA5F256}",
+  "File": "C:\\Windows\\SysWOW64\\evr.dll",
+  "Version": "10.0.19041.5794 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "BDA MPEG2 Transport Information Filter",
+  "CLSID": "{FC772AB0-0C7F-11D3-8FF2-00A0C9224CF4}",
+  "File": "C:\\Windows\\SysWOW64\\psisrndr.ax",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "DirectShow Filters",
+  "Name": "MPEG Video Decoder",
+  "CLSID": "{FEB50740-7BEF-11CE-9BD9-0000E202599C}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 1073741825,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming VBI Codec",
+  "CLSID": "{07DAD660-22F1-11d1-A9F4-00C04FBBDE8F}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "DirectShow Filters",
+  "CLSID": "{083863F1-70DE-11d0-BD40-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Tee/Splitter Devices",
+  "CLSID": "{0A4252A0-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Encoder Devices",
+  "CLSID": "{19689BF6-C384-48FD-AD51-90E58C79F70B}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Stream Decompression Devices",
+  "CLSID": "{2721AE20-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Data Transforms",
+  "CLSID": "{2EB07EA0-7E70-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Video Compressors",
+  "CLSID": "{33D9A760-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Compressors",
+  "CLSID": "{33D9A761-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Capture Sources",
+  "CLSID": "{33D9A762-90C8-11d0-BD43-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "PBDA CP Filters",
+  "CLSID": "{4A56AF32-C21F-11DB-96FA-005056C00008}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Midi Renderers",
+  "CLSID": "{4EFE2452-168A-11d1-BC76-00C04FB9453B}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Capture Devices",
+  "CLSID": "{65E8773D-8F56-11D0-A3B9-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Rendering Devices",
+  "CLSID": "{65e8773e-8f56-11d0-a3b9-00a0c9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Source Filters",
+  "CLSID": "{71985F48-1CA1-11d3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Rendering Filters",
+  "CLSID": "{71985F4A-1CA1-11d3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Network Providers",
+  "CLSID": "{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Multiplexer Devices",
+  "CLSID": "{7A5DE1D3-01A1-452C-B481-4FA2B96271E8}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Video Capture Sources",
+  "CLSID": "{860BB310-5D01-11d0-BD3B-00A0C911CE86}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\ESFEnum.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Multi-Instance Capable VBI Codecs",
+  "CLSID": "{9C24A977-0951-451A-8006-0E49BD28CD5F}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Transport Information Renderers",
+  "CLSID": "{A2E3074F-6C3D-11D3-B653-00C04F79498E}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming TV Tuner Devices",
+  "CLSID": "{A799A800-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Crossbar Devices",
+  "CLSID": "{A799A801-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming TV Audio Devices",
+  "CLSID": "{A799A802-A46D-11d0-A18C-00A02401DCD4}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Mixer Devices",
+  "CLSID": "{AD809C00-7B88-11D0-A5D6-28DB04C10000}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "External Renderers",
+  "CLSID": "{CC7BFB41-F175-11d1-A392-00E0291F3959}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Device Control Filters",
+  "CLSID": "{CC7BFB46-F175-11d1-A392-00E0291F3959}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Communication Transforms",
+  "CLSID": "{CF1DDA2C-9743-11D0-A3EE-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming Interface Transforms",
+  "CLSID": "{CF1DDA2D-9743-11D0-A3EE-00A0C9223196}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "Audio Renderers",
+  "CLSID": "{E0F158E1-CB04-11d0-BD4E-00A0C911CE86}",
+  "File": "C:\\Windows\\SysWOW64\\devenum.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "WDM Streaming System Devices",
+  "CLSID": "{FBF6F530-07B9-11D2-A71E-0000F8004788}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Device Control Filters",
+  "Name": "BDA Receiver Components",
+  "CLSID": "{FD0A5AF4-B41D-11d2-9C95-00C04F7971E0}",
+  "File": "",
+  "Version": "",
+  "Company": "",
+  "Merit": null,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Compressors",
+  "Name": "ATI MPEG Audio Encoder",
+  "CLSID": "{6467DD70-FBD5-11D2-B5B6-444553540000}",
+  "File": "C:\\Program Files (x86)\\Common Files\\atimpenc.dll",
+  "Version": "11.6.0.50527",
+  "Company": "Advanced Micro Devices Inc.",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source",
+  "CLSID": "{3193F794-0CE7-485D-A61D-7289A4ADBFCE}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 2",
+  "CLSID": "{E52E7DD2-0002-4469-9E5B-C30AE8EFC8CB}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 3",
+  "CLSID": "{B676F844-A989-4603-BAA6-389F5E395CD9}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 4",
+  "CLSID": "{594EE599-5FCD-4C11-B343-5084875573E7}",
+  "File": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\BaslerGenICamSource_v8_0.ax",
+  "Version": "8.0.0.10",
+  "Company": "Basler",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "File": "C:\\Program Files\\Daheng Imaging\\GalaxySDK\\DirectShow\\DX\\Win32\\GxDirectShow.ax",
+  "Version": "1, 4, 2102, 9081",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "OBS Virtual Camera",
+  "CLSID": "{A3FCE0F5-3493-419F-958A-ABA1250EC20B}",
+  "File": "C:\\Program Files\\obs-studio\\data\\obs-plugins\\win-dshow\\obs-virtualcam-module32.dll",
+  "Version": "29.0.2",
+  "Company": "OBS Project",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "File": "C:\\Program Files (x86)\\Euresys\\MultiCam\\DirectShow\\ESFilter.dll",
+  "Version": "6.15.1.3573",
+  "Company": "EURESYS",
+  "Merit": 6291456,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "SplitCam Virtual Camera",
+  "CLSID": "{D9F675A4-B126-4FFD-92DE-9FD9AD597E10}",
+  "File": "C:\\Program Files\\SplitCam\\10\\res\\virtualcam.dll",
+  "Version": "",
+  "Company": "",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Compressors",
+  "Name": "DV Video Encoder",
+  "CLSID": "{13AA3650-BB6F-11D0-AFB9-00AA00B67A42}",
+  "File": "C:\\Windows\\SysWOW64\\qdv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Compressors",
+  "Name": "MJPEG Compressor",
+  "CLSID": "{B80AB0A0-7416-11D2-9EEB-006008039E37}",
+  "File": "C:\\Windows\\SysWOW64\\quartz.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Merit": 2097152,
+  "Architecture": "x86"
+ }
+]

@@ -1,0 +1,618 @@
+[
+ {
+  "Name": "aux",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midimapper",
+  "File": "midimap.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.imaadpcm",
+  "File": "imaadp32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msadpcm",
+  "File": "msadp32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msg711",
+  "File": "msg711.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msgsm610",
+  "File": "msgsm32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.i420",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.iyuv",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.mrle",
+  "File": "msrle32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.msvc",
+  "File": "msvidc32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.uyvy",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yuy2",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yvu9",
+  "File": "tsbyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yvyu",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wavemapper",
+  "File": "msacm32.drv",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.l3acm",
+  "File": "C:\\Windows\\System32\\l3codeca.acm",
+  "Version": "1, 9, 0, 0401",
+  "Company": "Fraunhofer Institut Integrierte Schaltungen IIS",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "MSVideo8",
+  "File": "VfWWDM32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "midi6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "mixer6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "wave6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "aux",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midimapper",
+  "File": "midimap.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.imaadpcm",
+  "File": "imaadp32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msadpcm",
+  "File": "msadp32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msg711",
+  "File": "msg711.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msgsm610",
+  "File": "msgsm32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.cvid",
+  "File": "iccvid.dll",
+  "Version": "1.10.0.11",
+  "Company": "Radius Inc.",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.i420",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.iyuv",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.mrle",
+  "File": "msrle32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.msvc",
+  "File": "msvidc32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.uyvy",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yuy2",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yvu9",
+  "File": "tsbyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yvyu",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wavemapper",
+  "File": "msacm32.drv",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.l3acm",
+  "File": "C:\\Windows\\SysWOW64\\l3codeca.acm",
+  "Version": "1, 9, 0, 0401",
+  "Company": "Fraunhofer Institut Integrierte Schaltungen IIS",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave4",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave5",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave2",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave3",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave1",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "aux6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "midi6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "mixer6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "wave6",
+  "File": "wdmaud.drv",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ }
+]
