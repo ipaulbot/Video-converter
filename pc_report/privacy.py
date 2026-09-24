@@ -30,6 +30,14 @@ SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER",
                        "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME", "IGCCSVC_DB",
                        "__CURSOR_SANDBOX_ENV_RESTORE", "CURSOR_CONVERSATION_ID",
                        "CHROME_CRASHPAD_PIPE_NAME", "VSCODE_IPC_HOOK"}
+WELL_KNOWN_ACCOUNTS = frozenset({
+    "localsystem",
+    r"nt authority\system",
+    r"nt authority\localservice",
+    r"nt authority\networkservice",
+    r"nt authority\local service",
+    r"nt authority\network service",
+})
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
@@ -96,9 +104,20 @@ def mask_string(value, keep: int = 4):
     if isinstance(value, dict):
         return {k: mask_string(v, keep) for k, v in value.items()}
     s = str(value)
-    if len(s) <= keep + 2:
+    if len(s) < 2 * (keep + 2):
         return "*" * len(s)
     return s[:2] + "*" * max(1, len(s) - keep - 2) + s[-keep:]
+
+
+def _is_well_known_account(value) -> bool:
+    if not isinstance(value, str):
+        return False
+    account = re.sub(r"\\+", r"\\", value.replace("/", "\\")).casefold()
+    return (
+        account in WELL_KNOWN_ACCOUNTS
+        or account.startswith("nt service\\")
+        or account.startswith("nt authority\\")
+    )
 
 
 def mask_mac(mac):
@@ -226,6 +245,8 @@ def redact_payload(data, options=None, *, env=None):
         if any(t in key_l for t in IP_TOKENS):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):
+            if _is_well_known_account(value):
+                return value
             return mask_string(value)
         if isinstance(value, str):
             return redact_command_line(value) if key_l == "commandline" else redact_user_paths(value)

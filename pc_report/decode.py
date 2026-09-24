@@ -162,6 +162,35 @@ POWER_PLATFORM_ROLES = {0: "Unspecified", 1: "Desktop", 2: "Mobile", 3: "Worksta
                         4: "Enterprise Server", 5: "SOHO Server", 6: "Appliance PC",
                         7: "Performance Server", 8: "Slate"}
 
+# --- motherboard -------------------------------------------------------------
+
+ONBOARD_DEVICE_TYPES = {1: "Other", 2: "Unknown", 3: "Video", 4: "SCSI Controller", 5: "Ethernet", 6: "Token Ring",
+                        7: "Sound", 8: "PATA Controller", 9: "SATA Controller", 10: "SAS Controller"}
+MEMORY_ARRAY_USE = {0: "Reserved", 1: "Other", 2: "Unknown", 3: "System memory", 4: "Video memory", 5: "Flash memory",
+                    6: "Non-volatile RAM", 7: "Cache memory"}
+MEMORY_ARRAY_LOCATION = {0: "Reserved", 1: "Other", 2: "Unknown", 3: "System board or motherboard", 4: "ISA add-on card",
+                         5: "EISA add-on card", 6: "PCI add-on card", 7: "MCA add-on card", 8: "PCMCIA add-on card",
+                         9: "Proprietary add-on card", 10: "NuBus"}
+CPU_UPGRADE_METHOD = {
+    1: "Other", 2: "Unknown", 3: "Daughter Board", 4: "ZIF Socket", 5: "Replacement/Piggy Back", 6: "None",
+    7: "LIF Socket", 8: "Slot 1", 9: "Slot 2", 10: "370 Pin Socket", 11: "Slot A", 12: "Slot M",
+    13: "Socket 423", 14: "Socket A (Socket 462)", 15: "Socket 478", 16: "Socket 754", 17: "Socket 940",
+    18: "Socket 939", 19: "Socket mPGA604", 20: "Socket LGA771", 21: "Socket LGA775", 22: "Socket S1",
+    23: "Socket AM2", 24: "Socket F (1207)", 25: "Socket LGA1366", 26: "Socket G34", 27: "Socket AM3",
+    28: "Socket C32", 29: "Socket LGA1156", 30: "Socket LGA1567", 31: "Socket PGA988A", 32: "Socket BGA1288",
+    33: "rPGA988B", 34: "BGA1023", 35: "BGA1224", 36: "LGA1155", 37: "LGA1356", 38: "LGA2011", 39: "Socket FS1",
+    40: "Socket FS2", 41: "Socket FM1", 42: "Socket FM2", 43: "Socket LGA2011-3", 44: "Socket LGA1356-3",
+    45: "Socket LGA1150", 46: "Socket BGA1168", 47: "Socket BGA1234", 48: "Socket BGA1364", 49: "Socket AM4",
+    50: "Socket LGA1151", 51: "Socket BGA1356", 52: "Socket BGA1440", 53: "Socket BGA1515", 54: "Socket LGA3647-1",
+    55: "Socket SP3", 56: "Socket SP3r2", 57: "Socket LGA2066", 58: "Socket BGA1392", 59: "Socket BGA1510",
+    60: "Socket BGA1528", 61: "Socket LGA4189", 62: "Socket LGA1200", 63: "Socket LGA4677", 64: "Socket LGA1700",
+    65: "Socket BGA1744", 66: "Socket BGA1781", 67: "Socket BGA1211", 68: "Socket BGA2422", 69: "Socket LGA1211",
+    70: "Socket LGA2422", 71: "Socket LGA5773", 72: "Socket BGA5773", 73: "Socket AM5", 74: "Socket SP5",
+    75: "Socket SP6", 76: "Socket BGA883", 77: "Socket BGA1190", 78: "Socket BGA4129", 79: "Socket LGA4710",
+    80: "Socket LGA7529", 81: "Socket BGA1964", 82: "Socket BGA1792", 83: "Socket BGA2049", 84: "Socket BGA2551",
+    85: "Socket LGA1851", 86: "Socket BGA2114", 87: "Socket BGA2833",
+}
+
 # --- memory ------------------------------------------------------------------
 
 MEMORY_TYPES = {

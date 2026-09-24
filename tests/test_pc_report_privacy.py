@@ -118,9 +118,24 @@ class PcReportPrivacyTests(unittest.TestCase):
     def test_mask_string_fully_masks_short_sensitive_strings(self):
         self.assertEqual(mask_string("ABCDE"), "*****")
         self.assertEqual(mask_string("ABCDEF"), "******")
-        self.assertEqual(mask_string("ABCDEFG"), "AB*DEFG")
-        self.assertEqual(mask_string("WDGS-BH0020"), "WD*****0020")
+        self.assertEqual(mask_string("ABCDEFG"), "*******")
+        self.assertEqual(mask_string("WDGS-BH0020"), "***********")
+        self.assertEqual(mask_string("ABCDEFGHIJKL"), "AB******IJKL")
+        self.assertEqual(mask_string("ABCDEFGHIJKLMNOP"), "AB**********MNOP")
         self.assertEqual(mask_string("ab"), "**")
+
+    def test_start_name_leaves_well_known_accounts_readable(self):
+        payload = [
+            {"StartName": "LocalSystem"},
+            {"StartName": r"NT AUTHORITY\SYSTEM"},
+            {"StartName": r"NT SERVICE\TrustedInstaller"},
+            {"StartName": r"CORP\svc_backup"},
+        ]
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted[:3], payload[:3])
+        self.assertNotEqual(redacted[3]["StartName"], payload[3]["StartName"])
 
     def test_registered_user_is_redacted(self):
         r = redact_payload({"RegisteredUser": "Jane Example"}, {"redact": True})
