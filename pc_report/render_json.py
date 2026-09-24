@@ -1,5 +1,7 @@
 import json
+
 from .privacy import redact_payload
+
 
 def render(meta, data, options):
     safe_data = redact_payload(data, options)

@@ -1,8 +1,10 @@
+import datetime
 import os
 import re
-import datetime
-from .utils import run_ps_json
+
 from utils.logger import logger
+
+from .utils import run_ps_json
 
 NVC_RELATED_TERMS = (
     'noldus',
