@@ -1,0 +1,177 @@
+[
+ {
+  "Name": "SecurityHealth",
+  "Command": "C:\\Windows\\system32\\SecurityHealthSystray.exe",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "WavesSvc",
+  "Command": "\"C:\\Windows\\System32\\DriverStore\\FileRepository\\wavesapo11de_sc.inf_amd64_25d455028def85c7\\WavesSvc64.exe\" -Jack",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "RtkAudUService",
+  "Command": "\"C:\\Windows\\System32\\DriverStore\\FileRepository\\realtekservice.inf_amd64_d4e2f40b8460b254\\RtkAudUService64.exe\" -background",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "AdobeAAMUpdater-1.0",
+  "Command": "\"C:\\Program Files (x86)\\Common Files\\Adobe\\OOBE\\PDApp\\UWA\\UpdaterStartupUtility.exe\"",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Launch LCore",
+  "Command": "C:\\Program Files\\Logitech Gaming Software\\LCore.exe /minimized",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "VisoRecorderManager",
+  "Command": "C:\\Program Files\\Noldus\\Viso Recorder 12\\VisoRecorderManager.exe",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "NLinxAgent",
+  "Command": "C:\\Program Files\\Noldus\\N-Linx Agent 1\\NLinxAgent.exe",
+  "Location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "TeamsMachineInstaller",
+  "Command": "C:\\Program Files\\Teams Installer\\Teams.exe --checkInstall --source=PROPLUS",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Adobe CCXProcess",
+  "Command": "C:\\Program Files (x86)\\Adobe\\Adobe Creative Cloud Experience\\CCXProcess.exe",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Contour Shuttle Device Helper",
+  "Command": "C:\\Program Files (x86)\\Contour Shuttle\\ShuttleHelper.exe",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "(default)",
+  "Command": "",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Logi Tune",
+  "Command": "\"C:\\Program Files (x86)\\Logitech\\LogiTune\\LogiTune.exe\" --tray",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "APSDaemon",
+  "Command": "\"C:\\Program Files (x86)\\Common Files\\Apple\\Apple Application Support\\APSDaemon.exe\"",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Adobe Creative Cloud",
+  "Command": "\"C:\\Program Files\\Adobe\\Adobe Creative Cloud\\ACC\\Creative Cloud.exe\" --showwindow=false --onOSstartup=true",
+  "Location": "HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "OneDrive",
+  "Command": "\"C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe\" /background",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "HubSpot for Windows",
+  "Command": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Hubspot\\HubSpot for Windows.appref-ms",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "GoogleDriveFS",
+  "Command": "\"C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe\" --startup_mode",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Adobe Acrobat Synchronizer",
+  "Command": "\"C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\AdobeCollabSync.exe\"",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Microsoft.Lists",
+  "Command": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\OneDrive\\26.163.0823.0004\\OneDrive.Sync.Service.exe",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Steam",
+  "Command": "\"C:\\Program Files (x86)\\Steam\\steam.exe\" -silent",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "CiscoMeetingDaemon",
+  "Command": "\"C:\\Users\\<redacted>\\AppData\\Local\\WebEx\\WebexHost.exe\" /daemon /runFrom=autorun",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Adobe Reader Synchronizer",
+  "Command": "\"C:\\Program Files (x86)\\Adobe\\Acrobat Reader DC\\Reader\\AdobeCollabSync.exe\"",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "GoogleChromeAutoLaunch_D96A68621695C450EBE383818CFBE957",
+  "Command": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window /prefetch:5",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": true,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "MicrosoftEdgeAutoLaunch_9C8DF8574872BFF628895373A2E3F530",
+  "Command": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window --win-session-start",
+  "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+  "Enabled": false,
+  "Kind": "Registry"
+ },
+ {
+  "Name": "Send to OneNote.lnk",
+  "Command": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Send to OneNote.lnk",
+  "Location": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
+  "Enabled": true,
+  "Kind": "Startup folder"
+ }
+]
