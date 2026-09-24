@@ -1,1 +1,1145 @@
-null
+[
+ {
+  "Category": "Video Decoder",
+  "Name": "Intel\u00ae Hardware M-JPEG Decoder MFT",
+  "CLSID": "00c69f81-0524-48c0-a353-4dd9d54f9a6e",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_mjpgvd_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Frame Rate Converter",
+  "CLSID": "01f36ce2-0907-4d8b-979d-f151be91c883",
+  "File": "C:\\Windows\\System32\\mfvdsp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Other",
+  "Name": "Microsoft H264 Video Remux (MPEG2TSToMP4) MFT",
+  "CLSID": "05a47ebb-8bf0-4cbf-ad2f-3b71d75866f5",
+  "File": "C:\\Windows\\System32\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "LPCM DVD-Audio MFT",
+  "CLSID": "068a8476-9229-4cc0-9d49-2fc699dcd30a",
+  "File": "C:\\Windows\\System32\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "MP3 Encoder ACM Wrapper MFT",
+  "CLSID": "11103421-354c-4cca-a7a3-1aff9a5b6701",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft FLAC Audio Encoder MFT",
+  "CLSID": "128509e9-c44e-45dc-95e9-c255b8f466a6",
+  "File": "C:\\Windows\\System32\\MSFlacEncoder.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft Dolby Digital Plus Decoder MFT",
+  "CLSID": "177C0AFE-900B-48d4-9E4C-57ADD250B3D4",
+  "File": "C:\\Windows\\System32\\DolbyDecMFT.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Resizer MFT",
+  "CLSID": "1ea1ea14-48f4-4054-ad1a-e8aee10ac805",
+  "File": "C:\\Windows\\System32\\vidreszr.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "WM Speech Encoder DMO",
+  "CLSID": "1f1f4e1a-2252-4063-84bb-eee75f8856d5",
+  "File": "C:\\Windows\\System32\\WMSPDMOE.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "MS AMRNB Decoder MFT",
+  "CLSID": "265011AE-5481-4f77-A295-ABB6FFE8D63E",
+  "File": "C:\\Windows\\System32\\MSAMRNBDecoder.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Microsoft MPEG Video Decoder MFT",
+  "CLSID": "2D709E52-123F-49b5-9CBC-9AF5CDE28FB9",
+  "File": "C:\\Windows\\System32\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMAudio Decoder MFT",
+  "CLSID": "2eeb4adf-4578-4d10-bca7-bb955f56320a",
+  "File": "C:\\Windows\\System32\\WMADMOD.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "MS AMRNB Encoder MFT",
+  "CLSID": "2FAE8AFE-04A3-423a-A814-85DB454712B0",
+  "File": "C:\\Windows\\System32\\MSAMRNBEncoder.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft AAC Audio Decoder MFT",
+  "CLSID": "32d186a7-218f-4c75-8876-dd77273a8999",
+  "File": "C:\\Windows\\System32\\MSAudDecMFT.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "b0c687be-01cd-44b5-b8b2-7c1d7e058b1f",
+  "Name": "Intel\u00ae Hardware HDCP Encryptor MFT",
+  "CLSID": "36884b4b-41cd-4563-a2d7-15025a3bcaee",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_encrypt_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "A-law Wrapper MFT",
+  "CLSID": "36CB6E0C-78C1-42B2-9943-846262F31786",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "DV Decoder MFT",
+  "CLSID": "404a6de5-d4d6-4260-9bc7-5a6cbd882432",
+  "File": "C:\\Windows\\System32\\mfdvdec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft MPEG-2 Audio Encoder MFT",
+  "CLSID": "46A4DD5C-73F8-4304-94DF-308F760974F4",
+  "File": "C:\\Windows\\System32\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "GSM ACM Wrapper MFT",
+  "CLSID": "4a76b469-7b66-4dd4-ba2d-ddf244c766dc",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Quick Sync Video H.264 Encoder MFT",
+  "CLSID": "4be8d3c0-0515-4a37-ad55-e4bae19af471",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_h264ve_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "VideoStabilization MFT",
+  "CLSID": "51571744-7fe4-4ff2-a498-2dc34ff74f1b",
+  "File": "C:\\Windows\\System32\\MSVideoDSP.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMAPro over S/PDIF MFT",
+  "CLSID": "5210f8e4-b0bb-47c3-a8d9-7b2282cc79ed",
+  "File": "C:\\Windows\\System32\\WMADMOD.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg4s Decoder MFT",
+  "CLSID": "5686a0d9-fe39-409f-9dff-3fdbc849f9f5",
+  "File": "C:\\Windows\\System32\\mp4sdecd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "NVIDIA H.264 Encoder MFT",
+  "CLSID": "60F44560-5A20-4857-BFEF-D29773CB8040",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvEncMFTH264x.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware Accelerated AV1 Encoder MFT",
+  "CLSID": "62c053ce-5357-4794-8c5a-fbeffeffb82d",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_av1hve_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Microsoft H264 Video Decoder MFT",
+  "CLSID": "62ce7e72-4c71-4d20-b15d-452831a87d9d",
+  "File": "C:\\Windows\\System32\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft Opus Audio Decoder MFT",
+  "CLSID": "63e17c10-2d43-4c42-8fe3-8d8b63e46a6a",
+  "File": "C:\\Windows\\System32\\MSOpusDecoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft FLAC Audio Decoder MFT",
+  "CLSID": "6B0B3E6B-A2C5-4514-8055-AFE8A95242D9",
+  "File": "C:\\Windows\\System32\\MSFlacDecoder.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "H264 Encoder MFT",
+  "CLSID": "6ca50344-051a-4ded-9779-a43305165e35",
+  "File": "C:\\Windows\\System32\\mfh264enc.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft MPEG Audio Decoder MFT",
+  "CLSID": "70707B39-B2CA-4015-ABEA-F8447D22D88B",
+  "File": "C:\\Windows\\System32\\MSAudDecMFT.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "NVIDIA MJPEG Video Decoder MFT",
+  "CLSID": "70F36578-2741-454F-B494-E8563DDD1CB4",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvDecMFTMjpegx.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "WMAudio Encoder MFT",
+  "CLSID": "70f598e9-f4ab-495a-99e2-a7c4d3d89abf",
+  "File": "C:\\Windows\\System32\\WMADMOE.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "11064c48-3648-4ed0-932e-05ce8ac811b7",
+  "Name": "AEC",
+  "CLSID": "745057c7-f353-4f2d-a7ee-58434477730e",
+  "File": "C:\\Windows\\System32\\mfwmaaec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Color Control",
+  "CLSID": "798059f0-89ca-4160-b325-aeb48efe4f9a",
+  "File": "C:\\Windows\\System32\\mfvdsp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "WMV Screen decoder MFT",
+  "CLSID": "7bafb3b1-d8f4-4279-9253-27da423108de",
+  "File": "C:\\Windows\\System32\\wmvsdecd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "WMVideo8 Encoder MFT",
+  "CLSID": "7e320092-596a-41b2-bbeb-175d10504eb6",
+  "File": "C:\\Windows\\System32\\wmvxencd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "WMVideo Decoder MFT",
+  "CLSID": "82d353df-90bd-4382-8bc2-3f6192b76e34",
+  "File": "C:\\Windows\\System32\\wmvdecod.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMSpeech Decoder DMO",
+  "CLSID": "874131cb-4ecc-443b-8948-746b89595d20",
+  "File": "C:\\Windows\\System32\\WMSPDMOD.DLL",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Processor",
+  "Name": "Microsoft Video Processor MFT",
+  "CLSID": "88753B26-5B24-49bd-B2E7-0C445C78C982",
+  "File": "C:\\Windows\\System32\\msvproc.dll",
+  "Version": "10.0.19041.5794 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "G711 Wrapper MFT",
+  "CLSID": "92b66080-5e2d-449e-90c4-c41f268e5514",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft AAC Audio Encoder MFT",
+  "CLSID": "93af0c51-2275-45d2-a35b-f2ba21caed00",
+  "File": "C:\\Windows\\System32\\mfAACEnc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "NVIDIA HEVC Encoder MFT",
+  "CLSID": "966F107C-8EA2-425D-B822-E4A71BEF01D7",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvEncMFThevcx.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Color Converter MFT",
+  "CLSID": "98230571-0087-4204-b020-3282538e57d3",
+  "File": "C:\\Windows\\System32\\colorcnv.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft ALAC Audio Encoder MFT",
+  "CLSID": "9AB6A28C-748E-4B6A-BFFF-CC443B8E8FB4",
+  "File": "C:\\Windows\\System32\\MSAlacEncoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "IMA ADPCM ACM Wrapper MFT",
+  "CLSID": "a16e1bff-a80d-48ad-aecd-a35c005685fe",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Multiplexer",
+  "Name": "Microsoft MPEG2 Multiplexer MFT",
+  "CLSID": "ab300f71-01ab-46d2-ab6c-64906cb03258",
+  "File": "C:\\Windows\\System32\\mfmpeg2srcsnk.dll",
+  "Version": "10.0.19041.6392 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft Dolby Digital Encoder MFT",
+  "CLSID": "AC3315C9-F481-45D7-826C-0B406C1F64B8",
+  "File": "C:\\Windows\\System32\\msac3enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "AXIS Opus Audio Decoder MFT",
+  "CLSID": "b37a5f61-d837-4f1c-bf99-0dd22e17f1c4",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AudioX64.dll",
+  "Version": "3.7.2.0",
+  "Company": "Axis Communications",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "AXIS AAC Audio Decoder",
+  "CLSID": "ba7a56eb-d1b9-443b-96e9-086532a378f1",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AxAacDecX64.dll",
+  "Version": "4.0.3.0",
+  "Company": "Axis Communications",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "MP3 Decoder MFT",
+  "CLSID": "bbeea841-0a63-4f52-a7ab-a9b3a84ed38a",
+  "File": "C:\\Windows\\System32\\mp3dmod.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware H265 Encoder MFT",
+  "CLSID": "bc10864d-2b34-408f-912a-102b1b867b6c",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_h265ve_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "H263 Encoder MFT",
+  "CLSID": "bc47fcfe-98a0-4f27-bb07-698af24f2b38",
+  "File": "C:\\Windows\\System32\\mfh263enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft ALAC Audio Decoder MFT",
+  "CLSID": "C0CD7D12-31FC-4BBC-B363-7322EE3E1879",
+  "File": "C:\\Windows\\System32\\MSAlacDecoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "ADPCM ACM Wrapper MFT",
+  "CLSID": "ca34fe0a-5722-43ad-af23-05f7650257dd",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "MJPEG Decoder MFT",
+  "CLSID": "CB17E772-E1CC-4633-8450-5617AF577905",
+  "File": "C:\\Windows\\System32\\mfmjpegdec.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg43 Decoder MFT",
+  "CLSID": "cba9e78b-49a3-49ea-93d4-6bcba8c4de07",
+  "File": "C:\\Windows\\System32\\mp43decd.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Dolby TrueHD IEC-61937 converter MFT",
+  "CLSID": "cf5eeedf-0e92-4b3b-a161-bd0ffe545e4b",
+  "File": "C:\\Windows\\System32\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "DTS IEC-61937 converter MFT",
+  "CLSID": "d035e24c-c877-42d7-a795-2a8a339b472f",
+  "File": "C:\\Windows\\System32\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware VP9 Encoder MFT",
+  "CLSID": "d186a626-77ca-4d80-942f-61e0a5111afe",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_vp9ve_64.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "AXIS Audio Decoder DMO",
+  "CLSID": "d1f283e1-df6f-41e4-aed1-eb1d6b4b0ae1",
+  "File": "C:\\Program Files\\Axis Communications\\Components\\AudioX64.dll",
+  "Version": "3.7.2.0",
+  "Company": "Axis Communications",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "WMVideo9 Encoder MFT",
+  "CLSID": "d23b90d0-144f-46bd-841d-59e4eb19dc59",
+  "File": "C:\\Windows\\System32\\wmvencod.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Microsoft MPEG-2 Video Encoder MFT",
+  "CLSID": "e6335f02-80b7-4dc4-adfa-dfe7210d20d5",
+  "File": "C:\\Windows\\System32\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg4 Decoder MFT",
+  "CLSID": "f371728a-6052-4d47-827c-d039335dfe0a",
+  "File": "C:\\Windows\\System32\\mpg4decd.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "11064c48-3648-4ed0-932e-05ce8ac811b7",
+  "Name": "Resampler MFT",
+  "CLSID": "f447b69e-1884-4a7e-8055-346f74d6edb3",
+  "File": "C:\\Windows\\System32\\resampledmo.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Intel\u00ae Hardware M-JPEG Decoder MFT",
+  "CLSID": "00c69f81-0524-48c0-a353-4dd9d54f9a6e",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_mjpgvd_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Frame Rate Converter",
+  "CLSID": "01f36ce2-0907-4d8b-979d-f151be91c883",
+  "File": "C:\\Windows\\SysWOW64\\mfvdsp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Other",
+  "Name": "Microsoft H264 Video Remux (MPEG2TSToMP4) MFT",
+  "CLSID": "05a47ebb-8bf0-4cbf-ad2f-3b71d75866f5",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "LPCM DVD-Audio MFT",
+  "CLSID": "068a8476-9229-4cc0-9d49-2fc699dcd30a",
+  "File": "C:\\Windows\\SysWOW64\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "MP3 Encoder ACM Wrapper MFT",
+  "CLSID": "11103421-354c-4cca-a7a3-1aff9a5b6701",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft FLAC Audio Encoder MFT",
+  "CLSID": "128509e9-c44e-45dc-95e9-c255b8f466a6",
+  "File": "C:\\Windows\\SysWOW64\\MSFlacEncoder.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft Dolby Digital Plus Decoder MFT",
+  "CLSID": "177C0AFE-900B-48d4-9E4C-57ADD250B3D4",
+  "File": "C:\\Windows\\SysWOW64\\DolbyDecMFT.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Resizer MFT",
+  "CLSID": "1ea1ea14-48f4-4054-ad1a-e8aee10ac805",
+  "File": "C:\\Windows\\SysWOW64\\vidreszr.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "WM Speech Encoder DMO",
+  "CLSID": "1f1f4e1a-2252-4063-84bb-eee75f8856d5",
+  "File": "C:\\Windows\\SysWOW64\\WMSPDMOE.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "MS AMRNB Decoder MFT",
+  "CLSID": "265011AE-5481-4f77-A295-ABB6FFE8D63E",
+  "File": "C:\\Windows\\SysWOW64\\MSAMRNBDecoder.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "AXIS MJPEG Video Decoder",
+  "CLSID": "29020fe0-3833-4be2-a7f0-42841d4b45f0",
+  "File": "C:\\Program Files (x86)\\Axis Communications\\Components\\AxMJPGDec.dll",
+  "Version": "3, 0, 0, 0",
+  "Company": "Axis Communications AB",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Microsoft MPEG Video Decoder MFT",
+  "CLSID": "2D709E52-123F-49b5-9CBC-9AF5CDE28FB9",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMAudio Decoder MFT",
+  "CLSID": "2eeb4adf-4578-4d10-bca7-bb955f56320a",
+  "File": "C:\\Windows\\SysWOW64\\WMADMOD.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "MS AMRNB Encoder MFT",
+  "CLSID": "2FAE8AFE-04A3-423a-A814-85DB454712B0",
+  "File": "C:\\Windows\\SysWOW64\\MSAMRNBEncoder.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft AAC Audio Decoder MFT",
+  "CLSID": "32d186a7-218f-4c75-8876-dd77273a8999",
+  "File": "C:\\Windows\\SysWOW64\\MSAudDecMFT.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "b0c687be-01cd-44b5-b8b2-7c1d7e058b1f",
+  "Name": "Intel\u00ae Hardware HDCP Encryptor MFT",
+  "CLSID": "36884b4b-41cd-4563-a2d7-15025a3bcaee",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_encrypt_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "A-law Wrapper MFT",
+  "CLSID": "36CB6E0C-78C1-42B2-9943-846262F31786",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "AXIS Audio Decoder DMO Embedded",
+  "CLSID": "3ae4a063-a3da-461b-8ed9-3303ab417ea4",
+  "File": "C:\\Program Files (x86)\\Axis Communications\\AXIS Media Control Embedded\\AudioEmb.dll",
+  "Version": "3.2.3.0",
+  "Company": "Axis Communications",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "DV Decoder MFT",
+  "CLSID": "404a6de5-d4d6-4260-9bc7-5a6cbd882432",
+  "File": "C:\\Windows\\SysWOW64\\mfdvdec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft MPEG-2 Audio Encoder MFT",
+  "CLSID": "46A4DD5C-73F8-4304-94DF-308F760974F4",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "GSM ACM Wrapper MFT",
+  "CLSID": "4a76b469-7b66-4dd4-ba2d-ddf244c766dc",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Quick Sync Video H.264 Encoder MFT",
+  "CLSID": "4be8d3c0-0515-4a37-ad55-e4bae19af471",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_h264ve_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "VideoStabilization MFT",
+  "CLSID": "51571744-7fe4-4ff2-a498-2dc34ff74f1b",
+  "File": "C:\\Windows\\System32\\MSVideoDSP.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMAPro over S/PDIF MFT",
+  "CLSID": "5210f8e4-b0bb-47c3-a8d9-7b2282cc79ed",
+  "File": "C:\\Windows\\SysWOW64\\WMADMOD.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg4s Decoder MFT",
+  "CLSID": "5686a0d9-fe39-409f-9dff-3fdbc849f9f5",
+  "File": "C:\\Windows\\SysWOW64\\mp4sdecd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "NVIDIA H.264 Encoder MFT",
+  "CLSID": "60F44560-5A20-4857-BFEF-D29773CB8040",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvEncMFTH264.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware Accelerated AV1 Encoder MFT",
+  "CLSID": "62c053ce-5357-4794-8c5a-fbeffeffb82d",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_av1hve_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Microsoft H264 Video Decoder MFT",
+  "CLSID": "62ce7e72-4c71-4d20-b15d-452831a87d9d",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2vdec.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft Opus Audio Decoder MFT",
+  "CLSID": "63e17c10-2d43-4c42-8fe3-8d8b63e46a6a",
+  "File": "C:\\Windows\\SysWOW64\\MSOpusDecoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft FLAC Audio Decoder MFT",
+  "CLSID": "6B0B3E6B-A2C5-4514-8055-AFE8A95242D9",
+  "File": "C:\\Windows\\SysWOW64\\MSFlacDecoder.dll",
+  "Version": "10.0.19041.4355 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "H264 Encoder MFT",
+  "CLSID": "6ca50344-051a-4ded-9779-a43305165e35",
+  "File": "C:\\Windows\\SysWOW64\\mfh264enc.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft MPEG Audio Decoder MFT",
+  "CLSID": "70707B39-B2CA-4015-ABEA-F8447D22D88B",
+  "File": "C:\\Windows\\SysWOW64\\MSAudDecMFT.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "NVIDIA MJPEG Video Decoder MFT",
+  "CLSID": "70F36578-2741-454F-B494-E8563DDD1CB4",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvDecMFTMjpeg.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "WMAudio Encoder MFT",
+  "CLSID": "70f598e9-f4ab-495a-99e2-a7c4d3d89abf",
+  "File": "C:\\Windows\\SysWOW64\\WMADMOE.DLL",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "11064c48-3648-4ed0-932e-05ce8ac811b7",
+  "Name": "AEC",
+  "CLSID": "745057c7-f353-4f2d-a7ee-58434477730e",
+  "File": "C:\\Windows\\SysWOW64\\mfwmaaec.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Color Control",
+  "CLSID": "798059f0-89ca-4160-b325-aeb48efe4f9a",
+  "File": "C:\\Windows\\SysWOW64\\mfvdsp.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "WMV Screen decoder MFT",
+  "CLSID": "7bafb3b1-d8f4-4279-9253-27da423108de",
+  "File": "C:\\Windows\\SysWOW64\\wmvsdecd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "WMVideo8 Encoder MFT",
+  "CLSID": "7e320092-596a-41b2-bbeb-175d10504eb6",
+  "File": "C:\\Windows\\SysWOW64\\wmvxencd.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "WMVideo Decoder MFT",
+  "CLSID": "82d353df-90bd-4382-8bc2-3f6192b76e34",
+  "File": "C:\\Windows\\SysWOW64\\wmvdecod.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "WMSpeech Decoder DMO",
+  "CLSID": "874131cb-4ecc-443b-8948-746b89595d20",
+  "File": "C:\\Windows\\SysWOW64\\WMSPDMOD.DLL",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Processor",
+  "Name": "Microsoft Video Processor MFT",
+  "CLSID": "88753B26-5B24-49bd-B2E7-0C445C78C982",
+  "File": "C:\\Windows\\System32\\msvproc.dll",
+  "Version": "10.0.19041.5794 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "G711 Wrapper MFT",
+  "CLSID": "92b66080-5e2d-449e-90c4-c41f268e5514",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft AAC Audio Encoder MFT",
+  "CLSID": "93af0c51-2275-45d2-a35b-f2ba21caed00",
+  "File": "C:\\Windows\\SysWOW64\\mfAACEnc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "NVIDIA HEVC Encoder MFT",
+  "CLSID": "966F107C-8EA2-425D-B822-E4A71BEF01D7",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nvdm.inf_amd64_72b719430e6c2107\\nvEncMFThevc.dll",
+  "Version": "32.0.15.9671",
+  "Company": "NVIDIA Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Effect",
+  "Name": "Color Converter MFT",
+  "CLSID": "98230571-0087-4204-b020-3282538e57d3",
+  "File": "C:\\Windows\\SysWOW64\\colorcnv.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft ALAC Audio Encoder MFT",
+  "CLSID": "9AB6A28C-748E-4B6A-BFFF-CC443B8E8FB4",
+  "File": "C:\\Windows\\SysWOW64\\MSAlacEncoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "IMA ADPCM ACM Wrapper MFT",
+  "CLSID": "a16e1bff-a80d-48ad-aecd-a35c005685fe",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Multiplexer",
+  "Name": "Microsoft MPEG2 Multiplexer MFT",
+  "CLSID": "ab300f71-01ab-46d2-ab6c-64906cb03258",
+  "File": "C:\\Windows\\System32\\mfmpeg2srcsnk.dll",
+  "Version": "10.0.19041.6392 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Encoder",
+  "Name": "Microsoft Dolby Digital Encoder MFT",
+  "CLSID": "AC3315C9-F481-45D7-826C-0B406C1F64B8",
+  "File": "C:\\Windows\\SysWOW64\\msac3enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "MP3 Decoder MFT",
+  "CLSID": "bbeea841-0a63-4f52-a7ab-a9b3a84ed38a",
+  "File": "C:\\Windows\\SysWOW64\\mp3dmod.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware H265 Encoder MFT",
+  "CLSID": "bc10864d-2b34-408f-912a-102b1b867b6c",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_h265ve_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "H263 Encoder MFT",
+  "CLSID": "bc47fcfe-98a0-4f27-bb07-698af24f2b38",
+  "File": "C:\\Windows\\SysWOW64\\mfh263enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Microsoft ALAC Audio Decoder MFT",
+  "CLSID": "C0CD7D12-31FC-4BBC-B363-7322EE3E1879",
+  "File": "C:\\Windows\\SysWOW64\\MSAlacDecoder.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "ADPCM ACM Wrapper MFT",
+  "CLSID": "ca34fe0a-5722-43ad-af23-05f7650257dd",
+  "File": "C:\\Windows\\System32\\mfcore.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "MJPEG Decoder MFT",
+  "CLSID": "CB17E772-E1CC-4633-8450-5617AF577905",
+  "File": "C:\\Windows\\SysWOW64\\mfmjpegdec.dll",
+  "Version": "10.0.19041.5856 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg43 Decoder MFT",
+  "CLSID": "cba9e78b-49a3-49ea-93d4-6bcba8c4de07",
+  "File": "C:\\Windows\\SysWOW64\\mp43decd.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "Dolby TrueHD IEC-61937 converter MFT",
+  "CLSID": "cf5eeedf-0e92-4b3b-a161-bd0ffe545e4b",
+  "File": "C:\\Windows\\SysWOW64\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Audio Decoder",
+  "Name": "DTS IEC-61937 converter MFT",
+  "CLSID": "d035e24c-c877-42d7-a795-2a8a339b472f",
+  "File": "C:\\Windows\\SysWOW64\\mfaudiocnv.dll",
+  "Version": "10.0.19041.6456 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Intel\u00ae Hardware VP9 Encoder MFT",
+  "CLSID": "d186a626-77ca-4d80-942f-61e0a5111afe",
+  "File": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_8db060cc54b40826\\mfx_mft_vp9ve_32.dll",
+  "Version": "26.02.04.aa242ba8",
+  "Company": "Intel Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "WMVideo9 Encoder MFT",
+  "CLSID": "d23b90d0-144f-46bd-841d-59e4eb19dc59",
+  "File": "C:\\Windows\\SysWOW64\\wmvencod.dll",
+  "Version": "10.0.19041.6093 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Encoder",
+  "Name": "Microsoft MPEG-2 Video Encoder MFT",
+  "CLSID": "e6335f02-80b7-4dc4-adfa-dfe7210d20d5",
+  "File": "C:\\Windows\\SysWOW64\\msmpeg2enc.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Decoder",
+  "Name": "Mpeg4 Decoder MFT",
+  "CLSID": "f371728a-6052-4d47-827c-d039335dfe0a",
+  "File": "C:\\Windows\\SysWOW64\\mpg4decd.dll",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "11064c48-3648-4ed0-932e-05ce8ac811b7",
+  "Name": "Resampler MFT",
+  "CLSID": "f447b69e-1884-4a7e-8055-346f74d6edb3",
+  "File": "C:\\Windows\\SysWOW64\\resampledmo.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ }
+]

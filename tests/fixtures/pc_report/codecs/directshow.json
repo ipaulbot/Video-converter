@@ -1250,7 +1250,7 @@
   "Architecture": "x64"
  },
  {
-  "Category": "Video Compressors",
+  "Category": "Video Compressors (Legacy)",
   "Name": "DV Video Encoder",
   "CLSID": "{13AA3650-BB6F-11D0-AFB9-00AA00B67A42}",
   "File": "C:\\Windows\\System32\\qdv.dll",
@@ -1260,7 +1260,7 @@
   "Architecture": "x64"
  },
  {
-  "Category": "Video Compressors",
+  "Category": "Video Compressors (Legacy)",
   "Name": "MJPEG Compressor",
   "CLSID": "{B80AB0A0-7416-11D2-9EEB-006008039E37}",
   "File": "C:\\Windows\\System32\\quartz.dll",
@@ -2470,7 +2470,7 @@
   "Architecture": "x86"
  },
  {
-  "Category": "Video Compressors",
+  "Category": "Video Compressors (Legacy)",
   "Name": "DV Video Encoder",
   "CLSID": "{13AA3650-BB6F-11D0-AFB9-00AA00B67A42}",
   "File": "C:\\Windows\\SysWOW64\\qdv.dll",
@@ -2480,7 +2480,7 @@
   "Architecture": "x86"
  },
  {
-  "Category": "Video Compressors",
+  "Category": "Video Compressors (Legacy)",
   "Name": "MJPEG Compressor",
   "CLSID": "{B80AB0A0-7416-11D2-9EEB-006008039E37}",
   "File": "C:\\Windows\\SysWOW64\\quartz.dll",
