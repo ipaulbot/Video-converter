@@ -33,7 +33,7 @@ SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER",
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
-_ACCOUNT_SID = re.compile(r"\bS-\d+(?:-\d+){2,}\b", re.IGNORECASE)
+_ACCOUNT_SID = re.compile(r"\b(S-1-(?:5-21|12-1)-)(?:\d+-){3}\d+\b", re.IGNORECASE)
 _COMMAND_SECRET_ARG = re.compile(
     r"((?:--|-(?!-)|/)([A-Za-z0-9_.-]+)(?:=|:(\s*)|\s+))"
     r"(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\S+)",
@@ -206,7 +206,7 @@ def redact_payload(data, options=None, *, env=None):
         if isinstance(value, str):
             if scrubber is not None:
                 value = scrubber.sub(lambda match: replacements[match.group(0).casefold()], value)
-            return _ACCOUNT_SID.sub("<redacted-sid>", value)
+            return _ACCOUNT_SID.sub(r"\1<redacted>", value)
         return value
 
     def redact_value(key, value):

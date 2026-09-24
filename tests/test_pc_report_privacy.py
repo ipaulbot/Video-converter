@@ -105,7 +105,15 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         redacted = redact_payload(payload, {"redact": True}, env={})
 
-        self.assertEqual(redacted["Name"], "OneDrive Startup Task-<redacted-sid>")
+        value = redacted["Name"].removeprefix("OneDrive Startup Task-")
+        self.assertTrue(value.startswith("S-1-5-21-"))
+        for private_part in ("2734529186", "23328706", "2630127308", "5137"):
+            self.assertNotIn(private_part, value)
+
+    def test_redact_payload_leaves_well_known_sids_readable(self):
+        payload = {"system": "S-1-5-18", "administrators": "S-1-5-32-544"}
+
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
 
     def test_mask_string_fully_masks_short_sensitive_strings(self):
         self.assertEqual(mask_string("ABCDE"), "*****")

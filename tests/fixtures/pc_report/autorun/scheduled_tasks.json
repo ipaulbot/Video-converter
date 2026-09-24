@@ -60,50 +60,14 @@
   "Run As (account name)": "****"
  },
  {
-  "Name": "OneDrive Reporting Task-<redacted-sid>",
-  "Path": "\\",
-  "State": "Ready",
-  "Author": "Microsoft Corporation",
-  "Action": "%localappdata%\\Microsoft\\OneDrive\\OneDriveStandaloneUpdater.exe /reporting",
-  "Triggers": "Time",
-  "LastRun": "/Date(1790266393000)/",
-  "NextRun": "/Date(1790352793000)/",
-  "LastResult": 0,
-  "Run As (account name)": "****"
- },
- {
-  "Name": "OneDrive Standalone Update Task-<redacted-sid>",
-  "Path": "\\",
-  "State": "Ready",
-  "Author": "Microsoft Corporation",
-  "Action": "%localappdata%\\Microsoft\\OneDrive\\OneDriveStandaloneUpdater.exe",
-  "Triggers": "Time",
-  "LastRun": "/Date(1790266271000)/",
-  "NextRun": "/Date(1790354440000)/",
-  "LastResult": 2147806724,
-  "Run As (account name)": "****"
- },
- {
-  "Name": "OneDrive Startup Task-<redacted-sid>",
-  "Path": "\\",
-  "State": "Ready",
-  "Author": "Microsoft Corporation",
-  "Action": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\OneDrive\\26.163.0823.0004\\OneDriveLauncher.exe /startInstances",
-  "Triggers": "Logon",
-  "LastRun": "/Date(1790159979000)/",
-  "NextRun": null,
-  "LastResult": 0,
-  "Run As (account name)": "****"
- },
- {
-  "Name": "ZoomUpdateTaskUser-<redacted-sid>",
+  "Name": "ZoomUpdateTaskUser-S-1-5-21-<redacted>",
   "Path": "\\",
   "State": "Ready",
   "Author": "Zoom Communications, Inc.",
   "Action": "\"C:\\Users\\<redacted>\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe\" --action=UpdateSchedule",
   "Triggers": "Daily",
-  "LastRun": "/Date(1790287016000)/",
-  "NextRun": "/Date(1790290616000)/",
+  "LastRun": "/Date(1790290616000)/",
+  "NextRun": "/Date(1790294216000)/",
   "LastResult": 0,
   "Run As (account name)": "****"
  },
