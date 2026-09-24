@@ -124,6 +124,15 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(mask_string("ABCDEFGHIJKLMNOP"), "AB**********MNOP")
         self.assertEqual(mask_string("ab"), "**")
 
+    def test_processor_id_is_masked_as_a_hardware_identifier(self):
+        redacted = redact_payload(
+            {"ProcessorId": "BFEBFBFF000906A2"},
+            {"redact": True},
+            env={},
+        )
+
+        self.assertNotEqual(redacted["ProcessorId"], "BFEBFBFF000906A2")
+
     def test_start_name_leaves_well_known_accounts_readable(self):
         payload = [
             {"StartName": "LocalSystem"},

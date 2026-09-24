@@ -20,7 +20,7 @@ SENSITIVE_TOKENS = (
     "password", "passwd", "pwd", "token", "secret", "credential", "apikey",
     "uuid", "assettag", "registeredowner", "registereduser", "registeredorganization", "organization",
     "owner", "username", "startname", "logonserver",
-    "ssid", "computername", "csname", "hostname", "hardwareid", "machineguid", "domainname",
+    "ssid", "computername", "csname", "hostname", "hardwareid", "processorid", "machineguid", "domainname",
     "localadministrators", "accessaccount", "accountname",
 )
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",

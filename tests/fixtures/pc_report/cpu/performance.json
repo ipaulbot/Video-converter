@@ -1,0 +1,117 @@
+[
+ {
+  "Path": "\\\\PC-NAME\\processor information(_total)\\% processor utility",
+  "InstanceName": "_total",
+  "CookedValue": 2.709433835513678
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,0)\\% processor performance",
+  "InstanceName": "0,0",
+  "CookedValue": 152.54151561897416
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,1)\\% processor performance",
+  "InstanceName": "0,1",
+  "CookedValue": 77.56086015688396
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,10)\\% processor performance",
+  "InstanceName": "0,10",
+  "CookedValue": 164.14767685481883
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,11)\\% processor performance",
+  "InstanceName": "0,11",
+  "CookedValue": 53.07032590051458
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,12)\\% processor performance",
+  "InstanceName": "0,12",
+  "CookedValue": 104.22716627634661
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,13)\\% processor performance",
+  "InstanceName": "0,13",
+  "CookedValue": 124.23099839775686
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,14)\\% processor performance",
+  "InstanceName": "0,14",
+  "CookedValue": 120.9515570934256
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,15)\\% processor performance",
+  "InstanceName": "0,15",
+  "CookedValue": 129.43821898932933
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,16)\\% processor performance",
+  "InstanceName": "0,16",
+  "CookedValue": 112.52808788386774
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,17)\\% processor performance",
+  "InstanceName": "0,17",
+  "CookedValue": 133.76239229354246
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,18)\\% processor performance",
+  "InstanceName": "0,18",
+  "CookedValue": 130.77029226925114
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,19)\\% processor performance",
+  "InstanceName": "0,19",
+  "CookedValue": 159.62754774378908
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,2)\\% processor performance",
+  "InstanceName": "0,2",
+  "CookedValue": 164.76290196461733
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,3)\\% processor performance",
+  "InstanceName": "0,3",
+  "CookedValue": 81.49851323223312
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,4)\\% processor performance",
+  "InstanceName": "0,4",
+  "CookedValue": 131.44898564228538
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,5)\\% processor performance",
+  "InstanceName": "0,5",
+  "CookedValue": 165.86516954460052
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,6)\\% processor performance",
+  "InstanceName": "0,6",
+  "CookedValue": 114.66611097880448
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,7)\\% processor performance",
+  "InstanceName": "0,7",
+  "CookedValue": 168.96176094633535
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,8)\\% processor performance",
+  "InstanceName": "0,8",
+  "CookedValue": 167.81489383318095
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,9)\\% processor performance",
+  "InstanceName": "0,9",
+  "CookedValue": 54.96153846153846
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(0,_total)\\% processor performance",
+  "InstanceName": "0,_total",
+  "CookedValue": 138.26537896283855
+ },
+ {
+  "Path": "\\\\PC-NAME\\processor information(_total)\\% processor performance",
+  "InstanceName": "_total",
+  "CookedValue": 138.25870529271302
+ }
+]

@@ -1,0 +1,28 @@
+{
+ "ProcessorNameString": "12th Gen Intel(R) Core(TM) i7-12700H",
+ "Identifier": "Intel64 Family 6 Model 154 Stepping 3",
+ "VendorIdentifier": "GenuineIntel",
+ "Update Revision": [
+  0,
+  0,
+  0,
+  0,
+  59,
+  4,
+  0,
+  0
+ ],
+ "Previous Update Revision": [
+  0,
+  0,
+  0,
+  0,
+  59,
+  4,
+  0,
+  0
+ ],
+ "~MHz": 2688,
+ "FeatureSet": 823868927,
+ "Platform ID": null
+}
