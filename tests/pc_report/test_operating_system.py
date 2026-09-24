@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import operating_system as mod
 from tests.pc_report import support
 
@@ -63,6 +64,29 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(mod.value_of(data, "Name"), "Microsoft Windows 11 Enterprise LTSC")
         self.assertEqual(mod.value_of(None, "Name"), "")
 
+    def test_value_of_first_match_across_groups(self):
+        data = {
+            "groups": [
+                {"title": "A", "rows": {"Name": "first"}},
+                {"title": "B", "rows": {"Name": "second"}},
+            ]
+        }
+        self.assertEqual(mod.value_of(data, "Name"), "first")
+
+    def test_version_without_build_fields(self):
+        rows = mod.flatten(mod.build({}, {"DisplayVersion": "24H2"}, {}, {}))
+        self.assertEqual(rows["Version"], "24H2")
+
+    def test_version_with_build_no_ubr(self):
+        rows = mod.flatten(mod.build({}, {"DisplayVersion": "24H2", "CurrentBuild": "26100"}, {}, {}))
+        self.assertEqual(rows["Version"], "24H2 (OS Build 26100)")
+
+    def test_computer_name_masked_when_rendered(self):
+        data = mod.build(OS, VER, POL, LIC)
+        html = mod.render(redact_payload(data, {"redact": True}), support.render_ctx())
+        self.assertIn("<th>Computer Name</th>", html)
+        self.assertNotIn(OS["CSName"], html, "computer name must be masked")
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
@@ -71,7 +95,6 @@ class FixtureTests(unittest.TestCase):
         for label in ("Name", "Version", "Kernel Version", "Build Lab Ex", "Activation Status",
                       "Boot Time", "Up Time", "UAC Enabled", "Secure Boot", "Pending Reboot"):
             self.assertIn(f"<th>{label}</th>", html, label)
-        self.assertNotIn("PC-NAME", html, "computer name must be masked")
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)

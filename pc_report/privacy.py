@@ -17,7 +17,8 @@ _NON_ALNUM = re.compile(r"[^a-z0-9]")
 SENSITIVE_TOKENS = (
     "serial", "productkey", "partialproductkey", "productid", "oa3x", "licensekey",
     "password", "passwd", "pwd", "token", "secret", "credential", "apikey",
-    "uuid", "assettag", "registeredowner", "registereduser", "owner", "username", "startname", "logonserver",
+    "uuid", "assettag", "registeredowner", "registereduser", "registeredorganization", "organization",
+    "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "machineguid", "domainname",
     "localadministrators", "accessaccount", "accountname",
 )

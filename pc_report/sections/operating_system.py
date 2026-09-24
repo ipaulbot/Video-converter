@@ -61,11 +61,14 @@ def _minutes_human(minutes) -> str:
 
 def build(os_: dict, ver: dict, pol: dict, lic: dict) -> dict:
     os_, ver, pol, lic = os_ or {}, ver or {}, pol or {}, lic or {}
-    build_no = str(os_.get("BuildNumber") or ver.get("CurrentBuild") or "")
+    build_no = str(os_.get("BuildNumber") or ver.get("CurrentBuild") or "").strip()
     ubr = ver.get("UBR")
-    full_build = f"{build_no}.{ubr}" if build_no and ubr is not None else build_no
     display = ver.get("DisplayVersion") or ver.get("ReleaseId") or ""
-    version = f"{display} (OS Build {full_build})".strip() if (display or full_build) else ""
+    if build_no:
+        build_suffix = f"{build_no}.{ubr}" if ubr is not None else build_no
+        version = f"{display} (OS Build {build_suffix})".strip() if display else f"OS Build {build_suffix}"
+    else:
+        version = display
 
     windows = {
         "Name": os_.get("Caption", ""),
@@ -143,7 +146,14 @@ def flatten(data) -> dict:
 
 
 def value_of(data, label: str):
-    return flatten(data).get(label, "")
+    if not isinstance(data, dict):
+        return ""
+    for group in as_list(data.get("groups")):
+        if isinstance(group, dict):
+            rows = group.get("rows")
+            if isinstance(rows, dict) and label in rows:
+                return rows[label]
+    return ""
 
 
 def collect(ctx):

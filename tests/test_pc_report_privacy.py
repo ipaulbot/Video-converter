@@ -17,6 +17,10 @@ class PcReportPrivacyTests(unittest.TestCase):
         r = redact_payload({"RegisteredUser": "Jane Example"}, {"redact": True})
         self.assertNotIn("Example", r["RegisteredUser"])
 
+    def test_registered_organization_is_redacted(self):
+        r = redact_payload({"Registered Organization": "Acme Secret"}, {"redact": True})
+        self.assertNotIn("Secret", r["Registered Organization"])
+
     def test_redact_payload_masks_sensitive_keys_and_user_paths(self):
         payload = {
             "licenses": {"ProductKey": "AAAAA-BBBBB-CCCCC-DDDDD"},
