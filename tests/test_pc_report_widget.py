@@ -1,10 +1,10 @@
-import unittest
 import inspect
+import unittest
 
 from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
 
-from ui.pc_report_dialog import PCReportWidget
 from ui.main_window import VideoConverterApp
+from ui.pc_report_dialog import PCReportWidget
 
 
 class PCReportWidgetTests(unittest.TestCase):

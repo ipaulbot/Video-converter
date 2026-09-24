@@ -11,7 +11,6 @@ from unittest.mock import patch
 
 from conversion import gpu_encoders
 
-
 # A trimmed `ffmpeg -encoders` listing. The real output is a table; the code
 # only looks for encoder names as substrings.
 NVIDIA_OUTPUT = """

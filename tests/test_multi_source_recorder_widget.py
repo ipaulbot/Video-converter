@@ -1,13 +1,19 @@
-import unittest
-from unittest.mock import patch
 import os
 import tempfile
+import unittest
+from unittest.mock import patch
 
-from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtCore import QProcess
+from PyQt5.QtCore import QEvent, QProcess, Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QDialogButtonBox, QPushButton, QSizePolicy, QToolButton, QWidget
-from PyQt5.QtWidgets import QPlainTextEdit
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialogButtonBox,
+    QPlainTextEdit,
+    QPushButton,
+    QSizePolicy,
+    QToolButton,
+    QWidget,
+)
 
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget, VideoSettingsDialog
 

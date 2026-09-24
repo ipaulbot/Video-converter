@@ -34,10 +34,36 @@ SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER",
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
 _COMMAND_SECRET_ARG = re.compile(
-    r"((?:--|/)[A-Za-z0-9_.-]*(?:token|secret|password|session|conversation|uuid|pipe|channel|window-config)"
-    r"[A-Za-z0-9_.-]*(?:=|\s+))(?:\"[^\"]*\"|\S+)",
+    r"((?:--|-(?!-)|/)([A-Za-z0-9_.-]+)(?:=|:(\s*)|\s+))"
+    r"(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\S+)",
     re.IGNORECASE,
 )
+_COMMAND_OPT_COMPACT_SUBSTRINGS = (
+    "token", "password", "passwd", "secret", "credential", "apikey", "accesskey",
+    "bearer", "auth", "sas", "session", "conversation", "uuid", "pipe", "channel",
+    "windowconfig",
+)
+_COMMAND_OPT_SEGMENTS = frozenset(
+    {"token", "password", "passwd", "pwd", "secret", "credential", "key", "auth", "bearer", "sas"},
+)
+
+
+def _command_option_is_sensitive(name: str) -> bool:
+    lower = name.lower()
+    compact = _NON_ALNUM.sub("", lower)
+    if any(fragment in compact for fragment in _COMMAND_OPT_COMPACT_SUBSTRINGS):
+        return True
+    return any(part in _COMMAND_OPT_SEGMENTS for part in re.split(r"[-_]", lower))
+
+
+def _mask_command_secret_arg(match: re.Match[str]) -> str:
+    if not _command_option_is_sensitive(match.group(2)):
+        return match.group(0)
+    prefix = match.group(1)
+    gap = match.group(3) or ""
+    if gap and prefix[-1].isspace():
+        gap = ""
+    return prefix + gap + "***"
 _PIPE_NAME = re.compile(r"(\\\\\.\\pipe\\)[^\s\"<>]+", re.IGNORECASE)
 
 
@@ -111,7 +137,7 @@ def redact_command_line(command):
     if not command:
         return command
     value = redact_user_paths(command)
-    value = _COMMAND_SECRET_ARG.sub(r"\1<redacted>", value)
+    value = _COMMAND_SECRET_ARG.sub(_mask_command_secret_arg, value)
     return _PIPE_NAME.sub(r"\1<redacted>", value)
 
 

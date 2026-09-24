@@ -2,7 +2,7 @@ import json
 import unittest
 
 from pc_report import privacy
-from pc_report.privacy import mask_string, redact_payload, redact_user_paths
+from pc_report.privacy import mask_string, redact_command_line, redact_payload, redact_user_paths
 from pc_report.render_json import render
 
 
@@ -179,6 +179,27 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         for original, row in zip(rows, redacted, strict=True):
             self.assertNotEqual(row["Value"], original["Value"], original["Name"])
+
+    def test_command_line_masks_credential_option_separators(self):
+        cases = [
+            ("tool.exe -token abc123", "tool.exe -token ***"),
+            ("tool.exe --pwd=hunter2", "tool.exe --pwd=***"),
+            ('tool.exe --api-key="AKIA XYZ"', "tool.exe --api-key=***"),
+            ("tool.exe /password:secret1", "tool.exe /password:***"),
+            ("tool.exe --Auth-Token: xyz", "tool.exe --Auth-Token: ***"),
+        ]
+        for raw, expected in cases:
+            with self.subTest(raw=raw):
+                self.assertEqual(redact_command_line(raw), expected)
+
+        unchanged = [
+            r"C:\Program Files\Keyboard\app.exe --mode=key-remap",
+            r"notepad.exe C:\keys\readme.txt",
+            r"C:\data\token\file.txt --verbose",
+        ]
+        for raw in unchanged:
+            with self.subTest(raw=raw):
+                self.assertEqual(redact_command_line(raw), raw)
 
     def test_command_line_masks_sensitive_arguments_and_pipe_names(self):
         command = (

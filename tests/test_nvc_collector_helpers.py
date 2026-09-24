@@ -4,9 +4,9 @@ import unittest
 
 from pc_report.collectors import (
     filter_nvc_related_items,
-    scan_codec_files,
     normalize_logical_disk_rows,
     normalize_nvc_program_row,
+    scan_codec_files,
     scan_nvc_filter_files,
 )
 
