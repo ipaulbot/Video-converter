@@ -35,6 +35,45 @@ class PcReportPrivacyTests(unittest.TestCase):
             ],
         )
 
+    def test_redact_payload_scrubs_identities_before_sensitive_label_masking(self):
+        env = {
+            "COMPUTERNAME": "LAB-PC7",
+            "USERNAME": "jane",
+            "USERDNSDOMAIN": "corp.example.org",
+            "USERDOMAIN": "CORP",
+        }
+        computer = redact_payload({"ComputerName": "LAB-PC7"}, {"redact": True}, env=env)["ComputerName"]
+        self.assertNotIn("LAB", computer)
+        self.assertNotIn("PC7", computer)
+
+        rows = redact_payload(
+            [
+                {"Name": "LOGONSERVER", "Value": r"\\LAB-PC7"},
+                {"Name": "USERDNSDOMAIN", "Value": "corp.example.org"},
+            ],
+            {"redact": True},
+            env=env,
+        )
+        logon_value = rows[0]["Value"]
+        self.assertNotIn("LAB", logon_value)
+        self.assertNotIn("PC7", logon_value)
+        dns_value = rows[1]["Value"]
+        self.assertNotIn("corp", dns_value)
+        self.assertNotIn("example.org", dns_value)
+
+    def test_redact_payload_scrubs_logon_server_host_before_masking(self):
+        env = {
+            "COMPUTERNAME": "LAB-PC7",
+            "LOGONSERVER": r"\\DC01",
+            "USERNAME": "jane",
+        }
+        value = redact_payload(
+            [{"Name": "LOGONSERVER", "Value": r"\\DC01"}],
+            {"redact": True},
+            env=env,
+        )[0]["Value"]
+        self.assertNotIn("DC01", value)
+
     def test_redact_payload_scrubs_identity_tokens_in_string_values(self):
         env = {
             "COMPUTERNAME": "LAB-PC7",

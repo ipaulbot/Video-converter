@@ -112,6 +112,11 @@ def identity_tokens(env=None) -> list[tuple[str, str]]:
     user_domain = env.get("USERDOMAIN") or ""
     if user_domain and user_domain.upper() not in {computer_name.upper(), "WORKGROUP"}:
         values.append((user_domain, "WORKGROUP"))
+    logon = (env.get("LOGONSERVER") or "").strip()
+    if logon:
+        logon_host = logon.lstrip("\\").split("\\", 1)[0]
+        if logon_host and logon_host.upper() not in {computer_name.upper()}:
+            values.append((logon_host, "LOGON-SRV"))
     return [(value, replacement) for value, replacement in values if value]
 
 
@@ -165,4 +170,4 @@ def redact_payload(data, options=None, *, env=None):
             return mask_string(value)
         return redact_user_paths(value) if isinstance(value, str) else value
 
-    return scrub_identities(redact_value("", data))
+    return redact_value("", scrub_identities(data))

@@ -212,7 +212,7 @@
  {
   "Scope": "Process",
   "Name": "__CURSOR_SANDBOX_ENV_RESTORE",
-  "Value": "bu*********************************************************************************************************************************************************************************************625'"
+  "Value": "bu*********************************************************************************************************************************************************************************************6f3'"
  },
  {
   "Scope": "Process",
@@ -282,7 +282,7 @@
  {
   "Scope": "Process",
   "Name": "COMPUTERNAME",
-  "Value": "PB*****DBS3"
+  "Value": "PC*NAME"
  },
  {
   "Scope": "Process",
@@ -297,7 +297,7 @@
  {
   "Scope": "Process",
   "Name": "CURSOR_CONVERSATION_ID",
-  "Value": "0c******************************8625"
+  "Value": "0d******************************d6f3"
  },
  {
   "Scope": "Process",
@@ -412,7 +412,7 @@
  {
   "Scope": "Process",
   "Name": "LOGONSERVER",
-  "Value": "\\\\*******DC03"
+  "Value": "\\\\*****-SRV"
  },
  {
   "Scope": "Process",
@@ -547,22 +547,22 @@
  {
   "Scope": "Process",
   "Name": "USERDNSDOMAIN",
-  "Value": "NO*********OCAL"
+  "Value": "ex*******ocal"
  },
  {
   "Scope": "Process",
   "Name": "USERDOMAIN",
-  "Value": "NO***SINC"
+  "Value": "WO***ROUP"
  },
  {
   "Scope": "Process",
   "Name": "USERDOMAIN_ROAMINGPROFILE",
-  "Value": "NO***SINC"
+  "Value": "WO***ROUP"
  },
  {
   "Scope": "Process",
   "Name": "USERNAME",
-  "Value": "*****"
+  "Value": "****"
  },
  {
   "Scope": "Process",
