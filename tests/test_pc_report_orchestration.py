@@ -145,11 +145,31 @@ class RunAllTests(unittest.TestCase):
         self.assertEqual(results["noldus_summary"]["data"], {"cpu_seen": None})
 
     def test_later_phase_sees_elapsed_time_for_earlier_phase(self):
+        captured_run_elapsed = {}
+
         def summary(ctx):
+            captured_run_elapsed.update(dict(ctx.run.elapsed))
             return {"cpu_elapsed": "cpu" in ctx.run.elapsed}
+
         sections = [_fake("noldus_summary", "NVC", collect=summary, after=("cpu",)), _fake("cpu", "Hardware")]
-        _meta, results, _errors = self._run(sections=sections)
+        meta, results, _errors = self._run(sections=sections)
         self.assertEqual(results["noldus_summary"]["data"], {"cpu_elapsed": True})
+        self.assertEqual(meta["elapsed_by_section"]["cpu"], captured_run_elapsed["cpu"])
+
+    def test_failed_section_records_real_elapsed_time(self):
+        import time
+
+        def slow_then_fail(ctx):
+            deadline = time.monotonic() + 0.05
+            while time.monotonic() < deadline:
+                time.sleep(0.001)
+            raise RuntimeError("collect blew up")
+
+        sections = [_fake("cpu", "Hardware", collect=slow_then_fail)]
+        meta, results, errors = self._run(sections=sections)
+        self.assertIn("collect blew up", errors["cpu"])
+        self.assertEqual(results["cpu"]["status"], "partial")
+        self.assertGreaterEqual(meta["elapsed_by_section"]["cpu"], 0.05)
 
     def test_a_dependency_cycle_is_reported_not_hung(self):
         sections = [_fake("a", after=("b",)), _fake("b", after=("a",))]

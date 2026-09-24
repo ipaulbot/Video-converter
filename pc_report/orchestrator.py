@@ -24,9 +24,12 @@ MAX_WORKERS = 6
 
 def _collect_one(run: RunContext, section):
     started = time.monotonic()
-    ctx = SectionContext(run, section)
-    data = section.collect(ctx)
-    return wrap(data, ctx.notes), time.monotonic() - started
+    try:
+        ctx = SectionContext(run, section)
+        data = section.collect(ctx)
+        return wrap(data, ctx.notes), None, time.monotonic() - started
+    except Exception as exc:
+        return None, exc, time.monotonic() - started
 
 
 def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_runner=None,
@@ -79,14 +82,14 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
             done, _ = cf.wait(running, return_when=cf.FIRST_COMPLETED)
             for fut in done:
                 section = running.pop(fut)
-                try:
-                    result, seconds = fut.result()
-                except Exception as exc:
+                result, exc, raw_seconds = fut.result()
+                if exc is not None:
                     logger.warning("PC report section %s failed: %s", section.key, exc)
-                    result, seconds = {"status": "partial", "error": str(exc)}, 0.0
+                    result = {"status": "partial", "error": str(exc)}
                     errors[section.key] = str(exc)
+                seconds = round(raw_seconds, 3)
                 results[section.key] = result
-                elapsed[section.key] = round(seconds, 2)
+                elapsed[section.key] = seconds
                 run.elapsed[section.key] = seconds
                 report(section)
 
