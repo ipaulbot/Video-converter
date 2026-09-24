@@ -62,7 +62,7 @@
  {
   "Scope": "Machine",
   "Name": "IGCCSVC_DB",
-  "Value": "<redacted>"
+  "Value": "AQ**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************vg=="
  },
  {
   "Scope": "Machine",
@@ -212,7 +212,7 @@
  {
   "Scope": "Process",
   "Name": "__CURSOR_SANDBOX_ENV_RESTORE",
-  "Value": "<redacted>"
+  "Value": "bu*********************************************************************************************************************************************************************************************625'"
  },
  {
   "Scope": "Process",
@@ -262,7 +262,7 @@
  {
   "Scope": "Process",
   "Name": "CHROME_CRASHPAD_PIPE_NAME",
-  "Value": "<redacted>"
+  "Value": "\\\\**********************************DASJ"
  },
  {
   "Scope": "Process",
@@ -297,7 +297,7 @@
  {
   "Scope": "Process",
   "Name": "CURSOR_CONVERSATION_ID",
-  "Value": "<redacted>"
+  "Value": "0c******************************8625"
  },
  {
   "Scope": "Process",
@@ -387,7 +387,7 @@
  {
   "Scope": "Process",
   "Name": "IGCCSVC_DB",
-  "Value": "<redacted>"
+  "Value": "AQ**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************vg=="
  },
  {
   "Scope": "Process",
@@ -602,12 +602,12 @@
  {
   "Scope": "Process",
   "Name": "VSCODE_IPC_HOOK",
-  "Value": "<redacted>"
+  "Value": "\\\\****************************sock"
  },
  {
   "Scope": "Process",
   "Name": "VSCODE_NLS_CONFIG",
-  "Value": "{\"userLocale\":\"en-us\",\"osLocale\":\"en-us\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"C:\\\\Users\\\\<redacted>\\\\AppData\\\\Local\\\\Programs\\\\cursor\\\\resources\\\\app\\\\out\\\\nls.messages.json\",\"locale\":\"en-us\",\"availableLanguages\":{}}"
+  "Value": "{\"userLocale\":\"en-us\",\"osLocale\":\"en-us\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"C:\\\\Users\\\\user\\\\AppData\\\\Local\\\\Programs\\\\cursor\\\\resources\\\\app\\\\out\\\\nls.messages.json\",\"locale\":\"en-us\",\"availableLanguages\":{}}"
  },
  {
   "Scope": "Process",

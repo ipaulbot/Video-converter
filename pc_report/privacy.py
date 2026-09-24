@@ -7,6 +7,7 @@ decoded text field with a token word unless they want it masked.
 """
 from __future__ import annotations
 
+import os
 import re
 from copy import deepcopy
 
@@ -26,7 +27,9 @@ IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")
 MAC_TOKENS = ("macaddress", "physicaladdress")
 SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER", "COMPUTERNAME",
-                       "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME"}
+                       "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME", "IGCCSVC_DB",
+                       "__CURSOR_SANDBOX_ENV_RESTORE", "CURSOR_CONVERSATION_ID",
+                       "CHROME_CRASHPAD_PIPE_NAME", "VSCODE_IPC_HOOK"}
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
@@ -90,18 +93,57 @@ def mask_ip(value):
 def redact_user_paths(path):
     if not path:
         return path
-    return re.sub(r"(C:\\Users\\)[^\\/]+", r"\1<redacted>", str(path), flags=re.IGNORECASE)
+    return re.sub(
+        r"((?:[A-Z]:)?[\\/]Users[\\/])[^\\/;\"']+",
+        r"\1<redacted>",
+        str(path),
+        flags=re.IGNORECASE,
+    )
+
+
+def identity_tokens(env=None) -> list[tuple[str, str]]:
+    env = os.environ if env is None else env
+    computer_name = env.get("COMPUTERNAME") or ""
+    values = [
+        (computer_name, "PC-NAME"),
+        (env.get("USERNAME") or "", "user"),
+        (env.get("USERDNSDOMAIN") or "", "example.local"),
+    ]
+    user_domain = env.get("USERDOMAIN") or ""
+    if user_domain and user_domain.upper() not in {computer_name.upper(), "WORKGROUP"}:
+        values.append((user_domain, "WORKGROUP"))
+    return [(value, replacement) for value, replacement in values if value]
 
 
 def _name_is_sensitive(name: str) -> bool:
     return name.upper() in SENSITIVE_ENV_NAMES or any(t in norm_key(name) for t in SENSITIVE_TOKENS)
 
 
-def redact_payload(data, options=None):
+def redact_payload(data, options=None, *, env=None):
     """Return a redacted deep copy suitable for HTML or JSON export."""
     options = options or {}
     if not options.get("redact", True):
         return deepcopy(data)
+
+    replacements = {}
+    for value, replacement in identity_tokens(env):
+        replacements.setdefault(value.casefold(), replacement)
+    scrubber = None
+    if replacements:
+        alternatives = "|".join(re.escape(value) for value in sorted(replacements, key=len, reverse=True))
+        scrubber = re.compile(
+            r"(?<![A-Za-z0-9_])(?:" + alternatives + r")(?![A-Za-z0-9_])",
+            re.IGNORECASE,
+        )
+
+    def scrub_identities(value):
+        if isinstance(value, dict):
+            return {key: scrub_identities(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [scrub_identities(item) for item in value]
+        if isinstance(value, str) and scrubber is not None:
+            return scrubber.sub(lambda match: replacements[match.group(0).casefold()], value)
+        return value
 
     def redact_value(key, value):
         if isinstance(value, dict):
@@ -123,4 +165,4 @@ def redact_payload(data, options=None):
             return mask_string(value)
         return redact_user_paths(value) if isinstance(value, str) else value
 
-    return redact_value("", data)
+    return scrub_identities(redact_value("", data))

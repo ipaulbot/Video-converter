@@ -1,0 +1,14 @@
+{
+ "ProgramData": "C:\\ProgramData",
+ "SystemRoot": "C:\\Windows",
+ "ProgramW6432": "C:\\Program Files",
+ "windir": "C:\\Windows",
+ "ProgramFiles(x86)": "C:\\Program Files (x86)",
+ "CommonProgramFiles": "C:\\Program Files\\Common Files",
+ "TEMP": "C:\\Users\\<redacted>\\AppData\\Local\\Temp",
+ "TMP": "C:\\Users\\<redacted>\\AppData\\Local\\Temp",
+ "ProgramFiles": "C:\\Program Files",
+ "SystemDrive": "C:",
+ "PUBLIC": "C:\\Users\\<redacted>",
+ "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files"
+}

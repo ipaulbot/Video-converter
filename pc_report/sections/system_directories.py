@@ -1,10 +1,12 @@
 """System Directories: every Environment.SpecialFolder plus the core environment folders."""
 from __future__ import annotations
 
-import os
 import re
 
 from ..section import Section, list_table, rows_of
+
+ENV_DIRS = ("SystemRoot", "SystemDrive", "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432",
+            "ProgramData", "CommonProgramFiles", "CommonProgramFiles(x86)", "PUBLIC", "TEMP", "TMP", "windir")
 
 SCRIPT = r"""
 [Enum]::GetNames([System.Environment+SpecialFolder]) | Sort-Object -Unique | ForEach-Object {
@@ -13,8 +15,17 @@ SCRIPT = r"""
 }
 """
 
-ENV_DIRS = ("SystemRoot", "SystemDrive", "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432",
-            "ProgramData", "CommonProgramFiles", "CommonProgramFiles(x86)", "PUBLIC", "TEMP", "TMP", "windir")
+ENV_DIRS_SCRIPT = r"""
+$names = @(
+  'SystemRoot', 'SystemDrive', 'ProgramFiles', 'ProgramFiles(x86)', 'ProgramW6432',
+  'ProgramData', 'CommonProgramFiles', 'CommonProgramFiles(x86)', 'PUBLIC', 'TEMP', 'TMP', 'windir'
+)
+$values = @{}
+foreach ($n in $names) {
+  $values[$n] = [Environment]::GetEnvironmentVariable($n)
+}
+[pscustomobject]$values
+"""
 
 COLUMNS = [("Name", "Name"), ("Path", "Path"), ("Source", "Source")]
 
@@ -33,7 +44,9 @@ def build(folders, env: dict) -> dict:
 
 
 def collect(ctx):
-    return build(ctx.query("folders", SCRIPT), dict(os.environ))
+    folders = ctx.query("folders", SCRIPT)
+    env = ctx.query("environment_dirs", ENV_DIRS_SCRIPT) or {}
+    return build(folders, env)
 
 
 def render(data, ctx):

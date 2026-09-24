@@ -1,11 +1,65 @@
 import json
 import unittest
 
-from pc_report.privacy import mask_string, redact_payload
+from pc_report import privacy
+from pc_report.privacy import mask_string, redact_payload, redact_user_paths
 from pc_report.render_json import render
 
 
 class PcReportPrivacyTests(unittest.TestCase):
+    def test_redact_user_paths_handles_any_drive_and_slash_style(self):
+        cases = {
+            r"\Users\jane\x": r"\Users\<redacted>\x",
+            "D:/Users/jane/x": "D:/Users/<redacted>/x",
+            r"C:\Users\Public\x": r"C:\Users\<redacted>\x",
+            r"C:\Windows\Users2\x": r"C:\Windows\Users2\x",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(redact_user_paths(value), expected)
+
+    def test_identity_tokens_use_explicit_environment(self):
+        env = {
+            "COMPUTERNAME": "LAB-PC7",
+            "USERNAME": "jane",
+            "USERDNSDOMAIN": "corp.example.org",
+            "USERDOMAIN": "CORP",
+        }
+        self.assertEqual(
+            privacy.identity_tokens(env),
+            [
+                ("LAB-PC7", "PC-NAME"),
+                ("jane", "user"),
+                ("corp.example.org", "example.local"),
+                ("CORP", "WORKGROUP"),
+            ],
+        )
+
+    def test_redact_payload_scrubs_identity_tokens_in_string_values(self):
+        env = {
+            "COMPUTERNAME": "LAB-PC7",
+            "USERNAME": "jane",
+            "USERDNSDOMAIN": "corp.example.org",
+            "USERDOMAIN": "CORP",
+        }
+        payload = {
+            "share": r"\\LAB-PC7\share",
+            "people": ["jane", "janet"],
+            "jane": "harmless",
+        }
+
+        redacted = redact_payload(payload, {"redact": True}, env=env)
+
+        self.assertEqual(redacted["share"], r"\\PC-NAME\share")
+        self.assertEqual(redacted["people"], ["user", "janet"])
+        self.assertIn("jane", redacted)
+
+    def test_redact_payload_identity_scrub_respects_redact_off_and_empty_env(self):
+        payload = {"value": r"\\LAB-PC7\share", "people": ["jane"]}
+        env = {"COMPUTERNAME": "LAB-PC7", "USERNAME": "jane"}
+        self.assertEqual(redact_payload(payload, {"redact": False}, env=env), payload)
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
+
     def test_mask_string_fully_masks_short_sensitive_strings(self):
         self.assertEqual(mask_string("ABCDE"), "*****")
         self.assertEqual(mask_string("ABCDEF"), "******")
@@ -66,11 +120,26 @@ class PcReportPrivacyTests(unittest.TestCase):
 
     def test_name_value_rows_mask_sensitive_names_only(self):
         rows = [{"Name": "USERNAME", "Value": "pat"}, {"Name": "Path", "Value": r"C:\Users\pat\bin"},
-                {"Name": "LOGONSERVER", "Value": r"\\DC01"}]
+                {"Name": "LOGONSERVER", "Value": r"\\DC01"},
+                {"Name": "IGCCSVC_DB", "Value": "AQAAANCM..."}]
         r = redact_payload(rows, {"redact": True})
         self.assertNotEqual(r[0]["Value"], "pat")
         self.assertEqual(r[1]["Value"], r"C:\Users\<redacted>\bin")
         self.assertNotEqual(r[2]["Value"], r"\\DC01")
+        self.assertNotEqual(r[3]["Value"], "AQAAANCM...")
+
+    def test_name_value_rows_mask_editor_session_and_pipe_identifiers(self):
+        rows = [
+            {"Name": "__CURSOR_SANDBOX_ENV_RESTORE", "Value": "export CURSOR_CONVERSATION_ID='uuid'"},
+            {"Name": "CURSOR_CONVERSATION_ID", "Value": "0cb8551d-be1d-4a9a-9d72-8acc203a8625"},
+            {"Name": "CHROME_CRASHPAD_PIPE_NAME", "Value": r"\\.\pipe\crashpad_65712_unique"},
+            {"Name": "VSCODE_IPC_HOOK", "Value": r"\\.\pipe\unique-main-sock"},
+        ]
+
+        redacted = redact_payload(rows, {"redact": True}, env={})
+
+        for original, row in zip(rows, redacted, strict=True):
+            self.assertNotEqual(row["Value"], original["Value"], original["Name"])
 
     def test_requires_admin_sentinel_and_numbers_survive(self):
         from pc_report.section import REQUIRES_ADMIN
