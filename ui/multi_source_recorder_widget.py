@@ -1,6 +1,7 @@
 import glob
 import os
 import threading
+import time
 from datetime import datetime
 
 from PyQt5.QtCore import QCoreApplication, QProcess, QSize, Qt, QTimer, QUrl, pyqtSignal
@@ -2355,6 +2356,24 @@ class MultiSourceRecorderWidget(QWidget):
                 mute=mute,
                 volume=volume,
             )
+            audio_fallback_command = None
+            if (
+                audio_device
+                and audio_device != "No Audio"
+                and not mute
+                and volume != "0"
+            ):
+                audio_fallback_command = self.build_recording_command(
+                    ffmpeg,
+                    source,
+                    output_file,
+                    preview_pipe=preview_pipe,
+                    frame_rate=options.get("frame_rate", ""),
+                    resolution=options.get("resolution", ""),
+                    audio_device="",
+                    mute=True,
+                    volume="0",
+                )
             fallback_commands = [
                 fallback
                 for fallback in self.recording_fallback_commands(
@@ -2387,6 +2406,8 @@ class MultiSourceRecorderWidget(QWidget):
                 fallback_command=(fallback_commands[0] if fallback_commands else None),
                 fallback_commands=fallback_commands,
                 retry_delay_ms=retry_delay_ms,
+                audio_device=audio_device,
+                audio_fallback_command=audio_fallback_command,
             )
             if not preview_pipe and self.auto_preview and self.can_preview_separately_while_recording(source):
                 # Ensure the standalone preview process for this RTSP/HTTP row is running.
@@ -2404,6 +2425,9 @@ class MultiSourceRecorderWidget(QWidget):
         fallback_command=None,
         fallback_commands=None,
         retry_delay_ms=0,
+        audio_device="",
+        audio_fallback_command=None,
+        audio_retry_attempted=False,
     ):
         process.recording_fallback_commands = list(fallback_commands or ([fallback_command] if fallback_command else []))
         process.recording_fallback_command = process.recording_fallback_commands[0] if process.recording_fallback_commands else None
@@ -2412,6 +2436,10 @@ class MultiSourceRecorderWidget(QWidget):
         process.recording_row_index = row_index
         process.recording_safe_label = safe_label
         process.recording_error_text = ""
+        process.recording_started_at = time.monotonic()
+        process.recording_audio_device = audio_device
+        process.recording_audio_fallback_command = audio_fallback_command
+        process.recording_audio_retry_attempted = audio_retry_attempted
         if preview_pipe:
             process.setProcessChannelMode(QProcess.SeparateChannels)
             self.preview_buffers[row_index] = bytearray()
@@ -2439,24 +2467,33 @@ class MultiSourceRecorderWidget(QWidget):
                 _tr("Video %(number)s\nOpening combined preview...")
                 % {"number": row_index + 1})
 
-    def _start_combined_grid_process(self, ffmpeg, selected, output_folder, timestamp, attempt=0):
+    def _start_combined_grid_process(
+        self,
+        ffmpeg,
+        selected,
+        output_folder,
+        timestamp,
+        attempt=0,
+        force_video_only=False,
+    ):
         self._prepare_combined_preview_placeholders(selected)
         output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_Combined_{timestamp}.mp4"))
         audio_device = ""
         audio_row_label = ""
         audio_volume = "100"
-        for row_index, label, _source, *_options in selected:
-            source_row = self.source_rows[row_index]
-            candidate = self._audio_device_value(source_row[7])
-            if (
-                candidate != "No Audio"
-                and not source_row[5].isChecked()
-                and source_row[6].currentText() != "0"
-            ):
-                audio_device = candidate
-                audio_row_label = label
-                audio_volume = source_row[6].currentText()
-                break
+        if not force_video_only:
+            for row_index, label, _source, *_options in selected:
+                source_row = self.source_rows[row_index]
+                candidate = self._audio_device_value(source_row[7])
+                if (
+                    candidate != "No Audio"
+                    and not source_row[5].isChecked()
+                    and source_row[6].currentText() != "0"
+                ):
+                    audio_device = candidate
+                    audio_row_label = label
+                    audio_volume = source_row[6].currentText()
+                    break
         if audio_device:
             self._append_log(
                 _tr("[Combined] using audio from %(row)s")
@@ -2483,6 +2520,19 @@ class MultiSourceRecorderWidget(QWidget):
             mute=not bool(audio_device),
             volume=audio_volume,
         )
+        audio_fallback_command = None
+        if audio_device:
+            audio_fallback_command = build_combined_grid_record_command(
+                ffmpeg,
+                combined_sources,
+                output_file,
+                self.duration_edit.text().strip(),
+                preview_pipe=self.auto_preview,
+                offsets_per_source=combined_offsets,
+                audio_device="",
+                mute=True,
+                volume="0",
+            )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error
         # if its idle preview graph has not finished releasing the device when the combined
@@ -2490,6 +2540,11 @@ class MultiSourceRecorderWidget(QWidget):
         # on, so allow one retry of the same command after a longer pylon unwind window.
         process.recording_safe_label = "Combined"
         process.recording_error_text = ""
+        process.recording_started_at = time.monotonic()
+        process.recording_audio_device = audio_device
+        process.recording_audio_fallback_command = audio_fallback_command
+        process.recording_audio_retry_attempted = force_video_only
+        process.recording_preview_pipe = self.auto_preview
         has_genicam_source = any(
             self._is_basler_genicam_source(source) for _row, _label, source, *_options in selected
         )
@@ -2534,6 +2589,7 @@ class MultiSourceRecorderWidget(QWidget):
         has_retry = bool(
             getattr(process, "recording_fallback_commands", None)
             or getattr(process, "recording_fallback_command", None)
+            or getattr(process, "recording_audio_fallback_command", None)
         )
         if self.processes or has_retry:
             self.status_label.setText(_tr("Recording"))
@@ -2550,6 +2606,8 @@ class MultiSourceRecorderWidget(QWidget):
     def _process_finished(self, process, name, exit_code=0):
         self._append_log(f"[{name}] recording stopped exit_code={exit_code}")
         self.processes = [p for p in self.processes if p is not process and p.state() != QProcess.NotRunning]
+        if exit_code and self._retry_recording_without_audio(process, name):
+            return
         if exit_code and self._retry_combined_recording(process, name):
             return
         if exit_code and self._retry_recording_without_requested_options(process, name):
@@ -2622,6 +2680,81 @@ class MultiSourceRecorderWidget(QWidget):
         self._notify_workflow_availability_change()
         return True
 
+    @staticmethod
+    def _is_audio_start_failure(error_text, audio_device):
+        text = str(error_text or "").lower()
+        device = str(audio_device or "").lower()
+        return (
+            "could not find audio device" in text
+            or (
+                "i/o error" in text
+                and ("audio=" in text or (device and device in text))
+            )
+        )
+
+    def _retry_recording_without_audio(self, process, name):
+        command = getattr(process, "recording_audio_fallback_command", None)
+        audio_device = getattr(process, "recording_audio_device", "")
+        if (
+            not command
+            or getattr(process, "recording_audio_retry_attempted", False)
+        ):
+            return False
+        started_at = getattr(process, "recording_started_at", 0.0)
+        early_window = self.record_start_watchdog_delay_ms / 1000
+        if not started_at or time.monotonic() - started_at > early_window:
+            return False
+        if not self._is_audio_start_failure(
+            getattr(process, "recording_error_text", ""),
+            audio_device,
+        ):
+            return False
+        message = _tr(
+            "%(row)s: audio device '%(device)s' unavailable, recording video only"
+        ) % {
+            "row": name,
+            "device": audio_device,
+        }
+        self._append_log(message)
+        self.status_label.setText(message)
+
+        def start_retry():
+            if "recording video only" not in self.status_label.text().lower():
+                return
+            combined_context = getattr(
+                process,
+                "combined_recording_context",
+                None,
+            )
+            if combined_context:
+                self._start_combined_grid_process(
+                    *combined_context,
+                    attempt=getattr(
+                        process,
+                        "combined_recording_attempt",
+                        0,
+                    ),
+                    force_video_only=True,
+                )
+                return
+            replacement = self.create_recording_process()
+            self._start_configured_recording_process(
+                replacement,
+                command,
+                getattr(process, "recording_safe_label", name),
+                getattr(process, "recording_row_index", None),
+                getattr(process, "recording_preview_pipe", False),
+                fallback_commands=[],
+                retry_delay_ms=0,
+                audio_device="",
+                audio_fallback_command=None,
+                audio_retry_attempted=True,
+            )
+
+        self._schedule(0, start_retry)
+        self._notify_workflow_availability_change()
+        return True
+
     def _retry_recording_without_requested_options(self, process, name):
         fallback_commands = list(getattr(process, "recording_fallback_commands", None) or [])
         if not fallback_commands:
@@ -2658,6 +2791,17 @@ class MultiSourceRecorderWidget(QWidget):
                 fallback_command=(remaining_commands[0] if remaining_commands else None),
                 fallback_commands=remaining_commands,
                 retry_delay_ms=getattr(process, "recording_retry_delay_ms", 1500 if preview_pipe else 0),
+                audio_device=getattr(process, "recording_audio_device", ""),
+                audio_fallback_command=getattr(
+                    process,
+                    "recording_audio_fallback_command",
+                    None,
+                ),
+                audio_retry_attempted=getattr(
+                    process,
+                    "recording_audio_retry_attempted",
+                    False,
+                ),
             )
         retry_delay_ms = getattr(process, "recording_retry_delay_ms", 1500 if preview_pipe else 0)
         if retry_delay_ms:

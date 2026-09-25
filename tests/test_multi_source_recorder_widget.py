@@ -989,6 +989,129 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(replacements[0].started, failed.recording_fallback_commands[0])
         self.assertEqual(widget.status_label.text(), "Recording")
 
+    def test_audio_start_failure_retries_once_without_audio(self):
+        import time
+        import types
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.status_label.setText("Recording")
+        replacement_commands = []
+        scheduled = []
+
+        class Signal:
+            def connect(self, _callback):
+                pass
+
+        class FakeProcess:
+            def __init__(self):
+                self.errorOccurred = Signal()
+                self.finished = Signal()
+                self.readyReadStandardOutput = Signal()
+                self.readyReadStandardError = Signal()
+
+            def setProcessChannelMode(self, _mode):
+                pass
+
+            def start(self, program, args):
+                replacement_commands.append([program] + list(args))
+
+        widget.create_recording_process = FakeProcess
+        failed = types.SimpleNamespace(
+            recording_error_text=(
+                "Could not find audio device with name [Microphone A]"
+            ),
+            recording_audio_device="Microphone A",
+            recording_audio_fallback_command=[
+                "ffmpeg.exe",
+                "-hide_banner",
+                "-y",
+                "-i",
+                "sample.mp4",
+                "-map",
+                "0:v",
+                "-an",
+                "-c:v",
+                "copy",
+                "out.mp4",
+            ],
+            recording_audio_retry_attempted=False,
+            recording_started_at=time.monotonic(),
+            recording_preview_pipe=False,
+            recording_row_index=0,
+            recording_safe_label="Camera",
+            recording_fallback_commands=[],
+            recording_retry_delay_ms=0,
+            state=lambda: QProcess.NotRunning,
+        )
+        widget.processes = [failed]
+
+        with patch.object(
+            widget,
+            "_schedule",
+            lambda delay, callback: scheduled.append((delay, callback)),
+        ):
+            widget._process_finished(failed, "Camera", 1)
+
+        self.assertEqual(len(scheduled), 1)
+        scheduled[0][1]()
+        self.assertEqual(
+            replacement_commands[0],
+            failed.recording_audio_fallback_command,
+        )
+        self.assertIn(
+            "audio device 'Microphone A' unavailable, recording video only",
+            "\n".join(widget.log_lines),
+        )
+        self.assertIn("video only", widget.status_label.text().lower())
+
+    def test_non_audio_io_error_does_not_use_audio_fallback(self):
+        import time
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        process = type(
+            "Failed",
+            (),
+            {
+                "recording_audio_fallback_command": [
+                    "ffmpeg.exe",
+                    "video-only",
+                ],
+                "recording_audio_device": "Microphone A",
+                "recording_audio_retry_attempted": False,
+                "recording_started_at": time.monotonic(),
+                "recording_error_text": (
+                    "I/O error while opening video=Camera A"
+                ),
+            },
+        )()
+
+        self.assertFalse(
+            widget._retry_recording_without_audio(process, "Camera")
+        )
+
+    def test_late_audio_failure_does_not_restart_recording(self):
+        import time
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        process = type(
+            "Failed",
+            (),
+            {
+                "recording_audio_fallback_command": [
+                    "ffmpeg.exe",
+                    "video-only",
+                ],
+                "recording_audio_device": "Microphone A",
+                "recording_audio_retry_attempted": False,
+                "recording_started_at": time.monotonic() - 10,
+                "recording_error_text": "Could not find audio device",
+            },
+        )()
+
+        self.assertFalse(
+            widget._retry_recording_without_audio(process, "Camera")
+        )
+
     def test_start_recording_keeps_existing_rtsp_preview_alive(self):
         # The pre-existing idle preview for an RTSP row must keep running during
         # recording, because the recording process intentionally does not pipe its
