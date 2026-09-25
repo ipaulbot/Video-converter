@@ -138,3 +138,22 @@ Use this file to track user-visible fixes, improvements, and feature work.
   settings.
 - DirectShow device names with accented or curly-quote characters are now listed
   correctly instead of as garbled text.
+
+### Media Player
+
+- Added volume and mute for all panels, fullscreen (F / Esc / double-click, auto-hiding
+  transport bar), and keyboard shortcuts: Space, Home, Left/Right frame step,
+  Shift+Left/Right 5 s, Up/Down volume, M, F, N/P.
+- Frame-accurate stepping using the clip's real frame rate (ffprobe), with a
+  H:MM:SS.mmm and frame N / total readout.
+- Per-panel playlist (add files or a folder, reorder, drag from Explorer); auto-advance
+  only in single-panel mode.
+- Converted Files gains "Play in Media Player" (context menu and Play button); the tab is
+  shown for the session even if hidden in settings.
+- Files Windows cannot decode show an inline "Convert to MP4 (H.264) and play" offer
+  instead of a blank tile.
+- Fixed: MP4, MOV and MKV files now play. The player previously ran on Qt's DirectShow
+  backend, which cannot demux those containers on a stock Windows 10 install (only AVI
+  and WMV worked). The app now selects the Media Foundation backend at startup and
+  creates the player without the `VideoSurface` flag, which that backend rejects.
+- Player settings (last folder, panel count, volume, mute) persist between sessions.

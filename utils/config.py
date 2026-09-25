@@ -66,7 +66,13 @@ default_settings = {
         "lossless_editor": False,
         "multi_source_recorder": True,
         "media_player": False,
-    }
+    },
+    "media_player": {
+        "last_folder": "",
+        "panel_count": 2,
+        "volume": 100,
+        "muted": False,
+    },
 }
 
 config_file = os.path.join(get_data_dir(), "config.json")
@@ -77,6 +83,31 @@ def coerce_retention_days(value) -> int:
     except Exception:
         days = 0
     return max(0, min(30, days))
+
+MEDIA_PLAYER_PANEL_COUNTS = (1, 2, 4)
+
+
+def normalize_media_player_settings(group):
+    defaults = default_settings["media_player"]
+    if not isinstance(group, dict):
+        group = {}
+    try:
+        panel_count = int(group.get("panel_count", defaults["panel_count"]))
+    except (TypeError, ValueError):
+        panel_count = defaults["panel_count"]
+    if panel_count not in MEDIA_PLAYER_PANEL_COUNTS:
+        panel_count = defaults["panel_count"]
+    try:
+        volume = int(group.get("volume", defaults["volume"]))
+    except (TypeError, ValueError):
+        volume = defaults["volume"]
+    return {
+        "last_folder": str(group.get("last_folder", "") or ""),
+        "panel_count": panel_count,
+        "volume": max(0, min(100, volume)),
+        "muted": bool(group.get("muted", False)),
+    }
+
 
 def normalize_settings(settings):
     normalized = default_settings.copy()
@@ -90,6 +121,7 @@ def normalize_settings(settings):
         key: bool(supplied_tabs.get(key, default_value))
         for key, default_value in default_tabs.items()
     }
+    normalized["media_player"] = normalize_media_player_settings(normalized.get("media_player"))
     return normalized
 
 def load_settings():
