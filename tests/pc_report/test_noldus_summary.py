@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 from pc_report import registry
@@ -45,7 +46,10 @@ RESULTS = {
     "video": {"adapters": [{"name": "RTX 3060"}]},
     "logical_disks": {
         "groups": [{"title": "Summary", "rows": {"Low Space (<10 %)": "C:"}}],
-        "rows": [{"Drive": "C:", "Free": "8.0 GB", "Free %": "8.0 %"}, {"Drive": "D:", "Free": "20.0 GB", "Free %": "20.0 %"}],
+        "rows": [
+            {"Drive": "C:", "Type": "Local Fixed Disk", "Free": "8.0 GB", "Free %": "8.0 %"},
+            {"Drive": "D:", "Type": "Local Fixed Disk", "Free": "20.0 GB", "Free %": "20.0 %"},
+        ],
     },
     "devices": {"groups": [{"title": "Summary", "rows": {"Problem Devices": 1}}], "problems": [{"Name": "Unknown device", "Problem": "28: Drivers not installed"}]},
     "system_summary": {
@@ -68,7 +72,9 @@ class BuildTests(unittest.TestCase):
         items = {item["Item"]: item for item in self.data["attention"]}
         self.assertEqual(items["Pending reboot"]["Severity"], "Warning")
         self.assertEqual(items["UAC disabled"]["Severity"], "Warning")
-        self.assertEqual(items["Low disk space"]["Detail"], "C: (8.0 GB, 8.0 %)")
+        self.assertIn("C: (8.0 GB, 8.0 %)", items["Low disk space"]["Detail"])
+        self.assertIn("Free % below 10%", items["Low disk space"]["Detail"])
+        self.assertIn("Free space below 10 GB", items["Low disk space"]["Detail"])
         self.assertIn("1 device", items["Problem devices"]["Detail"])
         self.assertIn("Unknown device", items["Problem devices"]["Detail"])
         self.assertIn("Enabled", items["USB selective suspend"]["Detail"])
@@ -115,9 +121,142 @@ class BuildTests(unittest.TestCase):
         items = {item["Item"]: item for item in mod.build(results, is_admin=True, elapsed={})["attention"]}
         self.assertEqual(items["Performance counters unavailable"]["Severity"], "Info")
 
+    def test_low_disk_rule_is_local_fixed_only_and_reports_trigger(self):
+        cases = [
+            (
+                "percentage threshold",
+                {
+                    "Drive": "C:", "Type": "Local Fixed Disk", "Total": "2 TB",
+                    "Free": "100 GB", "Free %": "5 %",
+                },
+                True,
+                "Free % below 10%",
+            ),
+            (
+                "absolute threshold",
+                {
+                    "Drive": "C:", "Type": "Fixed", "Total": "20 GB",
+                    "Free": "8 GB", "Free %": "40 %",
+                },
+                True,
+                "Free space below 10 GB",
+            ),
+            (
+                "healthy local disk",
+                {"Drive": "C:", "Type": "Local Disk", "Free": "50 GB", "Free %": "12 %"},
+                False,
+                None,
+            ),
+            (
+                "network disk",
+                {"Drive": "Z:", "Type": "Network", "Free": "1 GB", "Free %": "1 %"},
+                False,
+                None,
+            ),
+        ]
+        for name, row, expected, threshold in cases:
+            with self.subTest(name=name):
+                attention = mod.build(
+                    {"logical_disks": {"rows": [row]}}, is_admin=True, elapsed={}
+                )["attention"]
+                low_disk = next(
+                    (item for item in attention if item["Item"] == "Low disk space"), None
+                )
+                self.assertEqual(low_disk is not None, expected)
+                if threshold:
+                    self.assertIn(threshold, low_disk["Detail"])
+
+    def test_each_attention_rule_has_a_negative_case(self):
+        cases = [
+            (
+                "Pending reboot",
+                {"operating_system": {"groups": [{"title": "Boot", "rows": {"Pending Reboot": "No"}}]}},
+                True,
+            ),
+            (
+                "UAC disabled",
+                {"security": {"groups": [{"title": "Policies", "rows": {"UAC Enabled": "Yes"}}]}},
+                True,
+            ),
+            (
+                "Low disk space",
+                {"logical_disks": {"rows": [
+                    {"Drive": "C:", "Type": "Fixed", "Free": "50 GB", "Free %": "12 %"}
+                ]}},
+                True,
+            ),
+            ("Problem devices", {"devices": {"problems": []}}, True),
+            (
+                "USB selective suspend",
+                {"usb": {"groups": [{"title": "Summary", "rows": {
+                    "Selective Suspend (AC)": "Disabled",
+                    "Selective Suspend (DC)": "Disabled",
+                }}]}},
+                True,
+            ),
+            (
+                "Camera Frame Server shared mode",
+                {"cameras": {"groups": [{"title": "Windows Camera Frame Server", "rows": {
+                    "Frame Server Mode": "Disabled (exclusive camera access for legacy applications)"
+                }}]}},
+                True,
+            ),
+            (
+                "Camera or microphone access denied",
+                {"cameras": {"groups": [{"title": "Camera and Microphone Consent", "rows": {
+                    "Camera Access (user)": "Allow",
+                    "Microphone Access (user)": "Allow",
+                }}]}},
+                True,
+            ),
+            (
+                "Sentinel LDK License Manager not running",
+                {"services": {"rows": [{"Name": "hasplms", "State": "Running"}]}},
+                True,
+            ),
+            (
+                "Jumbo frames disabled on GigE adapters",
+                {"network_adapters": {"gige": [{"Adapter": "Ethernet", "Jumbo Packet": "9014 Bytes"}]}},
+                True,
+            ),
+            ("Report ran without administrator rights", {}, True),
+            (
+                "Performance counters unavailable",
+                {
+                    "memory": {"groups": [{"title": "Operating System View", "rows": {
+                        "Live Source": "Performance counters"
+                    }}]},
+                    "sensors": {"groups": [{"title": "Live Sample (1 s)", "rows": {
+                        "CPU Utility": "4 %",
+                        "Memory Committed": "8 GB",
+                        "Memory Available": "24 GB",
+                    }}]},
+                },
+                True,
+            ),
+            (
+                "Running inside a virtual machine",
+                {"virtual_machine": {"groups": [{"title": "Detection", "rows": {
+                    "Running Inside a VM": "No"
+                }}]}},
+                True,
+            ),
+        ]
+        for item, results, is_admin in cases:
+            with self.subTest(item=item):
+                attention_items = {
+                    value["Item"] for value in mod.build(
+                        copy.deepcopy(results), is_admin=is_admin, elapsed={}
+                    )["attention"]
+                }
+                self.assertNotIn(item, attention_items)
+
     def test_render_uses_severity_classes(self):
         html = mod.render(self.data, support.render_ctx())
         self.assertIn('class="warn"', html)
+        self.assertIn('class="bad"', mod._attention_table([
+            {"Severity": "Error", "Item": "Collection failure", "Detail": "Failed"}
+        ]))
         self.assertIn("<h3>Needs attention</h3>", html)
         self.assertIn("<h3>Noldus software</h3>", html)
 
@@ -156,6 +295,10 @@ class FixtureTests(unittest.TestCase):
         self.assertIn("HD Pro Webcam C920", specs["Cameras"])
         self.assertIn("Sentinel", specs["HASP / Sentinel Dongles"])
         attention = {item["Item"]: item["Detail"] for item in data["attention"]}
+        self.assertIn("Pending reboot", attention)
+        self.assertIn("Camera Frame Server shared mode", attention)
+        self.assertIn("Jumbo frames disabled on GigE adapters", attention)
+        self.assertIn("Performance counters unavailable", attention)
         self.assertIn("Report ran without administrator rights", attention)
         self.assertIn("USB selective suspend", attention)
         self.assertIn("D:", attention["Low disk space"])

@@ -21,7 +21,7 @@ GIGE_COLUMNS = [("Adapter", "Adapter"), ("Link Speed", "Link Speed"), ("Jumbo Pa
                 ("Receive Buffers", "Receive Buffers"), ("Transmit Buffers", "Transmit Buffers"),
                 ("Interrupt Moderation", "Interrupt Moderation")]
 RUNTIME_COLUMNS = [("Name", "Name"), ("Version", "Version"), ("Publisher", "Publisher")]
-SEVERITY_CLASS = {"Warning": "warn", "Info": "", "OK": "ok"}
+SEVERITY_CLASS = {"Error": "bad", "Warning": "warn", "Info": "", "OK": "ok"}
 
 _HASP = re.compile(r"hasp|sentinel|hardlock", re.I)
 _NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
@@ -61,20 +61,23 @@ def _bytes(value):
 def _low_disks(data) -> list[str]:
     low = []
     for row in _rows(data, "rows"):
+        drive_type = str(_first(row, "Type", "Drive Type", "DriveType")).casefold()
+        if "local" not in drive_type and "fixed" not in drive_type:
+            continue
         drive = _first(row, "Drive", "Device", "Device ID", "DeviceID")
         free, free_pct = _first(row, "Free", "Free Space"), _first(row, "Free %", "Percent Free")
         pct = _number(free_pct)
         free_bytes = _bytes(free)
-        if (pct is not None and pct < 10) or (free_bytes is not None and free_bytes < 10 * 1024 ** 3):
+        triggers = []
+        if pct is not None and pct < 10:
+            triggers.append("Free % below 10%")
+        if free_bytes is not None and free_bytes < 10 * 1024 ** 3:
+            triggers.append("Free space below 10 GB")
+        if triggers:
             detail = ", ".join(str(value) for value in (free, free_pct) if value not in (None, ""))
-            low.append(f"{drive} ({detail})" if detail else str(drive))
-    if low:
-        return low
-    summary = {}
-    for group in rows_of(data.get("groups") if isinstance(data, dict) else None):
-        summary.update(group.get("rows") or {})
-    fallback = _first(summary, "Low Space (<10 %)", "Low Space", "Low disk space")
-    return [] if not fallback or str(fallback).casefold() == "none" else [str(fallback)]
+            disk = f"{drive} ({detail})" if detail else str(drive)
+            low.append(f"{disk}; triggered: {', '.join(triggers)}")
+    return low
 
 
 def _attention(results: dict, is_admin: bool) -> list[dict]:
