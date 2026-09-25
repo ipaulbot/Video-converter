@@ -144,7 +144,9 @@ def _directshow_av_source(video_source, audio_device):
         video_name = video_name[6:]
     video_name = video_name.strip('"')
     audio_name = str(audio_device or "").strip().strip('"')
-    return f'video="{video_name}":audio="{audio_name}"'
+    # No shell quotes: QProcess/subprocess pass argv verbatim, so FFmpeg would look for a
+    # device literally named "\"HD Webcam\"" and fail with "Could not find video device".
+    return f"video={video_name}:audio={audio_name}"
 
 
 def _append_audio_encoding_options(command, volume="100"):
@@ -159,7 +161,7 @@ def _add_directshow_audio_input(command, audio_device):
         "-f", "dshow",
         "-thread_queue_size", "1024",
         "-use_wallclock_as_timestamps", "1",
-        "-i", f'audio="{audio_name}"',
+        "-i", f"audio={audio_name}",
     ])
 
 

@@ -90,7 +90,7 @@ class RecordingCommandTests(unittest.TestCase):
             [
                 "ffmpeg.exe", "-hide_banner", "-y",
                 "-rtbufsize", "512M", "-f", "dshow",
-                "-i", 'video="Camera A":audio="Microphone A"',
+                "-i", "video=Camera A:audio=Microphone A",
                 "-map", "0:v", "-map", "0:a",
                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
                 "-c:a", "aac", "-b:a", "128k",
@@ -107,7 +107,7 @@ class RecordingCommandTests(unittest.TestCase):
         )
 
         self.assertEqual(command.count("-i"), 1)
-        self.assertEqual(command[command.index("-i") + 1], 'video="Camera A":audio="Microphone A"')
+        self.assertEqual(command[command.index("-i") + 1], "video=Camera A:audio=Microphone A")
         self.assertIn(
             ["-map", "0:v", "-map", "0:a"],
             [command[index:index + 4] for index in range(len(command) - 3)],
@@ -142,7 +142,7 @@ class RecordingCommandTests(unittest.TestCase):
                 "-i", "rtsp://camera/stream",
                 "-f", "dshow", "-thread_queue_size", "1024",
                 "-use_wallclock_as_timestamps", "1",
-                "-i", 'audio="Microphone A"',
+                "-i", "audio=Microphone A",
                 "-map", "0:v", "-map", "1:a", "-shortest",
                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
                 "-c:a", "aac", "-b:a", "128k",
@@ -162,7 +162,7 @@ class RecordingCommandTests(unittest.TestCase):
                 "ffmpeg.exe", "-hide_banner", "-y", "-i", "sample.mp4",
                 "-f", "dshow", "-thread_queue_size", "1024",
                 "-use_wallclock_as_timestamps", "1",
-                "-i", 'audio="Microphone A"',
+                "-i", "audio=Microphone A",
                 "-map", "0:v", "-map", "1:a", "-shortest",
                 "-c:v", "copy", "-c:a", "aac", "-b:a", "128k",
                 "out.mp4",
@@ -248,7 +248,7 @@ class RecordingCommandTests(unittest.TestCase):
                 "-i", "rtsp://camera/stream",
                 "-f", "dshow", "-thread_queue_size", "1024",
                 "-use_wallclock_as_timestamps", "1",
-                "-i", 'audio="Microphone A"',
+                "-i", "audio=Microphone A",
                 "-filter_complex",
                 "[0:v]split=2[v][preview];[preview]fps=20,scale=480:-1[p]",
                 "-map", "[v]", "-map", "1:a", "-shortest",
@@ -583,7 +583,7 @@ class RecordingCommandTests(unittest.TestCase):
                 "-rtbufsize", "512M", "-f", "dshow", "-i", "video=Camera A",
                 "-f", "dshow", "-thread_queue_size", "1024",
                 "-use_wallclock_as_timestamps", "1",
-                "-i", 'audio="Microphone A"',
+                "-i", "audio=Microphone A",
                 "-map", "0:v", "-map", "1:a", "-shortest",
                 "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
                 "-c:a", "aac", "-b:a", "128k", "combined.mp4",
@@ -599,7 +599,7 @@ class RecordingCommandTests(unittest.TestCase):
             audio_device="Microphone A",
         )
 
-        self.assertEqual(command.count('audio="Microphone A"'), 1)
+        self.assertEqual(command.count("audio=Microphone A"), 1)
         self.assertIn("2:a", command)
         self.assertEqual(command.count("-c:a"), 1)
         self.assertEqual(command[command.index("-b:a") + 1], "128k")
