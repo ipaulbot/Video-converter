@@ -136,3 +136,5 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Removed the non-functional Picture-in-picture choice, retained Separate videos
   and Combined grid, and made the recorder tab visible by default for fresh
   settings.
+- DirectShow device names with accented or curly-quote characters are now listed
+  correctly instead of as garbled text.
