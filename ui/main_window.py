@@ -32,6 +32,7 @@ from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.media_files import collect_supported_media_paths
+from utils.paths import log_dir
 from ui import theme
 from conversion.queue_state import Admission, ConversionQueueState
 from utils.subprocess_helpers import (
@@ -531,12 +532,7 @@ class VideoConverterApp(QMainWindow):
         self.converted_files_widget = ConvertedFilesWidget(button_style=getattr(self, 'current_button_style', None))
         # Forward drag/drop from the converted list to the main window handler
         self.converted_files_widget.drop_files_signal.connect(self._handle_converted_tab_drop)
-        # Ensure per-file logs go to unified logs directory
-        try:
-            from utils.paths import get_data_dir
-            self.converted_files_widget.set_log_folder(get_data_dir("logs"))
-        except Exception:
-            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
+        self.converted_files_widget.set_log_folder(log_dir(self.settings))
         # Preview on selection in converted list
         try:
             self.converted_files_widget.preview_requested.connect(
@@ -2344,13 +2340,7 @@ class VideoConverterApp(QMainWindow):
         self.converted_files_widget.file_converted_signal.emit(output_file_name, deletion_info, self.destination_folder, success)
         # Write the per-file log, if this conversion produced any lines.
         if log_lines:
-            try:
-                from utils.paths import get_data_dir
-                default_logs = get_data_dir("logs")
-            except Exception:
-                logger.debug("No data dir for per-file logs", exc_info=True)
-                default_logs = os.path.expanduser("~")
-            log_folder = getattr(self.converted_files_widget, 'log_folder', default_logs)
+            log_folder = log_dir(self.settings)
             try:
                 os.makedirs(log_folder, exist_ok=True)
                 log_path = os.path.join(log_folder, output_file_name + '.txt')
@@ -2428,7 +2418,8 @@ class VideoConverterApp(QMainWindow):
         # utils/help_resolution.py) and falls back to the legacy hand-written
         # help_document.pdf/.html when no generated one has been shipped.
         from utils.help_resolution import resolve_help_document
-        help_path = resolve_help_document()
+        from utils.localization import saved_locale
+        help_path = resolve_help_document(saved_locale())
         if help_path is not None:
             from PyQt5.QtCore import QUrl
             from PyQt5.QtGui import QDesktopServices
@@ -2516,6 +2507,7 @@ class VideoConverterApp(QMainWindow):
         self.destination_folder = os.path.abspath(self.settings.get('destination_folder', ''))
         self.backup_folder = os.path.abspath(self.settings.get('backup_folder', ''))
         self.locked = self.settings.get('locked', False)
+        self.converted_files_widget.set_log_folder(log_dir(self.settings))
         # Re-apply window flags if "close_on_x" changed
         self.apply_window_flags_based_on_settings()
         logger.info("Settings updated.")

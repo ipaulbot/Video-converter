@@ -1,6 +1,6 @@
 [project]
 name = "nvc"
-version = "2.2.0"          # keep in sync with utils/version.py APP_VERSION
+version = "2.3.0"          # keep in sync with utils/version.py APP_VERSION
 description = "NVC — video conversion, inspection, recording and PC reporting"
 requires-python = ">=3.12"
 

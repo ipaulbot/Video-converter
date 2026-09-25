@@ -1,8 +1,8 @@
 import os
 import sys
-from typing import Optional
 
-def get_data_dir(subfolder: Optional[str] = None) -> str:
+
+def get_data_dir(subfolder: str | None = None) -> str:
     """Return the root directory for all persistent NVC data files.
 
     Windows: %APPDATA%\\NVC (e.g. C:\\Users\\<user>\\AppData\\Roaming\\NVC)
@@ -43,3 +43,20 @@ def get_data_dir(subfolder: Optional[str] = None) -> str:
         os.makedirs(full, exist_ok=True)
         return full
     return base
+
+
+def log_dir(settings: dict | None = None) -> str:
+    """Return the folder used for per-file conversion logs.
+
+    Honour Settings -> Folders -> Log Folder when it is set and can be
+    created; otherwise use the application data logs folder. The root
+    application log is unaffected because it opens before settings are read.
+    """
+    wanted = settings.get("log_folder") if isinstance(settings, dict) else None
+    if isinstance(wanted, str) and wanted.strip():
+        try:
+            os.makedirs(wanted, exist_ok=True)
+            return wanted
+        except OSError:
+            pass
+    return get_data_dir("logs")

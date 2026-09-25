@@ -53,6 +53,7 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
     total = len(selected)
     completed = 0
     started_at = time.monotonic()
+    run.started_at = started_at
 
     def report(section):
         nonlocal completed
