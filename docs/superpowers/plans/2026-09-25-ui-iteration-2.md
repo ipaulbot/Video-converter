@@ -1758,7 +1758,8 @@ Write `%TEMP%\nvc_ui_iter2_shots.py` (not in the repo) that builds `VideoConvert
 python -m pytest -q -p no:cacheprovider
 python -m ruff check ui/theme.py ui/leaf_frame.py ui/glyph_icons.py ui/pc_report_dialog.py ui/lossless_editor_widget.py ui/media_player_widget.py ui/media_player_parts.py ui/converted_files_widget.py utils/config.py utils/paths.py conversion/recording_commands.py pc_report tests
 git diff --check
-rg -i -c "PBH-80|80JDBS3|paham|NITINC|DC03|NOLDUSINC" ui utils conversion pc_report tests docs/CHANGELOG.md docs/BACKLOG.md
+rg -i -c -f %TEMP%\nvc_leak_patterns.txt ui utils conversion pc_report tests docs/CHANGELOG.md docs/BACKLOG.md
+# (nvc_leak_patterns.txt holds this machine's user/host/device names and lives outside the repo)
 ```
 
 Expected: suite exit 0; ruff clean; diff --check exit 0; rg exit 1.
