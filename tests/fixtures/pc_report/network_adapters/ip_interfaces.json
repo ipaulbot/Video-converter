@@ -1,0 +1,106 @@
+[
+ {
+  "ifIndex": 15,
+  "AddressFamily": 23,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 0,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 12,
+  "AddressFamily": 23,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 1,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 4,
+  "AddressFamily": 23,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 0,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 16,
+  "AddressFamily": 23,
+  "NlMtu": 1500,
+  "InterfaceMetric": 65,
+  "Dhcp": 0,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 3,
+  "AddressFamily": 23,
+  "NlMtu": 1500,
+  "InterfaceMetric": 30,
+  "Dhcp": 1,
+  "ConnectionState": 1
+ },
+ {
+  "ifIndex": 1,
+  "AddressFamily": 23,
+  "NlMtu": 4294967295,
+  "InterfaceMetric": 75,
+  "Dhcp": 0,
+  "ConnectionState": 1
+ },
+ {
+  "ifIndex": 15,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 1,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 12,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 0,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 19,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 0,
+  "ConnectionState": 1
+ },
+ {
+  "ifIndex": 4,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 25,
+  "Dhcp": 1,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 16,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 65,
+  "Dhcp": 1,
+  "ConnectionState": 0
+ },
+ {
+  "ifIndex": 3,
+  "AddressFamily": 2,
+  "NlMtu": 1500,
+  "InterfaceMetric": 30,
+  "Dhcp": 1,
+  "ConnectionState": 1
+ },
+ {
+  "ifIndex": 1,
+  "AddressFamily": 2,
+  "NlMtu": 4294967295,
+  "InterfaceMetric": 75,
+  "Dhcp": 0,
+  "ConnectionState": 1
+ }
+]

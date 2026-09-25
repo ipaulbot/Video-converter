@@ -1,0 +1,601 @@
+[
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Flow Control",
+  "DisplayValue": "Auto Negotiation",
+  "RegistryKeyword": "*FlowControl",
+  "RegistryValue": [
+   "4"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Interrupt Moderation",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*InterruptModeration",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "IPv4 Checksum Offload",
+  "DisplayValue": "Rx & Tx Enabled",
+  "RegistryKeyword": "*IPChecksumOffloadIPv4",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Jumbo Packet",
+  "DisplayValue": "1514",
+  "RegistryKeyword": "*JumboPacket",
+  "RegistryValue": [
+   "1514"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Large Send Offload V2 (IPv4)",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*LsoV2IPv4",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Large Send Offload V2 (IPv6)",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*LsoV2IPv6",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Wake from S0ix on Magic Packet",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*ModernStandbyWoLMagicPacket",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Protocol ARP Offload",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PMARPOffload",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Protocol NS Offload",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PMNSOffload",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Packet Priority & VLAN",
+  "DisplayValue": "Packet Priority & VLAN Enabled",
+  "RegistryKeyword": "*PriorityVLANTag",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "PTP Hardware Timestamp",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "*PtpHardwareTimestamp",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Receive Buffers",
+  "DisplayValue": "256",
+  "RegistryKeyword": "*ReceiveBuffers",
+  "RegistryValue": [
+   "256"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Selective Suspend",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*SelectiveSuspend",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Software Timestamp",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "*SoftwareTimestamp",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Speed & Duplex",
+  "DisplayValue": "Auto Negotiation",
+  "RegistryKeyword": "*SpeedDuplex",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Selective Suspend Idle Timeout",
+  "DisplayValue": "20",
+  "RegistryKeyword": "*SSIdleTimeout",
+  "RegistryValue": [
+   "20"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "TCP Checksum Offload (IPv4)",
+  "DisplayValue": "Rx & Tx Enabled",
+  "RegistryKeyword": "*TCPChecksumOffloadIPv4",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "TCP Checksum Offload (IPv6)",
+  "DisplayValue": "Rx & Tx Enabled",
+  "RegistryKeyword": "*TCPChecksumOffloadIPv6",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Transmit Buffers",
+  "DisplayValue": "512",
+  "RegistryKeyword": "*TransmitBuffers",
+  "RegistryValue": [
+   "512"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "UDP Checksum Offload (IPv4)",
+  "DisplayValue": "Rx & Tx Enabled",
+  "RegistryKeyword": "*UDPChecksumOffloadIPv4",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "UDP Checksum Offload (IPv6)",
+  "DisplayValue": "Rx & Tx Enabled",
+  "RegistryKeyword": "*UDPChecksumOffloadIPv6",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Wake on Magic Packet",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*WakeOnMagicPacket",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Wake on Pattern Match",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*WakeOnPattern",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Adaptive Inter-Frame Spacing",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "AdaptiveIFS",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Link Speed Battery Saver",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "AutoPowerSaveModeEnabled",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Energy Efficient Ethernet",
+  "DisplayValue": "On",
+  "RegistryKeyword": "EEELinkAdvertisement",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "PCI Express Link Power Saving",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "EnableK1",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Enable PME",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "EnablePME",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Interrupt Moderation Rate",
+  "DisplayValue": "Adaptive",
+  "RegistryKeyword": "ITR",
+  "RegistryValue": [
+   "65535"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Legacy Switch Compatibility Mode",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "LinkNegotiationProcess",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Log Link State Event",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "LogLinkStateEvent",
+  "RegistryValue": [
+   "51"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Gigabit Master Slave Mode",
+  "DisplayValue": "Auto Detect",
+  "RegistryKeyword": "MasterSlave",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Locally Administered Address",
+  "DisplayValue": null,
+  "RegistryKeyword": "NetworkAddress",
+  "RegistryValue": null
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Reduce Speed On Power Down",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "ReduceSpeedOnPowerDown",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "System Idle Power Saver",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "SipsEnabled",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Ultra Low Power Mode",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "ULPMode",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "VLAN ID",
+  "DisplayValue": "0",
+  "RegistryKeyword": "VlanId",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Wait for Link",
+  "DisplayValue": "Auto Detect",
+  "RegistryKeyword": "WaitAutoNegComplete",
+  "RegistryValue": [
+   "2"
+  ]
+ },
+ {
+  "Name": "Noldus Switch",
+  "DisplayName": "Wake on Link Settings",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "WakeOnLink",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Ethernet 2",
+  "DisplayName": "Priority & VLAN",
+  "DisplayValue": "Priority & VLAN Enabled",
+  "RegistryKeyword": "*PriorityVLANTag",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Ethernet 2",
+  "DisplayName": "Speed & Duplex",
+  "DisplayValue": "Auto Negotiation",
+  "RegistryKeyword": "*SpeedDuplex",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Ethernet 2",
+  "DisplayName": "Wake on Magic Packet",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*WakeOnMagicPacket",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Ethernet 2",
+  "DisplayName": "MAC address",
+  "DisplayValue": null,
+  "RegistryKeyword": "NetworkAddress",
+  "RegistryValue": null
+ },
+ {
+  "Name": "Ethernet 2",
+  "DisplayName": "VLAN ID",
+  "DisplayValue": "0",
+  "RegistryKeyword": "VlanId",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Sleep on WoWLAN Disconnect",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "*DeviceSleepOnDisconnect",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Packet Coalescing",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PacketCoalescing",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "ARP offload for WoWLAN",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PMARPOffload",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "NS offload for WoWLAN",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PMNSOffload",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "GTK rekeying for WoWLAN",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*PMWiFiRekeyOffload",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Wake on Magic Packet",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*WakeOnMagicPacket",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Wake on Pattern Match",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "*WakeOnPattern",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Channel Width for 2.4GHz",
+  "DisplayValue": "Auto",
+  "RegistryKeyword": "ChannelWidth24",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Channel Width for 5GHz",
+  "DisplayValue": "Auto",
+  "RegistryKeyword": "ChannelWidth52",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Channel Width for 6GHz",
+  "DisplayValue": "Auto",
+  "RegistryKeyword": "ChannelWidth6",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Mixed Mode Protection",
+  "DisplayValue": "RTS/CTS Enabled",
+  "RegistryKeyword": "CtsToItself",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Channel-Load usage for AP Selection",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "EnableChLoad4ApSelection",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Fat Channel Intolerant",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "FatChannelIntolerant",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Human Presence Detection",
+  "DisplayValue": "Auto",
+  "RegistryKeyword": "HumanProximityDetection",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Transmit Power",
+  "DisplayValue": "5. Highest",
+  "RegistryKeyword": "IbssTxPower",
+  "RegistryValue": [
+   "100"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "802.11n/ac/ax Wireless Mode",
+  "DisplayValue": "4. 802.11ax",
+  "RegistryKeyword": "IEEE11nMode",
+  "RegistryValue": [
+   "3"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Ultra High Band (6GHz)",
+  "DisplayValue": "Enabled",
+  "RegistryKeyword": "Is6GhzBandSupported",
+  "RegistryValue": [
+   "1"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "MIMO Power Save Mode",
+  "DisplayValue": "Auto SMPS",
+  "RegistryKeyword": "MIMOPowerSaveMode",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Roaming Aggressiveness",
+  "DisplayValue": "3. Medium",
+  "RegistryKeyword": "RoamAggressiveness",
+  "RegistryValue": [
+   "2"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Preferred Band",
+  "DisplayValue": "1. No Preference",
+  "RegistryKeyword": "RoamingPreferredBandType",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "Throughput Booster",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "ThroughputBoosterEnabled",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "U-APSD support",
+  "DisplayValue": "Disabled",
+  "RegistryKeyword": "uAPSDSupport",
+  "RegistryValue": [
+   "0"
+  ]
+ },
+ {
+  "Name": "Wi-Fi",
+  "DisplayName": "802.11a/b/g Wireless Mode",
+  "DisplayValue": "6. Dual Band 802.11a/b/g",
+  "RegistryKeyword": "WirelessMode",
+  "RegistryValue": [
+   "34"
+  ]
+ }
+]
