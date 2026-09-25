@@ -152,7 +152,9 @@ CHAPTERS: list[dict] = [
                 ("Source Folder", "Click Change to select the folder NVC watches and scans."),
                 ("Destination Folder", "Click Change to select where converted files are written."),
                 ("Backup Folder", "Click Change to select where backed-up originals are moved."),
-                ("Log Folder", "Click Change to select where logs are written."),
+                ("Log Folder",
+                 r"Shows the log location. NVC currently always writes logs to "
+                 r"%APPDATA%\NVC\logs; changing this field has no effect in this version."),
             ]},
             {"type": "para", "text": (
                 "The Deletion tab controls original files. See the Original File Handling "
@@ -592,7 +594,8 @@ CHAPTERS: list[dict] = [
                  "\"Updates Not Configured\". When an address is configured and a newer "
                  "version exists, \"Update v<version> Available!\" appears in the sidebar."),
                 ("Log file",
-                 r"The rotating central log is %APPDATA%\NVC\logs\conversion_log.txt."),
+                 r"All logs are under %APPDATA%\NVC\logs. The rotating application log is "
+                 r"conversion_log.txt, and each conversion has an <output file name>.txt log."),
                 ("NVC_LOG_LEVEL",
                  "Set this environment variable to DEBUG to record full tracebacks."),
                 ("Settings file", r"%APPDATA%\NVC\config.json."),
@@ -652,8 +655,9 @@ CHAPTERS: list[dict] = [
                  "handle quietly."),
             ]},
             {"type": "para", "text": (
-                "NVC stores logs in its configured log folder, under the application data "
-                "location unless the app configuration changes it.")},
+                r"NVC stores logs under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                "application log, and each conversion has an <output file name>.txt log that "
+                "Converted Files -- Open Log File opens.")},
         ],
     },
     {
@@ -688,7 +692,8 @@ CHAPTERS: list[dict] = [
                  "HEVC is efficient but less universally supported than H.264. If compatibility "
                  "matters, use H.264."),
                 ("Where are logs stored?",
-                 "In the configured log folder, typically under the application data location."),
+                 r"Every log is under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                 "application log, with one <output file name>.txt log per conversion."),
                 ("Can I run two copies of NVC at once?",
                  "No. NVC allows a single instance, so two copies cannot process the same "
                  "source folder."),
