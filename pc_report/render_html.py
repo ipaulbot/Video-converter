@@ -9,7 +9,7 @@ from utils.resources import resource_path
 
 from . import registry
 from .format import duration
-from .privacy import mask_string, redact_payload
+from .privacy import redact_meta, redact_payload
 from .section import GROUPS, NO_DATA, RenderContext, esc, is_partial, kv_table, notes_block, section_data, section_notes
 
 CSS = """
@@ -84,7 +84,13 @@ def _report_health(meta: dict, data: dict, rendered, redact: bool) -> str:
     noted = [s.title for s, _a, _b in rendered if section_notes(data.get(s.key))]
     empty = [s.title for s, _a, body in rendered if is_empty_body(body)]
     elapsed = meta.get("elapsed_by_section") or {}
-    slowest = sorted(elapsed.items(), key=lambda kv: kv[1], reverse=True)[:3]
+    timings = []
+    for key, value in (elapsed.items() if isinstance(elapsed, dict) else ()):
+        try:
+            timings.append((key, float(value)))
+        except (TypeError, ValueError):
+            continue
+    slowest = sorted(timings, key=lambda kv: kv[1], reverse=True)[:3]
 
     def counted(items):
         return f"{len(items)}" + (f": {', '.join(items)}" if items else "")
@@ -124,9 +130,9 @@ def _contents(rendered) -> str:
 
 
 def render(meta, data, options):
-    meta = meta or {}
     options = options or {}
     redact = options.get("redact", True)
+    meta = redact_meta(meta, options)
     data = redact_payload(data or {}, options) if redact else (data or {})
     ctx = RenderContext(redact=redact, meta=meta)
 
@@ -143,8 +149,6 @@ def render(meta, data, options):
         parts.append(body)
 
     machine = meta.get("machine", "")
-    if redact and machine:
-        machine = mask_string(machine)
     version = meta.get("nvc_version", "")
     header = (f"<h1>{_logo_tag()}NVC PC Report</h1>"
               f"<p class='meta'>Machine: {esc(machine)} &middot; Generated: {esc(meta.get('generated_at', ''))}"

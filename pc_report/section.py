@@ -224,6 +224,21 @@ def kv_table(rows) -> str:
     return "".join(out)
 
 
+def _pairs_of(rows) -> list[tuple]:
+    """Every (key, value) pair in ``rows``. Malformed entries are skipped, not raised on."""
+    pairs = []
+    for entry in as_list(rows):
+        if isinstance(entry, str):
+            continue
+        try:
+            pair = tuple(entry)
+        except TypeError:
+            continue
+        if len(pair) == 2:
+            pairs.append(pair)
+    return pairs
+
+
 def kv_groups(groups) -> str:
     """groups: list of {"title": str, "rows": dict | list of pairs}. Empty groups are skipped.
 
@@ -234,7 +249,7 @@ def kv_groups(groups) -> str:
         if not isinstance(group, dict):
             continue
         grows = group.get("rows") or {}
-        pairs = list(grows.items()) if isinstance(grows, dict) else [tuple(p) for p in grows]
+        pairs = list(grows.items()) if isinstance(grows, dict) else _pairs_of(grows)
         pairs = [(k, "" if v is None else v) for k, v in pairs]
         if not pairs:
             continue

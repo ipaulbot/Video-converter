@@ -29,8 +29,10 @@ from PyQt5.QtWidgets import (
 )
 
 from pc_report.orchestrator import run_all
+from pc_report.privacy import redact_user_paths
 from pc_report.render_html import render as render_html
 from pc_report.render_json import render as render_json
+from pc_report.section import esc
 from ui import theme
 from utils.file_naming import get_unique_path
 from utils.logger import logger
@@ -56,8 +58,13 @@ class _PCReportWorker(QThread):
         try:
             html, json_text = self._generate()
         except Exception as exc:
-            self.progress.emit(f"[error] PC report failed: {exc}")
-            html = f"<html><body><h1>PC Report Failed</h1><p>{exc}</p></body></html>"
+            logger.exception("PC report failed")
+            message = str(exc)
+            if self.options.get('redact', True):
+                message = redact_user_paths(message)
+            self.progress.emit(f"[error] PC report failed: {message}")
+            html = ("<!doctype html><html><head><meta charset='utf-8'></head><body>"
+                    f"<h1>PC Report Failed</h1><p>{esc(message)}</p></body></html>")
             json_text = ''
         self.finished.emit(html, json_text)
 

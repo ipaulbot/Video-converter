@@ -25,6 +25,12 @@ SENSITIVE_TOKENS = (
     "machineid", "localadministrators", "accessaccount", "accountname", "interfaceguid",
     "dnssuffix", "dnsdomain", "networkprofile", "netprofilename",
 )
+# Credentials keep nothing; a serial keeps a four-character tail a support engineer can match.
+_FULL_MASK_TOKENS = ("password", "passwd", "pwd", "token", "secret", "credential",
+                     "apikey", "productkey", "licensekey", "recoverypassword")
+# Only these keys may hold a well-known account name that survives masking.
+_ACCOUNT_KEY_TOKENS = ("startname", "accountname", "accessaccount", "owner", "username",
+                       "localadministrators", "member", "runas")
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")
 MAC_TOKENS = ("macaddress", "permanentaddress", "physicaladdress")
@@ -111,9 +117,11 @@ def _mask_command_secret_arg(match: re.Match[str]) -> str:
 _PIPE_NAME = re.compile(r"(\\\\\.\\pipe\\)[^\s\"<>]+", re.IGNORECASE)
 _PORTABLE_INSTANCE_PREFIXES = (
     "USB\\", "USBSTOR\\", "SCSI\\", "SWD\\WPDBUSENUM\\",
-    "BTHENUM\\", "BTHLE\\", "DISPLAY\\",
+    "BTHENUM\\", "BTHLE\\", "DISPLAY\\", "PCI\\",
 )
 _GENERIC_INSTANCE_SEGMENT = re.compile(r"^\d+&[0-9A-F]+&0&", re.IGNORECASE)
+# DirectShow / symbolic-link form: \\?\usb#vid_x&pid_y#<instance>#{guid}
+_DIRECTSHOW_INSTANCE = re.compile(r"(#)([^#\\/]+)(#\{)")
 _BTH_MAC_OR_GUID = re.compile(
     r"\{[^{}]*\}|(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])|"
     r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
@@ -122,9 +130,13 @@ _PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u20
 _PERSONAL_NAME_KEYS = {
     "description", "name", "friendlyname", "devicename",
     "instancename", "productname", "caption",
+    # Summary fields that republish a device name the source row already masks.
+    "defaultplayback", "defaultcapture", "cameras", "detail",
+    # Volume labels: phones and removable media are routinely named after their owner.
+    "label", "volumename", "filesystemlabel",
 }
 _POSSESSIVE_OWNER = re.compile(
-    r"(^|[(-]\s*)(?:[a-z0-9.-]+(?:\s+[a-z0-9.-]+){0,2})((?:'|\u2019)s\b)",
+    r"(^|[(,:;-]\s*)(?:[a-z0-9.-]+(?:\s+[a-z0-9.-]+){0,2})((?:'|\u2019)s\b)",
     re.IGNORECASE,
 )
 _PERSONAL_DEVICE_OWNER = re.compile(
@@ -140,6 +152,39 @@ _WELL_KNOWN_NETWORK_PROFILE = re.compile(
     r"public network|private network)(?: \([^)]*\))?$",
     re.IGNORECASE,
 )
+_FREE_TEXT_KEYS = frozenset({"notes", "note", "error", "message", "comment"})
+# Anything that can carry a whole command line, whatever the section labels it.
+_COMMAND_KEYS = frozenset({"command", "commandline", "action", "uninstall", "uninstallstring",
+                           "quietuninstallstring", "modifypath", "imagepath", "arguments"})
+# Keys whose value is a device instance path, symbolic link or container identifier.
+_DEVICE_ID_KEYS = frozenset({"instanceid", "parentinstanceid", "deviceid", "deviceinstance",
+                             "pnpdeviceid", "instancename", "devicepath", "symboliclink",
+                             "containerid", "parent", "locationpaths"})
+_NETWORK_LOCATION_KEYS = frozenset({"portname", "sharename", "servername", "location",
+                                    "defaultprinter", "offline"})
+# Windows' "this device has no container" placeholder; it identifies nothing.
+_NULL_CONTAINER_GUID = "{00000000-0000-0000-ffff-ffffffffffff}"
+_EMAIL_ADDRESS = re.compile(r"(?<![\w.+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
+_URL_AUTHORITY = re.compile(
+    r"(?P<scheme>\b[A-Za-z][A-Za-z0-9+.-]*://)(?P<userinfo>[^/\s@\"']+@)?"
+    r"(?P<host>\[[0-9A-Fa-f:.]+\]|[^/\s:?#\"']+)(?P<port>:\d+)?",
+)
+# A bare dotted token is only a host name when it is not part of a path or a file name and its
+# last label is a real TLD: precision matters more than coverage here, because this runs over
+# command lines, notes and environment values full of file names and dotted .NET identifiers.
+_BARE_FQDN = re.compile(
+    r"(?<![\w.\\/:@-])"
+    r"[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+"
+    r"(?![\w-])"
+)
+_HOST_TLDS = frozenset({
+    "com", "net", "org", "edu", "gov", "mil", "int", "io", "co", "uk", "nl", "de", "fr", "be",
+    "cn", "jp", "local", "lan", "corp", "internal", "home", "intranet", "arpa", "example",
+})
+_FILE_EXTENSIONS = frozenset({"exe", "dll", "sys", "py", "json", "xml", "txt", "log", "ini"})
+_LOCAL_DEVICE_HOSTS = frozenset({".", "?"})
+# A UNC server quoted without a share, as Windows error text does: "connect to \\SERVER failed".
+_UNC_HOST_ONLY = re.compile(r"(\\\\)([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?![\\\w.*-])")
 _HOST_URL = re.compile(r"^(?P<scheme>[a-z][a-z0-9+.-]*://)(?P<host>\[[^\]]+\]|[^/:]+)(?P<rest>.*)$", re.IGNORECASE)
 _HOST_ASSIGNMENT = re.compile(r"^(?P<prefix>[a-z][a-z0-9+.-]*=)(?P<rest>.+)$", re.IGNORECASE)
 _HOST_PORT = re.compile(r"^(?P<host>.+?)(?P<port>:\d+)?$")
@@ -162,7 +207,7 @@ def mask_string(value, keep: int = 4):
     if isinstance(value, dict):
         return {k: mask_string(v, keep) for k, v in value.items()}
     s = str(value)
-    if len(s) < 2 * (keep + 2):
+    if keep <= 0 or len(s) < 2 * (keep + 2):
         return "*" * len(s)
     return s[:2] + "*" * max(1, len(s) - keep - 2) + s[-keep:]
 
@@ -183,6 +228,10 @@ def redact_instance_id(value):
                 else f"{match.group(0)[:6]}******"
             ),
             value,
+        )
+    if value.startswith(("\\\\?\\", "\\\\.\\")):
+        value = _DIRECTSHOW_INSTANCE.sub(
+            lambda match: match.group(1) + mask_string(match.group(2)) + match.group(3), value
         )
     value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
     if not upper.startswith(_PORTABLE_INSTANCE_PREFIXES) or "\\" not in value:
@@ -217,14 +266,14 @@ def _is_well_known_account(value) -> bool:
 
 
 def mask_mac(mac):
+    """Keep the vendor OUI and hide the device half, whatever separators the source used."""
     if not mac or mac == REQUIRES_ADMIN:
         return mac
     if isinstance(mac, list):
         return [mask_mac(m) for m in mac]
-    mc = str(mac).replace("-", ":")
-    parts = mc.split(":")
-    if len(parts) == 6:
-        return f"{parts[0]}:{parts[1]}:{parts[2]}:**:**:**"
+    raw = re.sub(r"[^0-9A-Fa-f]", "", str(mac))
+    if len(raw) == 12:
+        return ":".join(raw[i:i + 2] for i in range(0, 6, 2)) + ":**:**:**"
     return mask_string(mac)
 
 
@@ -310,6 +359,66 @@ def mask_hosts(value) -> str:
     )
 
 
+def _host_is_already_masked(host: str) -> bool:
+    return not host or "*" in host or "<" in host or host in _LOCAL_DEVICE_HOSTS
+
+
+def _mask_url_authority(match: re.Match[str]) -> str:
+    host = match.group("host")
+    masked = host if _host_is_already_masked(host) else _mask_host_name(host)
+    return match.group("scheme") + ("***@" if match.group("userinfo") else "") + masked + (match.group("port") or "")
+
+
+def _mask_unc_prefix(match: re.Match[str]) -> str:
+    host = match.group(2)
+    if _host_is_already_masked(host):
+        return match.group(0)
+    return f"{match.group(1)}{_mask_host_name(host)}{match.group(3)}"
+
+
+def _mask_unc_host_only(match: re.Match[str]) -> str:
+    host = match.group(2)
+    if _host_is_already_masked(host):
+        return match.group(0)
+    return match.group(1) + _mask_host_name(host)
+
+
+def _mask_bare_fqdn(match: re.Match[str]) -> str:
+    host = match.group(0)
+    labels = host.split(".")
+    tld = labels[-1].casefold()
+    if len(labels) < 2 or tld in _FILE_EXTENSIONS or tld not in _HOST_TLDS:
+        return host
+    return _mask_host_name(host)
+
+
+def mask_value_locations(value):
+    """Mask e-mail addresses, URL/UNC hosts, IP addresses and bare FQDNs inside free-form text.
+
+    Written for values whose key says nothing about their content -- command lines, environment
+    values, notes and adapter properties -- so it must leave file names, version numbers and
+    dotted identifiers alone. Schemes, ports, paths and option names survive.
+    """
+    if isinstance(value, list):
+        return [mask_value_locations(item) for item in value]
+    if isinstance(value, dict):
+        return {key: mask_value_locations(item) for key, item in value.items()}
+    if not isinstance(value, str) or not value:
+        return value
+    value = _EMAIL_ADDRESS.sub("***@***.example", value)
+    value = _URL_AUTHORITY.sub(_mask_url_authority, value)
+    value = _UNC_HOST_PREFIX.sub(_mask_unc_prefix, value)
+    value = _UNC_HOST_ONLY.sub(_mask_unc_host_only, value)
+    return _BARE_FQDN.sub(_mask_bare_fqdn, mask_ip(value))
+
+
+def redact_free_text(value):
+    """Notes, messages and partial-section errors: raw Windows text with no key to go on."""
+    if not isinstance(value, str):
+        return value
+    return mask_value_locations(redact_network_locations(redact_user_paths(value)))
+
+
 def redact_proxy_hosts(value):
     """Backward-compatible proxy host redaction helper."""
     if isinstance(value, list):
@@ -384,7 +493,8 @@ def redact_command_line(command):
         return command
     value = redact_user_paths(command)
     value = _COMMAND_SECRET_ARG.sub(_mask_command_secret_arg, value)
-    return _PIPE_NAME.sub(r"\1<redacted>", value)
+    value = _PIPE_NAME.sub(r"\1<redacted>", value)
+    return mask_value_locations(value)
 
 
 def identity_tokens(env=None) -> list[tuple[str, str]]:
@@ -408,6 +518,118 @@ def identity_tokens(env=None) -> list[tuple[str, str]]:
 
 def _name_is_sensitive(name: str) -> bool:
     return name.upper() in SENSITIVE_ENV_NAMES or any(t in norm_key(name) for t in SENSITIVE_TOKENS)
+
+
+def _keep_for_key(key_l: str) -> int:
+    return 0 if any(token in key_l for token in _FULL_MASK_TOKENS) else 4
+
+
+def redact_meta(meta, options=None) -> dict:
+    """Mask the machine name in the report meta; used by both renderers so they cannot drift.
+
+    The machine name is masked completely: whoever reads the report already knows which machine
+    it came from, and the surviving tail of a long name is often the asset tag.
+    """
+    meta = dict(meta or {})
+    options = options or {}
+    machine = meta.get("machine") or ""
+    if options.get("redact", True) and machine:
+        meta["machine"] = mask_string(machine, keep=0)
+    return meta
+
+
+def _mask_device_identifier(value):
+    if isinstance(value, str) and _GUID_FULL.fullmatch(value):
+        return value if value.casefold() == _NULL_CONTAINER_GUID else mask_string(value)
+    return redact_instance_id(value)
+
+
+def redact_value(key, value):
+    """Redact one value by what its normalised key says the value is."""
+    if isinstance(value, (set, frozenset, tuple)):
+        value = sorted(value, key=str)
+    if isinstance(value, dict):
+        out = {k: redact_value(k, v) for k, v in value.items()}
+        instance_id = next(
+            (
+                item for item_key, item in value.items()
+                if norm_key(item_key) in {"instanceid", "deviceid", "pnpdeviceid"}
+                and isinstance(item, str)
+            ),
+            "",
+        )
+        if instance_id.upper().startswith("BTH"):
+            description = out.get("Description")
+            normalized_description = (
+                " ".join(description.split()).casefold()
+                if isinstance(description, str)
+                else None
+            )
+            for name_key in ("FriendlyName", "Name"):
+                name = out.get(name_key)
+                normalized_name = (
+                    " ".join(name.split()).casefold()
+                    if isinstance(name, str)
+                    else None
+                )
+                if name_key in out and (
+                    normalized_description is None
+                    or normalized_name != normalized_description
+                ) and not (
+                    normalized_name is not None
+                    and _CANONICAL_BLUETOOTH_NETWORK_NAME.fullmatch(normalized_name)
+                ):
+                    out[name_key] = mask_string(out[name_key])
+        for name_key in ("FriendlyName", "Name"):
+            if isinstance(out.get(name_key), str) and _PERSONAL_DEVICE_NAME.search(out[name_key]):
+                out[name_key] = _redact_personal_device_name(out[name_key])
+        # Name/Value rows (environment variables, registry dumps): the name says what is sensitive,
+        # and when it says nothing the value itself is still inspected for hosts and addresses.
+        if isinstance(out.get("Name"), str) and "Value" in out:
+            if _name_is_sensitive(out["Name"]):
+                out["Value"] = mask_string(out["Value"], _keep_for_key(norm_key(out["Name"])))
+            elif isinstance(out["Value"], str):
+                out["Value"] = mask_value_locations(redact_user_paths(out["Value"]))
+        return out
+    if isinstance(value, list):
+        return [redact_value(key, item) for item in value]
+    if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
+        return value
+    key_l = norm_key(key)
+    if key_l in _FREE_TEXT_KEYS:
+        return redact_free_text(value)
+    if key_l in _DEVICE_ID_KEYS:
+        return _mask_device_identifier(value)
+    if key_l == "mac" or any(t in key_l for t in MAC_TOKENS):
+        return mask_mac(value)
+    if (
+        key_l in {"providername", "networkpathhostname", "networkpath"}
+        or key_l.startswith("remotepath")
+    ):
+        return redact_unc_host(value)
+    if key_l in _NETWORK_LOCATION_KEYS:
+        return mask_value_locations(redact_network_locations(value))
+    if any(token in key_l for token in HOST_TOKENS):
+        return mask_hosts(value)
+    if any(t in key_l for t in IP_TOKENS):
+        return mask_ip(value)
+    if any(t in key_l for t in SENSITIVE_TOKENS):
+        if (
+            key_l in {"networkprofile", "netprofilename"}
+            and isinstance(value, str)
+            and _WELL_KNOWN_NETWORK_PROFILE.fullmatch(" ".join(value.split()))
+        ):
+            return value
+        if any(token in key_l for token in _ACCOUNT_KEY_TOKENS) and _is_well_known_account(value):
+            return value
+        return mask_string(value, _keep_for_key(key_l))
+    if isinstance(value, str):
+        if key_l == "name":
+            value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
+        if key_l in _PERSONAL_NAME_KEYS:
+            value = _redact_personal_device_name(value)
+        return redact_command_line(value) if key_l in _COMMAND_KEYS else redact_user_paths(value)
+    return value
 
 
 def redact_payload(data, options=None, *, env=None):
@@ -436,86 +658,6 @@ def redact_payload(data, options=None, *, env=None):
             if scrubber is not None:
                 value = scrubber.sub(lambda match: replacements[match.group(0).casefold()], value)
             return _ACCOUNT_SID.sub(r"\1<redacted>", value)
-        return value
-
-    def redact_value(key, value):
-        if isinstance(value, dict):
-            out = {k: redact_value(k, v) for k, v in value.items()}
-            instance_id = next(
-                (
-                    item for item_key, item in value.items()
-                    if norm_key(item_key) in {"instanceid", "deviceid", "pnpdeviceid"}
-                    and isinstance(item, str)
-                ),
-                "",
-            )
-            if instance_id.upper().startswith("BTH"):
-                description = out.get("Description")
-                normalized_description = (
-                    " ".join(description.split()).casefold()
-                    if isinstance(description, str)
-                    else None
-                )
-                for name_key in ("FriendlyName", "Name"):
-                    name = out.get(name_key)
-                    normalized_name = (
-                        " ".join(name.split()).casefold()
-                        if isinstance(name, str)
-                        else None
-                    )
-                    if name_key in out and (
-                        normalized_description is None
-                        or normalized_name != normalized_description
-                    ) and not (
-                        normalized_name is not None
-                        and _CANONICAL_BLUETOOTH_NETWORK_NAME.fullmatch(normalized_name)
-                    ):
-                        out[name_key] = mask_string(out[name_key])
-            for name_key in ("FriendlyName", "Name"):
-                if isinstance(out.get(name_key), str) and _PERSONAL_DEVICE_NAME.search(out[name_key]):
-                    out[name_key] = _redact_personal_device_name(out[name_key])
-            # Name/Value rows (environment variables, registry dumps): the name says what is sensitive.
-            if isinstance(out.get("Name"), str) and "Value" in out and _name_is_sensitive(out["Name"]):
-                out["Value"] = mask_string(out["Value"])
-            return out
-        if isinstance(value, list):
-            return [redact_value(key, item) for item in value]
-        if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
-            return value
-        key_l = norm_key(key)
-        if key_l in {"instanceid", "parentinstanceid", "deviceid", "deviceinstance", "pnpdeviceid", "instancename"}:
-            if isinstance(value, str) and _GUID_FULL.fullmatch(value):
-                return mask_string(value)
-            return redact_instance_id(value)
-        if key_l == "mac" or any(t in key_l for t in MAC_TOKENS):
-            return mask_mac(value)
-        if (
-            key_l in {"providername", "networkpathhostname", "networkpath"}
-            or key_l.startswith("remotepath")
-        ):
-            return redact_unc_host(value)
-        if key_l in {"portname", "sharename", "servername", "location", "comment"}:
-            return redact_network_locations(value)
-        if any(token in key_l for token in HOST_TOKENS):
-            return mask_hosts(value)
-        if any(t in key_l for t in IP_TOKENS):
-            return mask_ip(value)
-        if any(t in key_l for t in SENSITIVE_TOKENS):
-            if (
-                key_l in {"networkprofile", "netprofilename"}
-                and isinstance(value, str)
-                and _WELL_KNOWN_NETWORK_PROFILE.fullmatch(" ".join(value.split()))
-            ):
-                return value
-            if _is_well_known_account(value):
-                return value
-            return mask_string(value)
-        if isinstance(value, str):
-            if key_l == "name":
-                value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
-            if key_l in _PERSONAL_NAME_KEYS:
-                value = _redact_personal_device_name(value)
-            return redact_command_line(value) if key_l == "commandline" else redact_user_paths(value)
         return value
 
     return redact_value("", scrub_identities(data))
