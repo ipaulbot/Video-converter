@@ -1,10 +1,11 @@
 import inspect
 import unittest
+from unittest.mock import patch
 
 from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
 
 from ui.main_window import VideoConverterApp
-from ui.pc_report_dialog import PCReportWidget
+from ui.pc_report_dialog import PCReportWidget, _PCReportWorker
 
 
 class PCReportWidgetTests(unittest.TestCase):
@@ -35,6 +36,38 @@ class PCReportWidgetTests(unittest.TestCase):
 
         self.assertTrue(path.endswith(".html"))
         self.assertIn("PC_Report", path)
+
+    def test_worker_uses_registry_options_and_section_progress(self):
+        worker = _PCReportWorker(
+            {
+                "updates": False,
+                "programs": True,
+                "security": False,
+                "redact": True,
+            }
+        )
+        progress = []
+        worker.progress.connect(progress.append)
+
+        def fake_run_all(options, progress_cb):
+            progress_cb("Operating System", 1, 40)
+            return {"total_seconds": 0.1}, {}, {}
+
+        with (
+            patch("ui.pc_report_dialog.run_all", side_effect=fake_run_all) as run_all,
+            patch("ui.pc_report_dialog.render_html", return_value="<html></html>"),
+        ):
+            worker._generate()
+
+        self.assertEqual(
+            run_all.call_args.args[0],
+            {
+                "installed_updates": False,
+                "installed_programs": True,
+                "security": False,
+            },
+        )
+        self.assertEqual(progress, ["Operating System (1/40)", "Rendering HTML..."])
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)

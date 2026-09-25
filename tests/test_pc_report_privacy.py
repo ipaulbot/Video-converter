@@ -480,6 +480,21 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotEqual(redacted["DeviceID"], guid)
         self.assertNotIn(guid, redacted["PnPDeviceID"])
 
+    def test_mac_label_and_colon_form_in_device_ids_are_masked(self):
+        payload = {
+            "MAC": "AA-BB-CC-DD-EE-FF",
+            "DeviceID": r"BTHENUM\DEV_AA:BB:CC:DD:EE:FF\PRIVATE",
+            "InstanceID": r"SWD\RADIO\AA:BB:CC:DD:EE:FF",
+            "Device Instance": r"SWD\RADIO\AA:BB:CC:DD:EE:FF",
+        }
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted["MAC"], "AA:BB:CC:**:**:**")
+        self.assertNotIn("AA:BB:CC:DD:EE:FF", redacted["DeviceID"])
+        self.assertNotIn("AA:BB:CC:DD:EE:FF", redacted["InstanceID"])
+        self.assertNotIn("AA:BB:CC:DD:EE:FF", redacted["Device Instance"])
+
     def test_new_identifying_fields_are_masked_by_human_label(self):
         payload = {"summary": {"UUID": "4C4C4544-0000-1234-8000-ABCDEF123456", "Asset Tag": "A123456",
                                "IdentifyingNumber": "JJYKXL3",

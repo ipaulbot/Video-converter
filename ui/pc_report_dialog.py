@@ -1,15 +1,39 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QCheckBox, QFileDialog, QProgressBar, QPlainTextEdit, QGridLayout, QGraphicsOpacityEffect, QWidget, QSizePolicy
-from PyQt5.QtCore import QCoreApplication, Qt, QThread, pyqtSignal, QPropertyAnimation, QEasingCurve, QRect, QTimer, QUrl
+import datetime
+import os
+
+from PyQt5.QtCore import (
+    QCoreApplication,
+    QEasingCurve,
+    QPropertyAnimation,
+    QRect,
+    Qt,
+    QThread,
+    QTimer,
+    QUrl,
+    pyqtSignal,
+)
 from PyQt5.QtGui import QDesktopServices
-import os, json, subprocess, sys, datetime, base64
+from PyQt5.QtWidgets import (
+    QDialog,
+    QFileDialog,
+    QGraphicsOpacityEffect,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPlainTextEdit,
+    QProgressBar,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+)
+
 from pc_report.orchestrator import run_all
 from pc_report.render_html import render as render_html
 from pc_report.render_json import render as render_json
+from ui import theme
 from utils.file_naming import get_unique_path
 from utils.logger import logger
-from ui import theme
-
-
 
 
 def _tr(source: str) -> str:
@@ -41,24 +65,11 @@ class _PCReportWorker(QThread):
         redact = self.options.get('redact', True)
         include_json = self.options.get('include_json', False)
         # Run modular collectors via orchestrator
-        self.progress.emit('Running PC report…')
         meta, data, errors = run_all({
-            'operating_system': True,
             'installed_updates': self.options.get('updates', True),
             'installed_programs': self.options.get('programs', True),
             'security': self.options.get('security', True),
-            'hardware': True,
-            'network': True,
-            'services': True,
-            'processes': True,
-            'licenses': True,
-            'environment': True,
-            'network_info': True,
-            'printers': True,
-            'autoruns': True,
-            'services_limit': 1000,
-            'processes_limit': 1000,
-        }, progress_cb=lambda name, completed, total: self.progress.emit(f"{name} ({completed}/{total})"))
+        }, progress_cb=lambda title, completed, total: self.progress.emit(f"{title} ({completed}/{total})"))
         for name, err in errors.items():
             self.progress.emit(f"[warn] {name}: {err}")
         self.progress.emit('Rendering HTML...')
@@ -166,6 +177,7 @@ class PCReportWidget(QWidget):
     def _set_logo(self):
         try:
             from PyQt5.QtGui import QPixmap
+
             from utils.resources import resource_path
             if self.locked:
                 logo_path = resource_path('graphics/GRAYSCALEPCREPORT.png')

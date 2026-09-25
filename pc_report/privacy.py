@@ -115,7 +115,8 @@ _PORTABLE_INSTANCE_PREFIXES = (
 )
 _GENERIC_INSTANCE_SEGMENT = re.compile(r"^\d+&[0-9A-F]+&0&", re.IGNORECASE)
 _BTH_MAC_OR_GUID = re.compile(
-    r"\{[^{}]*\}|(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
+    r"\{[^{}]*\}|(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])|"
+    r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
 )
 _PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u2019)s\b)", re.IGNORECASE)
 _PERSONAL_NAME_KEYS = {
@@ -170,12 +171,15 @@ def redact_instance_id(value):
     """Mask a portable device ID's trailing serial/instance segment."""
     if not isinstance(value, str):
         return value
+    value = _MAC.sub(lambda match: mask_mac(match.group(0)), value)
     upper = value.upper()
     if upper.startswith("BTH"):
         return _BTH_MAC_OR_GUID.sub(
             lambda match: (
                 match.group(0)
                 if match.group(0).startswith("{")
+                else mask_mac(match.group(0))
+                if ":" in match.group(0) or "-" in match.group(0)
                 else f"{match.group(0)[:6]}******"
             ),
             value,
@@ -479,11 +483,11 @@ def redact_payload(data, options=None, *, env=None):
         if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
             return value
         key_l = norm_key(key)
-        if key_l in {"instanceid", "parentinstanceid", "deviceid", "pnpdeviceid", "instancename"}:
+        if key_l in {"instanceid", "parentinstanceid", "deviceid", "deviceinstance", "pnpdeviceid", "instancename"}:
             if isinstance(value, str) and _GUID_FULL.fullmatch(value):
                 return mask_string(value)
             return redact_instance_id(value)
-        if any(t in key_l for t in MAC_TOKENS):
+        if key_l == "mac" or any(t in key_l for t in MAC_TOKENS):
             return mask_mac(value)
         if (
             key_l in {"providername", "networkpathhostname", "networkpath"}
