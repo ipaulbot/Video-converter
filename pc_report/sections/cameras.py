@@ -72,6 +72,7 @@ DS_COLUMNS = [("Name", "Name"), ("CLSID", "CLSID"), ("Device Path", "Device Path
 DX_COLUMNS = [("Name", "Name"), ("Category", "Category"), ("Manufacturer", "Manufacturer"), ("Hardware ID", "Hardware ID"),
               ("Driver", "Driver"), ("Driver Date", "Driver Date"), ("Service", "Service"), ("Problem", "Problem"), ("Location", "Location")]
 CONSENT_COLUMNS = [("App", "App"), ("Camera", "Camera"), ("Microphone", "Microphone"), ("Last Used", "Last Used")]
+_AUDIO_SERVICES = frozenset({"usbaudio", "usbaudio2", "hdaudbus", "intelaudio", "audioendpoint"})
 
 
 def is_camera(row) -> bool:
@@ -80,6 +81,13 @@ def is_camera(row) -> bool:
         return True
     if str(row.get("Service") or "").casefold() == "usbvideo":
         return True
+    service = str(row.get("Service") or "").casefold()
+    if service in _AUDIO_SERVICES:
+        return False
+    if cls.casefold() == "audioendpoint":
+        return False
+    if "audio" in str(row.get("Description") or "").casefold():
+        return False
     return cls.casefold() in {"image", "media"} and bool(CAMERA_NAME.search(str(row.get("Name") or "")))
 
 
@@ -182,7 +190,17 @@ def flatten(data) -> dict:
 
 
 def camera_names(data) -> list[str]:
-    return [r.get("Name", "") for r in rows_of((data or {}).get("pnp") if isinstance(data, dict) else None) if is_camera(r)]
+    seen: set[str] = set()
+    out: list[str] = []
+    for r in rows_of((data or {}).get("pnp") if isinstance(data, dict) else None):
+        if not is_camera(r):
+            continue
+        name = r.get("Name", "")
+        if name in seen:
+            continue
+        seen.add(name)
+        out.append(name)
+    return out
 
 
 def frame_server_enabled(data):

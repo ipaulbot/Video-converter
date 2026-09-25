@@ -47,10 +47,34 @@ class BuildTests(unittest.TestCase):
             ({"PNPClass": "Image", "Name": "Generic imaging device", "Service": "USBVideo"}, True),
             ({"PNPClass": "Camera", "Name": "Industrial sensor", "Service": ""}, True),
             ({"PNPClass": "Media", "Name": "USB Camera Pro", "Service": ""}, True),
+            (
+                {
+                    "PNPClass": "MEDIA",
+                    "Name": "HD Pro Webcam C920",
+                    "Service": "usbaudio",
+                    "Description": "USB Audio Device",
+                },
+                False,
+            ),
+            ({"PNPClass": "Camera", "Name": "HD Pro Webcam C920", "Service": "usbvideo"}, True),
+            ({"PNPClass": "MEDIA", "Name": "HD Pro Webcam C920", "Service": "usbvideo"}, True),
         ]
         for row, expected in cases:
             with self.subTest(row=row):
                 self.assertIs(mod.is_camera(row), expected)
+
+    def test_camera_names_deduplicates_preserving_order(self):
+        data = {
+            "pnp": [
+                {"Name": "HD Pro Webcam C920", "Class": "Camera", "Service": "usbvideo"},
+                {"Name": "Integrated Webcam", "Class": "Camera", "Service": "usbvideo"},
+                {"Name": "HD Pro Webcam C920", "Class": "Camera", "Service": "usbvideo"},
+            ]
+        }
+        self.assertEqual(
+            mod.camera_names(data),
+            ["HD Pro Webcam C920", "Integrated Webcam"],
+        )
 
     def test_frame_server_and_consent(self):
         self.assertEqual(self.rows["Frame Server Mode"], "Disabled (exclusive camera access for legacy applications)")
@@ -106,6 +130,10 @@ class FixtureTests(unittest.TestCase):
         self.assertIn("<h3>DirectShow video capture sources</h3>", html)
         self.assertLess(html.count("<tr>"), 90)
         self.assertNotIn("Canon TR8500 series", mod.camera_names(_data))
+        self.assertEqual(
+            mod.camera_names(_data),
+            ["HD Pro Webcam C920", "Integrated Webcam"],
+        )
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)

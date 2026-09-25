@@ -146,3 +146,9 @@ None.
 - Fixture-backed render: 75 `<tr>` elements.
 - `camera_names`: `['HD Pro Webcam C920', 'Integrated Webcam', 'HD Pro Webcam C920']`.
 - Consent fixture user paths use the redacted `C:#Users#<redacted>#...` form.
+
+## Fix report 2
+
+- `is_camera` rejects USB audio companion interfaces (`usbaudio`/`usbaudio2`, `audio` in description, audio PnP classes) before the name heuristic; `Camera` and `usbvideo` rows remain included.
+- `camera_names` de-duplicates by name while preserving order.
+- Fixture-backed `camera_names`: `['HD Pro Webcam C920', 'Integrated Webcam']`.
