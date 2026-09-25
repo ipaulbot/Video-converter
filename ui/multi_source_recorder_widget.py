@@ -2123,7 +2123,18 @@ class MultiSourceRecorderWidget(QWidget):
             return ""
         return path
 
-    def build_recording_command(self, ffmpeg, source, output_file, preview_pipe=False, frame_rate="", resolution=""):
+    def build_recording_command(
+        self,
+        ffmpeg,
+        source,
+        output_file,
+        preview_pipe=False,
+        frame_rate="",
+        resolution="",
+        audio_device="",
+        mute=False,
+        volume="100",
+    ):
         if self.is_directshow_source(source):
             return build_directshow_record_with_preview_command(
                 ffmpeg,
@@ -2133,6 +2144,9 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate=frame_rate,
                 resolution=resolution,
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             )
         source = apply_axis_rtsp_recording_options(source, frame_rate=frame_rate, resolution=resolution)
         return build_record_command(
@@ -2144,9 +2158,23 @@ class MultiSourceRecorderWidget(QWidget):
             preview_pipe=preview_pipe,
             frame_rate=frame_rate,
             resolution=resolution,
+            audio_device=audio_device,
+            mute=mute,
+            volume=volume,
         )
 
-    def recording_fallback_commands(self, ffmpeg, source, output_file, preview_pipe=False, frame_rate="", resolution=""):
+    def recording_fallback_commands(
+        self,
+        ffmpeg,
+        source,
+        output_file,
+        preview_pipe=False,
+        frame_rate="",
+        resolution="",
+        audio_device="",
+        mute=False,
+        volume="100",
+    ):
         commands = []
         if source.lower().startswith("rtsp://") and frame_rate and resolution:
             commands.append(self.build_recording_command(
@@ -2156,6 +2184,9 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate="",
                 resolution=resolution,
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             ))
         commands.append(self.build_recording_command(
             ffmpeg,
@@ -2164,6 +2195,9 @@ class MultiSourceRecorderWidget(QWidget):
             preview_pipe=preview_pipe,
             frame_rate="",
             resolution="",
+            audio_device=audio_device,
+            mute=mute,
+            volume=volume,
         ))
         unique = []
         for command in commands:
@@ -2294,6 +2328,9 @@ class MultiSourceRecorderWidget(QWidget):
             return
         for row_index, label, source, *option_items in selected:
             options = option_items[0] if option_items else {}
+            mute = self.source_rows[row_index][5].isChecked()
+            volume = self.source_rows[row_index][6].currentText()
+            audio_device = self._audio_device_value(self.source_rows[row_index][7])
             safe_label = "".join(ch if ch.isalnum() or ch in ("-", "_") else "_" for ch in label)
             output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_{safe_label}_{timestamp}.mp4"))
             # For DirectShow, the recording process MUST also pipe the preview because the
@@ -2314,6 +2351,9 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate=options.get("frame_rate", ""),
                 resolution=options.get("resolution", ""),
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             )
             fallback_commands = [
                 fallback
@@ -2324,6 +2364,9 @@ class MultiSourceRecorderWidget(QWidget):
                     preview_pipe=preview_pipe,
                     frame_rate=options.get("frame_rate", ""),
                     resolution=options.get("resolution", ""),
+                    audio_device=audio_device,
+                    mute=mute,
+                    volume=volume,
                 )
                 if fallback != command
             ]
@@ -2399,6 +2442,26 @@ class MultiSourceRecorderWidget(QWidget):
     def _start_combined_grid_process(self, ffmpeg, selected, output_folder, timestamp, attempt=0):
         self._prepare_combined_preview_placeholders(selected)
         output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_Combined_{timestamp}.mp4"))
+        audio_device = ""
+        audio_row_label = ""
+        audio_volume = "100"
+        for row_index, label, _source, *_options in selected:
+            source_row = self.source_rows[row_index]
+            candidate = self._audio_device_value(source_row[7])
+            if (
+                candidate != "No Audio"
+                and not source_row[5].isChecked()
+                and source_row[6].currentText() != "0"
+            ):
+                audio_device = candidate
+                audio_row_label = label
+                audio_volume = source_row[6].currentText()
+                break
+        if audio_device:
+            self._append_log(
+                _tr("[Combined] using audio from %(row)s")
+                % {"row": audio_row_label}
+            )
         combined_sources = []
         combined_offsets = []
         for _row_index, _label, source, *option_items in selected:
@@ -2416,6 +2479,9 @@ class MultiSourceRecorderWidget(QWidget):
             self.duration_edit.text().strip(),
             preview_pipe=self.auto_preview,
             offsets_per_source=combined_offsets,
+            audio_device=audio_device,
+            mute=not bool(audio_device),
+            volume=audio_volume,
         )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error

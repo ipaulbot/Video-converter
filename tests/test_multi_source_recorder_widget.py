@@ -1038,6 +1038,107 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertNotIn(0, widget.preview_paused_rows)
         self.assertIn(1, widget.preview_paused_rows)
 
+    def test_separate_recording_passes_row_audio_controls_to_builder(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        widget.populate_audio_device_combo(row[7], "Microphone A")
+        row[6].setCurrentText("50")
+        calls = []
+        widget.build_recording_command = (
+            lambda *args, **kwargs: calls.append(kwargs)
+            or ["ffmpeg.exe", "out.mp4"]
+        )
+        widget.recording_fallback_commands = lambda *args, **kwargs: []
+
+        class FakeProcess:
+            def __getattr__(self, _name):
+                return type(
+                    "Signal",
+                    (),
+                    {"connect": lambda *_args: None},
+                )()
+
+            def setProcessChannelMode(self, _mode):
+                pass
+
+            def start(self, _program, _args):
+                pass
+
+        widget.create_recording_process = FakeProcess
+        widget._start_recording_processes(
+            "ffmpeg.exe",
+            [(0, "Camera", "rtsp://camera/stream", {})],
+            "C:\\Temp",
+            "stamp",
+        )
+
+        self.assertEqual(calls[0]["audio_device"], "Microphone A")
+        self.assertFalse(calls[0]["mute"])
+        self.assertEqual(calls[0]["volume"], "50")
+
+    def test_combined_grid_uses_first_selected_unmuted_audio_row(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.output_mode_combo.setCurrentText("Combined grid")
+        widget.populate_audio_device_combo(
+            widget.source_rows[0][7],
+            "Muted Microphone",
+        )
+        widget.source_rows[0][5].setChecked(True)
+        widget.populate_audio_device_combo(
+            widget.source_rows[1][7],
+            "Microphone B",
+        )
+        captured = []
+
+        with patch(
+            "ui.multi_source_recorder_widget.build_combined_grid_record_command",
+            lambda *args, **kwargs: captured.append(kwargs)
+            or ["ffmpeg.exe", "combined.mp4"],
+        ):
+            widget.create_recording_process = lambda: type(
+                "FakeProcess",
+                (),
+                {
+                    "errorOccurred": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "finished": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "readyReadStandardOutput": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "readyReadStandardError": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "setProcessChannelMode": lambda self, mode: None,
+                    "start": lambda self, program, args: None,
+                },
+            )()
+            selected = [
+                (0, "One", "rtsp://camera/one", {}),
+                (1, "Two", "rtsp://camera/two", {}),
+            ]
+            widget._start_recording_processes(
+                "ffmpeg.exe",
+                selected,
+                "C:\\Temp",
+                "stamp",
+            )
+
+        self.assertEqual(captured[0]["audio_device"], "Microphone B")
+        self.assertFalse(captured[0]["mute"])
+        self.assertEqual(captured[0]["volume"], "100")
+        self.assertIn("Two", "\n".join(widget.log_lines))
+
     def test_stop_recording_refreshes_idle_previews_without_force_restarting_healthy_streams(self):
         widget = MultiSourceRecorderWidget(auto_preview=True)
         refreshed = []
