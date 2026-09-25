@@ -2,8 +2,10 @@ import inspect
 import unittest
 from unittest.mock import Mock, patch
 
-from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
+from PyQt5.QtCore import QAbstractAnimation
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QSizePolicy
 
+from ui import theme
 from ui.main_window import VideoConverterApp
 from ui.pc_report_dialog import PCReportWidget, _PCReportWorker
 
@@ -123,6 +125,55 @@ class PCReportWidgetTests(unittest.TestCase):
             worker.run()
 
         self.assertIn("jane", pages[0])
+
+    def test_no_hint_text_and_placeholder_instead_of_prefilled_log(self):
+        widget = PCReportWidget()
+        texts = [label.text() for label in widget.findChildren(QLabel)]
+        self.assertFalse(any(t.startswith("Tip:") for t in texts), texts)
+        self.assertEqual(widget.output.toPlainText(), "")
+        self.assertEqual(widget.output.placeholderText(), "Report progress appears here.")
+
+    def test_secondary_actions_are_links_and_generate_is_compact(self):
+        widget = PCReportWidget()
+        for button in (widget.btn_open, widget.btn_folder, widget.btn_admin):
+            self.assertTrue(button.property("skipGlobalStyle"), button.text())
+            self.assertIn("text-decoration: underline", button.styleSheet(), button.text())
+        self.assertTrue(widget.btn_run.property("skipGlobalStyle"))
+        self.assertIn("min-height: 24px", widget.btn_run.styleSheet())
+        self.assertEqual(widget.btn_open.text(), "Open report")
+        self.assertEqual(widget.btn_folder.text(), "Open folder")
+        self.assertEqual(widget.btn_admin.text(), "Run as administrator")
+
+    def test_admin_link_hidden_when_already_elevated(self):
+        with patch.object(PCReportWidget, "is_elevated", staticmethod(lambda: True)):
+            widget = PCReportWidget()
+            self.assertTrue(widget.btn_admin.isHidden())
+        with patch.object(PCReportWidget, "is_elevated", staticmethod(lambda: False)):
+            widget = PCReportWidget()
+            self.assertFalse(widget.btn_admin.isHidden())
+
+    def test_heart_pulses_while_running_and_settles_on_finish(self):
+        widget = PCReportWidget()
+        with patch("ui.pc_report_dialog._PCReportWorker") as worker_cls:
+            worker = worker_cls.return_value
+            worker.isRunning.return_value = False
+            widget.on_run()
+            self.assertIsNotNone(widget.heart_anim)
+            self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Running)
+            self.assertEqual(widget.heart_anim.loopCount(), -1)
+            self.assertFalse(widget.heart_label.isHidden())
+        widget._on_worker_finished("<html></html>", "")
+        self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Stopped)
+        self.assertEqual(widget.heart_effect.opacity(), 1.0)
+        widget._settle_heart(success=False)
+        self.assertTrue(widget.heart_label.isHidden())
+
+    def test_layout_mode_resizes_logo(self):
+        widget = PCReportWidget()
+        widget.apply_layout_mode(theme.FULL)
+        self.assertEqual(widget.logo_label.pixmap().width(), theme.FULL.pc_report_logo_w)
+        widget.apply_layout_mode(theme.COMPACT)
+        self.assertEqual(widget.logo_label.pixmap().width(), theme.COMPACT.pc_report_logo_w)
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)
