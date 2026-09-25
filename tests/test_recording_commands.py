@@ -208,6 +208,44 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertIn("image2pipe", command)
         self.assertEqual(command[-1], "pipe:1")
 
+    def test_record_preview_tee_maps_audio_only_to_file_leg(self):
+        command = build_record_command(
+            "ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "",
+            preview_pipe=True, audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtsp_transport", "tcp", "-timeout", "5000000",
+                "-i", "rtsp://camera/stream",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", 'audio="Microphone A"',
+                "-filter_complex",
+                "[0:v]split=2[v][preview];[preview]fps=20,scale=480:-1[p]",
+                "-map", "[v]", "-map", "1:a", "-shortest",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k", "out.mp4",
+                "-map", "[p]", "-q:v", "7",
+                "-f", "image2pipe", "-vcodec", "mjpeg", "pipe:1",
+            ],
+        )
+        pipe_map = command.index("[p]")
+        self.assertNotIn("1:a", command[pipe_map:])
+
+    def test_directshow_preview_tee_pipe_leg_is_video_only(self):
+        command = build_directshow_record_with_preview_command(
+            "ffmpeg.exe", "video=Camera A", "out.mp4",
+            preview_pipe=True, audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count("0:a"), 1)
+        pipe_map = command.index("[p]")
+        self.assertNotIn("0:a", command[pipe_map:])
+        self.assertEqual(command[-1], "pipe:1")
+
     def test_record_command_with_preview_pipe_for_directshow_uses_split_filter(self):
         command = build_record_command(
             "ffmpeg.exe",

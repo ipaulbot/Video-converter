@@ -198,11 +198,17 @@ def build_record_command(
             "-filter_complex",
             f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
             "-map", "[v]",
-            "-map", "0:a?",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "18",
-            "-c:a", "aac",
+        ])
+        if has_audio:
+            command.extend(["-map", audio_map])
+            if not is_directshow:
+                command.append("-shortest")
+        else:
+            command.append("-an")
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if has_audio:
+            _append_audio_encoding_options(command, volume)
+        command.extend([
             output_file,
             "-map", "[p]",
             "-q:v", "7",
@@ -644,11 +650,15 @@ def build_directshow_record_with_preview_command(
             "-filter_complex",
             f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
             "-map", "[v]",
-            "-map", "0:a?",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "18",
-            "-c:a", "aac",
+        ])
+        if has_audio:
+            command.extend(["-map", "0:a"])
+        else:
+            command.append("-an")
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if has_audio:
+            _append_audio_encoding_options(command, volume)
+        command.extend([
             output_file,
             "-map", "[p]",
             "-q:v", "7",
