@@ -482,6 +482,7 @@ class PcReportPrivacyTests(unittest.TestCase):
 
     def test_new_identifying_fields_are_masked_by_human_label(self):
         payload = {"summary": {"UUID": "4C4C4544-0000-1234-8000-ABCDEF123456", "Asset Tag": "A123456",
+                               "IdentifyingNumber": "JJYKXL3",
                                "Computer Name": "WDGS-BH0020", "Registered Owner": "Pat Example",
                                "User Name": "pat", "Logon Server": r"\\DC01", "SSID": "LabWiFi",
                                "Volume Serial Number": "1A2B-3C4D", "Hardware ID": "ABCDEFGHIJ"}}

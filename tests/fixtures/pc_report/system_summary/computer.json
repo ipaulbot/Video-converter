@@ -1,0 +1,21 @@
+{
+ "Manufacturer": "Dell Inc.",
+ "Model": "Precision 3571",
+ "SystemFamily": "Precision",
+ "SystemSKUNumber": "0B10",
+ "Name": "PC-NAME",
+ "Domain": "example.local",
+ "PartOfDomain": true,
+ "DomainRole": 1,
+ "Workgroup": null,
+ "PCSystemType": 2,
+ "TotalPhysicalMemory": 34029125632,
+ "UserName": "WO********user",
+ "NumberOfProcessors": 1,
+ "NumberOfLogicalProcessors": 20,
+ "HypervisorPresent": true,
+ "BootupState": "Normal boot",
+ "PowerSupplyState": 3,
+ "ThermalState": 3,
+ "Description": "AT/AT COMPATIBLE"
+}
