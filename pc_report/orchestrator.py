@@ -47,7 +47,7 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
     )
     results = run.results
     errors: dict[str, str] = {}
-    elapsed: dict[str, float] = {}
+    elapsed = run.elapsed
     total = len(selected)
     completed = 0
     started_at = time.monotonic()
@@ -90,7 +90,6 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
                 seconds = round(raw_seconds, 3)
                 results[section.key] = result
                 elapsed[section.key] = seconds
-                run.elapsed[section.key] = seconds
                 report(section)
 
     meta = {

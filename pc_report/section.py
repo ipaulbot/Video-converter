@@ -63,14 +63,14 @@ class SharedSources:
 
 @dataclass
 class RunContext:
-    """State shared by every section during one ``run_all``."""
+    """State shared by every section during one ``run_all``, including completed timings."""
     options: dict
     is_admin: bool
     results: dict
     shared: SharedSources
     runner: Callable[[str, int], tuple[Any, str | None]]
     text_runner: Callable[[list[str], int], tuple[str, str | None]]
-    elapsed: dict = field(default_factory=dict)
+    elapsed: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
