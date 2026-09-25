@@ -122,3 +122,17 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Report Health block: partial/empty sections, notes, elapsed time per section.
 - The PC Report tab's progress text now names the section being collected and
   the running count.
+
+## 2026-09-25
+
+### Multi-Source Recorder
+
+- Added per-source DirectShow audio selection, mute and volume control, including
+  AAC audio for stream-copy video and automatic video-only retry when a selected
+  microphone is unavailable. Without a microphone, file and RTSP (H.264 mode)
+  sources keep their own sound track; Mute or Volume 0 records silent video.
+- Recorder presets now load from and save to the MediaRecorder Presets folder,
+  with Load, Set, Save as and Delete actions plus unsaved-change indication.
+- Removed the non-functional Picture-in-picture choice, retained Separate videos
+  and Combined grid, and made the recorder tab visible by default for fresh
+  settings.

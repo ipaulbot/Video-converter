@@ -7,7 +7,7 @@ Use this file as the shared parking lot for bugs, refactors, and new features.
 1. Stabilize current app behavior.
 2. ~~Compare NVC PC Report against SIW and close parity gaps.~~ Done 2026-09-24; see "PC report follow-ups".
 3. Add a lossless FFmpeg editing tab.
-4. Add a multi-source video recording tab.
+4. ~~Add a multi-source video recording tab.~~ Done 2026-09-25; see "Recorder follow-ups".
 
 ## Bugs / Fixes
 
@@ -83,6 +83,18 @@ Out of scope in the current design, kept for later:
 - PDF export of the report.
 - Report comparison (diff two saved reports).
 - PC Report dialog redesign (section picker per group, live section list).
+
+## Recorder follow-ups
+
+- Timer-dialog fields: time format, decimals, maximum time.
+- Screen capture through FFmpeg gdigrab.
+- Picture-in-picture recording.
+- Source type and address columns in the main grid.
+- Splitting the 2,900-line recorder widget into modules.
+- Wiring `build_multi_source_record_command` into the live recorder.
+- Live verification on Axis, Basler and Daheng hardware using the lab checklist.
+- Preview-pipeline changes.
+- Combined grid mixes only one microphone; per-source embedded audio is not mixed.
 
 ## Done
 
