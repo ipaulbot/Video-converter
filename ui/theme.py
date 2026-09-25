@@ -674,7 +674,7 @@ def compact_button_style(radius: int = RADIUS_SM) -> str:
     return (
         f"QPushButton {{ background-color: {s.accent}; color: {s.text_on_accent}; "
         f"border: 1px solid {s.accent_dark}; border-radius: {radius}px; "
-        f"padding: 3px 10px; min-height: 24px; font-family: {FONT_UI}; "
+        f"padding: 1px 10px; min-height: 24px; font-family: {FONT_UI}; "
         f"font-size: 9pt; font-weight: 600; }} "
         f"QPushButton:hover {{ background-color: {s.accent_hover}; }} "
         f"QPushButton:pressed {{ background-color: {s.accent_pressed}; }} "
