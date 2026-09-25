@@ -7,7 +7,7 @@ import re
 from .. import decode
 from ..format import fmt_datetime, yes_no
 from ..ps import dx_list
-from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 DS_SCRIPT = r"""
 $cats = @{ '{860BB310-5D01-11D0-BD3B-00A0C911CE86}' = 'Video Capture Sources'; '{33D9A762-90C8-11D0-BD43-00A0C911CE86}' = 'Audio Capture Sources' }
@@ -183,10 +183,7 @@ def build(pnp, ds, dx, frame_server, consent, env, programs) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def camera_names(data) -> list[str]:

@@ -6,7 +6,7 @@ import re
 from .. import decode
 from ..format import bitrate_to_mbps, bytes_human, yes_no
 from ..ps import cim
-from ..section import Section, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 THERMAL_SCRIPT = cim("MSAcpi_ThermalZoneTemperature", ("InstanceName", "CurrentTemperature", "CriticalTripPoint",
                                                         "PassiveTripPoint", "ActiveTripPoint"), namespace="root/wmi")
@@ -182,10 +182,7 @@ def build(thermal, fans, probes, battery, counters) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for group in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(group.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

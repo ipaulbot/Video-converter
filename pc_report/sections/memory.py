@@ -7,7 +7,7 @@ import os
 from .. import decode
 from ..format import bytes_human, kb_human
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 ARRAY_SCRIPT = cim("Win32_PhysicalMemoryArray", ("MaxCapacity", "MaxCapacityEx", "MemoryDevices", "MemoryErrorCorrection"))
 MODULE_PROPS = ("DeviceLocator", "BankLabel", "Capacity", "Speed", "ConfiguredClockSpeed", "ConfiguredVoltage", "MinVoltage",
@@ -194,10 +194,7 @@ def build(arrays, modules, os_, perf, status=None) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

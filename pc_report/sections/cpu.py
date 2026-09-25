@@ -8,7 +8,7 @@ import re
 from .. import decode
 from ..format import kb_human, mhz, yes_no
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 PROC_PROPS = ("Name", "Manufacturer", "Description", "Caption", "ProcessorId", "SocketDesignation", "Architecture",
               "AddressWidth", "DataWidth", "NumberOfCores", "NumberOfEnabledCore", "NumberOfLogicalProcessors",
@@ -142,10 +142,7 @@ def build(procs, caches, reg, perf, features) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from .. import decode
 from ..format import yes_no
-from ..section import REQUIRES_ADMIN, Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import REQUIRES_ADMIN, Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 SHARES_SCRIPT = (
     "Get-SmbShare -ErrorAction SilentlyContinue | Select-Object Name,Path,Description,"
@@ -149,10 +149,7 @@ def build(shares, access, client, server) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for group in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(group.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

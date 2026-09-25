@@ -4,7 +4,7 @@ from __future__ import annotations
 from .. import decode
 from ..format import fmt_date, yes_no
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, rows_of
+from ..section import Section, first_dict, flatten_groups, kv_groups, rows_of
 
 BIOS_PROPS = ("Manufacturer", "Name", "Version", "SMBIOSBIOSVersion", "SMBIOSMajorVersion", "SMBIOSMinorVersion",
               "ReleaseDate", "BiosCharacteristics", "EmbeddedControllerMajorVersion", "EmbeddedControllerMinorVersion",
@@ -43,10 +43,7 @@ def build(bios, acpi, boot) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

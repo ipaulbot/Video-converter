@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 
 from ..noldus_terms import RUNTIME_TERMS, filter_nvc_related_items
-from ..section import Section, esc, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, esc, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 from . import cameras, cpu, memory, operating_system, security, sensors, system_summary, usb, video, virtual_machine
 
 ATTENTION_COLUMNS = [("Severity", "Severity"), ("Item", "Item"), ("Detail", "Detail")]
@@ -255,10 +255,7 @@ def build(results: dict, is_admin: bool, elapsed: dict) -> dict:
 
 
 def flatten(data) -> dict:
-    values = {}
-    for group in rows_of(data.get("groups") if isinstance(data, dict) else None):
-        values.update(group.get("rows") or {})
-    return values
+    return flatten_groups(data)
 
 
 def collect(ctx):

@@ -5,7 +5,7 @@ import re
 
 from ..format import yes_no
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, rows_of
+from ..section import Section, first_dict, flatten_groups, kv_groups, rows_of
 
 SYSTEM_SCRIPT = cim("Win32_ComputerSystem", ("Manufacturer", "Model", "HypervisorPresent"))
 FIRMWARE_SCRIPT = ("$b = Get-CimInstance Win32_BIOS -ErrorAction SilentlyContinue; $bb = Get-CimInstance Win32_BaseBoard -ErrorAction SilentlyContinue; "
@@ -110,10 +110,7 @@ def build(system, firmware, services, pnp) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

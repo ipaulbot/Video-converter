@@ -4,7 +4,7 @@ from __future__ import annotations
 from .. import decode
 from ..format import kb_human, yes_no
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 
 BASEBOARD = cim("Win32_BaseBoard", ("Manufacturer", "Product", "Version", "SerialNumber", "Tag"))
 SOCKETS = cim("Win32_Processor", ("SocketDesignation", "UpgradeMethod"))
@@ -55,10 +55,7 @@ def build(baseboard, sockets, arrays, slots, onboard, connectors) -> dict:
 
 
 def flatten(data) -> dict:
-    out = {}
-    for g in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(g.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):
