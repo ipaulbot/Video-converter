@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-from pc_report.privacy import redact_payload
+from pc_report.privacy import redact_payload, redact_text
 from pc_report.section import REQUIRES_ADMIN, RenderContext, RunContext, SectionContext, SharedSources, is_partial
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "pc_report"
@@ -85,7 +85,7 @@ class RecordingSectionContext(SectionContext):
             value = scrub_values(self.redact(value), self.scrub)
             text = json.dumps(value, indent=1, default=str)
         else:
-            text = self.scrub(value or "")
+            text = redact_text(self.scrub(value or ""))
         (directory / f"{safe_name(name)}{suffix}").write_text(text, encoding="utf-8")
 
     def query(self, name, script, timeout=None):

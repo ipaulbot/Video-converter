@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from pc_report import privacy
 from pc_report.section import REQUIRES_ADMIN, RunContext, Section, SharedSources
 from tests.pc_report import support
 
@@ -105,6 +106,37 @@ class RecordingContextTests(unittest.TestCase):
             self.assertEqual(json.loads((root / "_shared" / "dxdiag.json").read_text(encoding="utf-8")),
                              {"Machine": "PC-NAME"})
             self.assertFalse((root / "demo" / "bitlocker.json").exists())
+
+    def test_recording_redacts_network_identifiers_in_text_fixtures(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = RunContext(
+                options={},
+                is_admin=False,
+                results={},
+                shared=SharedSources({}),
+                runner=lambda s, t: (None, None),
+                text_runner=lambda a, t: (
+                    "SSID : PrivateNetwork\nBSSID : AA-BB-CC-DD-EE-FF\n"
+                    "Address : 192.168.10.55",
+                    None,
+                ),
+            )
+            ctx = support.RecordingSectionContext(
+                run,
+                _section(),
+                root,
+                lambda value: value,
+                lambda text: text,
+            )
+
+            ctx.text("netsh", ["netsh"])
+
+            saved = (root / "demo" / "netsh.txt").read_text(encoding="utf-8")
+            self.assertEqual(saved, privacy.redact_text(saved))
+            self.assertNotIn("PrivateNetwork", saved)
+            self.assertNotIn("DD-EE-FF", saved)
+            self.assertNotIn("192.168.10.55", saved)
 
 
 class HelperTests(unittest.TestCase):

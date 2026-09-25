@@ -23,6 +23,7 @@ SENSITIVE_TOKENS = (
     "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "processorid", "machineguid", "domainname",
     "machineid", "localadministrators", "accessaccount", "accountname", "interfaceguid",
+    "dnssuffix", "dnsdomain", "networkprofile", "netprofilename",
 )
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")
@@ -42,6 +43,11 @@ WELL_KNOWN_ACCOUNTS = frozenset({
 
 _IPV4 = re.compile(r"(?<![\d.])(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}(?![\d.])")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
+_MAC = re.compile(r"(?<![0-9A-Fa-f])([0-9A-Fa-f]{2})[:-]([0-9A-Fa-f]{2})[:-]([0-9A-Fa-f]{2})(?:[:-][0-9A-Fa-f]{2}){3}(?![0-9A-Fa-f])")
+_WIRELESS_LINE = re.compile(r"(?im)^(\s*(?:BSSID|SSID|GUID|Profile)\s*:\s*).*$")
+_PROXY_TEXT_LINE = re.compile(r"(?im)^(\s*(?:Proxy Server\(s\)|AutoConfigURL)\s*:\s*).*$")
+_URL_HOST = re.compile(r"(?i)(https?://)(\[[^\]]+\]|[^/:;\s]+)")
+_PROXY_ENTRY_HOST = re.compile(r"(?i)((?:^|[;,])\s*(?:https?=)?)([^:;/\s=]+)(?=:\d+|[;,]|$)")
 _UNC_PATH = re.compile(r"^(\\\\)([^\\]+)(\\.*)?$")
 _UNC_HOST_PREFIX = re.compile(r"(\\\\)([^\\\s]+)(\\)")
 _GUID_FULL = re.compile(
@@ -225,6 +231,34 @@ def mask_ip(value):
     return _IPV6.sub(_mask_v6, s)
 
 
+def redact_proxy_hosts(value):
+    """Mask host names in WinInet proxy strings and auto-config URLs."""
+    if isinstance(value, list):
+        return [redact_proxy_hosts(item) for item in value]
+    if not isinstance(value, str):
+        return value
+    masked = _URL_HOST.sub(lambda match: f"{match.group(1)}<redacted>", value)
+    return _PROXY_ENTRY_HOST.sub(lambda match: f"{match.group(1)}<redacted>", masked)
+
+
+def redact_text(text: str) -> str:
+    """Mask network identifiers in raw command-output fixtures."""
+    value = str(text or "")
+    value = _WIRELESS_LINE.sub(r"\1<redacted>", value)
+    value = _PROXY_TEXT_LINE.sub(r"\1<redacted>", value)
+    macs = []
+
+    def stash_mac(match):
+        macs.append(f"{match.group(1)}:{match.group(2)}:{match.group(3)}:**:**:**")
+        return f"<masked-mac-{len(macs) - 1}>"
+
+    value = _MAC.sub(stash_mac, value)
+    value = mask_ip(value)
+    for index, mac in enumerate(macs):
+        value = value.replace(f"<masked-mac-{index}>", mac)
+    return value
+
+
 def redact_unc_host(value):
     if not isinstance(value, str):
         return value
@@ -383,6 +417,8 @@ def redact_payload(data, options=None, *, env=None):
             return redact_unc_host(value)
         if key_l in {"portname", "sharename", "servername", "location", "comment"}:
             return redact_network_locations(value)
+        if key_l in {"proxyserver", "autoconfigurl", "winhttpproxy"}:
+            return redact_proxy_hosts(value)
         if any(t in key_l for t in IP_TOKENS):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):

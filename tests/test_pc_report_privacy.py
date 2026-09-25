@@ -479,6 +479,61 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(r["Remote Address"], "127.0.0.1")
         self.assertEqual(r["DNS Servers"], ["8.8.*.*", "1.1.*.*"])
 
+    def test_dns_suffix_and_network_profile_are_masked(self):
+        out = redact_payload(
+            {
+                "DNS Suffix": "lab.example.org",
+                "Network Profile": "lab.example.org (Domain)",
+                "DNSDomain": "private.lan",
+                "DNSDomainSuffixSearchOrder": ["private.lan"],
+                "NetProfileName": "Private Wi-Fi",
+            },
+            {"redact": True},
+        )
+        self.assertNotIn("example", out["DNS Suffix"])
+        self.assertNotIn("example", out["Network Profile"])
+        self.assertNotIn("private", out["DNSDomain"])
+        self.assertNotIn("private", out["DNSDomainSuffixSearchOrder"][0])
+        self.assertNotIn("Private", out["NetProfileName"])
+
+    def test_network_raw_text_masks_addresses_mac_and_wireless_names(self):
+        text = (
+            "Name : Wi-Fi\n"
+            "SSID : PrivateNetwork\n"
+            "BSSID : AA-BB-CC-DD-EE-FF\n"
+            "Physical address : AA:BB:CC:DD:EE:FF\n"
+            "IPv4 Address : 192.168.10.55\n"
+            "IPv6 Address : fe80::1c2d:3e4f:5a6b:7c8d\n"
+            "GUID : 01234567-89AB-CDEF-0123-456789ABCDEF\n"
+            "Profile : PrivateProfile\n"
+        )
+
+        out = privacy.redact_text(text)
+
+        self.assertNotIn("PrivateNetwork", out)
+        self.assertNotIn("DD-EE-FF", out)
+        self.assertIn("AA:BB:CC:**:**:**", out)
+        self.assertNotIn("192.168.10.55", out)
+        self.assertNotIn("1c2d:3e4f", out)
+        self.assertNotIn("01234567", out)
+        self.assertNotIn("PrivateProfile", out)
+
+    def test_proxy_server_hosts_are_masked(self):
+        payload = {
+            "ProxyServer": "http=proxy.private.example:8080;https=secure.private.example:8443",
+            "AutoConfigURL": "https://pac.private.example/config.pac",
+            "WinHTTP Proxy": "winhttp.private.example:3128 (bypass: local)",
+        }
+
+        out = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertNotIn("private.example", out["ProxyServer"])
+        self.assertIn(":8080", out["ProxyServer"])
+        self.assertNotIn("pac.private.example", out["AutoConfigURL"])
+        self.assertIn("/config.pac", out["AutoConfigURL"])
+        self.assertNotIn("winhttp.private.example", out["WinHTTP Proxy"])
+        self.assertIn(":3128", out["WinHTTP Proxy"])
+
     def test_name_value_rows_mask_sensitive_names_only(self):
         rows = [{"Name": "USERNAME", "Value": "pat"}, {"Name": "Path", "Value": r"C:\Users\pat\bin"},
                 {"Name": "LOGONSERVER", "Value": r"\\DC01"},
