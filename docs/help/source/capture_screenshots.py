@@ -33,6 +33,31 @@ if os.environ.get("NVC_SHOTS_OFFSCREEN") == "1":
 # Import the app the way it imports itself.
 sys.path.insert(0, str(ROOT))
 
+STUB_DEVICES = os.environ.get("NVC_SHOTS_STUB_DEVICES") == "1"
+STUB_CAMERAS = ["Camera A", "Camera B"]
+STUB_MICROPHONES = ["Microphone A", "Microphone B"]
+
+
+def _stub_device_discovery() -> None:
+    """Replace DirectShow discovery so screenshots never show real device names.
+
+    The recorder widget imports the discovery functions by name, so the patch
+    has to land on the widget module, not just on conversion.recording_sources.
+    """
+    import conversion.recording_sources as sources
+    import ui.multi_source_recorder_widget as recorder
+
+    def cameras(*_args, **_kwargs):
+        return list(STUB_CAMERAS)
+
+    def microphones(*_args, **_kwargs):
+        return list(STUB_MICROPHONES)
+
+    for module in (sources, recorder):
+        module.discover_directshow_video_devices = cameras
+        module.discover_directshow_audio_devices = microphones
+
+
 from PyQt5.QtWidgets import QApplication, QTabWidget  # noqa: E402
 
 
@@ -84,10 +109,34 @@ def _grab(widget, fig_id: str, filename: str, app) -> bool:
     return True
 
 
+def _make_test_clip():
+    """A 6 s colour-bar MP4 in %TEMP%, made with the bundled ffmpeg. None on failure."""
+    import subprocess
+    import tempfile
+
+    from utils.resources import resource_path
+
+    out = Path(tempfile.gettempdir()) / "nvc_help_fig08_clip.mp4"
+    cmd = [resource_path("ffmpeg.exe"), "-hide_banner", "-loglevel", "error", "-y",
+           "-f", "lavfi", "-i", "testsrc=duration=6:size=640x360:rate=25",
+           "-f", "lavfi", "-i", "sine=frequency=440:duration=6",
+           "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(out)]
+    try:
+        subprocess.run(cmd, check=True, timeout=60)
+    except (OSError, subprocess.SubprocessError) as exc:
+        print(f"  -- FIG-08: could not make a test clip: {exc}")
+        return None
+    return str(out)
+
+
 def main() -> int:
     import figures as figures_mod
 
     app = QApplication.instance() or QApplication([])
+
+    if STUB_DEVICES:
+        _stub_device_discovery()
+        print("  (DirectShow discovery stubbed: stand-in camera and microphone names)")
 
     from ui.main_window import VideoConverterApp
     window = VideoConverterApp()
@@ -168,6 +217,90 @@ def main() -> int:
     attempt("FIG-05", lambda: show_tab("PC Report"))
     attempt("FIG-06", lambda: show_tab("Lossless Editor"))
     attempt("FIG-07", lambda: show_tab("Multi-Source Recorder"))
+
+    # FIG-08: the Media Player with a clip. The widget is built lazily by the
+    # main window, so ask the window for it rather than reaching into the tab.
+    def media_player_with_clip():
+        if os.environ.get("NVC_SHOTS_OFFSCREEN") == "1":
+            print("  -- FIG-08: needs a real display (video surface is black offscreen)")
+            return None
+        if show_tab("Media Player") is None:
+            return None
+        widget = window._ensure_media_player_widget()
+        _pump(app, 10)
+        clip = _make_test_clip()
+        if clip is None:
+            return None
+        widget.set_visible_panel_count(1)
+        panel = widget.panels[0]
+        if not panel.load_media(clip):
+            return None
+        # Let the backend report duration, then park on a visible frame.
+        for _ in range(60):
+            _pump(app, 4)
+            if panel.player is not None and panel.player.duration() > 0:
+                break
+        widget.play_all()
+        for _ in range(30):
+            _pump(app, 4)
+            if panel.player is not None and panel.player.position() >= 1000:
+                break
+        widget.pause_all()
+        _pump(app, 10)
+        return window
+
+    attempt("FIG-08", media_player_with_clip)
+
+    # FIG-09: the recorder's Video Settings dialog, shown non-modally like the
+    # settings dialog above, with rows 1-2 filled from the stub device list.
+    def recorder_video_settings():
+        if show_tab("Multi-Source Recorder") is None:
+            return None
+        from ui.multi_source_recorder_widget import VideoSettingsDialog
+        recorder = window.multi_source_recorder_widget
+        recorder.directshow_devices = (
+            list(STUB_CAMERAS)
+            if STUB_DEVICES
+            else recorder.discover_directshow_devices()
+        )
+        if STUB_DEVICES:
+            recorder._apply_audio_devices(STUB_MICROPHONES)
+        dialog = VideoSettingsDialog(
+            recorder.source_rows,
+            recorder.output_controls(),
+            recorder,
+            recorder.button_style,
+        )
+        dialog.setModal(False)
+        dialog.show()
+        _pump(app, 12)
+        cameras = recorder.directshow_devices[:2]
+        for index, camera in enumerate(cameras):
+            (
+                row_enabled,
+                row_label,
+                _type,
+                row_device,
+                _fps,
+                _res,
+                row_audio_name,
+                row_audio,
+                _off,
+            ) = dialog.dialog_rows[index]
+            row_enabled.setChecked(True)
+            row_label.setText(f"Video {index + 1}")
+            row_device.setText(camera)
+            row_audio_name.setText(f"Audio {index + 1}")
+            if STUB_DEVICES:
+                mic_index = row_audio.findText(
+                    STUB_MICROPHONES[index % len(STUB_MICROPHONES)]
+                )
+                if mic_index >= 0:
+                    row_audio.setCurrentIndex(mic_index)
+        _pump(app, 12)
+        return dialog
+
+    attempt("FIG-09", recorder_video_settings)
 
     print(f"\ncaptured {len(captured)}, skipped {len(skipped)}")
     if skipped:

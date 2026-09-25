@@ -64,6 +64,22 @@ FIGURES: Final[list[dict[str, str]]] = [
         "caption": "The Multi-Source Recorder tab with two sources enabled.",
         "capture_steps": "Recorder tab, fill rows 1-2, enable both, do not start recording.",
     },
+    {
+        "id": "FIG-08",
+        "filename": "fig-08-media-player.png",
+        "caption": "The Media Player tab with a clip loaded in a single panel.",
+        "capture_steps": ("Media Player tab, Panels set to 1, a short test clip loaded and "
+                          "paused at about one second. Needs a real display; offscreen "
+                          "renders the video surface black."),
+    },
+    {
+        "id": "FIG-09",
+        "filename": "fig-09-recorder-video-settings.png",
+        "caption": "The recorder's Video Settings dialog with two camera rows configured.",
+        "capture_steps": ("Multi-Source Recorder tab -> Video Settings. Rows 1-2 set to USB "
+                          "cameras with stand-in names (Camera A, Camera B; Microphone A, "
+                          "Microphone B). Do not use real device names."),
+    },
 ]
 
 _ID_RE = re.compile(r"^FIG-(\d{2})$")

@@ -78,9 +78,16 @@ class FigureTests(unittest.TestCase):
 
     def test_number_is_derived_from_id(self):
         self.assertEqual(figures.figure_number("FIG-00"), 0)
-        self.assertEqual(figures.figure_number("FIG-07"), 7)
+        self.assertEqual(figures.figure_number("FIG-09"), 9)
         with self.assertRaises(ValueError):
             figures.figure_number("FIG-7")
+
+    def test_catalog_has_the_media_player_and_video_settings_figures(self):
+        by_id = {f["id"]: f for f in figures.FIGURES}
+        self.assertEqual(by_id["FIG-08"]["filename"], "fig-08-media-player.png")
+        self.assertEqual(by_id["FIG-09"]["filename"], "fig-09-recorder-video-settings.png")
+        self.assertIn("Media Player", by_id["FIG-08"]["caption"])
+        self.assertIn("Video Settings", by_id["FIG-09"]["caption"])
 
     def test_filenames_are_unique(self):
         names = [f["filename"] for f in figures.FIGURES]
