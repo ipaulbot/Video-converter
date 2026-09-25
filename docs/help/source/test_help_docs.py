@@ -478,6 +478,12 @@ class ShippedOutputTests(unittest.TestCase):
             self.assertIsNotNone(registry.parse_manual_filename(name),
                                  f"{name} does not match the filename grammar")
 
+    def test_readme_names_the_current_doc_version(self):
+        """The README's filename table must follow DOC_VERSION, not lag behind it."""
+        readme = (SOURCE_DIR.parent / "README.md").read_text(encoding="utf-8")
+        self.assertIn(registry.manual_filename("help", "en", "pdf"), readme)
+        self.assertIn(registry.manual_filename("quickstart", "en", "pdf"), readme)
+
 
 if __name__ == "__main__":
     unittest.main()

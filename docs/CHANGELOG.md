@@ -157,3 +157,18 @@ Use this file to track user-visible fixes, improvements, and feature work.
   and WMV worked). The app now selects the Media Foundation backend at startup and
   creates the player without the `VideoSurface` flag, which that backend rejects.
 - Player settings (last folder, panel count, volume, mute) persist between sessions.
+
+### Help documentation
+
+- Rewrote the Help manual against the current application: every Settings tab,
+  the seven main tabs and their default visibility, Converted Files, Time
+  Restrictions, Language, Updates and Logs.
+- New Media Player chapter (controls, shortcut table pinned by a test, fullscreen,
+  playlist, unsupported-format fallback) and a rewritten Multi-Source Recorder
+  chapter built around the Video Settings dialog and presets.
+- PC Report chapter lists every section in report order and describes the
+  always-on redaction and administrator-only fields.
+- Quick Start gains "Record From a Webcam" and "Review a Recording".
+- Two new figures (Media Player, Video Settings); all figures recaptured with
+  stand-in device names and paths, and captions corrected to match what is shown.
+  Regenerated the 2.3.0 PDF and DOCX manuals; the README names the 2.3.0 files.

@@ -25,8 +25,9 @@ FIGURES: Final[list[dict[str, str]]] = [
     {
         "id": "FIG-01",
         "filename": "fig-01-settings-general.png",
-        "caption": "Settings, General tab: source and destination folders.",
-        "capture_steps": "Menu -> Settings. General tab. Show both folder fields populated.",
+        "caption": "Settings, General tab: startup, Copy Only, tray and GPU options.",
+        "capture_steps": ("Menu -> Settings. General tab as shipped. (Folders live on the "
+                          "Folders tab, which shows the operator's own paths -- not captured.)"),
     },
     {
         "id": "FIG-02",
@@ -43,20 +44,21 @@ FIGURES: Final[list[dict[str, str]]] = [
     {
         "id": "FIG-04",
         "filename": "fig-04-inspection.png",
-        "caption": "The Inspection tab showing an FFprobe summary.",
-        "capture_steps": "Drop a short MP4 onto the Inspection tab; capture the Summary sub-tab.",
+        "caption": "The Video Inspection Tool tab, ready for a file to be dropped.",
+        "capture_steps": "Video Inspection Tool tab, Summary sub-tab, no file loaded.",
     },
     {
         "id": "FIG-05",
         "filename": "fig-05-pc-report.png",
-        "caption": "The PC Report tab after generating a report.",
-        "capture_steps": "PC Report tab, generate with redaction enabled, then capture.",
+        "caption": "The PC Report tab before a report is generated.",
+        "capture_steps": ("PC Report tab as opened. Do not generate: a real report would show "
+                          "this machine's name and hardware."),
     },
     {
         "id": "FIG-06",
         "filename": "fig-06-lossless-editor.png",
-        "caption": "The Lossless Editor tab with a trim range set.",
-        "capture_steps": "Lossless Editor tab, load a clip, set start and end timestamps.",
+        "caption": "The Lossless Editor tab with its trim, remux and merge tools.",
+        "capture_steps": "Lossless Editor tab as opened, no clip loaded.",
     },
     {
         "id": "FIG-07",
@@ -69,8 +71,9 @@ FIGURES: Final[list[dict[str, str]]] = [
         "filename": "fig-08-media-player.png",
         "caption": "The Media Player tab with a clip loaded in a single panel.",
         "capture_steps": ("Media Player tab, Panels set to 1, a short test clip loaded and "
-                          "paused at about one second. Needs a real display; offscreen "
-                          "renders the video surface black."),
+                          "paused at about one second. Needs a real display: the video "
+                          "surface is native, so the script grabs the screen region "
+                          "under the window (widget.grab() sees black)."),
     },
     {
         "id": "FIG-09",

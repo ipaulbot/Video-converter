@@ -67,6 +67,23 @@ def _pump(app, times: int = 8) -> None:
         app.processEvents()
 
 
+def _wait_ms(app, ms: int) -> None:
+    """Let real time pass while the event loop runs.
+
+    _pump() only drains queued events; a media backend that decodes on its own
+    threads needs wall-clock time. A QTimer object is used rather than
+    QTimer.singleShot, which this repository forbids.
+    """
+    from PyQt5.QtCore import QEventLoop, QTimer
+
+    loop = QEventLoop()
+    timer = QTimer()
+    timer.setSingleShot(True)
+    timer.timeout.connect(loop.quit)
+    timer.start(ms)
+    loop.exec_()
+
+
 def _tab_index(tabs: QTabWidget, label: str) -> int | None:
     """Find a tab by its visible label. Never trust tab order."""
     for i in range(tabs.count()):
@@ -78,11 +95,24 @@ def _tab_index(tabs: QTabWidget, label: str) -> int | None:
 _seen_digests: dict[str, str] = {}
 
 
-def _grab(widget, fig_id: str, filename: str, app) -> bool:
+def _grab(widget, fig_id: str, filename: str, app, screen: bool = False) -> bool:
+    """Save `widget` as `filename`.
+
+    `screen=True` captures the widget's on-screen rectangle from the display
+    instead of rendering the widget tree. widget.grab() cannot see a native
+    video surface (the Media Player's QVideoWidget renders through Media
+    Foundation's own presenter), so that view comes out black unless it is
+    read back from the screen. The window must be visible and unobscured.
+    """
     import hashlib
 
     _pump(app)
-    pixmap = widget.grab()
+    if screen:
+        top_left = widget.mapToGlobal(widget.rect().topLeft())
+        pixmap = app.primaryScreen().grabWindow(
+            0, top_left.x(), top_left.y(), widget.width(), widget.height())
+    else:
+        pixmap = widget.grab()
     if pixmap.isNull() or pixmap.width() < 8:
         print(f"  -- {fig_id}: nothing to grab")
         return False
@@ -162,20 +192,32 @@ def main() -> int:
     captured: list[str] = []
     skipped: list[str] = []
 
-    def attempt(fig_id: str, fn) -> None:
+    def attempt(fig_id: str, fn, screen: bool = False, after=None) -> None:
+        """Run `fn` to reach a view, grab it, then always run `after` (if any).
+
+        `after` undoes any state `fn` changed for the shot -- a scrubbed path,
+        a resized window -- so a failed grab never leaves the app altered.
+        """
         try:
             widget = fn()
             if widget is None:
                 skipped.append(fig_id)
                 print(f"  -- {fig_id}: view not reachable here")
                 return
-            if _grab(widget, fig_id, catalog[fig_id], app):
+            if _grab(widget, fig_id, catalog[fig_id], app, screen=screen):
                 captured.append(fig_id)
             else:
                 skipped.append(fig_id)
         except Exception:
             skipped.append(fig_id)
             print(f"  -- {fig_id}: {traceback.format_exc(limit=1).strip().splitlines()[-1]}")
+        finally:
+            if after is not None:
+                try:
+                    after()
+                    _pump(app, 4)
+                except Exception:
+                    print(f"  ! {fig_id}: cleanup failed; check the app state")
 
     tabs = getattr(window, "tabs", None) or window.findChild(QTabWidget)
 
@@ -194,12 +236,15 @@ def main() -> int:
 
     # FIG-01 / FIG-02: the settings dialog. Built directly rather than through
     # the menu action, so it can be grabbed without a modal event loop.
+    open_dialogs: list = []
+
     def settings_tab(label: str):
         from ui.settings_dialog import SettingsDialog
         from utils.config import load_settings
         dialog = SettingsDialog(load_settings(), parent=window)
         dialog.setModal(False)
         dialog.show()
+        open_dialogs.append(dialog)
         _pump(app, 12)
         inner = dialog.findChild(QTabWidget)
         if inner is not None:
@@ -209,17 +254,63 @@ def main() -> int:
                 _pump(app, 8)
         return dialog
 
-    attempt("FIG-01", lambda: settings_tab("General"))
-    attempt("FIG-02", lambda: settings_tab("Format"))
+    def close_dialogs():
+        # A non-modal dialog left open would sit on top of every later
+        # screen-grabbed view (FIG-08 reads pixels from the display).
+        while open_dialogs:
+            open_dialogs.pop().close()
 
-    attempt("FIG-03", lambda: show_tab("Converted Files"))
+    attempt("FIG-01", lambda: settings_tab("General"), after=close_dialogs)
+    attempt("FIG-02", lambda: settings_tab("Format"), after=close_dialogs)
+
+    # FIG-03: the Converted Files table with stand-in rows, so the status icons
+    # are visible without converting anything and without listing the
+    # operator's own files.
+    def converted_files_with_rows():
+        if show_tab("Converted Files") is None:
+            return None
+        table = window.converted_files_widget
+        table.add_queued_file("Session 1.mp4", r"C:\Videos\Converted")
+        table.update_file_status("Session 1.mp4", "success")
+        table.add_queued_file("Session 2.mp4", r"C:\Videos\Converted")
+        table.update_file_status("Session 2.mp4", "processing")
+        table.add_queued_file("Session 3.mp4", r"C:\Videos\Converted")
+        _pump(app, 8)
+        return window
+
+    attempt("FIG-03", converted_files_with_rows)
     attempt("FIG-04", lambda: show_tab("Video Inspection Tool"))
     attempt("FIG-05", lambda: show_tab("PC Report"))
     attempt("FIG-06", lambda: show_tab("Lossless Editor"))
-    attempt("FIG-07", lambda: show_tab("Multi-Source Recorder"))
+
+    # FIG-07: the recorder tab. The File location field defaults to the
+    # operator's own Videos folder, which contains their user name; show a
+    # neutral path instead and put it back afterwards. Row 2 is enabled so the
+    # shot matches its caption.
+    recorder = window.multi_source_recorder_widget
+    folder_edit = recorder.output_controls()["output_folder"]
+    original_folder = folder_edit.text()
+    row2_enabled = recorder.source_rows[1][0]
+    row2_was_checked = row2_enabled.isChecked()
+
+    def recorder_tab():
+        if show_tab("Multi-Source Recorder") is None:
+            return None
+        folder_edit.setText(r"C:\Videos")
+        row2_enabled.setChecked(True)
+        _pump(app, 8)
+        return window
+
+    def restore_recorder_tab():
+        folder_edit.setText(original_folder)
+        row2_enabled.setChecked(row2_was_checked)
+
+    attempt("FIG-07", recorder_tab, after=restore_recorder_tab)
 
     # FIG-08: the Media Player with a clip. The widget is built lazily by the
     # main window, so ask the window for it rather than reaching into the tab.
+    original_size = window.size()
+
     def media_player_with_clip():
         if os.environ.get("NVC_SHOTS_OFFSCREEN") == "1":
             print("  -- FIG-08: needs a real display (video surface is black offscreen)")
@@ -227,29 +318,41 @@ def main() -> int:
         if show_tab("Media Player") is None:
             return None
         widget = window._ensure_media_player_widget()
+        # The transport row is wider than the default window; widen it so the
+        # shot is not cut off by the tab's horizontal scrollbar.
+        window.move(0, 0)
+        window.resize(1600, 900)
+        window.raise_()
+        window.activateWindow()
         _pump(app, 10)
         clip = _make_test_clip()
         if clip is None:
             return None
-        widget.set_visible_panel_count(1)
+        # Drive the Panels combo rather than the layout method so the combo
+        # and the panel count agree in the picture.
+        from ui.media_player_widget import PANEL_COUNT_OPTIONS
+        widget.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(1))
+        _pump(app, 6)
         panel = widget.panels[0]
         if not panel.load_media(clip):
             return None
-        # Let the backend report duration, then park on a visible frame.
-        for _ in range(60):
-            _pump(app, 4)
+        # Media Foundation reports duration and decodes asynchronously; the
+        # pumps above do not let wall-clock time pass, so wait for real.
+        for _ in range(40):
+            _wait_ms(app, 100)
             if panel.player is not None and panel.player.duration() > 0:
                 break
         widget.play_all()
-        for _ in range(30):
-            _pump(app, 4)
+        for _ in range(40):
+            _wait_ms(app, 100)
             if panel.player is not None and panel.player.position() >= 1000:
                 break
         widget.pause_all()
-        _pump(app, 10)
+        _wait_ms(app, 300)
         return window
 
-    attempt("FIG-08", media_player_with_clip)
+    attempt("FIG-08", media_player_with_clip, screen=True,
+            after=lambda: window.resize(original_size))
 
     # FIG-09: the recorder's Video Settings dialog, shown non-modally like the
     # settings dialog above, with rows 1-2 filled from the stub device list.
@@ -273,6 +376,7 @@ def main() -> int:
         )
         dialog.setModal(False)
         dialog.show()
+        open_dialogs.append(dialog)
         _pump(app, 12)
         cameras = recorder.directshow_devices[:2]
         for index, camera in enumerate(cameras):
@@ -300,7 +404,7 @@ def main() -> int:
         _pump(app, 12)
         return dialog
 
-    attempt("FIG-09", recorder_video_settings)
+    attempt("FIG-09", recorder_video_settings, after=close_dialogs)
 
     print(f"\ncaptured {len(captured)}, skipped {len(skipped)}")
     if skipped:
