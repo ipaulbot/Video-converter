@@ -136,6 +136,18 @@ class TabCardTests(unittest.TestCase):
             window.hide()
             window.set_window_mode("compact", persist=False)
 
+    def test_recorder_layout_schematic_leaves_the_leaf_frame_visible(self):
+        # The schematic used to be painted on an opaque near-black pixmap that
+        # covered the dashed leaf frame; it now sits on a transparent canvas.
+        pixmap = self.window._build_layout_preview_pixmap(
+            "Separate videos", [(0.0, 0.0, 1.0, 1.0)], 180, 101
+        )
+        image = pixmap.toImage()
+        self.assertTrue(image.hasAlphaChannel())
+        self.assertEqual(image.pixelColor(1, 1).alpha(), 0)          # corner stays see-through
+        centre = image.pixelColor(90, 60)
+        self.assertGreater(centre.lightness(), 200)                    # tile is white, not black
+
     def test_reskin_reaches_opted_out_tiers(self):
         window = self.window
         widgets = window.reskin_widgets()

@@ -1410,30 +1410,37 @@ class VideoConverterApp(QMainWindow):
         self._showing_recorder_layout_preview = True
 
     def _build_layout_preview_pixmap(self, mode, rects, width, height):
+        # Transparent canvas: the dashed leaf frame of the sidebar preview box
+        # stays visible around the schematic, matching the other tabs' white look.
         pixmap = QPixmap(width, height)
-        pixmap.fill(QColor("#1b2227"))
+        pixmap.fill(Qt.transparent)
         painter = QPainter(pixmap)
         try:
             painter.setRenderHint(QPainter.Antialiasing, True)
+            s = theme.skin()
+            # Keep clear of the frame's 2 px dashed border.
+            inset = 6
+            area_w = max(1, width - 2 * inset)
+            area_h = max(1, height - 2 * inset)
             # "Separate videos" are distinct files, so draw each tile inset with a gap;
             # "Combined grid" is one frame, so tiles sit flush. PiP draws insets on top.
             mode_text = (mode or "").strip().lower()
             gap = 4 if mode_text.startswith("separate") else 1
-            accent = QColor("#43a296")
+            accent = QColor(s.accent)
             font = QFont()
             font.setPixelSize(max(9, height // 7))
             font.setBold(True)
             painter.setFont(font)
             for order, (nx, ny, nw, nh) in enumerate(rects):
-                x = int(round(nx * width)) + gap
-                y = int(round(ny * height)) + gap
-                w = max(1, int(round(nw * width)) - 2 * gap)
-                h = max(1, int(round(nh * height)) - 2 * gap)
+                x = inset + int(round(nx * area_w)) + gap
+                y = inset + int(round(ny * area_h)) + gap
+                w = max(1, int(round(nw * area_w)) - 2 * gap)
+                h = max(1, int(round(nh * area_h)) - 2 * gap)
                 is_pip_inset = mode_text.startswith("picture") and order > 0
                 painter.setPen(QPen(accent, 2))
-                painter.setBrush(QBrush(QColor("#2c353b") if is_pip_inset else QColor("#222b30")))
+                painter.setBrush(QBrush(QColor(s.panel_alt_bg) if is_pip_inset else QColor(s.panel_bg)))
                 painter.drawRoundedRect(x, y, w, h, 4, 4)
-                painter.setPen(QPen(QColor("#cfd6da")))
+                painter.setPen(QPen(accent))
                 painter.drawText(x, y, w, h, Qt.AlignCenter, str(order + 1))
         finally:
             painter.end()
