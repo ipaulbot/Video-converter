@@ -37,6 +37,7 @@ def build(connectors, serial, serialcomm, parallel) -> dict:
     conn = [{"Designator": c.get("ExternalReferenceDesignator", ""),
              "Connector": decode.lookup(decode.PORT_CONNECTOR_TYPES, c.get("ConnectorType")),
              "Port Type": decode.lookup(decode.PORT_TYPES, c.get("PortType"))} for c in rows_of(connectors)]
+    conn.sort(key=lambda row: (str(row["Designator"]).casefold(), str(row["Connector"]).casefold()))
     ser = []
     for item in rows_of(serial):
         baud = decode.to_int(item.get("MaxBaudRate"))
@@ -57,6 +58,7 @@ def build(connectors, serial, serialcomm, parallel) -> dict:
     )
     par = [{"Name": p.get("Name", ""), "Device": p.get("DeviceID", ""), "Status": p.get("Status", ""),
             "PnP Device ID": p.get("PNPDeviceID", "")} for p in rows_of(parallel)]
+    par.sort(key=lambda row: (str(row["Device"]).casefold(), str(row["Name"]).casefold()))
     summary = {"External Connectors": len(conn), "Serial Ports (WMI)": len(ser),
                "COM Ports Registered": ", ".join(str(r["Port"]) for r in comm) or "None",
                "Parallel Ports": len(par)}

@@ -26,6 +26,30 @@ class BuildTests(unittest.TestCase):
         self.assertEqual([row["Port"] for row in data["serialcomm"]], ["COM2", "COM10"])
         self.assertEqual(data["serial"][0]["Max Baud Rate"], "")
 
+    def test_connectors_are_sorted_by_designator_then_type(self):
+        connectors = [
+            {"ExternalReferenceDesignator": "USB 2", "ConnectorType": [63], "PortType": 16},
+            {"ExternalReferenceDesignator": "USB 1", "ConnectorType": [64], "PortType": 16},
+            {"ExternalReferenceDesignator": "USB 1", "ConnectorType": [63], "PortType": 16},
+        ]
+        data = mod.build(connectors, [], [], [])
+        self.assertEqual(
+            [(row["Designator"], row["Connector"]) for row in data["connectors"]],
+            [("USB 1", "USB Type-A"), ("USB 1", "USB Type-B"), ("USB 2", "USB Type-A")],
+        )
+
+    def test_parallel_ports_are_sorted_by_device_then_name(self):
+        parallel = [
+            {"Name": "Second", "DeviceID": "LPT2"},
+            {"Name": "Zulu", "DeviceID": "LPT1"},
+            {"Name": "Alpha", "DeviceID": "LPT1"},
+        ]
+        data = mod.build([], [], [], parallel)
+        self.assertEqual(
+            [(row["Device"], row["Name"]) for row in data["parallel"]],
+            [("LPT1", "Alpha"), ("LPT1", "Zulu"), ("LPT2", "Second")],
+        )
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):

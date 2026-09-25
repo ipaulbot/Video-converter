@@ -34,12 +34,15 @@ Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object { $_.InstanceId -like
   }
 }
 """
-SUSPEND_ARGS = ["powercfg", "/q", "SCHEME_CURRENT", "2a737441-1930-4402-8d77-b2bebba308a3",
-                "48e6b7a6-50f5-4782-a5d4-53bb50f7e3f1"]
+SUSPEND_ARGS = ["powercfg", "/q", "SCHEME_CURRENT", "2a737441-1930-4402-8d77-b2bebba308a3"]
+SELECTIVE_SUSPEND_GUID = "48e6b7a6-50f5-4782-a5d4-53bb8f07e226"
 
 _VIDPID = re.compile(r"VID_([0-9A-Fa-f]{4})&PID_([0-9A-Fa-f]{4})")
-_AC = re.compile(r"Current AC Power Setting Index:\s*0x([0-9A-Fa-f]+)", re.IGNORECASE)
-_DC = re.compile(r"Current DC Power Setting Index:\s*0x([0-9A-Fa-f]+)", re.IGNORECASE)
+_GUID = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    re.IGNORECASE,
+)
+_SETTING_VALUE = re.compile(r"0x[0-9A-Fa-f]{8}")
 
 CTRL_COLUMNS = [("Name", "Name"), ("Manufacturer", "Manufacturer"), ("USB Version", "USB Version"),
                 ("Status", "Status"), ("PNPDeviceID", "PnP Device ID")]
@@ -50,16 +53,52 @@ DEV_COLUMNS = [("Name", "Name"), ("VID / PID", "VID / PID"), ("Class", "Class"),
                ("ParentInstanceId", "Parent"), ("Location", "Location"), ("InstanceId", "Instance")]
 
 
-def _suspend(text: str, rx) -> str:
-    if not text:
-        return ""
-    match = rx.search(text)
-    if not match:
-        return "Unknown"
-    try:
-        return "Enabled" if int(match.group(1), 16) else "Disabled"
-    except (TypeError, ValueError):
-        return "Unknown"
+def _suspend(text: str) -> dict:
+    parsed = {"scheme": "", "ac": "Unknown", "dc": "Unknown", "found": False}
+    lines = text.splitlines()
+    setting_index = next(
+        (index for index, line in enumerate(lines)
+         if SELECTIVE_SUSPEND_GUID.casefold() in line.casefold()),
+        None,
+    )
+    if setting_index is None:
+        return parsed
+
+    parsed["found"] = True
+    subgroup_index = next(
+        (index for index in range(setting_index - 1, -1, -1)
+         if "2a737441-1930-4402-8d77-b2bebba308a3" in lines[index].casefold()),
+        setting_index,
+    )
+    for line in reversed(lines[:subgroup_index]):
+        match = _GUID.search(line)
+        if not match:
+            continue
+        friendly = re.search(r"\(([^()]*)\)\s*$", line[match.end():])
+        if friendly:
+            parsed["scheme"] = friendly.group(1).strip()
+            break
+
+    values = []
+    for line in lines[setting_index + 1:]:
+        guids = _GUID.findall(line)
+        if any(guid.casefold() != SELECTIVE_SUSPEND_GUID for guid in guids):
+            break
+        values.extend(_SETTING_VALUE.findall(line))
+
+    def state(index: int) -> str:
+        if index >= len(values):
+            return "Unknown"
+        value = int(values[index], 16)
+        if value == 0:
+            return "Disabled"
+        if value == 1:
+            return "Enabled"
+        return values[index]
+
+    parsed["ac"] = state(0)
+    parsed["dc"] = state(1)
+    return parsed
 
 
 def _problem(value) -> str:
@@ -78,6 +117,7 @@ def _device_sort_key(row: dict) -> tuple:
 
 
 def build(controllers, hubs, devices, suspend_text) -> dict:
+    suspend = _suspend(suspend_text)
     ctrl = [{"Name": c.get("Name", ""), "Manufacturer": c.get("Manufacturer", ""),
              "USB Version": decode.lookup(decode.USB_PROTOCOLS, c.get("ProtocolSupported")),
              "Status": c.get("Status", ""), "PNPDeviceID": c.get("PNPDeviceID", "")}
@@ -119,8 +159,8 @@ def build(controllers, hubs, devices, suspend_text) -> dict:
         "Hubs": len(hub_rows),
         "USB Devices Present": sum(1 for row in dev_rows if row["Present"] == "Yes"),
         "USB Devices Not Present": sum(1 for row in dev_rows if row["Present"] != "Yes"),
-        "Selective Suspend (AC)": _suspend(suspend_text, _AC),
-        "Selective Suspend (DC)": _suspend(suspend_text, _DC),
+        "Selective Suspend (AC)": suspend["ac"] if suspend_text else "",
+        "Selective Suspend (DC)": suspend["dc"] if suspend_text else "",
     }
     return {"groups": [{"title": "Summary", "rows": summary}], "controllers": ctrl,
             "hubs": hub_rows, "devices": dev_rows}
@@ -145,8 +185,8 @@ def collect(ctx):
         summary["Selective Suspend (AC)"] = "Unknown"
         summary["Selective Suspend (DC)"] = "Unknown"
         ctx.note("USB selective suspend: powercfg output was unavailable")
-    elif "Unknown" in (summary["Selective Suspend (AC)"], summary["Selective Suspend (DC)"]):
-        ctx.note("USB selective suspend: powercfg output was not recognised (possibly localised)")
+    elif not _suspend(suspend)["found"]:
+        ctx.note("USB selective suspend: powercfg output was not recognised")
     return data
 
 

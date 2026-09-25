@@ -9,15 +9,25 @@ DEV = [{"InstanceId": "USB\\VID_0529&PID_0001\\5&1", "FriendlyName": "SafeNet In
         "Status": "OK", "Present": True, "Service": "hardlock", "Parent": "USB\\ROOT_HUB30\\4"},
        {"InstanceId": "USB\\VID_2676&PID_BA02\\123", "FriendlyName": "Basler ace acA1920", "Class": "Camera", "Manufacturer": "Basler",
         "Status": "OK", "Present": True, "Service": "usbvideo", "Parent": "USB\\ROOT_HUB30\\4"}]
-SUSPEND = """Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)
+SUSPEND = """Power Scheme GUID: 900503f7-ad42-401d-86e4-eccab8b0e1b1  (Balanced)
   Subgroup GUID: 2a737441-1930-4402-8d77-b2bebba308a3  (USB settings)
-    Power Setting GUID: 48e6b7a6-50f5-4782-a5d4-53bb50f7e3f1  (USB selective suspend setting)
+    Power Setting GUID: 48e6b7a6-50f5-4782-a5d4-53bb8f07e226  (USB selective suspend setting)
       Possible Setting Index: 000
       Possible Setting Friendly Name: Disabled
       Possible Setting Index: 001
       Possible Setting Friendly Name: Enabled
-    Current AC Power Setting Index: 0x00000000
+    Current AC Power Setting Index: 0x00000001
     Current DC Power Setting Index: 0x00000001
+"""
+LOCALISED_SUSPEND = """Energieschema-ID: 900503f7-ad42-401d-86e4-eccab8b0e1b1  (Ausbalanciert)
+  Untergruppen-ID: 2a737441-1930-4402-8d77-b2bebba308a3  (USB-Einstellungen)
+    Energieeinstellungs-ID: 48e6b7a6-50f5-4782-a5d4-53bb8f07e226  (Selektives USB-Energiesparen)
+      Möglicher Einstellungsindex: 000
+      Möglicher Anzeigename: Deaktiviert
+      Möglicher Einstellungsindex: 001
+      Möglicher Anzeigename: Aktiviert
+    Aktueller Netzstrom-Einstellungsindex: 0x00000001
+    Aktueller Akkustrom-Einstellungsindex: 0x00000001
 """
 
 
@@ -27,7 +37,7 @@ class BuildTests(unittest.TestCase):
         hasp = next(r for r in data["devices"] if r["Name"].startswith("SafeNet"))
         self.assertEqual(hasp["VID / PID"], "0529 / 0001")
         rows = dict(data["groups"][0]["rows"])
-        self.assertEqual(rows["Selective Suspend (AC)"], "Disabled")
+        self.assertEqual(rows["Selective Suspend (AC)"], "Enabled")
         self.assertEqual(rows["Selective Suspend (DC)"], "Enabled")
         self.assertEqual(rows["USB Devices Present"], 2)
         self.assertEqual(mod.hasp_devices(data), ["SafeNet Inc. Sentinel HASP Key"])
@@ -42,12 +52,29 @@ class BuildTests(unittest.TestCase):
             {**DEV[0], "Address": 10, "Speed": "SuperSpeed", "Problem": 10},
             {**DEV[1], "Address": 2, "Parent": "USB\\ROOT_HUB20\\1"},
         ]
-        data = mod.build(CTRL, HUBS, devices, "Aktueller Wechselstromeinstellungsindex: 0x00000001")
+        data = mod.build(CTRL, HUBS, devices, LOCALISED_SUSPEND)
         rows = dict(data["groups"][0]["rows"])
-        self.assertEqual(rows["Selective Suspend (AC)"], "Unknown")
+        self.assertEqual(rows["Selective Suspend (AC)"], "Enabled")
+        self.assertEqual(rows["Selective Suspend (DC)"], "Enabled")
         self.assertEqual(data["devices"][0]["Name"], "Basler ace acA1920")
         self.assertEqual(data["devices"][1]["Speed"], "SuperSpeed")
         self.assertEqual(data["devices"][1]["Problem"], "10: Cannot start")
+
+    def test_suspend_parser_handles_empty_text(self):
+        self.assertEqual(
+            mod._suspend(""),
+            {"scheme": "", "ac": "Unknown", "dc": "Unknown", "found": False},
+        )
+
+    def test_suspend_parser_maps_disabled_and_enabled(self):
+        text = SUSPEND.replace(
+            "Current AC Power Setting Index: 0x00000001",
+            "Current AC Power Setting Index: 0x00000000",
+        )
+        parsed = mod._suspend(text)
+        self.assertEqual(parsed["scheme"], "Balanced")
+        self.assertEqual(parsed["ac"], "Disabled")
+        self.assertEqual(parsed["dc"], "Enabled")
 
     def test_hasp_detection_uses_required_vid_or_names(self):
         data = {"devices": [
@@ -82,9 +109,12 @@ class BuildTests(unittest.TestCase):
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
-        _data, html, ctx = support.collect_and_render(mod.SECTION)
+        data, html, ctx = support.collect_and_render(mod.SECTION)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<th>VID / PID</th>", html)
+        rows = dict(data["groups"][0]["rows"])
+        self.assertEqual(rows["Selective Suspend (AC)"], "Enabled")
+        self.assertEqual(rows["Selective Suspend (DC)"], "Enabled")
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)
