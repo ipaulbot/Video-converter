@@ -1,15 +1,15 @@
-"""Tests for pc_report/orchestrator.py and pc_report/utils.py.
+"""Tests for PC report orchestration, formatting, and PowerShell execution.
 
 The orchestrator fans sections across a thread pool, each of which can shell
 out to PowerShell. Nothing here runs PowerShell: sections use plain callables,
-and run_ps_json's subprocess is patched.
+and the PowerShell runner's subprocess is patched.
 """
 import unittest
 from unittest.mock import patch
 
 from pc_report import orchestrator, registry
+from pc_report import format as pcformat
 from pc_report import ps as pcps
-from pc_report import utils as pcutils
 from pc_report.section import Section
 
 
@@ -229,48 +229,48 @@ class TimeoutLocationTests(unittest.TestCase):
 
     def test_a_slow_collector_is_bounded_by_the_subprocess_timeout(self):
         self.assertGreaterEqual(
-            pcutils.run_ps_json.__defaults__[0], 1,
+            pcps.run_ps_json.__defaults__[0], 1,
             "run_ps_json should carry the real timeout")
 
 
 class ByteFormattingTests(unittest.TestCase):
     def test_it_scales_through_the_units(self):
-        self.assertEqual(pcutils.bytes_human(0), "0.0 B")
-        self.assertEqual(pcutils.bytes_human(512), "512.0 B")
-        self.assertEqual(pcutils.bytes_human(1024), "1.0 KB")
-        self.assertEqual(pcutils.bytes_human(1024 ** 2), "1.0 MB")
-        self.assertEqual(pcutils.bytes_human(1024 ** 3), "1.0 GB")
-        self.assertEqual(pcutils.bytes_human(1024 ** 4), "1.0 TB")
+        self.assertEqual(pcformat.bytes_human(0), "0.0 B")
+        self.assertEqual(pcformat.bytes_human(512), "512.0 B")
+        self.assertEqual(pcformat.bytes_human(1024), "1.0 KB")
+        self.assertEqual(pcformat.bytes_human(1024 ** 2), "1.0 MB")
+        self.assertEqual(pcformat.bytes_human(1024 ** 3), "1.0 GB")
+        self.assertEqual(pcformat.bytes_human(1024 ** 4), "1.0 TB")
 
     def test_it_stops_at_terabytes_rather_than_running_off_the_list(self):
-        self.assertTrue(pcutils.bytes_human(1024 ** 6).endswith("TB"))
+        self.assertTrue(pcformat.bytes_human(1024 ** 6).endswith("TB"))
 
     def test_a_numeric_string_is_accepted(self):
-        self.assertEqual(pcutils.bytes_human("2048"), "2.0 KB")
+        self.assertEqual(pcformat.bytes_human("2048"), "2.0 KB")
 
     def test_something_unparseable_is_returned_unchanged(self):
         # Comes straight out of WMI, which can return anything.
         for value in ("Unknown", None, "", "n/a"):
-            self.assertEqual(pcutils.bytes_human(value), value)
+            self.assertEqual(pcformat.bytes_human(value), value)
 
 
 class BitrateTests(unittest.TestCase):
     def test_it_converts_to_mbps(self):
-        self.assertEqual(pcutils.bitrate_to_mbps(1_000_000), "1.0 Mbps")
-        self.assertEqual(pcutils.bitrate_to_mbps(1_000_000_000), "1000.0 Mbps")
+        self.assertEqual(pcformat.bitrate_to_mbps(1_000_000), "1.0 Mbps")
+        self.assertEqual(pcformat.bitrate_to_mbps(1_000_000_000), "1000.0 Mbps")
 
     def test_zero_and_negative_are_unknown(self):
-        self.assertEqual(pcutils.bitrate_to_mbps(0), "Unknown")
-        self.assertEqual(pcutils.bitrate_to_mbps(-1), "Unknown")
+        self.assertEqual(pcformat.bitrate_to_mbps(0), "Unknown")
+        self.assertEqual(pcformat.bitrate_to_mbps(-1), "Unknown")
 
     def test_the_uint64_sentinel_is_unknown(self):
         """Windows reports an unset speed as a huge number, not as null."""
-        self.assertEqual(pcutils.bitrate_to_mbps(9_223_372_036_854_775_807),
+        self.assertEqual(pcformat.bitrate_to_mbps(9_223_372_036_854_775_807),
                          "Unknown")
 
     def test_unparseable_input_is_unknown(self):
         for value in (None, "", "fast", [1]):
-            self.assertEqual(pcutils.bitrate_to_mbps(value), "Unknown")
+            self.assertEqual(pcformat.bitrate_to_mbps(value), "Unknown")
 
 
 class PowerShellJsonTests(unittest.TestCase):
@@ -285,7 +285,7 @@ class PowerShellJsonTests(unittest.TestCase):
     def test_valid_json_is_parsed(self):
         with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout='{"a": 1}')):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertEqual(data, {"a": 1})
         self.assertIsNone(error)
 
@@ -293,7 +293,7 @@ class PowerShellJsonTests(unittest.TestCase):
         with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(returncode=1,
                                                        stderr="not recognised")):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertEqual(error, "not recognised")
 
@@ -301,14 +301,14 @@ class PowerShellJsonTests(unittest.TestCase):
         # A query that legitimately matched nothing.
         with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout="")):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIsNone(error)
 
     def test_unparseable_output_is_reported_as_a_parse_error(self):
         with patch.object(pcps.subprocess, "run",
                           return_value=self._Completed(stdout="not json")):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIn("JSON parse error", error)
 
@@ -316,14 +316,14 @@ class PowerShellJsonTests(unittest.TestCase):
         import subprocess as sp
         with patch.object(pcps.subprocess, "run",
                           side_effect=sp.TimeoutExpired("powershell", 12)):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIsNotNone(error)
 
     def test_a_missing_powershell_is_reported_rather_than_raising(self):
         with patch.object(pcps.subprocess, "run",
                           side_effect=FileNotFoundError("powershell")):
-            data, error = pcutils.run_ps_json("Get-Thing")
+            data, error = pcps.run_ps_json("Get-Thing")
         self.assertIsNone(data)
         self.assertIn("powershell", error)
 
@@ -336,7 +336,7 @@ class PowerShellJsonTests(unittest.TestCase):
             return self._Completed(stdout="{}")
 
         with patch.object(pcps.subprocess, "run", capture):
-            pcutils.run_ps_json("Get-Thing", timeout=1)
+            pcps.run_ps_json("Get-Thing", timeout=1)
         self.assertGreaterEqual(captured["timeout"], 12)
 
     def test_a_longer_timeout_is_respected(self):
@@ -347,7 +347,7 @@ class PowerShellJsonTests(unittest.TestCase):
             return self._Completed(stdout="{}")
 
         with patch.object(pcps.subprocess, "run", capture):
-            pcutils.run_ps_json("Get-Thing", timeout=60)
+            pcps.run_ps_json("Get-Thing", timeout=60)
         self.assertEqual(captured["timeout"], 60)
 
     def test_the_script_is_piped_through_convertto_json(self):
@@ -358,7 +358,7 @@ class PowerShellJsonTests(unittest.TestCase):
             return self._Completed(stdout="{}")
 
         with patch.object(pcps.subprocess, "run", capture):
-            pcutils.run_ps_json("Get-Process")
+            pcps.run_ps_json("Get-Process")
         joined = " ".join(captured["cmd"])
         self.assertIn("Get-Process", joined)
         self.assertIn("ConvertTo-Json", joined)

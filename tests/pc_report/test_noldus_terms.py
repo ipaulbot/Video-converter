@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 
-from pc_report.collectors import (
+from pc_report.noldus_terms import (
     filter_nvc_related_items,
     normalize_logical_disk_rows,
     normalize_nvc_program_row,
@@ -11,7 +11,7 @@ from pc_report.collectors import (
 )
 
 
-class NvcCollectorHelperTests(unittest.TestCase):
+class NoldusTermsTests(unittest.TestCase):
     def test_matches_noldus_dependency_package(self):
         row = {"Name": "Noldus - LeadTools - X64 Package - 21", "Version": "21.0.16.0"}
 

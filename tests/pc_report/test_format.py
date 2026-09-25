@@ -79,9 +79,3 @@ class OtherFormattersTests(unittest.TestCase):
         self.assertEqual(fmt.uptime_human(None), "")
         future = (datetime.datetime.now() + datetime.timedelta(days=1)).isoformat()
         self.assertEqual(fmt.uptime_human(future), "")
-
-    def test_legacy_names_still_exist(self):
-        from pc_report.utils import bitrate_to_mbps, bytes_human, run_ps_json
-        self.assertEqual(bytes_human(2048), "2.0 KB")
-        self.assertEqual(bitrate_to_mbps(1_000_000), "1.0 Mbps")
-        self.assertTrue(callable(run_ps_json))
