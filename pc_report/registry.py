@@ -24,6 +24,8 @@ ORDER: tuple[str, ...] = (
 
 # Option keys the dialog (and older callers) pass that map onto several or renamed sections.
 ALIASES: dict[str, tuple[str, ...]] = {
+    "updates": ("installed_updates",),
+    "programs": ("installed_programs",),
     "hardware": ("system_summary", "motherboard", "bios", "cpu", "memory", "video", "sound",
                  "storage_devices", "logical_disks"),
     "network": ("network_adapters", "shares"),

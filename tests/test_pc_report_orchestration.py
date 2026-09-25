@@ -96,6 +96,19 @@ class RunAllTests(unittest.TestCase):
         self.assertEqual(errors, {})
         self.assertEqual(results["cpu"], {"data": {"value": None}, "notes": ["thing: access denied"]})
 
+    def test_query_keeps_data_and_records_stderr_note(self):
+        def collect(ctx):
+            return {"value": ctx.query("thing", "Get-Thing")}
+        _meta, results, errors = self._run(
+            sections=[_fake("cpu", collect=collect)],
+            runner=lambda _script, _timeout: ({"ok": True}, "provider warning"),
+        )
+        self.assertEqual(errors, {})
+        self.assertEqual(
+            results["cpu"],
+            {"data": {"value": {"ok": True}}, "notes": ["thing: provider warning"]},
+        )
+
     def test_preset_cancellation_marks_every_section_partial_without_spawning(self):
         cancel = threading.Event()
         cancel.set()

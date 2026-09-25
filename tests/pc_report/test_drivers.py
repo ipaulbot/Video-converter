@@ -35,6 +35,21 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(summary["Shown"], mod.ROW_CAP)
         self.assertEqual(summary["Total"], mod.ROW_CAP + 1)
 
+    def test_collect_notes_when_rows_are_truncated(self):
+        class Ctx:
+            notes = []
+
+            def query(self, name, *_args, **_kwargs):
+                return ([{"DeviceName": f"Device {index:04d}", "DeviceClass": "TEST"}
+                         for index in range(mod.ROW_CAP + 1)] if name == "signed_drivers" else [])
+
+            def note(self, text):
+                self.notes.append(text)
+
+        ctx = Ctx()
+        mod.collect(ctx)
+        self.assertEqual(ctx.notes, [f"drivers: showing {mod.ROW_CAP} of {mod.ROW_CAP + 1} rows"])
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):

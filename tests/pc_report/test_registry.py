@@ -71,6 +71,16 @@ class SelectionTests(unittest.TestCase):
         keys = [s.key for s in registry.select({"network": False}, self._sections())]
         self.assertEqual(keys, ["cpu", "memory"])
 
+    def test_widget_option_aliases_resolve_to_registry_keys(self):
+        sections = [
+            Section(key=key, title=key, group="Software", collect=lambda c: {}, render=lambda d, c: "")
+            for key in ("installed_updates", "installed_programs")
+        ]
+        self.assertEqual(
+            [s.key for s in registry.select({"updates": False, "programs": True}, sections)],
+            ["installed_programs"],
+        )
+
     def test_explicit_key_beats_alias(self):
         keys = [s.key for s in registry.select({"hardware": False, "cpu": True}, self._sections())]
         self.assertEqual(keys, ["cpu", "shares"])

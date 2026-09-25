@@ -88,6 +88,26 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(summary["Shown"], mod.ROW_CAP)
         self.assertEqual(summary["Total"], mod.ROW_CAP + 1)
 
+    def test_collect_notes_when_a_table_is_truncated(self):
+        class Ctx:
+            notes = []
+
+            def query(self, name, *_args, **_kwargs):
+                if name == "directshow":
+                    return [{"Category": "DirectShow Filters", "Name": f"Filter {index:04d}"}
+                            for index in range(mod.ROW_CAP + 1)]
+                return [{"Name": "Transform"}] if name == "media_foundation" else []
+
+            def note(self, text):
+                self.notes.append(text)
+
+        ctx = Ctx()
+        mod.collect(ctx)
+        self.assertIn(
+            f"DirectShow Filters: showing {mod.ROW_CAP} of {mod.ROW_CAP + 1} rows",
+            ctx.notes,
+        )
+
 
 class ScriptTests(unittest.TestCase):
     def test_media_foundation_accepts_bare_and_braced_guids(self):

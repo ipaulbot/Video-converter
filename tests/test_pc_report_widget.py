@@ -75,6 +75,12 @@ class PCReportWidgetTests(unittest.TestCase):
         widget.shutdown()
         self.assertIsNone(widget.worker)
 
+    def test_worker_cancel_sets_its_event(self):
+        worker = _PCReportWorker({})
+        self.assertFalse(worker.cancel_event.is_set())
+        worker.cancel()
+        self.assertTrue(worker.cancel_event.is_set())
+
     def test_shutdown_cancels_and_waits_for_a_running_worker(self):
         widget = PCReportWidget()
         worker = Mock()
