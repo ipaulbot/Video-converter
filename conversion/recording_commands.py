@@ -144,6 +144,16 @@ def _append_audio_encoding_options(command, volume="100"):
         command.extend(["-af", f"volume={int(str(volume)) / 100:g}"])
 
 
+def _add_directshow_audio_input(command, audio_device):
+    audio_name = str(audio_device or "").strip().strip('"')
+    command.extend([
+        "-f", "dshow",
+        "-thread_queue_size", "1024",
+        "-use_wallclock_as_timestamps", "1",
+        "-i", f'audio="{audio_name}"',
+    ])
+
+
 def build_record_command(
     ffmpeg_path,
     source,
@@ -167,6 +177,13 @@ def build_record_command(
     if has_audio and is_directshow:
         source_text = _directshow_av_source(source_text, audio_device)
     _add_input(command, source_text, network_profile="recording", frame_rate=frame_rate, resolution=resolution)
+    audio_map = ""
+    if has_audio:
+        if is_directshow:
+            audio_map = "0:a"
+        else:
+            _add_directshow_audio_input(command, audio_device)
+            audio_map = "1:a"
 
     if preview_pipe:
         # Both DirectShow and RTSP/HTTP sources use a single decoded video stream that
@@ -195,26 +212,20 @@ def build_record_command(
         ])
         return command
 
-    if is_directshow:
-        command.extend(["-map", "0:v"])
-        if has_audio:
-            command.extend(["-map", "0:a"])
-        else:
-            command.append("-an")
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
-        if has_audio:
-            _append_audio_encoding_options(command, volume)
-        command.append(output_file)
-        return command
-
-    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
-    if codec_mode == "copy" and is_network_source:
-        command.extend(["-c:v", "copy", "-an"])
-    elif codec_mode == "copy" and not is_directshow:
-        command.extend(["-c", "copy"])
+    command.extend(["-map", "0:v"])
+    if has_audio:
+        command.extend(["-map", audio_map])
+        if not is_directshow:
+            command.append("-shortest")
     else:
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac"])
-
+        command.append("-an")
+    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
+    if codec_mode == "copy" and (is_network_source or not is_directshow):
+        command.extend(["-c:v", "copy"])
+    else:
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+    if has_audio:
+        _append_audio_encoding_options(command, volume)
     command.append(output_file)
     return command
 

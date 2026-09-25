@@ -128,6 +128,73 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertIn("-an", command)
         self.assertNotIn("-c", command)
 
+    def test_rtsp_record_adds_directshow_audio_as_second_input(self):
+        command = build_record_command(
+            "ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtsp_transport", "tcp", "-timeout", "5000000",
+                "-i", "rtsp://camera/stream",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", 'audio="Microphone A"',
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_file_copy_mode_keeps_video_copy_and_encodes_audio(self):
+        command = build_record_command(
+            "ffmpeg.exe", "sample.mp4", "out.mp4", "copy", "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y", "-i", "sample.mp4",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", 'audio="Microphone A"',
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_audio_volume_fifty_adds_half_gain(self):
+        command = build_record_command(
+            "ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "",
+            audio_device="Microphone A", volume="50",
+        )
+
+        self.assertIn(
+            ["-af", "volume=0.5"],
+            [command[index:index + 2] for index in range(len(command) - 1)],
+        )
+
+    def test_no_audio_mute_and_zero_volume_all_emit_an(self):
+        cases = [
+            {"audio_device": "No Audio"},
+            {"audio_device": "Microphone A", "mute": True},
+            {"audio_device": "Microphone A", "volume": "0"},
+        ]
+        for kwargs in cases:
+            with self.subTest(kwargs=kwargs):
+                command = build_record_command(
+                    "ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "", **kwargs,
+                )
+                self.assertEqual(command.count("-i"), 1)
+                self.assertIn("-an", command)
+                self.assertNotIn("-c:a", command)
+
     def test_record_command_with_preview_pipe_for_rtsp_uses_shared_decoder_split(self):
         command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "", preview_pipe=True)
 
