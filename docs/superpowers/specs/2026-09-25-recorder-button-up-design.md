@@ -52,7 +52,9 @@ the lab still loads on another PC.
 |---|---|---|---|
 | DirectShow (`video=Cam`) | device | `-f dshow -i video="Cam":audio="Mic"` (same input; A/V share one clock) | `-map 0:v -map 0:a` |
 | RTSP / HTTP / GenICam / file | device | existing video input, plus `-f dshow -thread_queue_size 1024 -use_wallclock_as_timestamps 1 -i audio="Mic"` as a second input | `-map 0:v -map 1:a -shortest` |
-| any | `No Audio` or `Mute` | unchanged video input | `-an` |
+| any | `Mute` or volume 0 | unchanged video input | `-an` (no sound at all) |
+| DirectShow | `No Audio` | unchanged video input | `-an` |
+| file / RTSP (h264 mode) / HTTP | `No Audio` | unchanged video input | `-map 0:a?` — the source's own sound track is kept (AAC, or `copy` for file copy mode); RTSP stream-copy stays `-an` as before |
 
 Audio is encoded `-c:a aac -b:a 128k`; a gain other than 100 adds `-af volume=<v/100>`.
 Volume 0 is treated as mute. Stream-copy mode (`copy`) keeps the *video* copy and
