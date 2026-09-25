@@ -335,10 +335,12 @@ CHAPTERS: list[dict] = [
             {"type": "steps", "items": [
                 "Click Generate PC Report.",
                 "Wait for collection to finish. Some collectors can take a while.",
-                "Click Open Report to open the generated HTML, or click Open Folder to open the "
-                "Desktop.",
-                "The report is saved as Desktop\\PC_Report_YYYYMMDD_HHMMSS.html. If that name "
-                "already exists, NVC chooses a unique name and never overwrites the existing file.",
+                "Click Open Report to open the generated HTML. Open Folder opens whichever folder "
+                "the report was written to.",
+                "Reports are saved to your Desktop by default, with the path pattern "
+                "Desktop\\PC_Report_YYYYMMDD_HHMMSS.html. If there is no Desktop folder, NVC "
+                "uses your user profile folder instead. If that file name already exists, NVC "
+                "chooses a unique name and never overwrites the existing file.",
             ]},
             {"type": "figure", "fig_id": "FIG-05"},
             {"type": "para", "text": (
