@@ -29,12 +29,19 @@ class TabCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
+        # changeEvent persists the mode whenever the window state flips, so a
+        # test that shows / maximizes the window would otherwise write "full"
+        # into the real config.json and leak into every later test that builds
+        # a main window.
+        cls._no_save = patch("ui.main_window.save_settings")
+        cls._no_save.start()
         cls.window = VideoConverterApp()
 
     @classmethod
     def tearDownClass(cls):
         cls.window.shutdown()
         cls.window.deleteLater()
+        cls._no_save.stop()
 
     def test_every_tool_tab_sits_in_a_leaf_card(self):
         keys = {
