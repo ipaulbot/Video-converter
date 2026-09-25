@@ -1,9 +1,8 @@
-from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
-import subprocess
 import re
+import subprocess
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 from utils.subprocess_helpers import get_subprocess_startupinfo
-
 
 CAMERA_SOURCE_TYPES = [
     {

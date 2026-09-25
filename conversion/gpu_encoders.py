@@ -40,8 +40,7 @@ def get_supported_encoders():
         startupinfo, creationflags = get_subprocess_startupinfo()
         result = subprocess.run(
             [ffmpeg_bin, '-encoders'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
             check=True,
             timeout=_DETECT_TIMEOUT_SECONDS,

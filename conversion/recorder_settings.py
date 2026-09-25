@@ -45,7 +45,7 @@ def normalize_recorder_settings(settings):
 def load_recorder_settings(path):
     if not os.path.exists(path):
         return default_recorder_settings()
-    with open(path, "r", encoding="utf-8") as handle:
+    with open(path, encoding="utf-8") as handle:
         return normalize_recorder_settings(json.load(handle))
 
 
