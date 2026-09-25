@@ -2997,7 +2997,7 @@
   "InstallLocation": "C:\\Program Files\\Google\\Chrome\\Application",
   "InstallSource": "",
   "EstimatedSize": 513902,
-  "Uninstall": "\"C:\\Program Files\\Google\\Chrome\\Application\\153.0.8010.54\\Installer\\setup.exe\" --uninstall --channel=stable --system-level --verbose-logging",
+  "Uninstall": "\"C:\\Program Files\\Google\\Chrome\\Application\\153.0.8010.54\\Installer\\setup.exe\" --uninstall --channel=*** --system-level --verbose-logging",
   "Architecture": "x86",
   "Scope": "Machine",
   "SystemComponent": null

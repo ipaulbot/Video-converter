@@ -460,6 +460,19 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(redacted["network"]["MACAddress"], "AA:BB:CC:**:**:**")
         self.assertEqual(redacted["processes"][0]["Path"], r"C:\Users\<redacted>\Desktop\secret.exe")
 
+    def test_mask_mac_keeps_the_vendor_oui_whatever_the_separator(self):
+        cases = {
+            "AA:BB:CC:DD:EE:FF": "AA:BB:CC:**:**:**",
+            "AA-BB-CC-DD-EE-FF": "AA:BB:CC:**:**:**",
+            "AABBCCDDEEFF": "AA:BB:CC:**:**:**",
+            "aabbccddeeff": "aa:bb:cc:**:**:**",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(privacy.mask_mac(value), expected)
+                self.assertEqual(redact_payload({"MacAddress": value}, {"redact": True}, env={})["MacAddress"],
+                                 expected)
+
     def test_network_adapter_identifiers_are_masked(self):
         guid = "{01234567-89AB-CDEF-0123-456789ABCDEF}"
         payload = {
@@ -671,6 +684,9 @@ class PcReportPrivacyTests(unittest.TestCase):
             ("tool.exe --basic-auth user:pass", "tool.exe --basic-auth ***"),
             ('tool.exe --auth-header "Bearer x"', 'tool.exe --auth-header ***'),
             ("tool.exe --hotkey=F5", "tool.exe --hotkey=***"),
+            # A harmless option must not swallow the secret that follows it.
+            ("setup.exe /S --token:abc123", "setup.exe /S --token:***"),
+            ("setup.exe --mode quiet --password hunter2", "setup.exe --mode quiet --password ***"),
         ]
         for raw, expected in cases:
             with self.subTest(raw=raw):
@@ -730,11 +746,254 @@ class PcReportPrivacyTests(unittest.TestCase):
             "licenses": {"ProductKey": "AAAAA-BBBBB-CCCCC-DDDDD"},
             "environment": {"directories": {"UserProfile": r"C:\Users\Pat"}},
         }
+        meta = {"generated_at": "now", "machine": "LAB-WKSTN-0042", "elevated": True,
+                "nvc_version": "4.9.18", "elapsed_by_section": {"cpu": 1.5}}
 
-        rendered = json.loads(render({"generated_at": "now", "machine": "pc"}, data, {"redact": True}))
+        rendered = json.loads(render(meta, data, {"redact": True}))
 
         self.assertNotEqual(rendered["sections"]["licenses"]["ProductKey"], "AAAAA-BBBBB-CCCCC-DDDDD")
         self.assertEqual(rendered["sections"]["environment"]["directories"]["UserProfile"], r"C:\Users\<redacted>")
+        self.assertNotIn("LAB-WKSTN-0042", rendered["machine"])
+        self.assertEqual(rendered["machine"], "*" * len("LAB-WKSTN-0042"))
+        self.assertIs(rendered["elevated"], True)
+        self.assertEqual(rendered["nvc_version"], "4.9.18")
+        self.assertEqual(rendered["elapsed_by_section"], {"cpu": 1.5})
+
+    def test_json_renderer_keeps_the_machine_name_when_redaction_is_off(self):
+        rendered = json.loads(render({"machine": "LAB-WKSTN-0042"}, {}, {"redact": False}))
+
+        self.assertEqual(rendered["machine"], "LAB-WKSTN-0042")
+
+    def test_html_header_masks_the_machine_name_completely(self):
+        from pc_report.render_html import render as render_page
+
+        html = render_page({"machine": "LAB-WKSTN-0042", "generated_at": "now"}, {}, {"redact": True})
+
+        self.assertNotIn("LAB-WKSTN-0042", html)
+        self.assertNotIn("0042", html)
+        self.assertIn("*" * len("LAB-WKSTN-0042"), html)
+
+    def test_redact_meta_is_what_sections_see_through_the_render_context(self):
+        seen = {}
+
+        def render_section(_data, ctx):
+            seen["machine"] = ctx.meta.get("machine")
+            return "<p>x</p>"
+
+        from pc_report import registry
+        from pc_report.render_html import render as render_page
+
+        section = registry.SECTIONS[0]
+        original_render = section.render
+        object.__setattr__(section, "render", render_section)
+        try:
+            render_page({"machine": "LAB-WKSTN-0042"}, {section.key: {}}, {"redact": True})
+        finally:
+            object.__setattr__(section, "render", original_render)
+
+        self.assertEqual(seen["machine"], "*" * len("LAB-WKSTN-0042"))
+
+    def test_free_text_keys_mask_hosts_addresses_and_user_paths(self):
+        payload = {
+            "notes": [
+                r"smb: Cannot find path '\\SERVER\share'",
+                "route: next hop 203.0.113.77 via host.corp.example",
+            ],
+            "note": "profile C:\\Users\\jane\\AppData is missing",
+            "message": "mail relay ops@lab.corp.example refused",
+            "error": r"connect to \\SERVER failed at 203.0.113.77",
+        }
+
+        out = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertNotIn("SERVER", repr(out))
+        self.assertNotIn("203.0.113.77", repr(out))
+        self.assertNotIn("host.corp.example", repr(out))
+        self.assertNotIn("ops@lab.corp.example", repr(out))
+        self.assertNotIn("jane", repr(out))
+        # The diagnosis itself has to survive, or the note is worthless.
+        self.assertIn("Cannot find path", out["notes"][0])
+        self.assertIn("next hop", out["notes"][1])
+        self.assertIn("connect to", out["error"])
+
+    def test_notes_and_partial_errors_are_masked_in_both_renderers(self):
+        from pc_report import registry
+        from pc_report.render_html import render as render_page
+
+        key = registry.SECTIONS[0].key
+        data = {
+            key: {"data": {"Name": "x"},
+                  "notes": [r"smb: Cannot find path '\\SERVER\share'",
+                            "route: next hop 203.0.113.77 via host.corp.example"]},
+        }
+        partial = {key: {"status": "partial", "error": r"connect to \\SERVER failed at 203.0.113.77"}}
+
+        for payload in (data, partial):
+            html = render_page({}, payload, {"redact": True})
+            text = json.dumps(json.loads(render({}, payload, {"redact": True})))
+            for rendered in (html, text):
+                for sensitive in ("SERVER", "203.0.113.77", "host.corp.example"):
+                    self.assertNotIn(sensitive, rendered)
+
+    def test_secret_tokens_are_masked_completely_and_serials_keep_a_tail(self):
+        secrets = {
+            "Password": "Sup3rS3cretPassw0rd!",
+            "RecoveryPassword": "123456-234567-345678-456789",
+            "API Token": "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY",
+            "Client Secret": "cs-0123456789abcdef",
+            "Credential": "user:hunter2",
+            "ApiKey": "AKIAIOSFODNN7EXAMPLE",
+            "ProductKey": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEE",
+            "LicenseKey": "LK-0123-4567-89AB-CDEF",
+        }
+
+        out = redact_payload(secrets, {"redact": True}, env={})
+
+        for key, value in secrets.items():
+            with self.subTest(key=key):
+                self.assertEqual(out[key], "*" * len(value))
+        self.assertEqual(redact_payload({"Serial Number": "ABCD1234EFGH"}, {"redact": True}, env={}),
+                         {"Serial Number": "AB******EFGH"})
+
+    def test_well_known_accounts_are_only_exempt_under_account_keys(self):
+        account = "NT AUTHORITY\\SYSTEM"
+
+        exempt = redact_payload({"StartName": account, "AccountName": account, "Owner": account},
+                                {"redact": True}, env={})
+        masked = redact_payload({"Password": account, "Serial Number": account},
+                                {"redact": True}, env={})
+
+        self.assertEqual(exempt, {"StartName": account, "AccountName": account, "Owner": account})
+        self.assertEqual(masked["Password"], "*" * len(account))
+        self.assertNotIn("AUTHORITY", masked["Serial Number"])
+
+    def test_non_json_containers_are_normalised_to_sorted_lists(self):
+        out = redact_payload(
+            {"Hosts": {"db-prod-07.corp.example", "www.corp.example"},
+             "Serials": ("ABCD1234EFGH",),
+             "Frozen": frozenset({"ABCD1234EFGH"})},
+            {"redact": True},
+            env={},
+        )
+
+        self.assertEqual(out["Hosts"], ["db-prod-07.corp.example", "www.corp.example"])
+        self.assertEqual(out["Serials"], ["AB******EFGH"])
+        self.assertIsInstance(out["Frozen"], list)
+        self.assertEqual(json.loads(json.dumps(out)), out)
+
+    def test_mask_value_locations_masks_hosts_addresses_and_credentials(self):
+        cases = {
+            "cam-srv-01.corp.example": "***.example",
+            "postgres://u:p@db.corp.example:5432/x": "postgres://***@***.example:5432/x",
+            "https://files.corp.example:8443/a/b?c=1": "https://***.example:8443/a/b?c=1",
+            "ops@lab.corp.example": "***@***.example",
+            r"\\SERVER\share": r"\\***\share",
+            r"connect to \\SERVER failed": r"connect to \\*** failed",
+            "203.0.113.77": "203.0.*.*",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(privacy.mask_value_locations(value), expected)
+
+    def test_mask_value_locations_leaves_file_names_and_dotted_identifiers_alone(self):
+        unchanged = [
+            "ffmpeg.exe",
+            r"C:\Program Files\Foo\bar.dll",
+            "Microsoft.Windows.Cortana",
+            "System.Runtime.dll",
+            "python -m pytest tests.foo.bar",
+            r"C:\Windows\system32;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\dotnet\ ",
+            "Windows_NT",
+            "node.js runtime 22.11.0",
+        ]
+        for value in unchanged:
+            with self.subTest(value=value):
+                self.assertEqual(privacy.mask_value_locations(value), value)
+
+    def test_version_like_ipv4_survives_under_a_plain_key(self):
+        # The value-aware masker only runs where the key says nothing; a version column is not that.
+        payload = {"Version": "12.19.2.66", "Driver Version": "12.19.2.66"}
+
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
+
+    def test_command_bearing_keys_all_reach_command_line_redaction(self):
+        payloads = {
+            "Command": "updater.exe --password hunter2",
+            "Command Line": "worker.exe --token=abc123",
+            "Action": "task.exe /key:XYZ123",
+            "Uninstall": r"C:\App\un.exe --secret s3cr3t",
+            "UninstallString": "setup.exe --apikey=AKIAEXAMPLE",
+            "QuietUninstallString": "setup.exe /S --token:abc123",
+            "ModifyPath": "setup.exe --modify --credential=c3",
+            "ImagePath": r"C:\svc\agent.exe --auth-token xyz789",
+            "Arguments": "--password=hunter2 --host cam-srv-01.corp.example",
+        }
+
+        out = redact_payload(payloads, {"redact": True}, env={})
+
+        for sensitive in ("hunter2", "abc123", "XYZ123", "s3cr3t", "AKIAEXAMPLE", "c3", "xyz789",
+                          "cam-srv-01.corp.example"):
+            self.assertNotIn(sensitive, repr(out))
+        self.assertIn("updater.exe", out["Command"])
+        self.assertIn("agent.exe", out["ImagePath"])
+
+    def test_environment_values_are_masked_by_content_when_the_name_says_nothing(self):
+        masked = [
+            {"Name": "NVC_SERVER", "Value": "cam-srv-01.corp.example"},
+            {"Name": "DATABASE_URL", "Value": "postgres://u:p@db.corp.example:5432/x"},
+            {"Name": "SUPPORT_EMAIL", "Value": "a@b.com"},
+        ]
+        unchanged = [
+            {"Name": "Path", "Value": r"C:\Windows\system32;C:\Program Files\dotnet\ "},
+            {"Name": "PSModulePath", "Value": r"C:\Program Files\WindowsPowerShell\Modules"},
+            {"Name": "NUMBER_OF_PROCESSORS", "Value": "8"},
+            {"Name": "OS", "Value": "Windows_NT"},
+        ]
+
+        out = redact_payload(masked + unchanged, {"redact": True}, env={})
+
+        for sensitive in ("cam-srv-01.corp.example", "db.corp.example", "u:p@", "a@b.com"):
+            self.assertNotIn(sensitive, repr(out))
+        self.assertEqual(out[1]["Value"], "postgres://***@***.example:5432/x")
+        self.assertEqual(out[len(masked):], unchanged)
+
+    def test_device_identifier_keys_mask_instance_paths_and_container_ids(self):
+        payload = {
+            "SymbolicLink": r"\\?\usb#vid_1234&pid_5678#CAMSERIAL9#{e5323777-f976-4f5b-9b55-b94699c46e44}\global",
+            "Device Path": r"\\?\usb#vid_1234&pid_5678#CAMSERIAL9#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global",
+            "ContainerID": "{13518594-3013-5EB4-BAFF-0CBC544C2D66}",
+            "Parent": r"USB\VID_1234&PID_5678\CAMSERIAL9",
+            "LocationPaths": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(3)",
+        }
+
+        out = redact_payload(payload, {"redact": True}, env={})
+
+        for key in ("SymbolicLink", "Device Path", "Parent"):
+            self.assertNotIn("CAMSERIAL9", out[key], key)
+            self.assertIn("vid_1234", out[key].casefold(), key)
+        self.assertNotIn("13518594", out["ContainerID"])
+        # Bus topology is not identifying and stays readable.
+        self.assertEqual(out["LocationPaths"], payload["LocationPaths"])
+
+    def test_null_container_guid_stays_readable(self):
+        null_container = "{00000000-0000-0000-FFFF-FFFFFFFFFFFF}"
+
+        out = redact_payload({"ContainerID": null_container}, {"redact": True}, env={})
+
+        self.assertEqual(out["ContainerID"], null_container)
+
+    def test_volume_labels_and_default_endpoints_mask_personal_names_only(self):
+        out = redact_payload(
+            {"Label": "Jan's iPhone", "VolumeName": "Jan's iPhone", "FileSystemLabel": "Jan's iPhone",
+             "Default Playback": "Jan's AirPods", "Default Capture": "Jan's AirPods"},
+            {"redact": True},
+            env={},
+        )
+        kept = redact_payload({"Label": "OSDisk", "VolumeName": "Data"}, {"redact": True}, env={})
+
+        self.assertNotIn("Jan", repr(out))
+        self.assertEqual(kept, {"Label": "OSDisk", "VolumeName": "Data"})
+
 
 if __name__ == "__main__":
     unittest.main()

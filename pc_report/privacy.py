@@ -114,6 +114,28 @@ def _mask_command_secret_arg(match: re.Match[str]) -> str:
     if gap and prefix[-1].isspace():
         gap = ""
     return prefix + gap + "***"
+
+
+def _mask_command_secrets(value: str) -> str:
+    """Mask every credential option's value, scanning inside the values we keep.
+
+    A harmless space-separated option would otherwise swallow the token after it, hiding a real
+    secret: ``setup.exe /S --token:abc`` reads as option ``S`` with value ``--token:abc``.
+    """
+    out: list[str] = []
+    position = 0
+    while (match := _COMMAND_SECRET_ARG.search(value, position)) is not None:
+        if _command_option_is_sensitive(match.group(2)):
+            out.append(value[position:match.start()])
+            out.append(_mask_command_secret_arg(match))
+            position = match.end()
+        else:
+            out.append(value[position:match.start(4)])
+            position = match.start(4)
+    out.append(value[position:])
+    return "".join(out)
+
+
 _PIPE_NAME = re.compile(r"(\\\\\.\\pipe\\)[^\s\"<>]+", re.IGNORECASE)
 _PORTABLE_INSTANCE_PREFIXES = (
     "USB\\", "USBSTOR\\", "SCSI\\", "SWD\\WPDBUSENUM\\",
@@ -491,8 +513,7 @@ def redact_user_paths(path):
 def redact_command_line(command):
     if not command:
         return command
-    value = redact_user_paths(command)
-    value = _COMMAND_SECRET_ARG.sub(_mask_command_secret_arg, value)
+    value = _mask_command_secrets(redact_user_paths(command))
     value = _PIPE_NAME.sub(r"\1<redacted>", value)
     return mask_value_locations(value)
 
