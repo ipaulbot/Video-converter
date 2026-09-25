@@ -158,6 +158,8 @@ PC_SYSTEM_TYPES = {0: "Unspecified", 1: "Desktop", 2: "Mobile", 3: "Workstation"
 DOMAIN_ROLES = {0: "Standalone Workstation", 1: "Member Workstation", 2: "Standalone Server",
                 3: "Member Server", 4: "Backup Domain Controller", 5: "Primary Domain Controller"}
 
+NETBIOS_OPTIONS = {0: "Default (from DHCP)", 1: "Enabled", 2: "Disabled"}
+
 POWER_PLATFORM_ROLES = {0: "Unspecified", 1: "Desktop", 2: "Mobile", 3: "Workstation",
                         4: "Enterprise Server", 5: "SOHO Server", 6: "Appliance PC",
                         7: "Performance Server", 8: "Slate"}

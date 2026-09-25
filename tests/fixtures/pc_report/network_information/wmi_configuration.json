@@ -1,0 +1,40 @@
+[
+ {
+  "InterfaceIndex": 3,
+  "Description": "Intel(R) Wi-Fi 6E AX211 160MHz",
+  "DHCPEnabled": true,
+  "DHCPServer": "192.168.*.*",
+  "DHCPLeaseObtained": "/Date(1790295386000)/",
+  "DHCPLeaseExpires": "/Date(1790338586000)/",
+  "DNSDomain": "***",
+  "DNSDomainSuffixSearchOrder": [
+   "ex*******ocal",
+   "***"
+  ],
+  "WINSPrimaryServer": null,
+  "WINSSecondaryServer": null,
+  "TcpipNetbiosOptions": 0,
+  "IPConnectionMetric": 35,
+  "MTU": null,
+  "IPEnabled": true
+ },
+ {
+  "InterfaceIndex": 19,
+  "Description": "Intel(R) Ethernet Connection (16) I219-LM",
+  "DHCPEnabled": false,
+  "DHCPServer": null,
+  "DHCPLeaseObtained": null,
+  "DHCPLeaseExpires": null,
+  "DNSDomain": null,
+  "DNSDomainSuffixSearchOrder": [
+   "ex*******ocal",
+   "***"
+  ],
+  "WINSPrimaryServer": null,
+  "WINSSecondaryServer": null,
+  "TcpipNetbiosOptions": 0,
+  "IPConnectionMetric": 25,
+  "MTU": null,
+  "IPEnabled": true
+ }
+]

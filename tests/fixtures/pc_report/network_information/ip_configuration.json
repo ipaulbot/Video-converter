@@ -1,0 +1,109 @@
+[
+ {
+  "InterfaceAlias": "Noldus Switch",
+  "InterfaceIndex": 19,
+  "InterfaceDescription": "Intel(R) Ethernet Connection (16) I219-LM",
+  "Status": "Up",
+  "MacAddress": "C8:4B:D6:**:**:**",
+  "LinkSpeed": "1 Gbps",
+  "IPv4Address": [
+   "192.168.*.*/24"
+  ],
+  "IPv6Address": [],
+  "IPv4DefaultGateway": [
+   null
+  ],
+  "IPv6DefaultGateway": [
+   null
+  ],
+  "DNSServer": [],
+  "NetProfileName": "Un**************work",
+  "NetProfileCategory": "Public",
+  "IPv4Connectivity": "LocalNetwork",
+  "IPv6Connectivity": "NoTraffic"
+ },
+ {
+  "InterfaceAlias": "Wi-Fi",
+  "InterfaceIndex": 3,
+  "InterfaceDescription": "Intel(R) Wi-Fi 6E AX211 160MHz",
+  "Status": "Up",
+  "MacAddress": "28:6B:35:**:**:**",
+  "LinkSpeed": "919 Mbps",
+  "IPv4Address": [
+   "192.168.*.*/24"
+  ],
+  "IPv6Address": [
+   "fd00::*/64",
+   "2603::*/64",
+   "2603::*/128"
+  ],
+  "IPv4DefaultGateway": [
+   "192.168.*.*"
+  ],
+  "IPv6DefaultGateway": [
+   "fe80::*"
+  ],
+  "DNSServer": [
+   "2603::*",
+   "192.168.*.*"
+  ],
+  "NetProfileName": "******",
+  "NetProfileCategory": "Public",
+  "IPv4Connectivity": "Internet",
+  "IPv6Connectivity": "Internet"
+ },
+ {
+  "InterfaceAlias": "Ethernet 2",
+  "InterfaceIndex": 15,
+  "InterfaceDescription": "Dell Giga Ethernet",
+  "Status": "Disconnected",
+  "MacAddress": "C8:4B:D6:**:**:**",
+  "LinkSpeed": "1 Gbps",
+  "IPv4Address": [
+   "169.254.*.*/16"
+  ],
+  "IPv6Address": [],
+  "IPv4DefaultGateway": [
+   null
+  ],
+  "IPv6DefaultGateway": [
+   null
+  ],
+  "DNSServer": [
+   "fec0::*",
+   "fec0::*",
+   "fec0::*"
+  ],
+  "NetProfileName": "",
+  "NetProfileCategory": "",
+  "IPv4Connectivity": "",
+  "IPv6Connectivity": ""
+ },
+ {
+  "InterfaceAlias": "Bluetooth Network Connection",
+  "InterfaceIndex": 16,
+  "InterfaceDescription": "Bluetooth Device (Personal Area Network)",
+  "Status": "Disconnected",
+  "MacAddress": "28:6B:35:**:**:**",
+  "LinkSpeed": "3 Mbps",
+  "IPv4Address": [
+   "169.254.*.*/16"
+  ],
+  "IPv6Address": [],
+  "IPv4DefaultGateway": [
+   null
+  ],
+  "IPv6DefaultGateway": [
+   null
+  ],
+  "DNSServer": [
+   "fec0::*",
+   "fec0::*",
+   "fec0::*"
+  ],
+  "NetProfileName": "",
+  "NetProfileCategory": "",
+  "IPv4Connectivity": "",
+  "IPv6Connectivity": ""
+ }
+]
