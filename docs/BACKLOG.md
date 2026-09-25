@@ -144,11 +144,15 @@ Deferred from UI iteration 2 (2026-09-25) until the feature set settles:
   quality, Timer binding, Log Folder.
 - Translate the new UI strings (Window menu, tooltips, copy-mode note, PC Report
   copy) in `translations/`.
-- Compact mode always resizes to 1024x640; consider remembering a user-resized
-  compact geometry.
-- Full window mode leaves the recorder and PC Report with a lot of empty space;
-  a Full-only two-column arrangement (e.g. recording log beside the previews)
-  would use it.
+- Compact mode always resizes to 1024x640 when chosen from the burger menu;
+  consider remembering a user-resized compact geometry (the title-bar Restore
+  button already keeps whatever size the window had).
+- Full window mode still leaves the recorder and PC Report with empty space
+  below the groups on very large screens; a Full-only two-column arrangement
+  (e.g. recording log beside the previews) would use it.
+- Media Player and Lossless Editor stay separate tabs; consider linking them
+  ("Set trim start/end from the player position", "Open in editor") rather
+  than merging the windows, which would crowd Compact mode.
 - The Recording properties grid still hides source type/address behind the
   per-row Video Settings dialog; a Full-mode variant could show them inline.
 
