@@ -88,7 +88,7 @@ def _normalize_itsoffset(value):
         return ""
     if abs(seconds) < 1e-6:
         return ""
-    return ("%f" % seconds).rstrip("0").rstrip(".")
+    return f"{seconds:f}".rstrip("0").rstrip(".")
 
 
 def _add_input(command, source_text, network_profile="preview", frame_rate="", resolution="", use_wallclock=False, itsoffset=""):
@@ -249,6 +249,9 @@ def build_combined_grid_record_command(
     preview_width=PREVIEW_WIDTH,
     output_fps=COMBINED_GRID_FPS,
     offsets_per_source=None,
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     source_texts = [(source or "").strip() for source in sources if (source or "").strip()]
     offsets = list(offsets_per_source or [])
@@ -265,8 +268,20 @@ def build_combined_grid_record_command(
             network_profile="recording",
         )
 
+    audio_input_index = None
+    if _audio_enabled(audio_device, mute=mute, volume=volume):
+        audio_input_index = len(source_texts)
+        _add_directshow_audio_input(command, audio_device)
+
     if len(source_texts) == 1 and not preview_pipe:
-        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-an"])
+        command.extend(["-map", "0:v"])
+        if audio_input_index is None:
+            command.append("-an")
+        else:
+            command.extend(["-map", f"{audio_input_index}:a", "-shortest"])
+        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if audio_input_index is not None:
+            _append_audio_encoding_options(command, volume)
         if duration_seconds:
             command.extend(["-t", str(duration_seconds)])
         command.append(output_file)
@@ -329,8 +344,15 @@ def build_combined_grid_record_command(
         "-c:v", "libx264",
         "-preset", "veryfast",
         "-crf", "18",
-        "-an",
     ])
+    if audio_input_index is None:
+        command.append("-an")
+    else:
+        command.extend([
+            "-map", f"{audio_input_index}:a",
+            "-shortest",
+        ])
+        _append_audio_encoding_options(command, volume)
     if duration_seconds:
         command.extend(["-t", str(duration_seconds)])
     command.append(output_file)

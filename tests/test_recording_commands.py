@@ -544,6 +544,61 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertEqual(command[command.index("-map") + 1], "[v]")
         self.assertEqual(command[-1], "combined.mp4")
 
+    def test_single_source_combined_grid_maps_optional_audio(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A"], "combined.mp4",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtbufsize", "512M", "-f", "dshow", "-i", "video=Camera A",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", 'audio="Microphone A"',
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k", "combined.mp4",
+            ],
+        )
+
+    def test_combined_grid_maps_one_audio_stream_and_video_only_preview(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["rtsp://camera/one", "rtsp://camera/two"],
+            "combined.mp4",
+            preview_pipe=True,
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count('audio="Microphone A"'), 1)
+        self.assertIn("2:a", command)
+        self.assertEqual(command.count("-c:a"), 1)
+        self.assertEqual(command[command.index("-b:a") + 1], "128k")
+        pipe_map = command.index("[p]")
+        self.assertNotIn("2:a", command[pipe_map:])
+
+    def test_combined_grid_without_audio_keeps_an(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["rtsp://camera/one", "rtsp://camera/two"], "combined.mp4",
+        )
+
+        self.assertIn("-an", command)
+        self.assertNotIn("-c:a", command)
+
+    def test_combined_grid_applies_selected_audio_volume(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["rtsp://camera/one", "rtsp://camera/two"],
+            "combined.mp4", audio_device="Microphone A", volume="50",
+        )
+
+        self.assertIn(
+            ["-af", "volume=0.5"],
+            [command[index:index + 2] for index in range(len(command) - 1)],
+        )
+
     def test_combined_grid_command_uses_valid_three_source_layout(self):
         command = build_combined_grid_record_command(
             "ffmpeg.exe",
