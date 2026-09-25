@@ -138,6 +138,26 @@ Use this file to track user-visible fixes, improvements, and feature work.
   settings.
 - DirectShow device names with accented or curly-quote characters are now listed
   correctly instead of as garbled text.
+- Fixed "Refresh USB devices..." and "Refresh devices" in Video Settings
+  appearing to freeze or do nothing. Device listing ran on the window's own
+  thread (about 6 s per pass on a machine with ten DirectShow devices), the
+  result was cached and never refreshed, and the combo box stayed on the
+  refresh entry. Cameras and microphones are now found in a single background
+  pass; the dialog scans automatically when opened, shows "Scanning..." and
+  then a count ("2 cameras, 1 microphone found"), reuses results younger than
+  45 s and rescans on demand with a refresh button. Picking the refresh entry
+  restores the previously chosen camera.
+- Every ffmpeg device-listing process is now tracked and terminated when the
+  recorder shuts down or the application exits. Previously a listing that
+  outlived its parent stayed behind; hundreds of such processes were found on
+  a development machine, all waiting on DirectShow enumeration, which made
+  every later scan time out with an empty device list.
+- The recorder's layout schematic in the sidebar is drawn on a transparent
+  canvas with white tiles, so its dashed leaf frame looks like every other
+  tab's preview instead of a black block.
+- "Video Settings" and "Show recording log" links carry gear and list glyphs;
+  each camera's settings button is a camera glyph; the rescan control is a
+  refresh glyph. All follow the locked/active accent like the other icons.
 
 ### Media Player
 
@@ -157,6 +177,16 @@ Use this file to track user-visible fixes, improvements, and feature work.
   and WMV worked). The app now selects the Media Foundation backend at startup and
   creates the player without the `VideoSurface` flag, which that backend rejects.
 - Player settings (last folder, panel count, volume, mute) persist between sessions.
+- Fixed an access violation when a player that had loaded a clip was shut down
+  and destroyed while the event loop kept running (seen in the test suite; the
+  same sequence applies when the tab's widget is torn down in the app). The
+  Windows media backend finishes closing a session asynchronously; shutdown
+  now lets those events land before the player is destroyed.
+
+### Settings
+
+- The four folder "Change" buttons carry a folder glyph and are wide enough
+  for glyph plus label.
 
 ### Help documentation
 
