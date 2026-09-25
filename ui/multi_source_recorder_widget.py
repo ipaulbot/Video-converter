@@ -1,17 +1,49 @@
+import glob
 import os
 import threading
-import glob
+import time
 from datetime import datetime
 
-from PyQt5.QtCore import QCoreApplication, QProcess, Qt, QSize, QTimer, QUrl, pyqtSignal
-from PyQt5.QtGui import QPixmap, QDesktopServices
+from PyQt5.QtCore import QCoreApplication, QProcess, QSize, Qt, QTimer, QUrl, pyqtSignal
+from PyQt5.QtGui import QDesktopServices, QPixmap
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QDialog,
-    QFileDialog, QComboBox, QCheckBox, QMessageBox, QGridLayout,
-    QGroupBox, QFormLayout, QDialogButtonBox, QSizePolicy, QStyle, QInputDialog,
-    QPlainTextEdit, QToolButton, QDoubleSpinBox
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QInputDialog,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPlainTextEdit,
+    QPushButton,
+    QSizePolicy,
+    QStyle,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
 )
 
+from conversion.ptz_controls import (
+    axis_vapix_continuous_url,
+    axis_vapix_ptz_url,
+    parse_axis_ptz_presets,
+    send_axis_vapix_request,
+)
+from conversion.recorder_settings import (
+    list_recorder_presets,
+    load_recorder_settings,
+    normalize_recorder_settings,
+    preset_file_path,
+    safe_preset_name,
+    save_recorder_settings,
+)
 from conversion.recording_commands import (
     build_combined_grid_record_command,
     build_directshow_camera_settings_command,
@@ -28,29 +60,15 @@ from conversion.recording_sources import (
     axis_mjpeg_preview_url,
     build_rtsp_url,
     build_source_text,
+    discover_directshow_audio_devices,
     discover_directshow_video_devices,
     parse_directshow_video_options,
     parse_rtsp_url_settings,
 )
-from conversion.recorder_settings import (
-    list_recorder_presets,
-    load_recorder_settings,
-    normalize_recorder_settings,
-    preset_file_path,
-    save_recorder_settings,
-)
-from conversion.ptz_controls import (
-    axis_vapix_continuous_url,
-    axis_vapix_ptz_url,
-    parse_axis_ptz_presets,
-    send_axis_vapix_request,
-)
+from ui import theme
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
-from ui import theme
-
-
 
 
 def _tr(source: str) -> str:
@@ -270,9 +288,15 @@ class VideoSettingsDialog(QDialog):
             row_audio_name.setMinimumWidth(58)
             row_audio_name.setMaximumWidth(82)
             row_audio_device = QComboBox()
-            row_audio_device.addItems(["No Audio"])
-            if audio_device_combo:
-                row_audio_device.setCurrentText(audio_device_combo.currentText())
+            stored_audio = (
+                parent._audio_device_value(audio_device_combo)
+                if parent and audio_device_combo
+                else "No Audio"
+            )
+            if parent and hasattr(parent, "populate_audio_device_combo"):
+                parent.populate_audio_device_combo(row_audio_device, stored_audio)
+            else:
+                row_audio_device.addItem(_tr("No Audio"), "No Audio")
             row_offset = make_sync_offset_spinbox()
             if offset_spin is not None:
                 row_offset.setValue(offset_spin.value())
@@ -322,6 +346,11 @@ class VideoSettingsDialog(QDialog):
         grid.setColumnMinimumWidth(4, 16)
         grid.setColumnStretch(4, 0)
         layout.addLayout(grid)
+        self.refresh_audio_devices_button = QPushButton(_tr("Refresh devices"))
+        self.refresh_audio_devices_button.clicked.connect(self.refresh_audio_devices)
+        layout.addWidget(self.refresh_audio_devices_button, 0, Qt.AlignRight)
+        if parent and hasattr(parent, "audio_devices_discovered"):
+            parent.audio_devices_discovered.connect(self.apply_discovered_audio_devices)
 
         preset_group = QGroupBox(_tr("Video Preset"))
         preset_layout = QHBoxLayout()
@@ -331,12 +360,13 @@ class VideoSettingsDialog(QDialog):
         self.preset_combo = QComboBox()
         self.preset_combo.setEditable(False)
         self.preset_combo.setMaximumWidth(120)
-        self.preset_combo.addItems(["Custom 1", "Custom 2", "Custom 3", "Custom 4"])
         self.preset_path_edit = QLineEdit()
         self.preset_path_edit.setReadOnly(True)
         self.preset_path_edit.setMinimumWidth(120)
         self.preset_load_button = QPushButton(_tr("Load"))
         self.preset_set_button = QPushButton(_tr("Set"))
+        self.preset_save_as_button = QPushButton(_tr("Save as..."))
+        self.preset_delete_button = QPushButton(_tr("Delete"))
         self.preset_open_bracket = QLabel(_tr("["))
         self.preset_separator = QLabel(_tr("/"))
         self.preset_close_bracket = QLabel(_tr("]"))
@@ -359,9 +389,11 @@ class VideoSettingsDialog(QDialog):
         self.preset_combo.currentTextChanged.connect(lambda _text: self.update_selected_preset_path())
         self.preset_load_button.clicked.connect(self.load_selected_preset)
         self.preset_set_button.clicked.connect(self.set_selected_preset)
+        self.preset_save_as_button.clicked.connect(self.save_preset_as)
+        self.preset_delete_button.clicked.connect(self.delete_selected_preset)
         preset_layout.addWidget(QLabel(_tr("Video Preset:")))
         preset_layout.addWidget(self.preset_combo)
-        self.preset_path_edit.hide()
+        preset_layout.addWidget(self.preset_path_edit)
         preset_action_layout = QHBoxLayout()
         self.preset_action_layout = preset_action_layout
         preset_action_layout.setContentsMargins(0, 0, 0, 0)
@@ -377,9 +409,10 @@ class VideoSettingsDialog(QDialog):
         preset_action_widget.setMaximumWidth(90)
         preset_action_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         preset_layout.addWidget(preset_action_widget)
+        preset_layout.addWidget(self.preset_save_as_button)
+        preset_layout.addWidget(self.preset_delete_button)
         preset_group.setLayout(preset_layout)
         layout.addWidget(preset_group)
-        self.update_selected_preset_path()
 
         lower_row = QHBoxLayout()
         output_group = QGroupBox(_tr("Output settings"))
@@ -387,7 +420,10 @@ class VideoSettingsDialog(QDialog):
         self.output_quality_combo = QComboBox()
         self.output_quality_combo.addItems(["Default", "High", "Balanced", "Compact"])
         self.output_mode_combo = QComboBox()
-        self.output_mode_combo.addItems(["Separate videos", "Picture-in-picture", "Combined grid"])
+        self.output_mode_combo.addItems([
+            _tr("Separate videos"),
+            _tr("Combined grid"),
+        ])
         output_mode_control = self.output_controls.get("output_mode")
         if output_mode_control:
             self.output_mode_combo.setCurrentText(output_mode_control.currentText())
@@ -429,9 +465,13 @@ class VideoSettingsDialog(QDialog):
         buttons.accepted.connect(self.accept_with_changes)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
+        self.loaded_preset_name = ""
+        self.loaded_preset_settings = None
+        self.refresh_preset_list()
 
     def apply_changes(self):
         self.apply_to_sources()
+        self.update_preset_dirty_marker()
         parent = self.parent()
         if parent and hasattr(parent, "refresh_previews_from_sources"):
             parent.refresh_previews_from_sources()
@@ -443,7 +483,7 @@ class VideoSettingsDialog(QDialog):
         self.accept()
 
     def selected_preset_name(self):
-        return self.preset_combo.currentText().strip() or "Default"
+        return self.preset_combo.currentText().removesuffix(" *").strip()
 
     def update_selected_preset_path(self):
         parent = self.parent()
@@ -454,33 +494,99 @@ class VideoSettingsDialog(QDialog):
             self.preset_path_edit.setText(name)
 
     def load_selected_preset(self):
+        name = self.selected_preset_name()
         parent = self.parent()
-        if parent and hasattr(parent, "load_named_recorder_preset"):
-            parent.load_named_recorder_preset(self.selected_preset_name())
-            self.apply_parent_state_to_dialog()
+        if not name or not parent:
+            return
+        self.loaded_preset_settings = parent.load_named_recorder_preset(name)
+        self.loaded_preset_name = name
+        self.apply_parent_state_to_dialog()
+        self.refresh_preset_list(name)
 
     def save_selected_preset(self):
         self.set_selected_preset()
 
     def set_selected_preset(self):
-        self.apply_changes()
+        name = self.selected_preset_name()
         parent = self.parent()
-        if parent and hasattr(parent, "save_named_recorder_preset"):
-            parent.save_named_recorder_preset(self.selected_preset_name())
-            self.refresh_preset_list()
+        if not name or not parent:
+            return
+        self.apply_changes()
+        self.loaded_preset_settings = parent.save_named_recorder_preset(name)
+        self.loaded_preset_name = name
+        self.refresh_preset_list(name)
 
     def save_preset_as(self):
-        name, accepted = QInputDialog.getText(self, "Save Video Preset", "Preset name:", text=self.selected_preset_name())
-        if accepted and name.strip():
-            self.preset_combo.setCurrentText(name.strip())
-            self.save_selected_preset()
+        name, accepted = QInputDialog.getText(
+            self,
+            _tr("Save Video Preset"),
+            _tr("Preset name:"),
+            text=self.selected_preset_name(),
+        )
+        if not accepted or not name.strip():
+            return
+        safe_name = safe_preset_name(name)
+        self.apply_changes()
+        self.loaded_preset_settings = self.parent().save_named_recorder_preset(safe_name)
+        self.loaded_preset_name = safe_name
+        self.refresh_preset_list(safe_name)
 
-    def refresh_preset_list(self):
-        current = self.selected_preset_name()
+    def delete_selected_preset(self):
+        name = self.selected_preset_name()
+        if not name:
+            return
+        answer = QMessageBox.question(
+            self,
+            _tr("Delete Video Preset"),
+            _tr("Delete preset '%(name)s'?") % {"name": name},
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if answer != QMessageBox.Yes:
+            return
+        self.parent().delete_named_recorder_preset(name)
+        self.loaded_preset_name = ""
+        self.loaded_preset_settings = None
+        self.refresh_preset_list()
+
+    def refresh_preset_list(self, selected_name=""):
+        parent = self.parent()
+        names = (
+            parent.list_recorder_presets()
+            if parent and hasattr(parent, "list_recorder_presets")
+            else []
+        )
+        current = selected_name or self.selected_preset_name().removesuffix(" *")
         self.preset_combo.blockSignals(True)
         self.preset_combo.clear()
-        self.preset_combo.addItems(["Custom 1", "Custom 2", "Custom 3", "Custom 4"])
-        self.preset_combo.setCurrentText(current)
+        self.preset_combo.addItems(names)
+        if current in names:
+            self.preset_combo.setCurrentText(current)
+        self.preset_combo.blockSignals(False)
+        self.update_selected_preset_path()
+
+    def _comparable_settings(self, settings):
+        value = normalize_recorder_settings(settings)
+        value.pop("version", None)
+        return value
+
+    def update_preset_dirty_marker(self):
+        if not self.loaded_preset_name or self.loaded_preset_settings is None:
+            return
+        current = self.parent().capture_recorder_settings()
+        dirty = self._comparable_settings(current) != self._comparable_settings(
+            self.loaded_preset_settings
+        )
+        text = (
+            _tr("%(name)s *") % {"name": self.loaded_preset_name}
+            if dirty
+            else self.loaded_preset_name
+        )
+        index = self.preset_combo.currentIndex()
+        if index < 0:
+            return
+        self.preset_combo.blockSignals(True)
+        self.preset_combo.setItemText(index, text)
         self.preset_combo.blockSignals(False)
         self.update_selected_preset_path()
 
@@ -524,7 +630,11 @@ class VideoSettingsDialog(QDialog):
 
     def apply_parent_state_to_dialog(self):
         # Rebuild the dialog field values from the parent widget after loading a preset.
-        for source_row, dialog_row in zip(self.source_rows, self.dialog_rows):
+        for source_row, dialog_row in zip(
+            self.source_rows,
+            self.dialog_rows,
+            strict=False,
+        ):
             enabled, label_edit, type_combo, source_edit = source_row[:4]
             audio_name_edit = source_row[4] if len(source_row) > 4 else None
             audio_device_combo = source_row[7] if len(source_row) > 7 else None
@@ -542,7 +652,16 @@ class VideoSettingsDialog(QDialog):
             if audio_name_edit:
                 row_audio_name.setText(audio_name_edit.text())
             if audio_device_combo:
-                row_audio_device.setCurrentText(audio_device_combo.currentText())
+                parent = self.parent()
+                selected_audio = (
+                    parent._audio_device_value(audio_device_combo)
+                    if parent and hasattr(parent, "_audio_device_value")
+                    else audio_device_combo.currentText()
+                )
+                if parent and hasattr(parent, "populate_audio_device_combo"):
+                    parent.populate_audio_device_combo(row_audio_device, selected_audio)
+                else:
+                    row_audio_device.setCurrentText(selected_audio)
             if frame_rate_combo:
                 row_frame_rate.setCurrentText(frame_rate_combo.currentText())
             if resolution_combo:
@@ -585,6 +704,22 @@ class VideoSettingsDialog(QDialog):
             self.directshow_devices = parent.discover_directshow_devices()
         for dialog_row in self.dialog_rows:
             self.populate_video_device_combo(dialog_row[3])
+
+    def refresh_audio_devices(self):
+        parent = self.parent()
+        if parent and hasattr(parent, "start_audio_device_discovery"):
+            parent.start_audio_device_discovery(force=True)
+
+    def apply_discovered_audio_devices(self, _devices):
+        parent = self.parent()
+        if not parent:
+            return
+        for dialog_row in self.dialog_rows:
+            combo = dialog_row[7]
+            parent.populate_audio_device_combo(
+                combo,
+                parent._audio_device_value(combo),
+            )
 
     def handle_video_device_choice(self, combo):
         if combo.currentData() == "refresh_directshow":
@@ -665,7 +800,9 @@ class VideoSettingsDialog(QDialog):
         row_resolution.setToolTip(_tr("Supported resolutions detected from the camera driver."))
 
     def apply_to_sources(self):
-        for row_index, (source_row, dialog_row) in enumerate(zip(self.source_rows, self.dialog_rows)):
+        for row_index, (source_row, dialog_row) in enumerate(
+            zip(self.source_rows, self.dialog_rows, strict=False)
+        ):
             enabled, label_edit, type_combo, source_edit = source_row[:4]
             audio_name_edit = source_row[4] if len(source_row) > 4 else None
             audio_device_combo = source_row[7] if len(source_row) > 7 else None
@@ -691,7 +828,12 @@ class VideoSettingsDialog(QDialog):
             if audio_name_edit:
                 audio_name_edit.setText(row_audio_name.text())
             if audio_device_combo:
-                audio_device_combo.setCurrentText(row_audio_device.currentText())
+                selected_audio = row_audio_device.currentData() or row_audio_device.currentText()
+                parent = self.parent()
+                if parent and hasattr(parent, "populate_audio_device_combo"):
+                    parent.populate_audio_device_combo(audio_device_combo, selected_audio)
+                else:
+                    audio_device_combo.setCurrentText(selected_audio)
             if frame_rate_combo:
                 frame_rate_combo.setCurrentText(row_frame_rate.currentText())
             if resolution_combo:
@@ -792,12 +934,16 @@ class MultiSourceRecorderWidget(QWidget):
     # Emitted whenever the output mode or the set of enabled sources changes, so a host
     # (the main window) can refresh the layout schematic shown in its sidebar preview.
     layout_preview_changed = pyqtSignal()
+    audio_devices_discovered = pyqtSignal(list)
 
     def __init__(self, parent=None, button_style=None, directshow_devices=None, auto_preview=True, load_saved_settings=False):
         super().__init__(parent)
         self._workflow_host = parent
         self.button_style = button_style
         self.directshow_devices = directshow_devices
+        self.directshow_audio_devices = []
+        self.audio_discovery_running = False
+        self.audio_devices_discovered.connect(self._apply_audio_devices)
         self.auto_preview = auto_preview
         self.preview_processes = {}
         self.preview_files = {}
@@ -837,6 +983,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.record_start_watchdog_timer = QTimer(self)
         self.record_start_watchdog_timer.setSingleShot(True)
         self.record_start_watchdog_timer.timeout.connect(self._begin_pending_recording)
+        self.start_audio_device_discovery()
         if load_saved_settings:
             self.load_current_recorder_settings()
 
@@ -1038,9 +1185,11 @@ class MultiSourceRecorderWidget(QWidget):
         self.codec_combo.addItems(["copy", "h264"])
         self.codec_combo.setMaximumWidth(120)
         self.output_mode_combo = QComboBox()
-        self.output_mode_combo.addItems(["Separate videos", "Picture-in-picture", "Combined grid"])
+        self.output_mode_combo.addItems([
+            _tr("Separate videos"),
+            _tr("Combined grid"),
+        ])
         self.output_mode_combo.setMaximumWidth(140)
-        self.output_mode_combo.setToolTip(_tr("Combined output layouts are saved here, but recording currently uses the stable separate-video path."))
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
         output_form.addRow("File base name:", self.base_name_edit)
@@ -1056,7 +1205,6 @@ class MultiSourceRecorderWidget(QWidget):
         middle_row.addWidget(output_group, 1)
         layout.addLayout(middle_row)
 
-        action_row = QHBoxLayout()
         self.start_btn = QPushButton("")
         self.start_btn.setToolTip(_tr("Start recording"))
         self.start_btn.setFixedSize(44, 44)
@@ -1193,6 +1341,68 @@ class MultiSourceRecorderWidget(QWidget):
         if not self.directshow_devices:
             self.directshow_devices = discover_directshow_video_devices(resource_path("ffmpeg.exe"))
         return self.directshow_devices
+
+    def start_audio_device_discovery(self, force=False):
+        if self.audio_discovery_running:
+            return
+        if self.directshow_audio_devices and not force:
+            self._apply_audio_devices(self.directshow_audio_devices)
+            return
+        self.audio_discovery_running = True
+
+        def discover():
+            devices = discover_directshow_audio_devices(resource_path("ffmpeg.exe"))
+            self._deliver_audio_devices(devices)
+
+        threading.Thread(target=discover, daemon=True).start()
+
+    def _deliver_audio_devices(self, devices):
+        try:
+            self.audio_devices_discovered.emit(devices)
+        except RuntimeError:
+            logger.debug(
+                "Recorder closed before audio device discovery completed",
+                exc_info=True,
+            )
+
+    def _apply_audio_devices(self, devices):
+        self.audio_discovery_running = False
+        self.directshow_audio_devices = list(devices or [])
+        for source_row in self.source_rows:
+            combo = source_row[7]
+            self.populate_audio_device_combo(combo, self._audio_device_value(combo))
+
+    @staticmethod
+    def _audio_device_value(combo):
+        return (
+            str(combo.currentData() or combo.currentText())
+            .removesuffix(" (not found)")
+            .strip()
+        )
+
+    def populate_audio_device_combo(self, combo, stored_device=""):
+        selected = (
+            str(stored_device or "")
+            .removesuffix(" (not found)")
+            .strip()
+        )
+        combo.blockSignals(True)
+        combo.clear()
+        combo.addItem(_tr("No Audio"), "No Audio")
+        for device in self.directshow_audio_devices:
+            combo.addItem(device, device)
+        if (
+            selected
+            and selected != "No Audio"
+            and selected not in self.directshow_audio_devices
+        ):
+            combo.addItem(
+                _tr("%(device)s (not found)") % {"device": selected},
+                selected,
+            )
+        target = combo.findData(selected or "No Audio")
+        combo.setCurrentIndex(max(0, target))
+        combo.blockSignals(False)
 
     @staticmethod
     def _deliver_modes(callback, modes):
@@ -1745,7 +1955,7 @@ class MultiSourceRecorderWidget(QWidget):
                 "source_type": self._source_type_id(type_combo),
                 "source": source_edit.text(),
                 "audio_name": audio_name_edit.text(),
-                "audio_device": audio_device_combo.currentText(),
+                "audio_device": self._audio_device_value(audio_device_combo),
                 "mute": mute_check.isChecked(),
                 "volume": volume_combo.currentText(),
                 "frame_rate": frame_rate_combo.currentText(),
@@ -1766,8 +1976,15 @@ class MultiSourceRecorderWidget(QWidget):
         })
 
     def apply_recorder_settings(self, settings, refresh_previews=True):
+        legacy_output_mode = (settings or {}).get("output", {}).get("mode")
         normalized = normalize_recorder_settings(settings)
         output = normalized.get("output", {})
+        if legacy_output_mode == "Picture-in-picture":
+            self._append_log(
+                _tr(
+                    "[recorder] legacy Picture-in-picture mode mapped to Separate videos"
+                )
+            )
         timer = normalized.get("timer", {})
         self.output_folder_edit.setText(output.get("folder", self.output_folder_edit.text()))
         self.base_name_edit.setText(output.get("base_name", self.base_name_edit.text()))
@@ -1791,7 +2008,13 @@ class MultiSourceRecorderWidget(QWidget):
                 type_combo.blockSignals(False)
             source_edit.setText(channel.get("source", source_edit.text()))
             audio_name_edit.setText(channel.get("audio_name", audio_name_edit.text()))
-            audio_device_combo.setCurrentText(channel.get("audio_device", audio_device_combo.currentText()))
+            self.populate_audio_device_combo(
+                audio_device_combo,
+                channel.get(
+                    "audio_device",
+                    self._audio_device_value(audio_device_combo),
+                ),
+            )
             mute_check.setChecked(bool(channel.get("mute", mute_check.isChecked())))
             volume_combo.setCurrentText(channel.get("volume", volume_combo.currentText()))
             frame_rate_combo.setCurrentText(channel.get("frame_rate", frame_rate_combo.currentText()))
@@ -1817,16 +2040,24 @@ class MultiSourceRecorderWidget(QWidget):
         return preset_file_path(self.recorder_presets_dir(), name)
 
     def list_recorder_presets(self):
-        presets = list_recorder_presets(self.recorder_presets_dir())
-        return presets or ["Default"]
+        return list_recorder_presets(self.recorder_presets_dir())
 
     def save_named_recorder_preset(self, name):
-        save_recorder_settings(self.recorder_preset_path(name), self.capture_recorder_settings())
+        settings = self.capture_recorder_settings()
+        save_recorder_settings(self.recorder_preset_path(name), settings)
+        return settings
 
     def load_named_recorder_preset(self, name):
-        self.apply_recorder_settings(load_recorder_settings(self.recorder_preset_path(name)))
+        settings = load_recorder_settings(self.recorder_preset_path(name))
+        self.apply_recorder_settings(settings)
         self.refresh_previews_from_sources()
         self.save_current_recorder_settings()
+        return settings
+
+    def delete_named_recorder_preset(self, name):
+        path = self.recorder_preset_path(name)
+        if os.path.exists(path):
+            os.remove(path)
 
     def _send_axis_ptz_url(self, url):
         if not url:
@@ -1997,7 +2228,18 @@ class MultiSourceRecorderWidget(QWidget):
             return ""
         return path
 
-    def build_recording_command(self, ffmpeg, source, output_file, preview_pipe=False, frame_rate="", resolution=""):
+    def build_recording_command(
+        self,
+        ffmpeg,
+        source,
+        output_file,
+        preview_pipe=False,
+        frame_rate="",
+        resolution="",
+        audio_device="",
+        mute=False,
+        volume="100",
+    ):
         if self.is_directshow_source(source):
             return build_directshow_record_with_preview_command(
                 ffmpeg,
@@ -2007,6 +2249,9 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate=frame_rate,
                 resolution=resolution,
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             )
         source = apply_axis_rtsp_recording_options(source, frame_rate=frame_rate, resolution=resolution)
         return build_record_command(
@@ -2018,9 +2263,23 @@ class MultiSourceRecorderWidget(QWidget):
             preview_pipe=preview_pipe,
             frame_rate=frame_rate,
             resolution=resolution,
+            audio_device=audio_device,
+            mute=mute,
+            volume=volume,
         )
 
-    def recording_fallback_commands(self, ffmpeg, source, output_file, preview_pipe=False, frame_rate="", resolution=""):
+    def recording_fallback_commands(
+        self,
+        ffmpeg,
+        source,
+        output_file,
+        preview_pipe=False,
+        frame_rate="",
+        resolution="",
+        audio_device="",
+        mute=False,
+        volume="100",
+    ):
         commands = []
         if source.lower().startswith("rtsp://") and frame_rate and resolution:
             commands.append(self.build_recording_command(
@@ -2030,6 +2289,9 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate="",
                 resolution=resolution,
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             ))
         commands.append(self.build_recording_command(
             ffmpeg,
@@ -2038,6 +2300,9 @@ class MultiSourceRecorderWidget(QWidget):
             preview_pipe=preview_pipe,
             frame_rate="",
             resolution="",
+            audio_device=audio_device,
+            mute=mute,
+            volume=volume,
         ))
         unique = []
         for command in commands:
@@ -2119,11 +2384,6 @@ class MultiSourceRecorderWidget(QWidget):
         self.clear_preview_backlog()
         released_directshow_preview = self.release_preview_processes_for_recording(selected)
         self.save_current_recorder_settings()
-        if self.output_mode_combo.currentText() == "Picture-in-picture":
-            self._append_log(
-                f"[recorder] {self.output_mode_combo.currentText()} output is saved for later, "
-                "but recording currently uses separate files for reliability."
-            )
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.pending_recording_start = (ffmpeg, selected, output_folder, timestamp)
         if released_directshow_preview:
@@ -2168,6 +2428,9 @@ class MultiSourceRecorderWidget(QWidget):
             return
         for row_index, label, source, *option_items in selected:
             options = option_items[0] if option_items else {}
+            mute = self.source_rows[row_index][5].isChecked()
+            volume = self.source_rows[row_index][6].currentText()
+            audio_device = self._audio_device_value(self.source_rows[row_index][7])
             safe_label = "".join(ch if ch.isalnum() or ch in ("-", "_") else "_" for ch in label)
             output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_{safe_label}_{timestamp}.mp4"))
             # For DirectShow, the recording process MUST also pipe the preview because the
@@ -2188,7 +2451,28 @@ class MultiSourceRecorderWidget(QWidget):
                 preview_pipe=preview_pipe,
                 frame_rate=options.get("frame_rate", ""),
                 resolution=options.get("resolution", ""),
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
             )
+            audio_fallback_command = None
+            if (
+                audio_device
+                and audio_device != "No Audio"
+                and not mute
+                and volume != "0"
+            ):
+                audio_fallback_command = self.build_recording_command(
+                    ffmpeg,
+                    source,
+                    output_file,
+                    preview_pipe=preview_pipe,
+                    frame_rate=options.get("frame_rate", ""),
+                    resolution=options.get("resolution", ""),
+                    audio_device="",
+                    mute=True,
+                    volume="0",
+                )
             fallback_commands = [
                 fallback
                 for fallback in self.recording_fallback_commands(
@@ -2198,6 +2482,9 @@ class MultiSourceRecorderWidget(QWidget):
                     preview_pipe=preview_pipe,
                     frame_rate=options.get("frame_rate", ""),
                     resolution=options.get("resolution", ""),
+                    audio_device=audio_device,
+                    mute=mute,
+                    volume=volume,
                 )
                 if fallback != command
             ]
@@ -2218,6 +2505,8 @@ class MultiSourceRecorderWidget(QWidget):
                 fallback_command=(fallback_commands[0] if fallback_commands else None),
                 fallback_commands=fallback_commands,
                 retry_delay_ms=retry_delay_ms,
+                audio_device=audio_device,
+                audio_fallback_command=audio_fallback_command,
             )
             if not preview_pipe and self.auto_preview and self.can_preview_separately_while_recording(source):
                 # Ensure the standalone preview process for this RTSP/HTTP row is running.
@@ -2235,6 +2524,9 @@ class MultiSourceRecorderWidget(QWidget):
         fallback_command=None,
         fallback_commands=None,
         retry_delay_ms=0,
+        audio_device="",
+        audio_fallback_command=None,
+        audio_retry_attempted=False,
     ):
         process.recording_fallback_commands = list(fallback_commands or ([fallback_command] if fallback_command else []))
         process.recording_fallback_command = process.recording_fallback_commands[0] if process.recording_fallback_commands else None
@@ -2243,6 +2535,10 @@ class MultiSourceRecorderWidget(QWidget):
         process.recording_row_index = row_index
         process.recording_safe_label = safe_label
         process.recording_error_text = ""
+        process.recording_started_at = time.monotonic()
+        process.recording_audio_device = audio_device
+        process.recording_audio_fallback_command = audio_fallback_command
+        process.recording_audio_retry_attempted = audio_retry_attempted
         if preview_pipe:
             process.setProcessChannelMode(QProcess.SeparateChannels)
             self.preview_buffers[row_index] = bytearray()
@@ -2270,9 +2566,38 @@ class MultiSourceRecorderWidget(QWidget):
                 _tr("Video %(number)s\nOpening combined preview...")
                 % {"number": row_index + 1})
 
-    def _start_combined_grid_process(self, ffmpeg, selected, output_folder, timestamp, attempt=0):
+    def _start_combined_grid_process(
+        self,
+        ffmpeg,
+        selected,
+        output_folder,
+        timestamp,
+        attempt=0,
+        force_video_only=False,
+    ):
         self._prepare_combined_preview_placeholders(selected)
         output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_Combined_{timestamp}.mp4"))
+        audio_device = ""
+        audio_row_label = ""
+        audio_volume = "100"
+        if not force_video_only:
+            for row_index, label, _source, *_options in selected:
+                source_row = self.source_rows[row_index]
+                candidate = self._audio_device_value(source_row[7])
+                if (
+                    candidate != "No Audio"
+                    and not source_row[5].isChecked()
+                    and source_row[6].currentText() != "0"
+                ):
+                    audio_device = candidate
+                    audio_row_label = label
+                    audio_volume = source_row[6].currentText()
+                    break
+        if audio_device:
+            self._append_log(
+                _tr("[Combined] using audio from %(row)s")
+                % {"row": audio_row_label}
+            )
         combined_sources = []
         combined_offsets = []
         for _row_index, _label, source, *option_items in selected:
@@ -2290,7 +2615,23 @@ class MultiSourceRecorderWidget(QWidget):
             self.duration_edit.text().strip(),
             preview_pipe=self.auto_preview,
             offsets_per_source=combined_offsets,
+            audio_device=audio_device,
+            mute=not bool(audio_device),
+            volume=audio_volume,
         )
+        audio_fallback_command = None
+        if audio_device:
+            audio_fallback_command = build_combined_grid_record_command(
+                ffmpeg,
+                combined_sources,
+                output_file,
+                self.duration_edit.text().strip(),
+                preview_pipe=self.auto_preview,
+                offsets_per_source=combined_offsets,
+                audio_device="",
+                mute=True,
+                volume="0",
+            )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error
         # if its idle preview graph has not finished releasing the device when the combined
@@ -2298,6 +2639,11 @@ class MultiSourceRecorderWidget(QWidget):
         # on, so allow one retry of the same command after a longer pylon unwind window.
         process.recording_safe_label = "Combined"
         process.recording_error_text = ""
+        process.recording_started_at = time.monotonic()
+        process.recording_audio_device = audio_device
+        process.recording_audio_fallback_command = audio_fallback_command
+        process.recording_audio_retry_attempted = force_video_only
+        process.recording_preview_pipe = self.auto_preview
         has_genicam_source = any(
             self._is_basler_genicam_source(source) for _row, _label, source, *_options in selected
         )
@@ -2342,6 +2688,7 @@ class MultiSourceRecorderWidget(QWidget):
         has_retry = bool(
             getattr(process, "recording_fallback_commands", None)
             or getattr(process, "recording_fallback_command", None)
+            or getattr(process, "recording_audio_fallback_command", None)
         )
         if self.processes or has_retry:
             self.status_label.setText(_tr("Recording"))
@@ -2358,6 +2705,8 @@ class MultiSourceRecorderWidget(QWidget):
     def _process_finished(self, process, name, exit_code=0):
         self._append_log(f"[{name}] recording stopped exit_code={exit_code}")
         self.processes = [p for p in self.processes if p is not process and p.state() != QProcess.NotRunning]
+        if exit_code and self._retry_recording_without_audio(process, name):
+            return
         if exit_code and self._retry_combined_recording(process, name):
             return
         if exit_code and self._retry_recording_without_requested_options(process, name):
@@ -2430,6 +2779,81 @@ class MultiSourceRecorderWidget(QWidget):
         self._notify_workflow_availability_change()
         return True
 
+    @staticmethod
+    def _is_audio_start_failure(error_text, audio_device):
+        text = str(error_text or "").lower()
+        device = str(audio_device or "").lower()
+        return (
+            "could not find audio device" in text
+            or (
+                "i/o error" in text
+                and ("audio=" in text or (device and device in text))
+            )
+        )
+
+    def _retry_recording_without_audio(self, process, name):
+        command = getattr(process, "recording_audio_fallback_command", None)
+        audio_device = getattr(process, "recording_audio_device", "")
+        if (
+            not command
+            or getattr(process, "recording_audio_retry_attempted", False)
+        ):
+            return False
+        started_at = getattr(process, "recording_started_at", 0.0)
+        early_window = self.record_start_watchdog_delay_ms / 1000
+        if not started_at or time.monotonic() - started_at > early_window:
+            return False
+        if not self._is_audio_start_failure(
+            getattr(process, "recording_error_text", ""),
+            audio_device,
+        ):
+            return False
+        message = _tr(
+            "%(row)s: audio device '%(device)s' unavailable, recording video only"
+        ) % {
+            "row": name,
+            "device": audio_device,
+        }
+        self._append_log(message)
+        self.status_label.setText(message)
+
+        def start_retry():
+            if "recording video only" not in self.status_label.text().lower():
+                return
+            combined_context = getattr(
+                process,
+                "combined_recording_context",
+                None,
+            )
+            if combined_context:
+                self._start_combined_grid_process(
+                    *combined_context,
+                    attempt=getattr(
+                        process,
+                        "combined_recording_attempt",
+                        0,
+                    ),
+                    force_video_only=True,
+                )
+                return
+            replacement = self.create_recording_process()
+            self._start_configured_recording_process(
+                replacement,
+                command,
+                getattr(process, "recording_safe_label", name),
+                getattr(process, "recording_row_index", None),
+                getattr(process, "recording_preview_pipe", False),
+                fallback_commands=[],
+                retry_delay_ms=0,
+                audio_device="",
+                audio_fallback_command=None,
+                audio_retry_attempted=True,
+            )
+
+        self._schedule(0, start_retry)
+        self._notify_workflow_availability_change()
+        return True
+
     def _retry_recording_without_requested_options(self, process, name):
         fallback_commands = list(getattr(process, "recording_fallback_commands", None) or [])
         if not fallback_commands:
@@ -2466,6 +2890,17 @@ class MultiSourceRecorderWidget(QWidget):
                 fallback_command=(remaining_commands[0] if remaining_commands else None),
                 fallback_commands=remaining_commands,
                 retry_delay_ms=getattr(process, "recording_retry_delay_ms", 1500 if preview_pipe else 0),
+                audio_device=getattr(process, "recording_audio_device", ""),
+                audio_fallback_command=getattr(
+                    process,
+                    "recording_audio_fallback_command",
+                    None,
+                ),
+                audio_retry_attempted=getattr(
+                    process,
+                    "recording_audio_retry_attempted",
+                    False,
+                ),
             )
         retry_delay_ms = getattr(process, "recording_retry_delay_ms", 1500 if preview_pipe else 0)
         if retry_delay_ms:

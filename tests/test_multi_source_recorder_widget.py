@@ -8,6 +8,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
     QDialogButtonBox,
+    QMessageBox,
     QPlainTextEdit,
     QPushButton,
     QSizePolicy,
@@ -86,6 +87,56 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget = MultiSourceRecorderWidget()
 
         self.assertTrue(callable(widget.video_name_edits[0].mouseDoubleClickEvent))
+
+    def test_audio_discovery_populates_all_row_combos(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+
+        widget._apply_audio_devices(["Microphone A", "Microphone B"])
+
+        for row in widget.source_rows:
+            self.assertEqual(
+                [row[7].itemText(index) for index in range(row[7].count())],
+                ["No Audio", "Microphone A", "Microphone B"],
+            )
+
+    def test_stored_missing_audio_device_is_displayed_and_preserved(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        settings = widget.capture_recorder_settings()
+        settings["channels"][0]["audio_device"] = "Lab Microphone"
+
+        widget.apply_recorder_settings(settings, refresh_previews=False)
+        widget._apply_audio_devices(["Microphone A"])
+
+        combo = widget.source_rows[0][7]
+        self.assertEqual(combo.currentText(), "Lab Microphone (not found)")
+        self.assertEqual(combo.currentData(), "Lab Microphone")
+        self.assertEqual(
+            widget.capture_recorder_settings()["channels"][0]["audio_device"],
+            "Lab Microphone",
+        )
+
+    def test_widget_starts_audio_discovery_on_creation(self):
+        started = []
+        with patch.object(
+            MultiSourceRecorderWidget,
+            "start_audio_device_discovery",
+            lambda self, force=False: started.append(force),
+        ):
+            MultiSourceRecorderWidget(auto_preview=False)
+
+        self.assertEqual(started, [False])
+
+    def test_audio_discovery_result_is_ignored_after_widget_is_destroyed(self):
+        with patch.object(
+            MultiSourceRecorderWidget,
+            "start_audio_device_discovery",
+            lambda self, force=False: None,
+        ):
+            widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.deleteLater()
+        self.app.sendPostedEvents(None, QEvent.DeferredDelete)
+
+        widget._deliver_audio_devices(["Microphone A"])
 
     def test_selecting_usb_directshow_updates_preview_guidance(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
@@ -277,7 +328,8 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertIn("text-decoration: underline", dialog.preset_load_button.styleSheet())
         self.assertIn("background: transparent", dialog.preset_set_button.styleSheet())
         self.assertFalse(hasattr(dialog, "preset_save_button"))
-        self.assertFalse(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_delete_button"))
 
     def test_video_settings_preset_actions_are_left_aligned_bracketed_links(self):
         widget = MultiSourceRecorderWidget()
@@ -297,14 +349,18 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(dialog.preset_action_layout.indexOf(dialog.preset_close_bracket), 4)
         self.assertLessEqual(dialog.preset_combo.maximumWidth(), 120)
 
-    def test_video_settings_dialog_uses_four_fixed_preset_slots(self):
+    def test_video_settings_dialog_uses_disk_preset_actions(self):
         widget = MultiSourceRecorderWidget()
+        widget.list_recorder_presets = lambda: ["Alpha", "Beta"]
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
         self.assertEqual(
             [dialog.preset_combo.itemText(index) for index in range(dialog.preset_combo.count())],
-            ["Custom 1", "Custom 2", "Custom 3", "Custom 4"],
+            ["Alpha", "Beta"],
         )
+        self.assertTrue(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_delete_button"))
+        self.assertFalse(dialog.preset_path_edit.isHidden())
 
     def test_video_settings_dialog_defaults_empty_rows_to_no_source_selected(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
@@ -341,6 +397,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
     def test_video_settings_dialog_shows_selected_preset_path(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Custom 3"]
         widget.recorder_preset_path = lambda name: f"C:\\Presets\\{name}.json"
 
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
@@ -354,14 +411,60 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         calls = []
         widget.list_recorder_presets = lambda: ["Default"]
         widget.recorder_preset_path = lambda name: f"C:\\Presets\\{name}.json"
-        widget.load_named_recorder_preset = lambda name: calls.append(("load", name))
-        widget.save_named_recorder_preset = lambda name: calls.append(("save", name))
+        widget.load_named_recorder_preset = lambda name: (
+            calls.append(("load", name)) or widget.capture_recorder_settings()
+        )
+        widget.save_named_recorder_preset = lambda name: (
+            calls.append(("save", name)) or widget.capture_recorder_settings()
+        )
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
         dialog.load_selected_preset()
         dialog.set_selected_preset()
 
-        self.assertEqual(calls, [("load", "Custom 1"), ("save", "Custom 1")])
+        self.assertEqual(calls, [("load", "Default"), ("save", "Default")])
+
+    def test_video_settings_lists_disk_presets_and_refreshes_on_open(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha", "Beta"]
+
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        self.assertEqual(
+            [dialog.preset_combo.itemText(index) for index in range(dialog.preset_combo.count())],
+            ["Alpha", "Beta"],
+        )
+
+    def test_video_settings_dirty_marker_ignores_version(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha"]
+        widget.load_named_recorder_preset = lambda name: widget.capture_recorder_settings()
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        dialog.loaded_preset_name = "Alpha"
+        dialog.loaded_preset_settings = widget.capture_recorder_settings()
+        dialog.loaded_preset_settings["version"] = 999
+
+        dialog.update_preset_dirty_marker()
+        self.assertEqual(dialog.preset_combo.currentText(), "Alpha")
+
+        widget.source_rows[0][2].setCurrentIndex(1)
+        dialog.update_preset_dirty_marker()
+        self.assertEqual(dialog.preset_combo.currentText(), "Alpha *")
+
+    def test_delete_selected_preset_confirms_and_refreshes(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha"]
+        deleted = []
+        widget.delete_named_recorder_preset = lambda name: deleted.append(name)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        with patch(
+            "ui.multi_source_recorder_widget.QMessageBox.question",
+            return_value=QMessageBox.Yes,
+        ):
+            dialog.delete_selected_preset()
+
+        self.assertEqual(deleted, ["Alpha"])
 
     def test_video_settings_basler_camera_settings_use_pylon_dialog(self):
         widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)
@@ -467,6 +570,36 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         dialog.apply_to_sources()
 
         self.assertEqual(widget.output_mode_combo.currentText(), "Combined grid")
+
+    def test_output_mode_combos_offer_only_implemented_modes(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        expected = ["Separate videos", "Combined grid"]
+        self.assertEqual(
+            [
+                widget.output_mode_combo.itemText(index)
+                for index in range(widget.output_mode_combo.count())
+            ],
+            expected,
+        )
+        self.assertEqual(
+            [
+                dialog.output_mode_combo.itemText(index)
+                for index in range(dialog.output_mode_combo.count())
+            ],
+            expected,
+        )
+
+    def test_apply_settings_maps_legacy_picture_in_picture(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        settings = widget.capture_recorder_settings()
+        settings["output"]["mode"] = "Picture-in-picture"
+
+        widget.apply_recorder_settings(settings, refresh_previews=False)
+
+        self.assertEqual(widget.output_mode_combo.currentText(), "Separate videos")
+        self.assertIn("Picture-in-picture", "\n".join(widget.log_lines))
 
     def test_video_settings_apply_refreshes_main_preview_without_closing(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=False)
@@ -951,6 +1084,129 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(replacements[0].started, failed.recording_fallback_commands[0])
         self.assertEqual(widget.status_label.text(), "Recording")
 
+    def test_audio_start_failure_retries_once_without_audio(self):
+        import time
+        import types
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.status_label.setText("Recording")
+        replacement_commands = []
+        scheduled = []
+
+        class Signal:
+            def connect(self, _callback):
+                pass
+
+        class FakeProcess:
+            def __init__(self):
+                self.errorOccurred = Signal()
+                self.finished = Signal()
+                self.readyReadStandardOutput = Signal()
+                self.readyReadStandardError = Signal()
+
+            def setProcessChannelMode(self, _mode):
+                pass
+
+            def start(self, program, args):
+                replacement_commands.append([program] + list(args))
+
+        widget.create_recording_process = FakeProcess
+        failed = types.SimpleNamespace(
+            recording_error_text=(
+                "Could not find audio device with name [Microphone A]"
+            ),
+            recording_audio_device="Microphone A",
+            recording_audio_fallback_command=[
+                "ffmpeg.exe",
+                "-hide_banner",
+                "-y",
+                "-i",
+                "sample.mp4",
+                "-map",
+                "0:v",
+                "-an",
+                "-c:v",
+                "copy",
+                "out.mp4",
+            ],
+            recording_audio_retry_attempted=False,
+            recording_started_at=time.monotonic(),
+            recording_preview_pipe=False,
+            recording_row_index=0,
+            recording_safe_label="Camera",
+            recording_fallback_commands=[],
+            recording_retry_delay_ms=0,
+            state=lambda: QProcess.NotRunning,
+        )
+        widget.processes = [failed]
+
+        with patch.object(
+            widget,
+            "_schedule",
+            lambda delay, callback: scheduled.append((delay, callback)),
+        ):
+            widget._process_finished(failed, "Camera", 1)
+
+        self.assertEqual(len(scheduled), 1)
+        scheduled[0][1]()
+        self.assertEqual(
+            replacement_commands[0],
+            failed.recording_audio_fallback_command,
+        )
+        self.assertIn(
+            "audio device 'Microphone A' unavailable, recording video only",
+            "\n".join(widget.log_lines),
+        )
+        self.assertIn("video only", widget.status_label.text().lower())
+
+    def test_non_audio_io_error_does_not_use_audio_fallback(self):
+        import time
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        process = type(
+            "Failed",
+            (),
+            {
+                "recording_audio_fallback_command": [
+                    "ffmpeg.exe",
+                    "video-only",
+                ],
+                "recording_audio_device": "Microphone A",
+                "recording_audio_retry_attempted": False,
+                "recording_started_at": time.monotonic(),
+                "recording_error_text": (
+                    "I/O error while opening video=Camera A"
+                ),
+            },
+        )()
+
+        self.assertFalse(
+            widget._retry_recording_without_audio(process, "Camera")
+        )
+
+    def test_late_audio_failure_does_not_restart_recording(self):
+        import time
+
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        process = type(
+            "Failed",
+            (),
+            {
+                "recording_audio_fallback_command": [
+                    "ffmpeg.exe",
+                    "video-only",
+                ],
+                "recording_audio_device": "Microphone A",
+                "recording_audio_retry_attempted": False,
+                "recording_started_at": time.monotonic() - 10,
+                "recording_error_text": "Could not find audio device",
+            },
+        )()
+
+        self.assertFalse(
+            widget._retry_recording_without_audio(process, "Camera")
+        )
+
     def test_start_recording_keeps_existing_rtsp_preview_alive(self):
         # The pre-existing idle preview for an RTSP row must keep running during
         # recording, because the recording process intentionally does not pipe its
@@ -999,6 +1255,107 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertNotIn(1, widget.preview_processes)
         self.assertNotIn(0, widget.preview_paused_rows)
         self.assertIn(1, widget.preview_paused_rows)
+
+    def test_separate_recording_passes_row_audio_controls_to_builder(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        widget.populate_audio_device_combo(row[7], "Microphone A")
+        row[6].setCurrentText("50")
+        calls = []
+        widget.build_recording_command = (
+            lambda *args, **kwargs: calls.append(kwargs)
+            or ["ffmpeg.exe", "out.mp4"]
+        )
+        widget.recording_fallback_commands = lambda *args, **kwargs: []
+
+        class FakeProcess:
+            def __getattr__(self, _name):
+                return type(
+                    "Signal",
+                    (),
+                    {"connect": lambda *_args: None},
+                )()
+
+            def setProcessChannelMode(self, _mode):
+                pass
+
+            def start(self, _program, _args):
+                pass
+
+        widget.create_recording_process = FakeProcess
+        widget._start_recording_processes(
+            "ffmpeg.exe",
+            [(0, "Camera", "rtsp://camera/stream", {})],
+            "C:\\Temp",
+            "stamp",
+        )
+
+        self.assertEqual(calls[0]["audio_device"], "Microphone A")
+        self.assertFalse(calls[0]["mute"])
+        self.assertEqual(calls[0]["volume"], "50")
+
+    def test_combined_grid_uses_first_selected_unmuted_audio_row(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.output_mode_combo.setCurrentText("Combined grid")
+        widget.populate_audio_device_combo(
+            widget.source_rows[0][7],
+            "Muted Microphone",
+        )
+        widget.source_rows[0][5].setChecked(True)
+        widget.populate_audio_device_combo(
+            widget.source_rows[1][7],
+            "Microphone B",
+        )
+        captured = []
+
+        with patch(
+            "ui.multi_source_recorder_widget.build_combined_grid_record_command",
+            lambda *args, **kwargs: captured.append(kwargs)
+            or ["ffmpeg.exe", "combined.mp4"],
+        ):
+            widget.create_recording_process = lambda: type(
+                "FakeProcess",
+                (),
+                {
+                    "errorOccurred": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "finished": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "readyReadStandardOutput": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "readyReadStandardError": type(
+                        "Signal",
+                        (),
+                        {"connect": lambda *_args: None},
+                    )(),
+                    "setProcessChannelMode": lambda self, mode: None,
+                    "start": lambda self, program, args: None,
+                },
+            )()
+            selected = [
+                (0, "One", "rtsp://camera/one", {}),
+                (1, "Two", "rtsp://camera/two", {}),
+            ]
+            widget._start_recording_processes(
+                "ffmpeg.exe",
+                selected,
+                "C:\\Temp",
+                "stamp",
+            )
+
+        self.assertEqual(captured[0]["audio_device"], "Microphone B")
+        self.assertFalse(captured[0]["mute"])
+        self.assertEqual(captured[0]["volume"], "100")
+        self.assertIn("Two", "\n".join(widget.log_lines))
 
     def test_stop_recording_refreshes_idle_previews_without_force_restarting_healthy_streams(self):
         widget = MultiSourceRecorderWidget(auto_preview=True)
@@ -2014,7 +2371,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         fired = []
         widget.layout_preview_changed.connect(lambda: fired.append(True))
-        widget.output_mode_combo.setCurrentText("Picture-in-picture")
+        widget.output_mode_combo.setCurrentText("Combined grid")
         self.assertTrue(fired)
 
     def test_enabling_a_source_emits_layout_preview_changed(self):

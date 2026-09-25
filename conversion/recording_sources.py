@@ -1,9 +1,8 @@
-from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
-import subprocess
 import re
+import subprocess
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 from utils.subprocess_helpers import get_subprocess_startupinfo
-
 
 CAMERA_SOURCE_TYPES = [
     {
@@ -204,7 +203,8 @@ def discover_directshow_audio_devices(ffmpeg_path, timeout_seconds=12):
         result = subprocess.run(
             [ffmpeg_path, "-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout_seconds,
             startupinfo=startupinfo,
             creationflags=creationflags,
@@ -263,7 +263,8 @@ def discover_directshow_video_devices(ffmpeg_path, timeout_seconds=12):
         result = subprocess.run(
             [ffmpeg_path, "-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout_seconds,
             startupinfo=startupinfo,
             creationflags=creationflags,

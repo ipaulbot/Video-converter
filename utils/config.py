@@ -1,7 +1,8 @@
 import json
 import os
-from utils.paths import get_data_dir
+
 from utils.logger import logger
+from utils.paths import get_data_dir
 
 
 def _vc_public_root() -> str:
@@ -63,7 +64,7 @@ default_settings = {
         "video_inspection": True,
         "pc_report": False,
         "lossless_editor": False,
-        "multi_source_recorder": False,
+        "multi_source_recorder": True,
         "media_player": False,
     }
 }
@@ -94,7 +95,7 @@ def normalize_settings(settings):
 def load_settings():
     if os.path.exists(config_file):
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
+            with open(config_file, encoding="utf-8") as f:
                 settings = json.load(f)
         except Exception as e:
             logger.warning(f"Could not load settings from {config_file}: {e}")

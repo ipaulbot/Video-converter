@@ -1,21 +1,22 @@
 import os
-import subprocess
-import shutil
-import threading
-import tempfile
-from datetime import datetime, timedelta
 import re
+import shutil
+import subprocess
+import tempfile
+import threading
+from datetime import datetime, timedelta
+
+from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot
+
+from conversion.ffmpeg_utils import build_ffmpeg_command, build_gif_commands, preprocess_file
+from utils.file_naming import get_unique_path
+from utils.logger import logger
+from utils.resources import resource_path
+from utils.retention import add_pending_deletion
 
 # Hides console windows on Windows.
 from utils.subprocess_helpers import FFPROBE_TIMEOUT, get_subprocess_startupinfo
 
-from PyQt5.QtCore import QRunnable, QObject, pyqtSignal, pyqtSlot
-
-from utils.logger import logger
-from utils.resources import resource_path
-from conversion.ffmpeg_utils import build_ffmpeg_command, preprocess_file, has_audio_stream, build_gif_commands
-from utils.retention import add_pending_deletion
-from utils.file_naming import get_unique_path
 
 class WorkerSignals(QObject):
     log = pyqtSignal(str)
@@ -112,7 +113,7 @@ class ConversionWorker(QRunnable):
         command = [ffprobe_path, '-v', 'error', '-show_format', '-show_streams', self.file_path]
         try:
             startupinfo, creationflags = get_subprocess_startupinfo()
-            subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+            subprocess.run(command, capture_output=True, text=True, check=True,
                            timeout=FFPROBE_TIMEOUT,
                            startupinfo=startupinfo, creationflags=creationflags)
             return True
@@ -232,7 +233,7 @@ class ConversionWorker(QRunnable):
                     creationflags=creationflags
                 )
                 self._process = p1
-                for line in p1.stdout:
+                for _line in p1.stdout:
                     if self._cancel_requested:
                         try:
                             p1.terminate()
@@ -292,7 +293,7 @@ class ConversionWorker(QRunnable):
         command = [ffprobe_path, '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_path]
         try:
             startupinfo, creationflags = get_subprocess_startupinfo()
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+            result = subprocess.run(command, capture_output=True, text=True, check=True,
                                    timeout=FFPROBE_TIMEOUT,
                                    startupinfo=startupinfo, creationflags=creationflags)
             return float(result.stdout.strip())

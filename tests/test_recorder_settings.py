@@ -7,7 +7,9 @@ from conversion.recorder_settings import (
     default_recorder_settings,
     list_recorder_presets,
     load_recorder_settings,
+    normalize_recorder_settings,
     preset_file_path,
+    safe_preset_name,
     save_recorder_settings,
 )
 
@@ -75,6 +77,27 @@ class RecorderSettingsTests(unittest.TestCase):
             presets = list_recorder_presets(temp_dir)
 
         self.assertEqual(presets, ["Axis", "Default"])
+
+    def test_list_recorder_presets_skips_unparseable_json(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            save_recorder_settings(
+                os.path.join(temp_dir, "Valid.json"),
+                default_recorder_settings(),
+            )
+            with open(os.path.join(temp_dir, "Broken.json"), "w", encoding="utf-8") as handle:
+                handle.write("{not json")
+
+            self.assertEqual(list_recorder_presets(temp_dir), ["Valid"])
+
+    def test_safe_preset_name_removes_path_characters(self):
+        self.assertEqual(safe_preset_name("Lab / Camera: One"), "Lab_Camera_One")
+
+    def test_normalize_maps_legacy_picture_in_picture_to_separate_videos(self):
+        settings = normalize_recorder_settings({
+            "output": {"mode": "Picture-in-picture"},
+        })
+
+        self.assertEqual(settings["output"]["mode"], "Separate videos")
 
 
 if __name__ == "__main__":

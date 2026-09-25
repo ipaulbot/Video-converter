@@ -1,9 +1,13 @@
+import subprocess
 import unittest
+from unittest import mock
 
 from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
     build_rtsp_url,
     build_source_text,
+    discover_directshow_audio_devices,
+    discover_directshow_video_devices,
     parse_directshow_audio_devices,
     parse_directshow_video_devices,
     parse_rtsp_url_settings,
@@ -136,6 +140,27 @@ class RecordingSourceTests(unittest.TestCase):
         devices = parse_directshow_audio_devices(output)
         self.assertEqual(devices, ["Microphone"])
         self.assertNotIn("Integrated Webcam", devices)
+
+    def test_device_discovery_decodes_ffmpeg_output_as_utf8(self):
+        # FFmpeg prints DirectShow device names as UTF-8 regardless of the console
+        # code page; decoding them with the locale turns "Kent’s" into mojibake that
+        # FFmpeg can never match again when the name is passed back as an input.
+        listing = (
+            "[dshow @ 000001] DirectShow video devices\n"
+            '[dshow @ 000001]  "Cámara A"\n'
+            "[dshow @ 000001] DirectShow audio devices\n"
+            '[dshow @ 000001]  "Microphone (Kent’s Headset)"\n'
+        )
+
+        def fake_run(command, **kwargs):
+            self.assertEqual(kwargs.get("encoding"), "utf-8")
+            self.assertEqual(kwargs.get("errors"), "replace")
+            self.assertNotIn("text", kwargs)
+            return subprocess.CompletedProcess(command, 1, stdout="", stderr=listing)
+
+        with mock.patch("conversion.recording_sources.subprocess.run", side_effect=fake_run):
+            self.assertEqual(discover_directshow_video_devices("ffmpeg.exe"), ["Cámara A"])
+            self.assertEqual(discover_directshow_audio_devices("ffmpeg.exe"), ["Microphone (Kent’s Headset)"])
 
 
 if __name__ == "__main__":

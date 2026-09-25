@@ -275,7 +275,22 @@ CHAPTERS: list[dict] = [
                 "video=Camera Name.",
                 "Choose copy mode for compatible streams, or h264 mode when the source needs "
                 "encoding.",
+                "Open Video Settings to choose a DirectShow microphone for each source. Mute "
+                "or Volume 0 records that source without audio; lower volume values reduce "
+                "the recorded audio gain. Without a microphone, a file or RTSP source in "
+                "h264 mode keeps its own sound track.",
+                "Choose Separate videos to write one file per source, or Combined grid to "
+                "write one file whose audio comes from the first enabled, unmuted row with "
+                "a selected microphone.",
+                "Use Load to apply a preset, Set to overwrite the selected preset, Save as... "
+                "to create one, and Delete to remove one. An asterisk marks settings changed "
+                "since the selected preset was loaded or saved.",
                 "Leave duration blank to record until you press Stop.",
+            ]},
+            {"type": "note", "items": [
+                "If a saved microphone is not connected, it appears as (not found). NVC keeps "
+                "the saved name and retries an early audio-device failure as video-only so the "
+                "camera recording is not lost.",
             ]},
         ],
     },

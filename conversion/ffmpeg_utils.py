@@ -1,7 +1,9 @@
-import subprocess
 import os
 import shutil
-from datetime import datetime, timezone
+import subprocess
+from datetime import UTC, datetime
+
+from conversion.gpu_encoders import get_supported_encoders
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.subprocess_helpers import (
@@ -9,7 +11,6 @@ from utils.subprocess_helpers import (
     FFPROBE_TIMEOUT,
     get_subprocess_startupinfo,
 )
-from conversion.gpu_encoders import get_supported_encoders
 
 # Detected GPU encoders, or None to resolve them on first use. Left unset so
 # that importing this module never shells out to ffmpeg; detection is cached in
@@ -202,7 +203,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
                             path
                         ]
                         startupinfo, creationflags = get_subprocess_startupinfo()
-                        res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                        res = subprocess.run(cmd, capture_output=True, text=True,
                                              timeout=FFPROBE_TIMEOUT,
                                              startupinfo=startupinfo, creationflags=creationflags, check=False)
                         raw = (res.stdout or "").strip().splitlines()
@@ -216,7 +217,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
                                 s = s[:-1] + "+00:00"
                             dt = datetime.fromisoformat(s)
                             if dt.tzinfo is None:
-                                dt = dt.replace(tzinfo=timezone.utc)
+                                dt = dt.replace(tzinfo=UTC)
                             # Convert to local time then to epoch seconds
                             return int(dt.astimezone().timestamp())
                 except Exception:
@@ -240,7 +241,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
                         path
                     ]
                     startupinfo, creationflags = get_subprocess_startupinfo()
-                    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                    res = subprocess.run(cmd, capture_output=True, text=True,
                                          timeout=FFPROBE_TIMEOUT,
                                          startupinfo=startupinfo, creationflags=creationflags, check=False)
                     s = (res.stdout or "").strip()
@@ -458,7 +459,7 @@ def preprocess_file(file_path):
     command = [ffmpeg_path, '-i', file_path, '-c', 'copy', fixed_file]
     try:
         startupinfo, creationflags = get_subprocess_startupinfo()
-        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+        subprocess.run(command, capture_output=True, check=True,
                        timeout=FFMPEG_REMUX_TIMEOUT,
                        startupinfo=startupinfo, creationflags=creationflags)
         shutil.move(fixed_file, file_path)
@@ -493,7 +494,7 @@ def has_audio_stream(file_path):
     ]
     try:
         startupinfo, creationflags = get_subprocess_startupinfo()
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True,
+        result = subprocess.run(command, capture_output=True, text=True, check=True,
                                 timeout=FFPROBE_TIMEOUT,
                                 startupinfo=startupinfo, creationflags=creationflags)
         return bool(result.stdout.strip())

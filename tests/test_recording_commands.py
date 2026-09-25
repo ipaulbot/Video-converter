@@ -75,6 +75,45 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertEqual(command[command.index("-f") + 1], "dshow")
         self.assertIn("-t", command)
 
+    def test_directshow_record_uses_video_and_audio_in_one_input(self):
+        command = build_record_command(
+            "ffmpeg.exe",
+            "video=Camera A",
+            "out.mp4",
+            "h264",
+            "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtbufsize", "512M", "-f", "dshow",
+                "-i", "video=Camera A:audio=Microphone A",
+                "-map", "0:v", "-map", "0:a",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_directshow_specialized_builder_uses_same_input_audio(self):
+        command = build_directshow_record_with_preview_command(
+            "ffmpeg.exe",
+            "video=Camera A",
+            "out.mp4",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count("-i"), 1)
+        self.assertEqual(command[command.index("-i") + 1], "video=Camera A:audio=Microphone A")
+        self.assertIn(
+            ["-map", "0:v", "-map", "0:a"],
+            [command[index:index + 4] for index in range(len(command) - 3)],
+        )
+        self.assertEqual(command[command.index("-b:a") + 1], "128k")
+
     def test_copy_mode_uses_stream_copy(self):
         command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mkv", "copy", "")
 
@@ -89,6 +128,99 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertIn("-an", command)
         self.assertNotIn("-c", command)
 
+    def test_rtsp_record_adds_directshow_audio_as_second_input(self):
+        command = build_record_command(
+            "ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtsp_transport", "tcp", "-timeout", "5000000",
+                "-i", "rtsp://camera/stream",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", "audio=Microphone A",
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_file_copy_mode_keeps_video_copy_and_encodes_audio(self):
+        command = build_record_command(
+            "ffmpeg.exe", "sample.mp4", "out.mp4", "copy", "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y", "-i", "sample.mp4",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", "audio=Microphone A",
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_audio_volume_fifty_adds_half_gain(self):
+        command = build_record_command(
+            "ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "",
+            audio_device="Microphone A", volume="50",
+        )
+
+        self.assertIn(
+            ["-af", "volume=0.5"],
+            [command[index:index + 2] for index in range(len(command) - 1)],
+        )
+
+    def test_mute_and_zero_volume_emit_an_even_for_sources_with_embedded_audio(self):
+        cases = [
+            {"audio_device": "Microphone A", "mute": True},
+            {"audio_device": "Microphone A", "volume": "0"},
+            {"audio_device": "No Audio", "mute": True},
+        ]
+        for kwargs in cases:
+            with self.subTest(kwargs=kwargs):
+                command = build_record_command(
+                    "ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "", **kwargs,
+                )
+                self.assertEqual(command.count("-i"), 1)
+                self.assertIn("-an", command)
+                self.assertNotIn("-c:a", command)
+
+    def test_no_microphone_keeps_a_file_sources_embedded_audio(self):
+        # "No Audio" means no microphone was added; the file's own sound track survives.
+        h264 = build_record_command("ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "", audio_device="No Audio")
+        self.assertEqual(h264[h264.index("-map", h264.index("-map") + 1) + 1], "0:a?")
+        self.assertEqual(h264[h264.index("-c:a") + 1], "aac")
+        self.assertNotIn("-an", h264)
+        copy = build_record_command("ffmpeg.exe", "sample.mp4", "out.mp4", "copy", "")
+        self.assertEqual(copy[copy.index("-c:v") + 1], "copy")
+        self.assertEqual(copy[copy.index("-c:a") + 1], "copy")
+        self.assertNotIn("-an", copy)
+
+    def test_no_microphone_directshow_video_is_silent(self):
+        command = build_record_command("ffmpeg.exe", "video=Camera A", "out.mp4", "h264", "")
+        self.assertIn("-an", command)
+        self.assertNotIn("0:a?", command)
+
+    def test_rtsp_h264_without_microphone_keeps_stream_audio_but_copy_mode_drops_it(self):
+        h264 = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "")
+        self.assertIn("0:a?", h264)
+        self.assertEqual(h264[h264.index("-c:a") + 1], "aac")
+        copy = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "")
+        self.assertIn("-an", copy)
+        preview = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "", preview_pipe=True)
+        self.assertIn("0:a?", preview)
+        self.assertNotIn("-an", preview)
+
     def test_record_command_with_preview_pipe_for_rtsp_uses_shared_decoder_split(self):
         command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "", preview_pipe=True)
 
@@ -100,6 +232,44 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertIn("split=2", filter_complex)
         self.assertIn("fps=20,scale=480:-1", filter_complex)
         self.assertIn("image2pipe", command)
+        self.assertEqual(command[-1], "pipe:1")
+
+    def test_record_preview_tee_maps_audio_only_to_file_leg(self):
+        command = build_record_command(
+            "ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "",
+            preview_pipe=True, audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtsp_transport", "tcp", "-timeout", "5000000",
+                "-i", "rtsp://camera/stream",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", "audio=Microphone A",
+                "-filter_complex",
+                "[0:v]split=2[v][preview];[preview]fps=20,scale=480:-1[p]",
+                "-map", "[v]", "-map", "1:a", "-shortest",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k", "out.mp4",
+                "-map", "[p]", "-q:v", "7",
+                "-f", "image2pipe", "-vcodec", "mjpeg", "pipe:1",
+            ],
+        )
+        pipe_map = command.index("[p]")
+        self.assertNotIn("1:a", command[pipe_map:])
+
+    def test_directshow_preview_tee_pipe_leg_is_video_only(self):
+        command = build_directshow_record_with_preview_command(
+            "ffmpeg.exe", "video=Camera A", "out.mp4",
+            preview_pipe=True, audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count("0:a"), 1)
+        pipe_map = command.index("[p]")
+        self.assertNotIn("0:a", command[pipe_map:])
         self.assertEqual(command[-1], "pipe:1")
 
     def test_record_command_with_preview_pipe_for_directshow_uses_split_filter(self):
@@ -399,6 +569,61 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertIn("-map", command)
         self.assertEqual(command[command.index("-map") + 1], "[v]")
         self.assertEqual(command[-1], "combined.mp4")
+
+    def test_single_source_combined_grid_maps_optional_audio(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A"], "combined.mp4",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtbufsize", "512M", "-f", "dshow", "-i", "video=Camera A",
+                "-f", "dshow", "-thread_queue_size", "1024",
+                "-use_wallclock_as_timestamps", "1",
+                "-i", "audio=Microphone A",
+                "-map", "0:v", "-map", "1:a", "-shortest",
+                "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k", "combined.mp4",
+            ],
+        )
+
+    def test_combined_grid_maps_one_audio_stream_and_video_only_preview(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["rtsp://camera/one", "rtsp://camera/two"],
+            "combined.mp4",
+            preview_pipe=True,
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count("audio=Microphone A"), 1)
+        self.assertIn("2:a", command)
+        self.assertEqual(command.count("-c:a"), 1)
+        self.assertEqual(command[command.index("-b:a") + 1], "128k")
+        pipe_map = command.index("[p]")
+        self.assertNotIn("2:a", command[pipe_map:])
+
+    def test_combined_grid_without_audio_keeps_an(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["rtsp://camera/one", "rtsp://camera/two"], "combined.mp4",
+        )
+
+        self.assertIn("-an", command)
+        self.assertNotIn("-c:a", command)
+
+    def test_combined_grid_applies_selected_audio_volume(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["rtsp://camera/one", "rtsp://camera/two"],
+            "combined.mp4", audio_device="Microphone A", volume="50",
+        )
+
+        self.assertIn(
+            ["-af", "volume=0.5"],
+            [command[index:index + 2] for index in range(len(command) - 1)],
+        )
 
     def test_combined_grid_command_uses_valid_three_source_layout(self):
         command = build_combined_grid_record_command(

@@ -1,6 +1,8 @@
 import json
 import os
 
+from utils.logger import logger
+
 RECORDER_SETTINGS_VERSION = 1
 
 
@@ -36,6 +38,8 @@ def normalize_recorder_settings(settings):
             normalized[key] = value
     normalized["version"] = int(settings.get("version") or RECORDER_SETTINGS_VERSION)
     normalized["output"].update(settings.get("output") or {})
+    if normalized["output"].get("mode") == "Picture-in-picture":
+        normalized["output"]["mode"] = "Separate videos"
     normalized["timer"].update(settings.get("timer") or {})
     normalized["preview"].update(settings.get("preview") or {})
     normalized["channels"] = list(settings.get("channels") or [])
@@ -45,7 +49,7 @@ def normalize_recorder_settings(settings):
 def load_recorder_settings(path):
     if not os.path.exists(path):
         return default_recorder_settings()
-    with open(path, "r", encoding="utf-8") as handle:
+    with open(path, encoding="utf-8") as handle:
         return normalize_recorder_settings(json.load(handle))
 
 
@@ -70,6 +74,14 @@ def list_recorder_presets(preset_dir):
         return []
     presets = []
     for filename in os.listdir(preset_dir):
-        if filename.lower().endswith(".json"):
-            presets.append(os.path.splitext(filename)[0])
+        if not filename.lower().endswith(".json"):
+            continue
+        path = os.path.join(preset_dir, filename)
+        try:
+            with open(path, encoding="utf-8") as handle:
+                normalize_recorder_settings(json.load(handle))
+        except (OSError, ValueError, TypeError) as exc:
+            logger.warning("Skipping unreadable recorder preset %s: %s", path, exc)
+            continue
+        presets.append(os.path.splitext(filename)[0])
     return sorted(presets)

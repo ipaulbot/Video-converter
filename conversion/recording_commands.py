@@ -88,7 +88,7 @@ def _normalize_itsoffset(value):
         return ""
     if abs(seconds) < 1e-6:
         return ""
-    return ("%f" % seconds).rstrip("0").rstrip(".")
+    return f"{seconds:f}".rstrip("0").rstrip(".")
 
 
 def _add_input(command, source_text, network_profile="preview", frame_rate="", resolution="", use_wallclock=False, itsoffset=""):
@@ -120,6 +120,51 @@ def _add_input(command, source_text, network_profile="preview", frame_rate="", r
     command.extend(["-i", source_text])
 
 
+def _audio_enabled(audio_device, mute=False, volume="100"):
+    device = str(audio_device or "").strip()
+    try:
+        gain = int(str(volume or "100"))
+    except ValueError:
+        gain = 100
+    return bool(device and device != "No Audio" and not mute and gain > 0)
+
+
+def _silenced(mute=False, volume="100"):
+    """Mute or volume 0: the row wants no sound at all, embedded or microphone."""
+    try:
+        gain = int(str(volume or "100"))
+    except ValueError:
+        gain = 100
+    return bool(mute) or gain <= 0
+
+
+def _directshow_av_source(video_source, audio_device):
+    video_name = str(video_source or "").strip()
+    if video_name.lower().startswith("video="):
+        video_name = video_name[6:]
+    video_name = video_name.strip('"')
+    audio_name = str(audio_device or "").strip().strip('"')
+    # No shell quotes: QProcess/subprocess pass argv verbatim, so FFmpeg would look for a
+    # device literally named "\"HD Webcam\"" and fail with "Could not find video device".
+    return f"video={video_name}:audio={audio_name}"
+
+
+def _append_audio_encoding_options(command, volume="100"):
+    command.extend(["-c:a", "aac", "-b:a", "128k"])
+    if str(volume or "100") != "100":
+        command.extend(["-af", f"volume={int(str(volume)) / 100:g}"])
+
+
+def _add_directshow_audio_input(command, audio_device):
+    audio_name = str(audio_device or "").strip().strip('"')
+    command.extend([
+        "-f", "dshow",
+        "-thread_queue_size", "1024",
+        "-use_wallclock_as_timestamps", "1",
+        "-i", f"audio={audio_name}",
+    ])
+
+
 def build_record_command(
     ffmpeg_path,
     source,
@@ -129,6 +174,9 @@ def build_record_command(
     preview_pipe=False,
     frame_rate="",
     resolution="",
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
@@ -136,7 +184,22 @@ def build_record_command(
 
     source_text = (source or "").strip()
     is_directshow = source_text.lower().startswith(("video=", "audio="))
+    has_audio = _audio_enabled(audio_device, mute=mute, volume=volume)
+    if has_audio and is_directshow:
+        source_text = _directshow_av_source(source_text, audio_device)
     _add_input(command, source_text, network_profile="recording", frame_rate=frame_rate, resolution=resolution)
+    audio_map = ""
+    if has_audio:
+        if is_directshow:
+            audio_map = "0:a"
+        else:
+            _add_directshow_audio_input(command, audio_device)
+            audio_map = "1:a"
+    # "No Audio" means no microphone was chosen, not "strip the source's own sound": a file or
+    # network stream keeps its embedded audio unless the row is muted. RTSP stream-copy stays
+    # video-only as before (camera audio codecs rarely copy into MP4).
+    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
+    keep_embedded_audio = not has_audio and not _silenced(mute, volume) and not is_directshow
 
     if preview_pipe:
         # Both DirectShow and RTSP/HTTP sources use a single decoded video stream that
@@ -151,11 +214,21 @@ def build_record_command(
             "-filter_complex",
             f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
             "-map", "[v]",
-            "-map", "0:a?",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "18",
-            "-c:a", "aac",
+        ])
+        if has_audio:
+            command.extend(["-map", audio_map])
+            if not is_directshow:
+                command.append("-shortest")
+        elif keep_embedded_audio:
+            command.extend(["-map", "0:a?"])
+        else:
+            command.append("-an")
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if has_audio:
+            _append_audio_encoding_options(command, volume)
+        elif keep_embedded_audio:
+            command.extend(["-c:a", "aac"])
+        command.extend([
             output_file,
             "-map", "[p]",
             "-q:v", "7",
@@ -165,14 +238,26 @@ def build_record_command(
         ])
         return command
 
-    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
-    if codec_mode == "copy" and is_network_source:
-        command.extend(["-c:v", "copy", "-an"])
-    elif codec_mode == "copy" and not is_directshow:
-        command.extend(["-c", "copy"])
+    copy_video = codec_mode == "copy" and not is_directshow
+    if copy_video and is_network_source:
+        keep_embedded_audio = False
+    command.extend(["-map", "0:v"])
+    if has_audio:
+        command.extend(["-map", audio_map])
+        if not is_directshow:
+            command.append("-shortest")
+    elif keep_embedded_audio:
+        command.extend(["-map", "0:a?"])
     else:
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac"])
-
+        command.append("-an")
+    if copy_video:
+        command.extend(["-c:v", "copy"])
+    else:
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+    if has_audio:
+        _append_audio_encoding_options(command, volume)
+    elif keep_embedded_audio:
+        command.extend(["-c:a", "copy" if copy_video else "aac"])
     command.append(output_file)
     return command
 
@@ -190,6 +275,9 @@ def build_combined_grid_record_command(
     preview_width=PREVIEW_WIDTH,
     output_fps=COMBINED_GRID_FPS,
     offsets_per_source=None,
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     source_texts = [(source or "").strip() for source in sources if (source or "").strip()]
     offsets = list(offsets_per_source or [])
@@ -206,8 +294,20 @@ def build_combined_grid_record_command(
             network_profile="recording",
         )
 
+    audio_input_index = None
+    if _audio_enabled(audio_device, mute=mute, volume=volume):
+        audio_input_index = len(source_texts)
+        _add_directshow_audio_input(command, audio_device)
+
     if len(source_texts) == 1 and not preview_pipe:
-        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-an"])
+        command.extend(["-map", "0:v"])
+        if audio_input_index is None:
+            command.append("-an")
+        else:
+            command.extend(["-map", f"{audio_input_index}:a", "-shortest"])
+        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if audio_input_index is not None:
+            _append_audio_encoding_options(command, volume)
         if duration_seconds:
             command.extend(["-t", str(duration_seconds)])
         command.append(output_file)
@@ -270,8 +370,15 @@ def build_combined_grid_record_command(
         "-c:v", "libx264",
         "-preset", "veryfast",
         "-crf", "18",
-        "-an",
     ])
+    if audio_input_index is None:
+        command.append("-an")
+    else:
+        command.extend([
+            "-map", f"{audio_input_index}:a",
+            "-shortest",
+        ])
+        _append_audio_encoding_options(command, volume)
     if duration_seconds:
         command.extend(["-t", str(duration_seconds)])
     command.append(output_file)
@@ -572,10 +679,16 @@ def build_directshow_record_with_preview_command(
     preview_pipe=False,
     frame_rate="",
     resolution="",
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     source_text = (source or "").strip()
     if not source_text.lower().startswith("video="):
         source_text = f"video={source_text}"
+    has_audio = _audio_enabled(audio_device, mute=mute, volume=volume)
+    if has_audio:
+        source_text = _directshow_av_source(source_text, audio_device)
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
         command.extend(["-t", str(duration_seconds)])
@@ -585,11 +698,15 @@ def build_directshow_record_with_preview_command(
             "-filter_complex",
             f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
             "-map", "[v]",
-            "-map", "0:a?",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "18",
-            "-c:a", "aac",
+        ])
+        if has_audio:
+            command.extend(["-map", "0:a"])
+        else:
+            command.append("-an")
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if has_audio:
+            _append_audio_encoding_options(command, volume)
+        command.extend([
             output_file,
             "-map", "[p]",
             "-q:v", "7",
@@ -598,8 +715,13 @@ def build_directshow_record_with_preview_command(
             "pipe:1",
         ])
         return command
-    command.extend([
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
-        output_file,
-    ])
+    command.extend(["-map", "0:v"])
+    if has_audio:
+        command.extend(["-map", "0:a"])
+    else:
+        command.append("-an")
+    command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+    if has_audio:
+        _append_audio_encoding_options(command, volume)
+    command.append(output_file)
     return command
