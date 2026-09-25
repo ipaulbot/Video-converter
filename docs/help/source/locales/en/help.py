@@ -521,10 +521,10 @@ CHAPTERS: list[dict] = [
                 ("Load", "Loads a clip into that panel."),
                 ("Clear", "Removes the clip from that panel."),
                 ("offset", "Shifts that panel in seconds relative to the shared seek position."),
-                ("Play all", "Plays every loaded panel and reads Pause all while playing."),
+                ("Play all", "Plays every visible loaded panel and reads Pause all while playing."),
                 ("Stop all", "Stops every loaded panel and returns the shared position to zero."),
-                ("Restart", "Returns to the beginning and plays every loaded panel."),
-                ("Seek slider", "Moves every loaded panel on the shared timeline."),
+                ("Restart", "Returns to the beginning and plays every visible loaded panel."),
+                ("Seek slider", "Moves every visible loaded panel on the shared timeline."),
                 ("Speed", "Sets every panel to 0.25x, 0.5x, 1x, 1.5x or 2x playback."),
                 ("Panels", "Shows 1, 2 or 4 panels."),
                 ("Volume", "Sets the volume for every panel from 0 to 100."),
@@ -533,7 +533,7 @@ CHAPTERS: list[dict] = [
                 ("Playlist", "Shows or hides the playlist for the selected panel."),
             ]},
             {"type": "para", "text": (
-                "The readout shows H:MM:SS.mmm / H:MM:SS.mmm followed by frame N / M. "
+                "The readout shows H:MM:SS.mmm / H:MM:SS.mmm · frame N / M. "
                 "NVC reads the clip's real frame rate with FFprobe, so Left and Right step "
                 "exactly one frame. Frame stepping pauses playback.")},
             {"type": "table", "headers": ("Keys", "Action"), "rows": [
