@@ -288,6 +288,26 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(redacted["network"]["MACAddress"], "AA:BB:**:**:EE:FF")
         self.assertEqual(redacted["processes"][0]["Path"], r"C:\Users\<redacted>\Desktop\secret.exe")
 
+    def test_network_adapter_identifiers_are_masked(self):
+        guid = "{01234567-89AB-CDEF-0123-456789ABCDEF}"
+        payload = {
+            "MacAddress": "AA-BB-CC-DD-EE-FF",
+            "PermanentAddress": "11-22-33-44-55-66",
+            "PhysicalAddress": "77:88:99:AA:BB:CC",
+            "InterfaceGuid": guid,
+            "DeviceID": guid,
+            "PnPDeviceID": rf"{guid}\VWIFIMP_WFD\4&PRIVATE&0&17",
+        }
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted["MacAddress"], "AA:BB:**:**:EE:FF")
+        self.assertEqual(redacted["PermanentAddress"], "11:22:**:**:55:66")
+        self.assertEqual(redacted["PhysicalAddress"], "77:88:**:**:BB:CC")
+        self.assertNotEqual(redacted["InterfaceGuid"], guid)
+        self.assertNotEqual(redacted["DeviceID"], guid)
+        self.assertNotIn(guid, redacted["PnPDeviceID"])
+
     def test_new_identifying_fields_are_masked_by_human_label(self):
         payload = {"summary": {"UUID": "4C4C4544-0000-1234-8000-ABCDEF123456", "Asset Tag": "A123456",
                                "Computer Name": "WDGS-BH0020", "Registered Owner": "Pat Example",

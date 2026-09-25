@@ -21,11 +21,11 @@ SENSITIVE_TOKENS = (
     "uuid", "assettag", "registeredowner", "registereduser", "registeredorganization", "organization",
     "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "processorid", "machineguid", "domainname",
-    "localadministrators", "accessaccount", "accountname",
+    "localadministrators", "accessaccount", "accountname", "interfaceguid",
 )
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")
-MAC_TOKENS = ("macaddress", "physicaladdress")
+MAC_TOKENS = ("macaddress", "permanentaddress", "physicaladdress")
 SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER", "COMPUTERNAME",
                        "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME", "IGCCSVC_DB",
                        "__CURSOR_SANDBOX_ENV_RESTORE", "CURSOR_CONVERSATION_ID",
@@ -41,6 +41,10 @@ WELL_KNOWN_ACCOUNTS = frozenset({
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
+_GUID_FULL = re.compile(
+    r"\{?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
+    r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}?"
+)
 _ACCOUNT_SID = re.compile(r"\b(S-1-(?:5-21|12-1)-)(?:\d+-){3}\d+\b", re.IGNORECASE)
 _COMMAND_SECRET_ARG = re.compile(
     r"((?:--|-(?!-)|/)([A-Za-z0-9_.-]+)(?:=|:(\s*)|\s+))"
@@ -132,6 +136,7 @@ def redact_instance_id(value):
             ),
             value,
         )
+    value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
     if not upper.startswith(_PORTABLE_INSTANCE_PREFIXES) or "\\" not in value:
         return value
     stem, segment = value.rsplit("\\", 1)
@@ -302,6 +307,8 @@ def redact_payload(data, options=None, *, env=None):
             return value
         key_l = norm_key(key)
         if key_l in {"instanceid", "deviceid", "pnpdeviceid"}:
+            if isinstance(value, str) and _GUID_FULL.fullmatch(value):
+                return mask_string(value)
             return redact_instance_id(value)
         if any(t in key_l for t in MAC_TOKENS):
             return mask_mac(value)
