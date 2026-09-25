@@ -1,6 +1,8 @@
 """Sensors: ACPI thermal zones, fans, probes, battery and a one-second performance-counter sample."""
 from __future__ import annotations
 
+import re
+
 from .. import decode
 from ..format import bitrate_to_mbps, bytes_human, yes_no
 from ..ps import cim
@@ -15,7 +17,7 @@ BATTERY_SCRIPT = cim("Win32_Battery", ("Name", "BatteryStatus", "EstimatedCharge
                                        "DesignVoltage", "Chemistry"))
 COUNTERS_SCRIPT = r"""
 $paths = @('\Processor Information(_Total)\% Processor Utility', '\Memory\% Committed Bytes In Use', '\Memory\Available MBytes',
-           '\PhysicalDisk(*)\% Disk Time', '\GPU Engine(*engtype_3D)\Utilization Percentage',
+           '\PhysicalDisk(*)\% Disk Time', '\GPU Engine(*)\Utilization Percentage',
            '\GPU Adapter Memory(*)\Dedicated Usage', '\Network Interface(*)\Bytes Total/sec')
 foreach ($p in $paths) {
   try { (Get-Counter -Counter $p -SampleInterval 1 -MaxSamples 1 -ErrorAction Stop).CounterSamples | ForEach-Object {
@@ -42,9 +44,10 @@ def _nonnegative(value):
 def _celsius(tenths_kelvin):
     """ACPI reports tenths of Kelvin; do the subtraction in hundredths to avoid float rounding surprises."""
     n = _nonnegative(tenths_kelvin)
-    if not n:
+    if n is None:
         return ""
-    return f"{(n * 10 - 27315) / 100:.2f} °C"
+    celsius = (n * 10 - 27315) / 100
+    return f"{celsius:.2f} °C" if -40.0 <= celsius <= 150.0 else ""
 
 
 def _lc(sample) -> str:
@@ -54,6 +57,43 @@ def _lc(sample) -> str:
 def _percent(value) -> str:
     n = _nonnegative(value)
     return f"{n:.1f} %" if n is not None else ""
+
+
+def gpu_by_engine(samples) -> dict[str, float]:
+    display_names = {
+        "3d": "3D",
+        "videodecode": "Video Decode",
+        "videoencode": "Video Encode",
+        "videoprocessing": "Video Processing",
+        "copy": "Copy",
+        "compute": "Compute",
+        "security": "Security",
+    }
+    totals = {}
+    for sample in samples:
+        if "gpu engine" not in _lc(sample):
+            continue
+        match = re.search(r"engtype_([a-z0-9_]+)$", str(sample.get("InstanceName", "")).lower())
+        value = _nonnegative(sample.get("CookedValue"))
+        if not match or value is None:
+            continue
+        raw_name = match.group(1)
+        display = display_names.get(raw_name, raw_name.title())
+        totals[display] = totals.get(display, 0.0) + value
+    return {name: min(total, 100.0) for name, total in totals.items()}
+
+
+def missing_counter_families(samples) -> list[str]:
+    families = (
+        ("% processor utility", "Processor Information"),
+        ("% committed bytes in use", "Memory"),
+        ("physicaldisk", "PhysicalDisk"),
+        ("gpu engine", "GPU Engine"),
+        ("gpu adapter memory", "GPU Adapter Memory"),
+        ("network interface", "Network Interface"),
+    )
+    paths = {_lc(sample) for sample in samples}
+    return [display for fragment, display in families if not any(fragment in path for path in paths)]
 
 
 def build(thermal, fans, probes, battery, counters) -> dict:
@@ -102,17 +142,25 @@ def build(thermal, fans, probes, battery, counters) -> dict:
                 return _nonnegative(sample.get("CookedValue"))
         return None
 
-    gpu_values = [_nonnegative(s.get("CookedValue")) for s in samples
-                  if "gpu engine" in _lc(s) and "engtype_3d" in _lc(s)]
-    gpu_values = [value for value in gpu_values if value is not None]
     cpu, committed, available = one("% processor utility"), one("% committed bytes in use"), one("available mbytes")
     live = {
         "CPU Utility": _percent(cpu),
         "Memory Committed": _percent(committed),
         "Memory Available": f"{int(available)} MB" if available is not None else "",
-        "GPU 3D Utilization (all processes)": f"{sum(gpu_values):.1f} %" if gpu_values else "",
-        "Temperatures": "CPU/GPU core temperatures need a vendor tool (HWiNFO, vendor utilities); only ACPI zones are shown.",
     }
+    gpu_samples = [sample for sample in samples if "gpu engine" in _lc(sample)]
+    engine_totals = gpu_by_engine(gpu_samples)
+    if gpu_samples:
+        engine_totals.setdefault("3D", 0.0)
+    preferred = ("3D", "Video Decode", "Video Encode", "Video Processing", "Copy", "Compute")
+    engine_order = {name: index for index, name in enumerate(preferred)}
+    for engine, total in sorted(engine_totals.items(),
+                                key=lambda item: (engine_order.get(item[0], len(preferred)), item[0])):
+        if total > 0 or engine == "3D":
+            live[f"GPU {engine} Utilization"] = _percent(total)
+    live["Temperatures"] = (
+        "CPU/GPU core temperatures need a vendor tool (HWiNFO, vendor utilities); only ACPI zones are shown."
+    )
     disks = [{"Disk": s.get("InstanceName", ""), "Active": _percent(s.get("CookedValue"))}
              for s in samples if "physicaldisk" in _lc(s) and s.get("InstanceName") != "_total"]
     gpus = []
@@ -150,6 +198,10 @@ def collect(ctx):
         ctx.note("ACPI thermal zones unavailable on this system.")
     if not counters:
         ctx.note("Performance counters unavailable on this system.")
+    else:
+        missing = missing_counter_families(rows_of(counters))
+        if missing:
+            ctx.note("Performance counter sets unavailable on this system: " + ", ".join(missing) + ".")
     return build(thermal, fans, probes, battery, counters)
 
 

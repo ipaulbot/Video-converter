@@ -40,7 +40,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["CPU Utility"], "9.7 %")
         self.assertEqual(rows["Memory Committed"], "38.2 %")
         self.assertEqual(rows["Memory Available"], "19532 MB")
-        self.assertEqual(rows["GPU 3D Utilization (all processes)"], "5.5 %")
+        self.assertEqual(rows["GPU 3D Utilization"], "5.5 %")
         self.assertEqual(self.data["disks"][0], {"Disk": "0 c:", "Active": "3.1 %"})
         self.assertEqual(self.data["gpus"][0]["Dedicated Memory In Use"], "1.0 GB")
         self.assertEqual(self.data["nics"][0]["Throughput"], "1.0 Mbps")
@@ -49,12 +49,93 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(self.data["probes"][0], {"Kind": "Voltage", "Name": "VCORE", "Reading": "1.200 V", "Status": "OK"})
 
 
+class GpuEngineTests(unittest.TestCase):
+    @staticmethod
+    def sample(engine, value, pid=1):
+        instance = f"pid_{pid}_luid_0x0_0x1_phys_0_engtype_{engine}"
+        return {"Path": f"\\\\pc\\gpu engine({instance})\\utilization percentage",
+                "InstanceName": instance, "CookedValue": value}
+
+    def test_groups_clamps_filters_and_orders_gpu_engines(self):
+        samples = [
+            self.sample("VideoDecode", 12.5),
+            self.sample("3D", 60, pid=1),
+            self.sample("Copy", 0),
+            self.sample("3D", 90, pid=2),
+        ]
+
+        self.assertEqual(mod.gpu_by_engine(samples), {"Video Decode": 12.5, "3D": 100.0, "Copy": 0.0})
+        rows = mod.flatten(mod.build([], [], {}, [], samples))
+        gpu_labels = [label for label in rows if label.startswith("GPU ")]
+        self.assertEqual(gpu_labels, ["GPU 3D Utilization", "GPU Video Decode Utilization"])
+        self.assertEqual(rows["GPU 3D Utilization"], "100.0 %")
+        self.assertEqual(rows["GPU Video Decode Utilization"], "12.5 %")
+
+    def test_ignores_malformed_instance_and_nonnumeric_values(self):
+        samples = [
+            {"Path": "\\\\pc\\gpu engine(pid_1)\\utilization percentage",
+             "InstanceName": "pid_1", "CookedValue": 50},
+            self.sample("Compute", None),
+            self.sample("Security", "abc"),
+        ]
+
+        self.assertEqual(mod.gpu_by_engine(samples), {})
+
+    def test_orders_unknown_engine_types_alphabetically_after_common_types(self):
+        samples = [
+            self.sample("beta_engine", 2),
+            self.sample("compute", 3),
+            self.sample("alpha_engine", 1),
+        ]
+
+        rows = mod.flatten(mod.build([], [], {}, [], samples))
+        gpu_labels = [label for label in rows if label.startswith("GPU ")]
+        self.assertEqual(gpu_labels, [
+            "GPU 3D Utilization", "GPU Compute Utilization",
+            "GPU Alpha_Engine Utilization", "GPU Beta_Engine Utilization",
+        ])
+
+    def test_counter_script_samples_all_gpu_engine_types(self):
+        self.assertIn(r"'\GPU Engine(*)\Utilization Percentage'", mod.COUNTERS_SCRIPT)
+        self.assertNotIn("engtype_3D", mod.COUNTERS_SCRIPT)
+
+
+class CounterFamilyTests(unittest.TestCase):
+    def test_reports_all_families_except_present_processor(self):
+        samples = [{"Path": "\\\\pc\\processor information(_total)\\% processor utility"}]
+
+        self.assertEqual(mod.missing_counter_families(samples), [
+            "Memory", "PhysicalDisk", "GPU Engine", "GPU Adapter Memory", "Network Interface",
+        ])
+
+    def test_reports_no_missing_families_for_full_set(self):
+        samples = [{"Path": f"\\\\pc\\{fragment}"} for fragment in (
+            "% processor utility", "% committed bytes in use", "physicaldisk",
+            "gpu engine", "gpu adapter memory", "network interface",
+        )]
+
+        self.assertEqual(mod.missing_counter_families(samples), [])
+
+
+class TemperatureTests(unittest.TestCase):
+    def test_rejects_implausible_temperatures(self):
+        expected = {2732: "0.05 °C", 0: "", 65535: "", 3100: "36.85 °C", None: "", "abc": ""}
+
+        for value, result in expected.items():
+            with self.subTest(value=value):
+                self.assertEqual(mod._celsius(value), result)
+
+
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
         _data, html, ctx = support.collect_and_render(mod.SECTION)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<th>CPU Utility</th>", html)
         self.assertIn("vendor tool", html)
+        self.assertIn(
+            "Performance counter sets unavailable on this system: Memory, PhysicalDisk, Network Interface.",
+            ctx.notes,
+        )
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)
