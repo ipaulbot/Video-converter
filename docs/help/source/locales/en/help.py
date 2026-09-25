@@ -438,31 +438,65 @@ CHAPTERS: list[dict] = [
         "title": "Multi-Source Recorder",
         "blocks": [
             {"type": "para", "text": (
-                "The Multi-Source Recorder tab is a lightweight recorder for up to four FFmpeg "
-                "inputs. Enter one source per row and enable the rows you want to record.")},
+                "The Multi-Source Recorder records up to four sources at once with FFmpeg. "
+                "The tab shows one row per source; configure the sources in the Video Settings "
+                "dialog.")},
             {"type": "figure", "fig_id": "FIG-07"},
+            {"type": "para", "text": "The recorder tab"},
+            {"type": "table", "headers": ("Control", "What it does"), "rows": [
+                ("Use", "Records this row."),
+                ("Video name", "Sets the label used in the file name."),
+                ("Audio name", "Sets the audio label for the row."),
+                ("Mute", "Records the row without sound."),
+                ("Volume", "Sets the audio level to 100, 75, 50, 25 or 0 %."),
+                ("Encoding", "copy keeps the camera or stream's own compressed video; h264 "
+                 "re-encodes it."),
+                ("Output mode", "Separate videos writes one file per row; Combined grid writes "
+                 "one file with all sources tiled."),
+                ("File location", "Sets the recording folder. The default is your Videos folder."),
+                ("File base name", "The default is Video. Files are named "
+                 "<base>_<Video name>_<timestamp>.mp4, or "
+                 "<base>_Combined_<timestamp>.mp4."),
+                ("Timer", "Leave blank to record until you press Stop Recording."),
+                ("Show recording log", "Opens the recording log."),
+                ("Start Recording / Stop Recording", "The footer button starts or stops recording."),
+            ]},
+            {"type": "para", "text": "Video Settings"},
+            {"type": "figure", "fig_id": "FIG-09"},
             {"type": "steps", "items": [
-                "Use RTSP, HTTP or file URLs directly, for example rtsp://192.168.1.10/stream.",
-                "Use Windows DirectShow input strings for local capture devices, for example "
-                "video=Camera Name.",
-                "Choose copy mode for compatible streams, or h264 mode when the source needs "
-                "encoding.",
-                "Open Video Settings to choose a DirectShow microphone for each source. Mute "
-                "or Volume 0 records that source without audio; lower volume values reduce "
-                "the recorded audio gain. Without a microphone, a file or RTSP source in "
-                "h264 mode keeps its own sound track.",
-                "Choose Separate videos to write one file per source, or Combined grid to "
-                "write one file whose audio comes from the first enabled, unmuted row with "
-                "a selected microphone.",
-                "Use Load to apply a preset, Set to overwrite the selected preset, Save as... "
-                "to create one, and Delete to remove one. An asterisk marks settings changed "
-                "since the selected preset was loaded or saved.",
-                "Leave duration blank to record until you press Stop.",
+                "Open Video Settings. Each row has Use, Video name, Video device, a camera "
+                "settings button, Frame rate, Resolution, Audio name, Audio device and Sync "
+                "offset.",
+                "In Video device choose a USB camera by its Windows name, choose RTSP/IP Camera "
+                "and click the camera button to enter Address / URL, Username, Password, Port "
+                "and Stream path, or type an rtsp://, http:// or https:// URL, a file path, or "
+                "a Basler / GenICam source string directly. Refresh USB devices... rescans.",
+                "For a USB camera NVC reads the frame rates and resolutions the driver reports "
+                "and offers those; if detection fails, leave both at Auto.",
+                "Choose an Audio device per row, or No Audio. Refresh devices rescans "
+                "microphones. Mute or Volume 0 on the tab records that row without sound.",
+                "Sync offset shifts a source earlier or later in a Combined grid recording so "
+                "clips that started at slightly different times line up.",
+                "Apply keeps the dialog open; OK applies and closes.",
+            ]},
+            {"type": "para", "text": "Presets"},
+            {"type": "steps", "items": [
+                "Load applies the selected preset; Set overwrites it with the current settings; "
+                "Save as... creates a new one; Delete removes it. An asterisk after the name "
+                "marks unsaved changes.",
+                "Presets are JSON files under "
+                r"Public\Documents\Noldus\NVC\MediaRecorder\Presets.",
             ]},
             {"type": "note", "items": [
-                "If a saved microphone is not connected, it appears as (not found). NVC keeps "
-                "the saved name and retries an early audio-device failure as video-only so the "
-                "camera recording is not lost.",
+                "Without a microphone, a file or RTSP source in h264 mode keeps its own sound "
+                "track; in copy mode an RTSP source is recorded without audio; a USB camera "
+                "without a microphone is silent. Combined grid takes its audio from the first "
+                "enabled, unmuted row with a microphone.",
+                "A saved microphone that is not connected shows as (not found). If the audio "
+                "device fails as recording starts, NVC restarts that row as video only and says "
+                "so in the recording log, so the camera recording is not lost.",
+                "FFmpeg needs the exact Windows camera name; close other applications that may "
+                "be using the camera.",
             ]},
         ],
     },

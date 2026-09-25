@@ -154,6 +154,29 @@ class ContentTests(unittest.TestCase):
         self.assertIn("time-restrictions", ids)
         self.assertIn("converted-files", ids)
 
+    def test_recorder_chapter_covers_video_settings_and_presets(self):
+        text = self._chapter_text("help", "multi-source-recorder")
+        for needle in (
+            "Video Settings",
+            "RTSP/IP Camera",
+            "Refresh USB devices",
+            "Separate videos",
+            "Combined grid",
+            "Save as",
+            "(not found)",
+            "Sync offset",
+            "Start Recording",
+        ):
+            self.assertIn(needle, text, needle)
+        fig_ids = [
+            block["fig_id"]
+            for block in self._chapter("help", "multi-source-recorder")["blocks"]
+            if block["type"] == "figure"
+        ]
+        self.assertEqual(fig_ids, ["FIG-07", "FIG-09"])
+        for forbidden in ("Output quality", "Timer settings", "Time format"):
+            self.assertNotIn(forbidden, text, forbidden)
+
     def test_pc_report_chapter_lists_every_section_in_registry_order(self):
         import importlib
 
