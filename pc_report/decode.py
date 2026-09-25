@@ -124,7 +124,10 @@ def security_center_state(product_state) -> tuple[str, str]:
     n = to_int(product_state, 0)
     state_byte = (n >> 8) & 0xFF
     signature_byte = n & 0xFF
-    state = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "Snoozed"}.get(
+    # The state byte's high nibble is the on/off flag. Some tables call 0x11 "snoozed", but
+    # Microsoft Defender reports 0x061100 with real-time protection on (verified live against
+    # Get-MpComputerStatus), so 0x11 is treated as On like 0x10.
+    state = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "On"}.get(
         state_byte, f"Unknown (0x{state_byte:02X})"
     )
     signature = {0x00: "Up to date", 0x10: "Out of date"}.get(signature_byte, "Unknown")
@@ -133,6 +136,7 @@ def security_center_state(product_state) -> tuple[str, str]:
 
 DEVICE_GUARD_VBS_STATUS = {0: "Off", 1: "Enabled but not running", 2: "Running"}
 DEVICE_GUARD_SERVICES = {
+    0: "None",  # Win32_DeviceGuard reports {0} when no service is configured/running
     1: "Credential Guard",
     2: "Memory integrity (HVCI)",
     3: "System Guard Secure Launch",
@@ -142,6 +146,7 @@ DEVICE_GUARD_SERVICES = {
     7: "Hypervisor-Enforced Paging Translation",
 }
 DEVICE_GUARD_AVAILABLE = {
+    0: "None",
     1: "Hypervisor support",
     2: "Secure Boot",
     3: "DMA protection",

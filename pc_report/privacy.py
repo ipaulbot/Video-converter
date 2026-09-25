@@ -28,6 +28,8 @@ SENSITIVE_TOKENS = (
 # Credentials keep nothing; a serial keeps a four-character tail a support engineer can match.
 _FULL_MASK_TOKENS = ("password", "passwd", "pwd", "token", "secret", "credential",
                      "apikey", "productkey", "licensekey", "recoverypassword")
+# Account-policy rows from `net accounts` mention "password" but carry numbers, never secrets.
+_PASSWORD_POLICY_KEY = re.compile(r"password(?:age|length|history|complexity|expir)|passwordsmustmeet")
 # Only these keys may hold a well-known account name that survives masking.
 _ACCOUNT_KEY_TOKENS = ("startname", "accountname", "accessaccount", "owner", "username",
                        "localadministrators", "member", "runas")
@@ -650,6 +652,9 @@ def redact_value(key, value):
         ):
             return value
         if any(token in key_l for token in _ACCOUNT_KEY_TOKENS) and _is_well_known_account(value):
+            return value
+        if _PASSWORD_POLICY_KEY.search(key_l):
+            # "Minimum password length", "Maximum password age (days)": policy numbers, not secrets.
             return value
         return mask_string(value, _keep_for_key(key_l))
     if isinstance(value, str):

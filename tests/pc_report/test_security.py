@@ -33,7 +33,7 @@ class BuildTests(unittest.TestCase):
     def test_security_center_rows(self):
         av = self.data["security_center"][0]
         self.assertEqual(av["Kind"], "Antivirus")
-        self.assertEqual(av["State"], "Snoozed")
+        self.assertEqual(av["State"], "On")
         self.assertEqual(av["Signatures"], "Up to date")
 
     def test_defender_and_firewall(self):
@@ -52,7 +52,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Kernel-mode Code Integrity"], "Enforced")
 
     def test_security_center_state_decodes_every_state_and_signature(self):
-        states = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "Snoozed", 0x22: "Unknown (0x22)"}
+        states = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "On", 0x22: "Unknown (0x22)"}
         signatures = {0x00: "Up to date", 0x10: "Out of date", 0x20: "Unknown"}
         for state_byte, state_label in states.items():
             for signature_byte, signature_label in signatures.items():
@@ -62,6 +62,22 @@ class BuildTests(unittest.TestCase):
                         mod.decode.security_center_state(packed),
                         (state_label, signature_label),
                     )
+
+    def test_device_guard_no_services_reads_none_not_other(self):
+        dg = {**DG, "SecurityServicesConfigured": [0], "SecurityServicesRunning": [0]}
+        data = mod.build(SC, DEF, FW, dg, None, None, ADMINS, NET)
+        rows = mod.flatten(data)
+        self.assertEqual(rows["Security Services Configured"], "None")
+        self.assertEqual(rows["Security Services Running"], "None")
+
+    def test_password_policy_numbers_survive_redaction(self):
+        from pc_report.privacy import redact_payload
+        rows = redact_payload({"Minimum password length": "8", "Maximum password age (days)": "42",
+                               "Length of password history maintained": "24", "Password": "hunter22"})
+        self.assertEqual(rows["Minimum password length"], "8")
+        self.assertEqual(rows["Maximum password age (days)"], "42")
+        self.assertEqual(rows["Length of password history maintained"], "24")
+        self.assertEqual(rows["Password"], "********")
 
     def test_device_guard_tables_match_windows_values(self):
         service_labels = [

@@ -55,7 +55,8 @@ class DecodeTests(unittest.TestCase):
 
     def test_security_center_state(self):
         # 0x061100 = snoozed, up to date.
-        self.assertEqual(D.security_center_state(397568), ("Snoozed", "Up to date"))
+        # 0x061100 is what Defender reports with real-time protection on (verified live).
+        self.assertEqual(D.security_center_state(397568), ("On", "Up to date"))
         # 0x000000 = off
         self.assertEqual(D.security_center_state(0), ("Off", "Up to date"))
         self.assertEqual(D.security_center_state(0x1010), ("On", "Out of date"))
