@@ -4,13 +4,17 @@ from unittest import mock
 
 from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
+    _register_probe,
+    active_device_probes,
     build_rtsp_url,
     build_source_text,
     discover_directshow_audio_devices,
+    discover_directshow_devices,
     discover_directshow_video_devices,
     parse_directshow_audio_devices,
     parse_directshow_video_devices,
     parse_rtsp_url_settings,
+    terminate_device_probes,
 )
 
 
@@ -152,15 +156,91 @@ class RecordingSourceTests(unittest.TestCase):
             '[dshow @ 000001]  "Microphone (Kent’s Headset)"\n'
         )
 
-        def fake_run(command, **kwargs):
+        def fake_popen(command, **kwargs):
             self.assertEqual(kwargs.get("encoding"), "utf-8")
             self.assertEqual(kwargs.get("errors"), "replace")
             self.assertNotIn("text", kwargs)
-            return subprocess.CompletedProcess(command, 1, stdout="", stderr=listing)
+            return _FakeProbe(stderr=listing)
 
-        with mock.patch("conversion.recording_sources.subprocess.run", side_effect=fake_run):
+        with mock.patch("conversion.recording_sources.subprocess.Popen", side_effect=fake_popen):
             self.assertEqual(discover_directshow_video_devices("ffmpeg.exe"), ["Cámara A"])
             self.assertEqual(discover_directshow_audio_devices("ffmpeg.exe"), ["Microphone (Kent’s Headset)"])
+
+
+class _FakeProbe:
+    """Stands in for the ffmpeg Popen: one listing, optional hang, kill tracking."""
+
+    def __init__(self, stderr="", hang=False):
+        self._stderr = stderr
+        self._hang = hang
+        self.killed = False
+        self.returncode = None
+
+    def communicate(self, timeout=None):
+        if self._hang and not self.killed:
+            raise subprocess.TimeoutExpired("ffmpeg", timeout)
+        self.returncode = 1
+        return "", self._stderr
+
+    def kill(self):
+        self.killed = True
+
+    def poll(self):
+        return self.returncode
+
+
+class DeviceScanTests(unittest.TestCase):
+    LISTING = (
+        "[dshow @ 000001] DirectShow video devices\n"
+        '[dshow @ 000001]  "Camera A"\n'
+        '[dshow @ 000001]  "Camera B"\n'
+        "[dshow @ 000001] DirectShow audio devices\n"
+        '[dshow @ 000001]  "Microphone A"\n'
+    )
+
+    def test_one_ffmpeg_run_yields_both_device_lists(self):
+        probes = []
+
+        def fake_popen(command, **kwargs):
+            probes.append(_FakeProbe(stderr=self.LISTING))
+            return probes[-1]
+
+        with mock.patch("conversion.recording_sources.subprocess.Popen", side_effect=fake_popen):
+            scan = discover_directshow_devices("ffmpeg.exe")
+
+        self.assertEqual(len(probes), 1)
+        self.assertTrue(scan.ok)
+        self.assertEqual(scan.video, ["Camera A", "Camera B"])
+        self.assertEqual(scan.audio, ["Microphone A"])
+
+    def test_timed_out_scan_is_killed_and_reported_as_failed(self):
+        probe = _FakeProbe(hang=True)
+        with mock.patch("conversion.recording_sources.subprocess.Popen", return_value=probe):
+            scan = discover_directshow_devices("ffmpeg.exe", timeout_seconds=0.01)
+
+        self.assertTrue(probe.killed)
+        self.assertFalse(scan.ok)
+        self.assertEqual((scan.video, scan.audio), ([], []))
+        self.assertEqual(active_device_probes(), [])
+
+    def test_missing_ffmpeg_is_a_failed_scan_not_an_exception(self):
+        with mock.patch("conversion.recording_sources.subprocess.Popen", side_effect=OSError("no ffmpeg")):
+            scan = discover_directshow_devices("ffmpeg.exe")
+        self.assertFalse(scan.ok)
+        self.assertFalse(discover_directshow_devices("").ok)
+
+    def test_terminate_device_probes_kills_a_scan_still_in_flight(self):
+        # What shutdown() and atexit rely on: a scan interrupted by the process
+        # exiting must not leave ffmpeg behind (549 of them were found queued
+        # on DirectShow enumeration, which made every later scan time out).
+        probe = _FakeProbe(stderr=self.LISTING)
+        _register_probe(probe)
+        self.assertIn(probe, active_device_probes())
+
+        terminate_device_probes()
+
+        self.assertTrue(probe.killed)
+        self.assertEqual(active_device_probes(), [])
 
 
 if __name__ == "__main__":

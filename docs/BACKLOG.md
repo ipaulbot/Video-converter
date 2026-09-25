@@ -105,6 +105,13 @@ Out of scope in the current design, kept for later:
 - Live verification on Axis, Basler and Daheng hardware using the lab checklist.
 - Preview-pipeline changes.
 - Combined grid mixes only one microphone; per-source embedded audio is not mixed.
+- Device listing still takes ~6 s per pass on a machine with ten DirectShow
+  devices (ffmpeg enumerates every device's formats). A cheaper first pass
+  (names only, via the Windows device enumeration APIs) would make the Video
+  Settings dialog feel instant; ffmpeg would then only be asked for modes.
+- The 45 s freshness window for device scans is a constant
+  (`DEVICE_SCAN_TTL_S`); consider invalidating on WM_DEVICECHANGE instead so a
+  camera plugged in mid-session shows up without a manual rescan.
 
 ## Media player follow-ups
 
@@ -155,6 +162,14 @@ Deferred from UI iteration 2 (2026-09-25) until the feature set settles:
   than merging the windows, which would crowd Compact mode.
 - The Recording properties grid still hides source type/address behind the
   per-row Video Settings dialog; a Full-mode variant could show them inline.
+- Glyph pass (2026-09-25) covered the player dock, editor browse, PC Report
+  links, recorder links, Video Settings camera/refresh and Settings folder
+  buttons. Still text-only: the recorder preset row (Load / Set / Save as /
+  Delete), the Lossless Editor action buttons, and the converter's
+  Add/Clear/Start row. Keep text on Start/Stop/Convert; glyph-plus-text on
+  the rest.
+- `ui/settings_dialog.py` carries six pre-existing unused imports (ruff F401 /
+  I001); clean up in a dedicated commit.
 
 ## Done
 

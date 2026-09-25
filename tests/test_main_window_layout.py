@@ -136,6 +136,34 @@ class TabCardTests(unittest.TestCase):
             window.hide()
             window.set_window_mode("compact", persist=False)
 
+    def test_recorder_layout_schematic_leaves_the_leaf_frame_visible(self):
+        # The schematic used to be painted on an opaque near-black pixmap that
+        # covered the dashed leaf frame; it now sits on a transparent canvas.
+        pixmap = self.window._build_layout_preview_pixmap(
+            "Separate videos", [(0.0, 0.0, 1.0, 1.0)], 180, 101
+        )
+        image = pixmap.toImage()
+        self.assertTrue(image.hasAlphaChannel())
+        self.assertEqual(image.pixelColor(1, 1).alpha(), 0)          # corner stays see-through
+        centre = image.pixelColor(90, 60)
+        self.assertGreater(centre.lightness(), 200)                    # tile is white, not black
+
+    def test_settings_folder_change_buttons_carry_a_folder_glyph(self):
+        from ui.settings_dialog import SettingsDialog
+
+        dialog = SettingsDialog(dict(self.window.settings), self.window)
+        try:
+            self.assertEqual(len(dialog.folder_change_buttons), 4)
+            for button in dialog.folder_change_buttons:
+                self.assertEqual(button.property("glyph"), "folder_open")
+                self.assertFalse(button.icon().isNull())
+                self.assertEqual(button.text(), "Change")
+        finally:
+            # Delete now: a deferred delete of a child of the class-level window
+            # fires alongside the window's own and crashes a later test.
+            dialog.setParent(None)
+            del dialog
+
     def test_reskin_reaches_opted_out_tiers(self):
         window = self.window
         widgets = window.reskin_widgets()

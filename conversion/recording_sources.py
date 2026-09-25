@@ -1,5 +1,8 @@
+import atexit
 import re
 import subprocess
+import threading
+from typing import NamedTuple
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 from utils.subprocess_helpers import get_subprocess_startupinfo
@@ -195,23 +198,103 @@ def parse_directshow_audio_devices(output):
     return devices
 
 
-def discover_directshow_audio_devices(ffmpeg_path, timeout_seconds=12):
+class DeviceScan(NamedTuple):
+    """Result of one `ffmpeg -list_devices` run.
+
+    `ok` is False when ffmpeg was missing, crashed or timed out; callers should
+    then keep whatever lists they already had rather than treat the machine as
+    having no cameras.
+    """
+
+    video: list
+    audio: list
+    ok: bool
+
+
+_ACTIVE_PROBES: list = []
+_PROBES_LOCK = threading.Lock()
+
+
+def _register_probe(probe):
+    with _PROBES_LOCK:
+        _ACTIVE_PROBES.append(probe)
+
+
+def _unregister_probe(probe):
+    with _PROBES_LOCK:
+        if probe in _ACTIVE_PROBES:
+            _ACTIVE_PROBES.remove(probe)
+
+
+def active_device_probes():
+    with _PROBES_LOCK:
+        return list(_ACTIVE_PROBES)
+
+
+def terminate_device_probes():
+    """Kill every device listing still running.
+
+    Called from the recorder's shutdown() and at interpreter exit. A listing
+    that outlives its parent stays queued on DirectShow enumeration and makes
+    every later listing on the machine time out, so leaving one behind is not
+    harmless.
+    """
+    for probe in active_device_probes():
+        try:
+            if probe.poll() is None:
+                probe.kill()
+        except OSError:
+            pass
+        _unregister_probe(probe)
+
+
+atexit.register(terminate_device_probes)
+
+
+def discover_directshow_devices(ffmpeg_path, timeout_seconds=12):
+    """List DirectShow cameras and microphones with a single ffmpeg run.
+
+    Blocking (several seconds with many devices) -- call it off the GUI thread.
+    """
     if not ffmpeg_path:
-        return []
+        return DeviceScan([], [], False)
     startupinfo, creationflags = get_subprocess_startupinfo()
     try:
-        result = subprocess.run(
-            [ffmpeg_path, "-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
-            capture_output=True,
+        probe = subprocess.Popen(
+            [ffmpeg_path, "-hide_banner", "-nostdin", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             encoding="utf-8",
             errors="replace",
-            timeout=timeout_seconds,
             startupinfo=startupinfo,
             creationflags=creationflags,
         )
     except (OSError, subprocess.SubprocessError):
-        return []
-    return parse_directshow_audio_devices((result.stdout or "") + "\n" + (result.stderr or ""))
+        return DeviceScan([], [], False)
+    _register_probe(probe)
+    try:
+        stdout, stderr = probe.communicate(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        probe.kill()
+        try:
+            probe.communicate(timeout=5)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return DeviceScan([], [], False)
+    except (OSError, subprocess.SubprocessError):
+        return DeviceScan([], [], False)
+    finally:
+        _unregister_probe(probe)
+    output = (stdout or "") + "\n" + (stderr or "")
+    return DeviceScan(
+        parse_directshow_video_devices(output),
+        parse_directshow_audio_devices(output),
+        True,
+    )
+
+
+def discover_directshow_audio_devices(ffmpeg_path, timeout_seconds=12):
+    return discover_directshow_devices(ffmpeg_path, timeout_seconds).audio
 
 
 def _format_mode_resolution(value):
@@ -256,20 +339,5 @@ def parse_directshow_video_options(output):
 
 
 def discover_directshow_video_devices(ffmpeg_path, timeout_seconds=12):
-    if not ffmpeg_path:
-        return []
-    startupinfo, creationflags = get_subprocess_startupinfo()
-    try:
-        result = subprocess.run(
-            [ffmpeg_path, "-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=timeout_seconds,
-            startupinfo=startupinfo,
-            creationflags=creationflags,
-        )
-    except (OSError, subprocess.SubprocessError):
-        return []
-    return parse_directshow_video_devices((result.stdout or "") + "\n" + (result.stderr or ""))
+    return discover_directshow_devices(ffmpeg_path, timeout_seconds).video
 

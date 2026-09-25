@@ -81,6 +81,24 @@ def _reap(widgets):
 
 
 @pytest.fixture(autouse=True)
+def no_real_device_listing(monkeypatch):
+    """Keep the suite from spawning `ffmpeg -list_devices`.
+
+    Every recorder widget starts a device scan when it is built, in a daemon
+    thread; a test run that exits while one is in flight leaves the ffmpeg
+    behind. 549 of them were found queued on DirectShow enumeration, which
+    made every scan on the machine -- the app's included -- time out. Tests
+    that exercise the scan itself patch this name again, closer in.
+    """
+    from conversion.recording_sources import DeviceScan
+
+    monkeypatch.setattr(
+        "ui.multi_source_recorder_widget.discover_directshow_devices",
+        lambda _ffmpeg, timeout_seconds=None: DeviceScan([], [], True),
+    )
+
+
+@pytest.fixture(autouse=True)
 def reap_hidden_top_level_widgets():
     """Destroy the hidden top-level windows each test created.
 
