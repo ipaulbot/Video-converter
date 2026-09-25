@@ -318,9 +318,58 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertTrue(hasattr(dialog, "output_quality_combo"))
         self.assertTrue(hasattr(dialog, "output_mode_combo"))
-        self.assertTrue(hasattr(dialog, "time_format_combo"))
+        self.assertFalse(hasattr(dialog, "time_format_combo"))
+        self.assertFalse(hasattr(dialog, "decimals_combo"))
         self.assertTrue(hasattr(dialog, "preset_combo"))
         self.assertEqual(len(dialog.dialog_rows), len(widget.source_rows))
+
+    def test_video_settings_binds_maximum_time_to_timer(self):
+        widget = self._widget()
+        widget.duration_edit.setText("00:10:00")
+        dialog = VideoSettingsDialog(
+            widget.source_rows,
+            widget.output_controls(),
+            widget,
+            widget.button_style,
+        )
+
+        self.assertTrue(dialog.maximum_time_check.isChecked())
+        self.assertEqual(dialog.maximum_time_edit.text(), "00:10:00")
+        dialog.maximum_time_edit.setText("00:05:00")
+        dialog.apply_to_sources()
+        self.assertEqual(widget.duration_edit.text(), "00:05:00")
+
+        dialog.maximum_time_check.setChecked(False)
+        dialog.apply_to_sources()
+        self.assertEqual(widget.duration_edit.text(), "")
+
+    def test_output_quality_round_trips_through_settings_and_commands(self):
+        widget = self._widget()
+        dialog = VideoSettingsDialog(
+            widget.source_rows,
+            widget.output_controls(),
+            widget,
+            widget.button_style,
+        )
+
+        dialog.output_quality_combo.setCurrentText("High")
+        dialog.apply_to_sources()
+
+        self.assertEqual(widget.output_quality, "High")
+        self.assertEqual(widget.capture_recorder_settings()["output"]["quality"], "High")
+        widget.codec_combo.setCurrentText("h264")
+        command = widget.build_recording_command(
+            "ffmpeg.exe",
+            "rtsp://camera/stream",
+            "out.mp4",
+        )
+        self.assertEqual(command[command.index("-crf") + 1], "16")
+
+        widget.apply_recorder_settings(
+            {"output": {"quality": "Compact"}},
+            refresh_previews=False,
+        )
+        self.assertEqual(widget.output_quality, "Compact")
 
     def test_video_settings_dialog_uses_compact_columns_and_preset_buttons(self):
         widget = MultiSourceRecorderWidget()

@@ -425,6 +425,9 @@ class VideoSettingsDialog(QDialog):
             _tr("Separate videos"),
             _tr("Combined grid"),
         ])
+        quality_control = self.output_controls.get("quality")
+        if quality_control:
+            self.output_quality_combo.setCurrentText(quality_control)
         output_mode_control = self.output_controls.get("output_mode")
         if output_mode_control:
             self.output_mode_combo.setCurrentText(output_mode_control.currentText())
@@ -435,15 +438,15 @@ class VideoSettingsDialog(QDialog):
 
         timer_group = QGroupBox(_tr("Timer settings"))
         timer_form = QFormLayout()
-        self.time_format_combo = QComboBox()
-        self.time_format_combo.addItems(["HH:mm:ss", "Seconds"])
-        self.decimals_combo = QComboBox()
-        self.decimals_combo.addItems(["0", "1", "2", "3"])
         self.maximum_time_check = QCheckBox(_tr("Use maximum recording time"))
         self.maximum_time_edit = QLineEdit()
         self.maximum_time_edit.setPlaceholderText(_tr("01:00:00"))
-        timer_form.addRow("Time format:", self.time_format_combo)
-        timer_form.addRow("Decimals:", self.decimals_combo)
+        current_timer = self.output_controls.get("duration")
+        current_text = current_timer.text().strip() if current_timer is not None else ""
+        self.maximum_time_check.setChecked(bool(current_text))
+        self.maximum_time_edit.setText(current_text)
+        self.maximum_time_edit.setEnabled(bool(current_text))
+        self.maximum_time_check.toggled.connect(self.maximum_time_edit.setEnabled)
         timer_form.addRow(self.maximum_time_check, self.maximum_time_edit)
         timer_group.setLayout(timer_form)
         lower_row.addWidget(timer_group, 1)
@@ -845,6 +848,14 @@ class VideoSettingsDialog(QDialog):
         if output_mode_control:
             output_mode_control.setCurrentText(self.output_mode_combo.currentText())
         parent = self.parent()
+        if parent is not None:
+            parent.output_quality = self.output_quality_combo.currentText()
+            if hasattr(parent, "duration_edit"):
+                parent.duration_edit.setText(
+                    self.maximum_time_edit.text().strip()
+                    if self.maximum_time_check.isChecked()
+                    else ""
+                )
         if parent and hasattr(parent, "update_preview_panel_visibility"):
             parent.update_preview_panel_visibility()
 
@@ -973,6 +984,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.source_config_buttons = []
         self.video_name_edits = []
         self.source_type_map = {item["id"]: item for item in CAMERA_SOURCE_TYPES}
+        self.output_quality = "Default"
         self._init_ui()
         self.preview_render_timer = QTimer(self)
         self.preview_render_timer.setInterval(100)
@@ -1996,6 +2008,7 @@ class MultiSourceRecorderWidget(QWidget):
             "codec": self.codec_combo,
             "output_mode": self.output_mode_combo,
             "duration": self.duration_edit,
+            "quality": self.output_quality,
         }
 
     def capture_recorder_settings(self):
@@ -2024,6 +2037,7 @@ class MultiSourceRecorderWidget(QWidget):
                 "base_name": self.base_name_edit.text(),
                 "encoding": self.codec_combo.currentText(),
                 "mode": self.output_mode_combo.currentText(),
+                "quality": self.output_quality,
             },
             "timer": {
                 "duration": self.duration_edit.text(),
@@ -2046,6 +2060,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.base_name_edit.setText(output.get("base_name", self.base_name_edit.text()))
         self.codec_combo.setCurrentText(output.get("encoding", self.codec_combo.currentText()))
         self.output_mode_combo.setCurrentText(output.get("mode", self.output_mode_combo.currentText()))
+        self.output_quality = output.get("quality", self.output_quality)
         self.duration_edit.setText(timer.get("duration", self.duration_edit.text()))
         for index, channel in enumerate(normalized.get("channels", [])):
             if index >= len(self.source_rows):
@@ -2308,6 +2323,7 @@ class MultiSourceRecorderWidget(QWidget):
                 audio_device=audio_device,
                 mute=mute,
                 volume=volume,
+                quality=self.output_quality,
             )
         source = apply_axis_rtsp_recording_options(source, frame_rate=frame_rate, resolution=resolution)
         return build_record_command(
@@ -2322,6 +2338,7 @@ class MultiSourceRecorderWidget(QWidget):
             audio_device=audio_device,
             mute=mute,
             volume=volume,
+            quality=self.output_quality,
         )
 
     def recording_fallback_commands(
@@ -2674,6 +2691,7 @@ class MultiSourceRecorderWidget(QWidget):
             audio_device=audio_device,
             mute=not bool(audio_device),
             volume=audio_volume,
+            quality=self.output_quality,
         )
         audio_fallback_command = None
         if audio_device:
@@ -2687,6 +2705,7 @@ class MultiSourceRecorderWidget(QWidget):
                 audio_device="",
                 mute=True,
                 volume="0",
+                quality=self.output_quality,
             )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error

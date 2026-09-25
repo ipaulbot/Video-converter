@@ -1,5 +1,6 @@
 import unittest
 
+from conversion import recording_commands as rc
 from conversion.recording_commands import (
     build_combined_grid_record_command,
     build_directshow_camera_settings_command,
@@ -982,6 +983,59 @@ class MultiSourceRecordCommandTests(unittest.TestCase):
         # mapped with an AAC encoder into the recording output.
         self.assertIn("1:a", command)
         self.assertEqual(command[command.index("-c:a") + 1], "aac")
+
+
+class OutputQualityTests(unittest.TestCase):
+    def test_quality_table_and_default(self):
+        self.assertEqual(
+            rc.h264_encode_args("High"),
+            ["-c:v", "libx264", "-preset", "medium", "-crf", "16"],
+        )
+        self.assertEqual(
+            rc.h264_encode_args("Compact"),
+            ["-c:v", "libx264", "-preset", "faster", "-crf", "24"],
+        )
+        self.assertEqual(
+            rc.h264_encode_args("nonsense"),
+            ["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"],
+        )
+
+    def test_every_builder_emits_the_chosen_quality(self):
+        command = rc.build_record_command(
+            "ffmpeg.exe",
+            "rtsp://camera/stream",
+            "out.mp4",
+            "h264",
+            "",
+            quality="Balanced",
+        )
+        self.assertEqual(command[command.index("-crf") + 1], "20")
+
+        command = rc.build_directshow_record_with_preview_command(
+            "ffmpeg.exe",
+            "Camera A",
+            "out.mp4",
+            "",
+            quality="High",
+        )
+        self.assertEqual(command[command.index("-crf") + 1], "16")
+
+        command = rc.build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["rtsp://camera/a", "rtsp://camera/b"],
+            "out.mp4",
+            "",
+            quality="Compact",
+        )
+        self.assertEqual(command[command.index("-crf") + 1], "24")
+
+        command = rc.build_multi_source_record_command(
+            "ffmpeg.exe",
+            ["rtsp://camera/stream"],
+            ["out.mp4"],
+            quality="High",
+        )
+        self.assertEqual(command[command.index("-crf") + 1], "16")
 
 
 if __name__ == "__main__":
