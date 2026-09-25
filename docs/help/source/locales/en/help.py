@@ -508,6 +508,70 @@ CHAPTERS: list[dict] = [
         ],
     },
     {
+        "id": "media-player",
+        "title": "Media Player",
+        "blocks": [
+            {"type": "para", "text": (
+                "The Media Player loads up to four clips for synchronized review. The tab is "
+                "hidden by default; enable it under Settings -> Tools. Play in Media Player "
+                "from Converted Files shows the tab for the current session, loads the selected "
+                "file and starts playback.")},
+            {"type": "figure", "fig_id": "FIG-08"},
+            {"type": "table", "headers": ("Control", "What it does"), "rows": [
+                ("Load", "Loads a clip into that panel."),
+                ("Clear", "Removes the clip from that panel."),
+                ("offset", "Shifts that panel in seconds relative to the shared seek position."),
+                ("Play all", "Plays every loaded panel and reads Pause all while playing."),
+                ("Stop all", "Stops every loaded panel and returns the shared position to zero."),
+                ("Restart", "Returns to the beginning and plays every loaded panel."),
+                ("Seek slider", "Moves every loaded panel on the shared timeline."),
+                ("Speed", "Sets every panel to 0.25x, 0.5x, 1x, 1.5x or 2x playback."),
+                ("Panels", "Shows 1, 2 or 4 panels."),
+                ("Volume", "Sets the volume for every panel from 0 to 100."),
+                ("Mute", "Mutes every panel and reads Unmute while muted."),
+                ("Fullscreen", "Shows the panels and transport bar fullscreen."),
+                ("Playlist", "Shows or hides the playlist for the selected panel."),
+            ]},
+            {"type": "para", "text": (
+                "The readout shows H:MM:SS.mmm / H:MM:SS.mmm followed by frame N / M. "
+                "NVC reads the clip's real frame rate with FFprobe, so Left and Right step "
+                "exactly one frame. Frame stepping pauses playback.")},
+            {"type": "table", "headers": ("Keys", "Action"), "rows": [
+                ("Space", "Play or pause"),
+                ("Home", "Restart from the beginning"),
+                ("Left", "Step back one frame"),
+                ("Right", "Step forward one frame"),
+                ("Shift+Left", "Seek back 5 seconds"),
+                ("Shift+Right", "Seek forward 5 seconds"),
+                ("Up", "Volume up 5"),
+                ("Down", "Volume down 5"),
+                ("M", "Mute or unmute"),
+                ("F", "Toggle fullscreen"),
+                ("Escape", "Leave fullscreen"),
+                ("N", "Next playlist item"),
+                ("P", "Previous playlist item"),
+            ]},
+            {"type": "para", "text": (
+                "Shortcuts work while the Media Player tab has focus. Press F, click "
+                "Fullscreen, or double-click a panel to enter fullscreen. The transport bar "
+                "hides three seconds after the mouse stops moving and returns when the mouse "
+                "moves. Press Escape or F, or double-click, to leave fullscreen.")},
+            {"type": "para", "text": (
+                "Playlist opens a dock for the selected panel with Add files..., Add folder..., "
+                "Remove and Clear. Drag entries to reorder them, or drop files from Explorer "
+                "into the dock. N and P move through the playlist. With Panels set to 1, the "
+                "next item starts automatically when a clip ends.")},
+            {"type": "note", "items": [
+                'A file Windows cannot decode shows "Windows cannot play this file." or names '
+                'the codec and container, with "Convert to MP4 (H.264) and play". The converted '
+                "copy is written to your Destination Folder with a unique name and then loaded.",
+                "NVC remembers the last folder, panel count, volume and mute between sessions.",
+                "Playback uses Windows Media Foundation. MP4, MOV, MKV, AVI and WMV files with "
+                "common codecs play directly; use the convert offer for anything else.",
+            ]},
+        ],
+    },
+    {
         "id": "troubleshooting",
         "title": "Troubleshooting",
         "blocks": [

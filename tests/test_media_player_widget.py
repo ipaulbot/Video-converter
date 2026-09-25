@@ -268,6 +268,25 @@ class MediaPlayerWidgetTests(unittest.TestCase):
                                  ("vol", 5), ("vol", -5), "mute", "fs", "next", "prev"])
         self.assertEqual(widget.shortcuts["Space"].context(), Qt.WidgetWithChildrenShortcut)
 
+    def test_help_documents_every_shortcut(self):
+        import sys
+        from pathlib import Path
+
+        source_dir = Path(__file__).resolve().parents[1] / "docs" / "help" / "source"
+        if str(source_dir) not in sys.path:
+            sys.path.insert(0, str(source_dir))
+        import content_loader
+
+        chapter = next(c for c in content_loader.load_manual("help", "en")
+                       if c["id"] == "media-player")
+        tables = [b for b in chapter["blocks"]
+                  if b["type"] == "table" and b["headers"][0] == "Keys"]
+        self.assertEqual(len(tables), 1, "media-player needs exactly one Keys/Action table")
+        documented = "\n".join(cell for row in tables[0]["rows"] for cell in row)
+        widget = self._widget()
+        for key in widget.shortcuts:
+            self.assertIn(key, documented, f"shortcut {key} is not in the manual")
+
     def test_fullscreen_reparents_stage_and_restores(self):
         widget = self._widget()
         widget.show()

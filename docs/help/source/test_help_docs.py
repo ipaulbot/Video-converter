@@ -154,6 +154,12 @@ class ContentTests(unittest.TestCase):
         self.assertIn("time-restrictions", ids)
         self.assertIn("converted-files", ids)
 
+    def test_help_has_a_chapter_per_tool_tab(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        for chapter_id in ("converted-files", "media-inspection", "pc-report",
+                           "lossless-editor", "multi-source-recorder", "media-player"):
+            self.assertIn(chapter_id, ids)
+
     def test_recorder_chapter_covers_video_settings_and_presets(self):
         text = self._chapter_text("help", "multi-source-recorder")
         for needle in (
