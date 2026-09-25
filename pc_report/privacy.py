@@ -21,7 +21,7 @@ SENSITIVE_TOKENS = (
     "uuid", "assettag", "registeredowner", "registereduser", "registeredorganization", "organization",
     "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "processorid", "machineguid", "domainname",
-    "localadministrators", "accessaccount", "accountname", "interfaceguid",
+    "machineid", "localadministrators", "accessaccount", "accountname", "interfaceguid",
 )
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")

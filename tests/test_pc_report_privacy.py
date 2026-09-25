@@ -134,6 +134,13 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         self.assertNotEqual(redacted["ProcessorId"], "BFEBFBFF000906A2")
 
+    def test_machine_id_is_masked_as_an_identifier(self):
+        machine_id = "{01234567-89AB-CDEF-0123-456789ABCDEF}"
+
+        redacted = redact_payload({"MachineId": machine_id}, {"redact": True}, env={})
+
+        self.assertNotEqual(redacted["MachineId"], machine_id)
+
     def test_device_instance_ids_mask_trailing_serial_segments(self):
         ids = [
             r"USB\VID_1234&PID_5678\PHONE-SERIAL",
