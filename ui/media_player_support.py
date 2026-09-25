@@ -6,6 +6,7 @@ fixed "convert and play" preset, and the playlist model.
 """
 import json
 import math
+import os
 import subprocess
 
 from utils.logger import logger
@@ -160,3 +161,64 @@ def player_convert_settings(base_settings):
         "custom_console_command": PLAYER_CONVERT_CUSTOM_ARGS,
     })
     return settings
+
+
+VIDEO_EXTENSIONS = (".mp4", ".mov", ".mkv", ".avi", ".wmv", ".webm", ".m4v", ".mpg", ".mpeg", ".flv")
+
+
+def collect_video_files(folder, walker=os.walk):
+    """Recursively list video files under `folder`, sorted for a stable playlist order."""
+    found = []
+    for root, _dirs, files in walker(folder):
+        for name in files:
+            if name.lower().endswith(VIDEO_EXTENSIONS):
+                found.append(os.path.join(root, name))
+    return sorted(found)
+
+
+class PlaylistModel:
+    """Ordered, duplicate-free list of file paths with wrap-around navigation."""
+
+    def __init__(self):
+        self.items = []
+
+    def add(self, paths):
+        added = 0
+        for path in paths or []:
+            path = str(path or "").strip()
+            if path and path not in self.items:
+                self.items.append(path)
+                added += 1
+        return added
+
+    def remove(self, index):
+        if 0 <= index < len(self.items):
+            del self.items[index]
+
+    def clear(self):
+        self.items = []
+
+    def move(self, source_index, destination_index):
+        if not (0 <= source_index < len(self.items)):
+            return
+        item = self.items.pop(source_index)
+        destination_index = max(0, min(destination_index, len(self.items)))
+        self.items.insert(destination_index, item)
+
+    def next_index(self, current_index):
+        if not self.items:
+            return None
+        return (current_index + 1) % len(self.items)
+
+    def previous_index(self, current_index):
+        if not self.items:
+            return None
+        if current_index < 0:
+            return 0
+        return (current_index - 1) % len(self.items)
+
+    def index_of(self, path):
+        try:
+            return self.items.index(path)
+        except ValueError:
+            return -1

@@ -4,6 +4,8 @@ import unittest
 
 from ui.media_player_support import (
     DEFAULT_FPS,
+    PlaylistModel,
+    collect_video_files,
     format_readout,
     format_timecode_ms,
     frame_index,
@@ -154,3 +156,42 @@ class ConvertPresetTests(unittest.TestCase):
         self.assertEqual(settings["custom_console_command"], "-crf 20 -preset veryfast -movflags +faststart")
         # The caller's dict is not mutated.
         self.assertEqual(base["video_codec"], "libx265")
+
+
+class PlaylistModelTests(unittest.TestCase):
+    def test_add_skips_duplicates_and_blanks(self):
+        model = PlaylistModel()
+        self.assertEqual(model.add(["a.mp4", "b.mp4", "a.mp4", ""]), 2)
+        self.assertEqual(model.items, ["a.mp4", "b.mp4"])
+
+    def test_remove_clear_and_move(self):
+        model = PlaylistModel()
+        model.add(["a", "b", "c"])
+        model.move(0, 2)
+        self.assertEqual(model.items, ["b", "c", "a"])
+        model.remove(1)
+        self.assertEqual(model.items, ["b", "a"])
+        model.remove(99)
+        self.assertEqual(model.items, ["b", "a"])
+        model.clear()
+        self.assertEqual(model.items, [])
+
+    def test_next_and_previous_wrap(self):
+        model = PlaylistModel()
+        self.assertIsNone(model.next_index(0))
+        self.assertIsNone(model.previous_index(0))
+        model.add(["a", "b", "c"])
+        self.assertEqual(model.next_index(0), 1)
+        self.assertEqual(model.next_index(2), 0)
+        self.assertEqual(model.previous_index(0), 2)
+        self.assertEqual(model.previous_index(-1), 0)
+        self.assertEqual(model.index_of("c"), 2)
+        self.assertEqual(model.index_of("zzz"), -1)
+
+    def test_collect_video_files_filters_and_sorts(self):
+        tree = [
+            ("root", ["sub"], ["B.MP4", "notes.txt", "a.mkv"]),
+            ("root\\sub", [], ["c.webm", "image.png"]),
+        ]
+        files = collect_video_files("root", walker=lambda folder: iter(tree))
+        self.assertEqual(files, ["root\\B.MP4", "root\\a.mkv", "root\\sub\\c.webm"])
