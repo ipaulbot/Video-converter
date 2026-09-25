@@ -7,7 +7,7 @@ import unittest
 from PyQt5.QtCore import QEvent, QPointF, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWidgets import QApplication, QToolButton
+from PyQt5.QtWidgets import QApplication, QSizePolicy, QToolButton
 
 from ui import theme
 from ui.media_player_widget import (
@@ -342,6 +342,17 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertIs(widget.stage.parentWidget(), stage_parent)
         self.assertIsNone(widget._fullscreen_host)
         self.assertTrue(widget.transport_widget.isVisibleTo(widget))
+
+    def test_video_surface_native_size_never_drives_the_layout(self):
+        # QVideoWidget.sizeHint() is the clip's resolution; after a fullscreen
+        # round trip the layout re-reads hints and a 1080p clip used to grow the
+        # panel to 1000+ px, scrolling the whole tab.
+        widget = self._widget()
+        panel = widget.panels[0]
+        video = panel._ensure_video_widget()
+        self.assertEqual(video.sizePolicy().verticalPolicy(), QSizePolicy.Ignored)
+        self.assertEqual(video.sizePolicy().horizontalPolicy(), QSizePolicy.Ignored)
+        self.assertEqual(panel.video_container.layout().sizeHint().height(), 0)
 
     def test_fullscreen_bar_hides_after_timeout_and_returns_on_mouse(self):
         widget = self._widget()

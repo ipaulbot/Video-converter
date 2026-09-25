@@ -1074,7 +1074,8 @@ class MultiSourceRecorderWidget(QWidget):
             enabled.toggled.connect(lambda _checked: self.layout_preview_changed.emit())
             label = QLineEdit(f"Video {index + 1}")
             label.setMinimumWidth(60)
-            label.setMaximumWidth(82)
+            label.setMaximumWidth(220)
+            label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             label.setToolTip(_tr("Double-click to open video settings"))
             label.mouseDoubleClickEvent = lambda event, row=index: self.open_video_settings(row)
             source_type = QComboBox()
@@ -1092,7 +1093,8 @@ class MultiSourceRecorderWidget(QWidget):
             )
             audio_name = QLineEdit(f"Audio {index + 1}")
             audio_name.setMinimumWidth(60)
-            audio_name.setMaximumWidth(82)
+            audio_name.setMaximumWidth(220)
+            audio_name.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             mute = QCheckBox()
             volume = QComboBox()
             volume.addItems(["100", "75", "50", "25", "0"])
@@ -1116,8 +1118,10 @@ class MultiSourceRecorderWidget(QWidget):
             ))
             self.video_name_edits.append(label)
         self.update_preview_panel_visibility()
-        # Every control column is capped in width, so give the spare room to an
-        # empty trailing column instead of letting Qt pad the Nr/Use columns.
+        # Spare width goes to the name columns first (up to their caps) and
+        # then to an empty trailing column, so Qt never pads Nr/Use/Mute.
+        source_grid.setColumnStretch(2, 3)
+        source_grid.setColumnStretch(3, 3)
         source_grid.setColumnStretch(6, 1)
         source_group_layout = QVBoxLayout()
         source_group_layout.setContentsMargins(6, 6, 6, 6)
@@ -1146,14 +1150,16 @@ class MultiSourceRecorderWidget(QWidget):
         self.source_grid = source_grid
 
         output_group = QGroupBox(_tr("Output settings"))
-        output_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        output_group.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         output_form = QFormLayout()
         output_form.setContentsMargins(6, 6, 6, 6)
         output_form.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
         output_form.setFormAlignment(Qt.AlignTop)
         output_form.setVerticalSpacing(3)
         self.output_folder_edit = QLineEdit(os.path.join(os.path.expanduser("~"), "Videos"))
-        self.output_folder_edit.setMinimumWidth(120)
+        # Wide enough to read a path tail, never spanning the whole window.
+        self.output_folder_edit.setMinimumWidth(200)
+        self.output_folder_edit.setMaximumWidth(320)
         self.output_folder_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         # Keep the folder *name* (the tail) visible when the path is set
         # programmatically; leave the caret alone while the user is typing.
@@ -1278,15 +1284,17 @@ class MultiSourceRecorderWidget(QWidget):
             old.removeWidget(self.source_group)
             old.removeWidget(self.output_group)
             QWidget().setLayout(old)
+        # Output settings first (left / top); the properties table takes
+        # whatever width is left so the output form keeps its natural size.
         if metrics.recorder_stacked:
             new = QVBoxLayout(self.groups_host)
-            new.addWidget(self.source_group)
             new.addWidget(self.output_group)
+            new.addWidget(self.source_group)
         else:
             new = QHBoxLayout(self.groups_host)
             new.setAlignment(Qt.AlignTop)
-            new.addWidget(self.source_group, 2)
-            new.addWidget(self.output_group, 1)
+            new.addWidget(self.output_group, 0)
+            new.addWidget(self.source_group, 1)
         new.setContentsMargins(0, 0, 0, 0)
         new.setSpacing(metrics.spacing * 2)
         self.groups_layout = new

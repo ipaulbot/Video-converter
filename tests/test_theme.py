@@ -479,7 +479,8 @@ class LayoutMetricsTests(unittest.TestCase):
     def test_metrics_grow_in_full_mode(self):
         self.assertGreater(theme.FULL.margin, theme.COMPACT.margin)
         self.assertGreater(theme.FULL.recorder_tile_max_h, theme.COMPACT.recorder_tile_max_h)
-        self.assertTrue(theme.COMPACT.recorder_stacked)
+        # Output settings sit beside the properties table in both modes.
+        self.assertFalse(theme.COMPACT.recorder_stacked)
         self.assertFalse(theme.FULL.recorder_stacked)
 
 

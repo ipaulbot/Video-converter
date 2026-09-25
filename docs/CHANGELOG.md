@@ -193,10 +193,20 @@ Use this file to track user-visible fixes, improvements, and feature work.
   clipped buttons in narrow windows.
 - Lossless Editor: compact tool row, icon Add/Clear on the merge list header,
   end time placeholder "end of file".
-- Multi-Source Recorder: Recording properties and Output settings stack in
-  Compact and sit side by side in Full; the file location field shows the tail
-  of long paths with an icon Open button; a note explains that USB cameras are
-  always re-encoded when "copy" is selected.
+- Multi-Source Recorder: Output settings sit to the left of Recording
+  properties in both modes; the file location field is capped in width and
+  shows the tail of long paths with an icon Open button; the Video/Audio name
+  columns take the spare width and the preview tiles grow taller; a note
+  explains that USB cameras are always re-encoded when "copy" is selected.
+- The title bar offers Maximize/Restore again; using it switches between Full
+  window and Compact mode without forcing the window back to 1024x640, so a
+  Full window can be restored and dragged to any size.
+- Grey blocks behind tab headings, group boxes and labels (Media Player,
+  Multi-Source Recorder, Video Inspection Tool) are gone: only the window and
+  dialog surfaces are grey, everything on a leaf card is white.
+- More glyphs: PC Report's Open report / Open folder / Run as administrator
+  links carry report, folder and shield icons that follow the skin; the
+  Lossless Editor's Browse is a folder icon button.
 - Video Settings: Output quality now changes the recording (Default veryfast/18,
   High medium/16, Balanced veryfast/20, Compact faster/24) and is saved with
   presets; "Use maximum recording time" is bound to the tab's Timer; the unused
@@ -211,3 +221,6 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - PC report Noldus Summary reports wall-clock collection time separately from
   the time summed across parallel sections (previously "370 s" for a 91 s run).
 - Recorder test no longer depends on a webcam being attached.
+- Media Player: leaving fullscreen no longer leaves the tab sized to the clip's
+  native resolution (a 1080p clip grew the video area past the window).
+- The layout tests no longer write `window_mode` into the real config.json.

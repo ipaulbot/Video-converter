@@ -215,7 +215,11 @@ class PlayerPanel(QWidget):
         if self.video_widget is None:
             self.video_widget = QVideoWidget(self.video_container)
             self.video_widget.setStyleSheet(theme.video_surface_style())
-            self.video_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            # QVideoWidget.sizeHint() is the clip's native size (1920x1080 for HD).
+            # With any policy but Ignored that hint reaches the tab's scroll area
+            # the next time the layout is invalidated (e.g. after a fullscreen
+            # round trip) and the panel balloons to full video height.
+            self.video_widget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
             self._video_layout.addWidget(self.video_widget)
             self.placeholder.raise_()
         return self.video_widget

@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 
 from ui import theme
@@ -28,12 +29,19 @@ class TabCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
+        # changeEvent persists the mode whenever the window state flips, so a
+        # test that shows / maximizes the window would otherwise write "full"
+        # into the real config.json and leak into every later test that builds
+        # a main window.
+        cls._no_save = patch("ui.main_window.save_settings")
+        cls._no_save.start()
         cls.window = VideoConverterApp()
 
     @classmethod
     def tearDownClass(cls):
         cls.window.shutdown()
         cls.window.deleteLater()
+        cls._no_save.stop()
 
     def test_every_tool_tab_sits_in_a_leaf_card(self):
         keys = {
@@ -102,6 +110,31 @@ class TabCardTests(unittest.TestCase):
             self.window.set_window_mode("compact", persist=False)
         self.assertFalse(self.window.isMaximized())
         self.assertEqual(self.window.size().width(), theme.COMPACT.window_size[0])
+
+    def test_title_bar_offers_maximize(self):
+        self.assertTrue(self.window.windowFlags() & Qt.WindowMaximizeButtonHint)
+
+    def test_title_bar_restore_switches_mode_without_resizing(self):
+        window = self.window
+        window.show()
+        try:
+            window.set_window_mode("full", persist=False)
+            self.app.processEvents()
+            with patch("ui.main_window.save_settings"):
+                # What the title-bar restore button does: state changes first,
+                # then changeEvent brings the mode along, leaving geometry alone.
+                window.showNormal()
+                window.resize(1300, 800)
+                self.app.processEvents()
+                self.assertEqual(theme.metrics().name, "compact")
+                self.assertEqual(window.width(), 1300)
+                window.showMaximized()
+                self.app.processEvents()
+                self.assertEqual(theme.metrics().name, "full")
+                self.assertTrue(window.window_mode_actions["full"].isChecked())
+        finally:
+            window.hide()
+            window.set_window_mode("compact", persist=False)
 
     def test_reskin_reaches_opted_out_tiers(self):
         window = self.window
