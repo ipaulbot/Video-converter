@@ -234,6 +234,20 @@ def mask_string(value, keep: int = 4):
     return s[:2] + "*" * max(1, len(s) - keep - 2) + s[-keep:]
 
 
+def _mask_embedded_mac_tokens(value: str) -> str:
+    """Mask MAC-shaped runs inside a device ID, leaving whole GUIDs for the GUID rule."""
+    return _BTH_MAC_OR_GUID.sub(
+        lambda match: (
+            match.group(0)
+            if match.group(0).startswith("{")
+            else mask_mac(match.group(0))
+            if ":" in match.group(0) or "-" in match.group(0)
+            else f"{match.group(0)[:6]}******"
+        ),
+        value,
+    )
+
+
 def redact_instance_id(value):
     """Mask a portable device ID's trailing serial/instance segment."""
     if not isinstance(value, str):
@@ -241,16 +255,10 @@ def redact_instance_id(value):
     value = _MAC.sub(lambda match: mask_mac(match.group(0)), value)
     upper = value.upper()
     if upper.startswith("BTH"):
-        return _BTH_MAC_OR_GUID.sub(
-            lambda match: (
-                match.group(0)
-                if match.group(0).startswith("{")
-                else mask_mac(match.group(0))
-                if ":" in match.group(0) or "-" in match.group(0)
-                else f"{match.group(0)[:6]}******"
-            ),
-            value,
-        )
+        return _mask_embedded_mac_tokens(value)
+    # Radios, modems and docks publish the adapter MAC inside IDs whose prefix says nothing
+    # about Bluetooth, e.g. SWD\RADIO\BLUETOOTH_<mac>, so the MAC rule cannot be prefix-gated.
+    value = _mask_embedded_mac_tokens(value)
     if value.startswith(("\\\\?\\", "\\\\.\\")):
         value = _DIRECTSHOW_INSTANCE.sub(
             lambda match: match.group(1) + mask_string(match.group(2)) + match.group(3), value

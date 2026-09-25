@@ -2253,7 +2253,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\RADIO\\BLUETOOTH_286B35099C4A"
+  "DeviceID": "SWD\\RADIO\\BLUETOOTH_286B35******"
  },
  {
   "DeviceName": "Generic software device",

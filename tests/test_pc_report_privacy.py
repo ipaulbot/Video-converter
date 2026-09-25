@@ -508,6 +508,22 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotIn("AA:BB:CC:DD:EE:FF", redacted["InstanceID"])
         self.assertNotIn("AA:BB:CC:DD:EE:FF", redacted["Device Instance"])
 
+    def test_compact_macs_in_non_bluetooth_prefixed_device_ids_are_masked(self):
+        # A live report put the radio's own adapter MAC here, under a prefix the Bluetooth
+        # rule never looked at.
+        payload = {
+            "DeviceID": r"SWD\RADIO\BLUETOOTH_AABBCCDDEEFF",
+            "Device Instance": r"SWD\RADIO\BLUETOOTH_AABBCCDDEEFF",
+            "InstanceId": r"SWD\MSNVR\AABBCCDDEEFF",
+        }
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        for key in payload:
+            self.assertNotIn("AABBCCDDEEFF", redacted[key], key)
+            self.assertIn("AABBCC", redacted[key], key)
+        self.assertEqual(redacted["DeviceID"], r"SWD\RADIO\BLUETOOTH_AABBCC******")
+
     def test_new_identifying_fields_are_masked_by_human_label(self):
         payload = {"summary": {"UUID": "4C4C4544-0000-1234-8000-ABCDEF123456", "Asset Tag": "A123456",
                                "IdentifyingNumber": "JJYKXL3",
