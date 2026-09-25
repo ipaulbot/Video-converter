@@ -1,7 +1,14 @@
 import os
 import threading
 
-from PyQt5.QtCore import QCoreApplication, Qt, QTimer, QUrl, pyqtSignal
+from PyQt5.QtCore import (
+    QCoreApplication,
+    Qt,
+    QThreadPool,
+    QTimer,
+    QUrl,
+    pyqtSignal,
+)
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -21,14 +28,16 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from conversion.worker import ConversionWorker, WorkerSignals
 from ui import theme
-from ui.media_player_parts import FullscreenHost, PlaylistDock
+from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
     PlaylistModel,
     collect_video_files,
     format_readout,
     frame_step_ms,
+    player_convert_settings,
     probe_media_info,
 )
 from utils.config import normalize_media_player_settings
@@ -111,6 +120,7 @@ class PlayerPanel(QWidget):
         self.on_player_created = None
         self.on_probe_finished = None
         self.on_selected = None
+        self.on_player_error = None
         self._build_ui()
 
     def _build_ui(self):
@@ -133,6 +143,7 @@ class PlayerPanel(QWidget):
         self.placeholder.setAlignment(Qt.AlignCenter)
         self.placeholder.setStyleSheet(
             theme.video_label_style(size=11, muted=True) + " background:transparent;")
+        self.overlay = UnsupportedOverlay(self.video_container)
 
         controls = QHBoxLayout()
         controls.setSpacing(6)
@@ -181,6 +192,7 @@ class PlayerPanel(QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.placeholder.setGeometry(self.video_container.rect())
+        self.overlay.setGeometry(self.video_container.rect())
 
     def _ensure_video_widget(self):
         if self.video_widget is None:
@@ -208,7 +220,24 @@ class PlayerPanel(QWidget):
             self.player.mediaStatusChanged.connect(
                 lambda status, panel=self: self.on_media_status_changed(status, panel)
             )
+        error_signal = self.player.error
+        try:
+            error_signal[QMediaPlayer.Error].connect(self._on_player_error_code)
+        except (TypeError, KeyError):
+            error_signal.connect(self._on_player_error_code)
+        self.player.mediaStatusChanged.connect(self._on_status_for_errors)
         return self.player
+
+    def _on_player_error_code(self, code):
+        if callable(self.on_player_error):
+            self.on_player_error(self, code)
+
+    def _on_status_for_errors(self, status):
+        if (
+            status == QMediaPlayer.InvalidMedia
+            and callable(self.on_player_error)
+        ):
+            self.on_player_error(self, QMediaPlayer.FormatError)
 
     def set_selected(self, selected):
         self.selected = bool(selected)
@@ -265,6 +294,7 @@ class PlayerPanel(QWidget):
     def load_media(self, path):
         if not path or not os.path.exists(path):
             return False
+        self.hide_unsupported()
         self._ensure_player().setMedia(QMediaContent(QUrl.fromLocalFile(path)))
         self._media_path = path
         self.name_label.setText(
@@ -278,6 +308,7 @@ class PlayerPanel(QWidget):
         return True
 
     def clear_media(self):
+        self.hide_unsupported()
         if self.player is not None:
             self.player.stop()
             self.player.setMedia(QMediaContent())
@@ -287,6 +318,14 @@ class PlayerPanel(QWidget):
                                 % {"number": self.index + 1})
         self.name_label.setToolTip("")
         self.placeholder.show()
+
+    def show_unsupported(self, text):
+        self.overlay.show_message(text)
+        self.overlay.setGeometry(self.video_container.rect())
+
+    def hide_unsupported(self):
+        self.overlay.reset()
+        self.overlay.hide()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -312,6 +351,12 @@ class MediaPlayerWidget(QWidget):
     """Observer-style synchronized multi-panel player (up to four clips at once)."""
 
     probe_finished = pyqtSignal(int, dict)
+    probe_finished_for_error = pyqtSignal(int, dict)
+    UNSUPPORTED_ERRORS = (
+        QMediaPlayer.FormatError,
+        QMediaPlayer.ResourceError,
+        QMediaPlayer.AccessDeniedError,
+    )
 
     def __init__(self, parent=None, button_style=None, settings=None, save_settings=None, threadpool=None):
         super().__init__(parent)
@@ -328,6 +373,9 @@ class MediaPlayerWidget(QWidget):
         self._restoring = False
         self.probe_runner = probe_media_info
         self.probe_finished.connect(self._on_probe_finished)
+        self.probe_finished_for_error.connect(
+            self._on_probe_finished_for_error
+        )
         self._build_ui()
 
         self.sync_timer = QTimer(self)
@@ -375,6 +423,11 @@ class MediaPlayerWidget(QWidget):
             panel.on_media_status_changed = self._on_media_status_changed
             panel.on_player_created = self._on_player_created
             panel.on_selected = self._on_panel_selected
+            panel.on_player_error = self._on_player_error
+            panel.overlay.convert_requested.connect(
+                lambda checked=False, p=panel: self.convert_and_play(p)
+            )
+            panel.overlay.dismissed.connect(panel.hide_unsupported)
             self.panels.append(panel)
         # 2x2 grid layout positions.
         positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
@@ -772,14 +825,19 @@ class MediaPlayerWidget(QWidget):
         return max(panel.duration_ms() for panel in panels)
 
     # --- probing -----------------------------------------------------------
-    def start_probe(self, panel):
+    def start_probe(self, panel, for_error=False):
         path = panel._media_path
         index = panel.index
 
         def run():
             info = self.probe_runner(path)
             try:
-                self.probe_finished.emit(index, info)
+                signal = (
+                    self.probe_finished_for_error
+                    if for_error
+                    else self.probe_finished
+                )
+                signal.emit(index, info)
             except RuntimeError:
                 logger.debug("Media player closed before probe finished", exc_info=True)
 
@@ -793,6 +851,76 @@ class MediaPlayerWidget(QWidget):
             return
         panel.set_probe_info(info)
         self._update_time_label(self.position_slider.value())
+
+    def _on_player_error(self, panel, code):
+        if code not in self.UNSUPPORTED_ERRORS or not panel.has_media():
+            return
+        if self._is_playing:
+            self.pause_all()
+        self.start_probe(panel, for_error=True)
+
+    def _unsupported_text(self, info):
+        if not info or not info.get("ok"):
+            return _tr("Windows cannot play this file.")
+        vcodec = info.get("vcodec") or _tr("unknown")
+        container = info.get("container") or _tr("unknown")
+        acodec = info.get("acodec") or ""
+        codecs = f"{vcodec}/{acodec}" if acodec else vcodec
+        return _tr(
+            "Windows cannot play %(codecs)s in %(container)s."
+        ) % {"codecs": codecs, "container": container}
+
+    def _on_probe_finished_for_error(self, index, info):
+        if not (0 <= index < len(self.panels)):
+            return
+        panel = self.panels[index]
+        if not panel.has_media():
+            return
+        panel.set_probe_info(info)
+        panel.show_unsupported(self._unsupported_text(info))
+
+    def convert_and_play(self, panel):
+        path = panel._media_path
+        if not path:
+            return
+        settings = player_convert_settings(self.settings)
+        signals = WorkerSignals()
+        signals.progress_update.connect(
+            lambda _path, percent, p=panel: p.overlay.show_progress(percent)
+        )
+        signals.conversion_complete.connect(
+            lambda name, success, info, p=panel: self._on_convert_finished(
+                p, name, success, info
+            )
+        )
+        panel.overlay.show_progress(0)
+        panel._conversion_signals = signals
+        self._start_conversion_worker(path, settings, signals)
+
+    def _start_conversion_worker(self, path, settings, signals):
+        worker = ConversionWorker(path, settings, signals)
+        pool = self.threadpool or QThreadPool.globalInstance()
+        pool.start(worker)
+
+    def _on_convert_finished(
+        self,
+        panel,
+        _file_name,
+        success,
+        deletion_info,
+    ):
+        output = (deletion_info or {}).get("output_file", "")
+        if success and output:
+            panel.hide_unsupported()
+            if panel.load_media(output):
+                self.play_all()
+            return
+        panel.overlay.show_error(
+            _tr(
+                "the converter could not produce an MP4; "
+                "see the Conversion Log"
+            )
+        )
 
     # --- transport --------------------------------------------------------
     def toggle_play_all(self):

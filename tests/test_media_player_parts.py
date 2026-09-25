@@ -4,7 +4,7 @@ from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QApplication, QLabel
 
-from ui.media_player_parts import FullscreenHost, PlaylistDock
+from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import PlaylistModel
 
 
@@ -79,3 +79,34 @@ class PlaylistDockTests(unittest.TestCase):
         dock.add_paths(["a", "b", "c"])
         dock._on_rows_moved(None, 0, 0, None, 3)
         self.assertEqual(model.items, ["b", "c", "a"])
+
+
+class UnsupportedOverlayTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_show_message_progress_and_error(self):
+        overlay = UnsupportedOverlay()
+        self.addCleanup(overlay.close)
+        overlay.show_message("Windows cannot play x in y.")
+        self.assertEqual(
+            overlay.message_label.text(), "Windows cannot play x in y."
+        )
+        self.assertTrue(overlay.convert_btn.isEnabled())
+        overlay.show_progress(42)
+        self.assertIn("42", overlay.progress_label.text())
+        self.assertFalse(overlay.convert_btn.isEnabled())
+        overlay.show_error("boom")
+        self.assertIn("boom", overlay.progress_label.text())
+        self.assertTrue(overlay.convert_btn.isEnabled())
+
+    def test_buttons_emit_signals(self):
+        overlay = UnsupportedOverlay()
+        self.addCleanup(overlay.close)
+        events = []
+        overlay.convert_requested.connect(lambda: events.append("convert"))
+        overlay.dismissed.connect(lambda: events.append("dismiss"))
+        overlay.convert_btn.click()
+        overlay.dismiss_btn.click()
+        self.assertEqual(events, ["convert", "dismiss"])

@@ -186,3 +186,76 @@ class PlaylistDock(QWidget):
             event.acceptProposedAction()
         else:
             super().dropEvent(event)
+
+
+class UnsupportedOverlay(QWidget):
+    """Inline message shown when the Windows backend cannot decode a file."""
+
+    convert_requested = pyqtSignal()
+    dismissed = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setStyleSheet(
+            theme.qss(
+                "background: rgba(0, 0, 0, 180); color: white; "
+                "border-radius: 6px;"
+            )
+        )
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(8)
+        layout.addStretch(1)
+        self.message_label = QLabel("")
+        self.message_label.setWordWrap(True)
+        self.message_label.setAlignment(Qt.AlignCenter)
+        self.message_label.setStyleSheet(
+            "color: white; font-size: 12px; background: transparent;"
+        )
+        layout.addWidget(self.message_label)
+        self.progress_label = QLabel("")
+        self.progress_label.setAlignment(Qt.AlignCenter)
+        self.progress_label.setStyleSheet(
+            "color: white; font-size: 11px; background: transparent;"
+        )
+        layout.addWidget(self.progress_label)
+        buttons = QHBoxLayout()
+        buttons.addStretch(1)
+        self.convert_btn = QPushButton(
+            _tr("Convert to MP4 (H.264) and play")
+        )
+        self.convert_btn.setStyleSheet(theme.accent_button_style())
+        self.convert_btn.setCursor(Qt.PointingHandCursor)
+        self.convert_btn.clicked.connect(self.convert_requested.emit)
+        self.dismiss_btn = QPushButton(_tr("Dismiss"))
+        self.dismiss_btn.setStyleSheet(theme.secondary_button_style())
+        self.dismiss_btn.setCursor(Qt.PointingHandCursor)
+        self.dismiss_btn.clicked.connect(self.dismissed.emit)
+        buttons.addWidget(self.convert_btn)
+        buttons.addWidget(self.dismiss_btn)
+        buttons.addStretch(1)
+        layout.addLayout(buttons)
+        layout.addStretch(1)
+        self.hide()
+
+    def reset(self):
+        self.progress_label.setText("")
+        self.convert_btn.setEnabled(True)
+
+    def show_message(self, text):
+        self.reset()
+        self.message_label.setText(text)
+        self.show()
+        self.raise_()
+
+    def show_progress(self, percent):
+        self.convert_btn.setEnabled(False)
+        self.progress_label.setText(
+            _tr("Converting... %(percent)s%%") % {"percent": int(percent)}
+        )
+
+    def show_error(self, text):
+        self.convert_btn.setEnabled(True)
+        self.progress_label.setText(
+            _tr("Conversion failed: %(error)s") % {"error": text}
+        )

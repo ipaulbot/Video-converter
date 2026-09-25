@@ -349,6 +349,96 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         widget._on_media_status_changed(QMediaPlayer.EndOfMedia, panel)
         self.assertEqual(loaded, ["b.mp4", "play"])
 
+    def test_format_error_probes_and_shows_tile_message(self):
+        widget = self._widget()
+        widget.probe_runner = lambda path: {
+            "ok": True,
+            "fps": 25.0,
+            "nb_frames": 0,
+            "duration_ms": 0,
+            "container": "matroska",
+            "vcodec": "hevc",
+            "acodec": "opus",
+        }
+        panel = widget.panels[0]
+        panel._media_path = "C:\\Videos\\clip.mkv"
+        widget._on_player_error(panel, QMediaPlayer.FormatError)
+        deadline = time.monotonic() + 5
+        while (
+            not panel.overlay.isVisibleTo(panel)
+            and time.monotonic() < deadline
+        ):
+            self.app.processEvents()
+            time.sleep(0.01)
+        self.assertEqual(
+            panel.overlay.message_label.text(),
+            "Windows cannot play hevc/opus in matroska.",
+        )
+
+    def test_failed_probe_still_offers_convert(self):
+        widget = self._widget()
+        widget.probe_runner = lambda path: {"ok": False}
+        panel = widget.panels[0]
+        panel._media_path = "C:\\Videos\\clip.bin"
+        widget._on_probe_finished_for_error(0, {"ok": False})
+        self.assertEqual(
+            panel.overlay.message_label.text(),
+            "Windows cannot play this file.",
+        )
+        self.assertTrue(panel.overlay.convert_btn.isEnabled())
+
+    def test_convert_enqueues_one_job_with_fixed_preset_and_plays_result(self):
+        settings = {
+            "destination_folder": "C:\\Videos\\Out",
+            "video_codec": "libx265",
+            "use_gpu": True,
+        }
+        widget = self._widget(settings=settings)
+        panel = widget.panels[0]
+        panel._media_path = "C:\\Videos\\clip.mkv"
+        jobs = []
+        widget._start_conversion_worker = (
+            lambda path, job_settings, signals: jobs.append(
+                (path, job_settings, signals)
+            )
+        )
+        widget.convert_and_play(panel)
+        self.assertEqual(len(jobs), 1)
+        path, job_settings, signals = jobs[0]
+        self.assertEqual(path, "C:\\Videos\\clip.mkv")
+        self.assertEqual(job_settings["video_codec"], "libx264")
+        self.assertEqual(
+            job_settings["destination_folder"], "C:\\Videos\\Out"
+        )
+        self.assertIn("-crf 20", job_settings["custom_console_command"])
+        signals.progress_update.emit(path, 30)
+        self.assertIn("30", panel.overlay.progress_label.text())
+        loaded = []
+        panel.load_media = lambda new_path: loaded.append(new_path) or True
+        widget.play_all = lambda: loaded.append("play")
+        signals.conversion_complete.emit(
+            "clip.mkv",
+            True,
+            {"output_file": "C:\\Videos\\Out\\clip.mp4"},
+        )
+        self.assertEqual(loaded, ["C:\\Videos\\Out\\clip.mp4", "play"])
+        self.assertFalse(panel.overlay.isVisibleTo(panel))
+
+    def test_convert_failure_shows_error_in_tile(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        panel._media_path = "C:\\Videos\\clip.mkv"
+        widget._start_conversion_worker = lambda *args: None
+        widget.convert_and_play(panel)
+        widget._on_convert_finished(
+            panel,
+            "clip.mkv",
+            False,
+            {"source_file": "C:\\Videos\\clip.mkv"},
+        )
+        self.assertIn("failed", panel.overlay.progress_label.text().lower())
+        self.assertTrue(panel.overlay.convert_btn.isEnabled())
+
 
 if __name__ == "__main__":
     unittest.main()
