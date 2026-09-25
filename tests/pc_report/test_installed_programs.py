@@ -55,6 +55,14 @@ class BuildTests(unittest.TestCase):
         qt = next(r for r in data["rows"] if r["Name"] == "QuickTime")
         self.assertEqual(qt["Install Date"], "2025-01-07")
 
+    def test_rows_are_capped_with_shown_and_total(self):
+        rows = [{"Name": f"Program {index:04d}"} for index in range(mod.ROW_CAP + 1)]
+        data = mod.build(rows, [], [])
+        summary = data["groups"][0]["rows"]
+        self.assertEqual(len(data["rows"]), mod.ROW_CAP)
+        self.assertEqual(summary["Shown"], mod.ROW_CAP)
+        self.assertEqual(summary["Total"], mod.ROW_CAP + 1)
+
 
 class PrivacyTests(unittest.TestCase):
     def test_uninstall_strings_lose_credential_options(self):

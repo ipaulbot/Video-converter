@@ -15,6 +15,7 @@ PNP_COLUMNS = [("Device", "Device"), ("Version", "Version"), ("Date", "Date"), (
                ("Device ID", "Device ID")]
 SYS_COLUMNS = [("Display Name", "Display Name"), ("Name", "Name"), ("State", "State"), ("Start Mode", "Start Mode"),
                ("Started", "Started"), ("Type", "Type"), ("Path", "Path")]
+ROW_CAP = 1500
 
 
 def _class_title(name) -> str:
@@ -26,7 +27,7 @@ def _class_title(name) -> str:
 
 
 def build(signed, system) -> dict:
-    by_class: dict[str, list] = {}
+    pnp_rows = []
     unsigned = 0
     for d in rows_of(signed):
         row = {"Device": d.get("DeviceName", ""), "Class": _class_title(d.get("DeviceClass")),
@@ -36,19 +37,32 @@ def build(signed, system) -> dict:
                "Device ID": d.get("DeviceID", "")}
         if row["Signed"] == "No":
             unsigned += 1
-        by_class.setdefault(row["Class"], []).append(row)
-    by_class = dict(sorted(by_class.items()))
+        pnp_rows.append(row)
+    pnp_rows.sort(key=lambda row: (str(row["Class"]).casefold(), str(row["Device"]).casefold(),
+                                   str(row["Device ID"]).casefold()))
     system_rows = [{"Display Name": s.get("DisplayName", ""), "Name": s.get("Name", ""), "State": s.get("State", ""),
                     "Start Mode": s.get("StartMode", ""), "Started": yes_no(s.get("Started")),
                     "Type": s.get("ServiceType", ""), "Path": s.get("PathName", "")} for s in rows_of(system)]
-    summary = {"PnP Drivers": sum(len(v) for v in by_class.values()), "Device Classes": len(by_class),
+    system_rows.sort(key=lambda row: (str(row["Display Name"]).casefold(), str(row["Name"]).casefold()))
+    total = len(pnp_rows) + len(system_rows)
+    shown_pnp = pnp_rows[:ROW_CAP]
+    shown_system = system_rows[:max(0, ROW_CAP - len(shown_pnp))]
+    by_class: dict[str, list] = {}
+    for row in shown_pnp:
+        by_class.setdefault(row["Class"], []).append(row)
+    summary = {"PnP Drivers": len(pnp_rows), "Device Classes": len({row["Class"] for row in pnp_rows}),
                "Unsigned Drivers": unsigned, "System Drivers": len(system_rows),
-               "System Drivers Running": sum(1 for r in system_rows if r["State"] == "Running")}
-    return {"groups": [{"title": "Summary", "rows": summary}], "by_class": by_class, "system": system_rows}
+               "System Drivers Running": sum(1 for r in system_rows if r["State"] == "Running"),
+               "Shown": len(shown_pnp) + len(shown_system), "Total": total}
+    return {"groups": [{"title": "Summary", "rows": summary}], "by_class": by_class, "system": shown_system}
 
 
 def collect(ctx):
-    return build(ctx.query("signed_drivers", SIGNED_SCRIPT, timeout=90), ctx.query("system_drivers", SYSTEM_SCRIPT))
+    data = build(ctx.query("signed_drivers", SIGNED_SCRIPT, timeout=90), ctx.query("system_drivers", SYSTEM_SCRIPT))
+    summary = data["groups"][0]["rows"]
+    if summary["Shown"] < summary["Total"]:
+        ctx.note(f"drivers: showing {summary['Shown']} of {summary['Total']} rows")
+    return data
 
 
 def render(data, ctx):

@@ -79,6 +79,15 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(categories["Video for Windows (VCM)"][0]["Name"], "vidc.XVID")
         self.assertEqual(categories["Audio Compression Manager (ACM)"][0]["Name"], "msacm.l3acm")
 
+    def test_each_table_is_capped_with_shown_and_total(self):
+        rows = [{"Category": "DirectShow Filters", "Name": f"Filter {index:04d}"}
+                for index in range(mod.ROW_CAP + 1)]
+        data = mod.build(rows, [], [])
+        summary = data["groups"][0]["rows"]
+        self.assertEqual(len(data["categories"]["DirectShow Filters"]), mod.ROW_CAP)
+        self.assertEqual(summary["Shown"], mod.ROW_CAP)
+        self.assertEqual(summary["Total"], mod.ROW_CAP + 1)
+
 
 class ScriptTests(unittest.TestCase):
     def test_media_foundation_accepts_bare_and_braced_guids(self):

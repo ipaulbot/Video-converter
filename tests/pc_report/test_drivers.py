@@ -26,6 +26,15 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["System Drivers"], 1)
         self.assertEqual(data["system"][0]["Started"], "Yes")
 
+    def test_rows_are_capped_with_shown_and_total(self):
+        signed = [{"DeviceName": f"Device {index:04d}", "DeviceClass": "TEST"}
+                  for index in range(mod.ROW_CAP + 1)]
+        data = mod.build(signed, [])
+        summary = data["groups"][0]["rows"]
+        self.assertEqual(sum(len(rows) for rows in data["by_class"].values()), mod.ROW_CAP)
+        self.assertEqual(summary["Shown"], mod.ROW_CAP)
+        self.assertEqual(summary["Total"], mod.ROW_CAP + 1)
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):

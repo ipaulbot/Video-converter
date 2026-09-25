@@ -26,6 +26,7 @@ COLUMNS = [("PID", "PID"), ("Name", "Name"), ("Description", "Description"), ("C
            ("Threads", "Threads"), ("Handles", "Handles"), ("Priority", "Priority"), ("Responding", "Responding"),
            ("Path", "Path"), ("Command Line", "Command Line")]
 TOP_COLUMNS = [("PID", "PID"), ("Name", "Name"), ("CPU Time", "CPU Time"), ("Working Set", "Working Set"), ("Owner", "Owner")]
+ROW_CAP = 1000
 
 
 def _num(value, default=0):
@@ -52,8 +53,12 @@ def build(raw) -> dict:
     rows.sort(key=lambda r: str(r["Name"]).lower())
     top_cpu = sorted(rows, key=lambda r: r["_cpu"], reverse=True)[:10]
     top_mem = sorted(rows, key=lambda r: r["_ws"], reverse=True)[:10]
+    total = len(rows)
+    shown = rows[:ROW_CAP]
     summary = {
-        "Processes": len(rows),
+        "Processes": total,
+        "Shown": len(shown),
+        "Total": total,
         "Threads": sum(int(_num(r["Threads"])) for r in rows),
         "Handles": sum(int(_num(r["Handles"])) for r in rows),
         "Working Set (total)": bytes_human(int(sum(r["_ws"] for r in rows))),
@@ -65,11 +70,15 @@ def build(raw) -> dict:
 
     return {"groups": [{"title": "Summary", "rows": summary}],
             "top_cpu": [clean(r) for r in top_cpu], "top_memory": [clean(r) for r in top_mem],
-            "rows": [clean(r) for r in rows]}
+            "rows": [clean(r) for r in shown]}
 
 
 def collect(ctx):
-    return build(ctx.query("processes", SCRIPT, timeout=90))
+    data = build(ctx.query("processes", SCRIPT, timeout=90))
+    summary = data["groups"][0]["rows"]
+    if summary["Shown"] < summary["Total"]:
+        ctx.note(f"processes: showing {summary['Shown']} of {summary['Total']} rows")
+    return data
 
 
 def render(data, ctx):

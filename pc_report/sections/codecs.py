@@ -140,6 +140,7 @@ _MERITS = {
 
 COLUMNS = [("Name", "Name"), ("Category", "Category"), ("File", "File"), ("Version", "Version"),
            ("Company", "Company"), ("CLSID", "CLSID"), ("Merit", "Merit"), ("Architecture", "Architecture")]
+ROW_CAP = 800
 
 
 def merit(value) -> str:
@@ -175,13 +176,22 @@ def build(directshow, drivers32, media_foundation) -> dict:
              "Version": m.get("Version", ""), "Company": m.get("Company", ""),
              "CLSID": m.get("CLSID", ""), "Merit": "", "Architecture": m.get("Architecture", ""), "Source": "Media Foundation"})
     order = list(DS_CATEGORIES.values()) + ["Video for Windows (VCM)", "Audio Compression Manager (ACM)", "Media Foundation Transforms"]
-    ordered = {c: sorted(categories[c], key=lambda r: str(r["Name"]).lower()) for c in order if c in categories}
-    for c in categories:
-        if c not in ordered:
-            ordered[c] = categories[c]
-    summary = {c: len(rows) for c, rows in ordered.items()}
-    summary["Total Entries"] = sum(summary.values())
-    return {"groups": [{"title": "Summary", "rows": summary}], "categories": ordered}
+    category_order = [c for c in order if c in categories] + sorted(c for c in categories if c not in order)
+    full = {
+        category: sorted(
+            categories[category],
+            key=lambda row: (str(row["Name"]).casefold(), str(row.get("Architecture", "")).casefold(),
+                             str(row.get("CLSID", "")).casefold()),
+        )
+        for category in category_order
+    }
+    ordered = {category: rows[:ROW_CAP] for category, rows in full.items()}
+    summary = {category: len(rows) for category, rows in full.items()}
+    summary["Shown"] = sum(len(rows) for rows in ordered.values())
+    summary["Total"] = sum(len(rows) for rows in full.values())
+    summary["Total Entries"] = summary["Total"]
+    return {"groups": [{"title": "Summary", "rows": summary}], "categories": ordered,
+            "totals": {category: len(rows) for category, rows in full.items()}}
 
 
 def collect(ctx):
@@ -190,7 +200,12 @@ def collect(ctx):
     media_foundation = ctx.query("media_foundation", MF_SCRIPT, timeout=60)
     if not rows_of(media_foundation):
         ctx.note("media foundation: no transforms enumerated")
-    return build(directshow, drivers32, media_foundation)
+    data = build(directshow, drivers32, media_foundation)
+    for category, total in data["totals"].items():
+        shown = len(data["categories"][category])
+        if shown < total:
+            ctx.note(f"{category}: showing {shown} of {total} rows")
+    return data
 
 
 def render(data, ctx):

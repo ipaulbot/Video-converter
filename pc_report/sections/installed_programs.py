@@ -45,6 +45,7 @@ COLUMNS = [("Name", "Name"), ("Version", "Version"), ("Publisher", "Publisher"),
            ("Size", "Size"), ("Architecture", "Architecture"), ("Scope", "Scope"), ("Hidden", "Hidden"),
            ("Install Location", "Install Location"), ("Install Source", "Install Source"), ("Source", "Source"),
            ("Uninstall", "Uninstall")]
+ROW_CAP = 2500
 
 
 def _row(name, version="", publisher="", install_date="", size="", arch="", scope="Machine", hidden=False,
@@ -91,20 +92,28 @@ def build(registry_rows, package_rows, appx_rows) -> dict:
         seen[key] = len(deduped)
         deduped.append(row)
     deduped.sort(key=lambda r: r["Name"].lower())
+    total = len(deduped)
+    shown = deduped[:ROW_CAP]
     summary = {
-        "Programs": len(deduped),
+        "Programs": total,
+        "Shown": len(shown),
+        "Total": total,
         "Hidden (system components)": sum(1 for r in deduped if r["Hidden"] == "Yes"),
         "Microsoft Store apps": sum(1 for r in deduped if r["Source"] == "Microsoft Store"),
         "User-scope installs": sum(1 for r in deduped if r["Scope"] == "User"),
     }
-    return {"groups": [{"title": "Summary", "rows": summary}], "rows": deduped}
+    return {"groups": [{"title": "Summary", "rows": summary}], "rows": shown}
 
 
 def collect(ctx):
     reg = ctx.query("registry", REGISTRY_SCRIPT, timeout=60)
     pkg = ctx.query("packages", PACKAGES_SCRIPT, timeout=90)
     appx = ctx.query("appx", APPX_SCRIPT, timeout=60)
-    return build(reg, pkg, appx)
+    data = build(reg, pkg, appx)
+    summary = data["groups"][0]["rows"]
+    if summary["Shown"] < summary["Total"]:
+        ctx.note(f"programs: showing {summary['Shown']} of {summary['Total']} rows")
+    return data
 
 
 def render(data, ctx):
