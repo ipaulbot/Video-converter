@@ -13,6 +13,7 @@ from utils.config import default_settings, coerce_retention_days
 from utils.logger import logger
 from utils.resources import resource_path
 from ui.dialogs import EasterEggDialog
+from ui.glyph_icons import set_link_glyph
 from utils.paths import get_data_dir
 from ui import theme
 
@@ -430,6 +431,16 @@ class SettingsDialog(QDialog):
         log_layout.addWidget(self.log_button)
 
         folders_layout.addLayout(log_layout)
+
+        # Four identical "Change" bubbles read better with a folder glyph; the
+        # text stays because the buttons sit in a form, not a toolbar.
+        self.folder_change_buttons = (
+            self.source_button, self.destination_button, self.backup_button, self.log_button,
+        )
+        for button in self.folder_change_buttons:
+            set_link_glyph(button, "folder_open", theme.skin().text_on_accent, size=14)
+            # The glyph needs room next to the label; keep the four buttons equal.
+            button.setFixedWidth(max(80, button.sizeHint().width() + 12))
 
         folders_group.setLayout(folders_layout)
         layout.addWidget(folders_group)

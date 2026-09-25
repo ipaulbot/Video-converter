@@ -489,7 +489,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertLessEqual(row_label.maximumWidth(), 82)
         self.assertLessEqual(row_audio_name.maximumWidth(), 82)
         self.assertIsInstance(dialog.camera_settings_buttons[0], QToolButton)
-        self.assertLessEqual(dialog.camera_settings_buttons[0].maximumWidth(), 16)
+        self.assertLessEqual(dialog.camera_settings_buttons[0].maximumWidth(), 20)
         self.assertLessEqual(dialog.camera_settings_buttons[0].sizePolicy().horizontalPolicy(), QSizePolicy.Fixed)
         self.assertLessEqual(dialog.preset_load_button.maximumWidth(), 48)
         self.assertLessEqual(dialog.preset_set_button.maximumWidth(), 38)
@@ -2329,6 +2329,21 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         dialog.refresh_devices_button.click()
 
         self.assertEqual(started, [False, True])
+
+    def test_recorder_links_and_camera_buttons_carry_glyphs_that_follow_the_skin(self):
+        widget = self._widget()
+        self.assertEqual(widget.video_settings_link.property("glyph"), "settings")
+        self.assertEqual(widget.recording_log_link.property("glyph"), "log")
+        self.assertFalse(widget.video_settings_link.icon().isNull())
+        before = widget.video_settings_link.icon().pixmap(16).toImage()
+        with patch.object(theme, "skin", return_value=theme.skin_for_state(locked=True)):
+            widget.reskin()
+        self.assertNotEqual(widget.video_settings_link.icon().pixmap(16).toImage(), before)
+
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        for button in dialog.camera_settings_buttons:
+            self.assertEqual(button.property("glyph"), "camera")
+            self.assertFalse(button.icon().isNull())
 
     def test_picking_refresh_in_a_row_combo_rescans_and_keeps_the_previous_choice(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)

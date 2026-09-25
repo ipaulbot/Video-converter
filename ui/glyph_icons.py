@@ -234,6 +234,14 @@ def make_icon_button(
     return button
 
 
+def set_link_glyph(button, name: str, color: str, size: int = 16) -> None:
+    """Put a small glyph in front of a text button or link (PC Report links,
+    the recorder's Video Settings / recording log links). Re-call on reskin."""
+    button.setProperty("glyph", name)
+    button.setIcon(glyph_icon(name, color, size))
+    button.setIconSize(QSize(size, size))
+
+
 def set_button_glyph(button: QToolButton, name: str, color: str) -> None:
     """Swap the glyph on a button made by `make_icon_button` (play/pause, mute)."""
     size = int(button.property("glyph_size") or 28)

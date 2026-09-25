@@ -148,6 +148,22 @@ class TabCardTests(unittest.TestCase):
         centre = image.pixelColor(90, 60)
         self.assertGreater(centre.lightness(), 200)                    # tile is white, not black
 
+    def test_settings_folder_change_buttons_carry_a_folder_glyph(self):
+        from ui.settings_dialog import SettingsDialog
+
+        dialog = SettingsDialog(dict(self.window.settings), self.window)
+        try:
+            self.assertEqual(len(dialog.folder_change_buttons), 4)
+            for button in dialog.folder_change_buttons:
+                self.assertEqual(button.property("glyph"), "folder_open")
+                self.assertFalse(button.icon().isNull())
+                self.assertEqual(button.text(), "Change")
+        finally:
+            # Delete now: a deferred delete of a child of the class-level window
+            # fires alongside the window's own and crashes a later test.
+            dialog.setParent(None)
+            del dialog
+
     def test_reskin_reaches_opted_out_tiers(self):
         window = self.window
         widgets = window.reskin_widgets()

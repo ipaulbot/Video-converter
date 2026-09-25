@@ -24,8 +24,6 @@ from PyQt5.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QSizePolicy,
-    QStyle,
-    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -68,7 +66,7 @@ from conversion.recording_sources import (
     terminate_device_probes,
 )
 from ui import theme
-from ui.glyph_icons import make_icon_button, reskin_icon_buttons
+from ui.glyph_icons import make_icon_button, reskin_icon_buttons, set_link_glyph
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -319,26 +317,13 @@ class VideoSettingsDialog(QDialog):
             grid.addWidget(row_enabled, index + 1, 1)
             grid.addWidget(row_label, index + 1, 2)
             grid.addWidget(row_device, index + 1, 3)
-            camera_button = QToolButton()
-            camera_button.setIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
-            camera_button.setIconSize(QSize(11, 11))
-            camera_button.setToolTip(_tr("Camera %(number)s settings")
-                                     % {"number": index + 1})
-            camera_button.setFixedSize(16, 16)
-            camera_button.setMaximumWidth(16)
+            camera_button = make_icon_button(
+                "camera",
+                _tr("Camera %(number)s settings") % {"number": index + 1},
+                theme.skin().accent,
+                size=20,
+            )
             camera_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            camera_button.setProperty("skipGlobalStyle", True)
-            camera_button.setStyleSheet(theme.qss("""
-                QToolButton {
-                    background: transparent;
-                    border: none;
-                    padding: 0px;
-                    margin: 0px;
-                    min-width: 16px;
-                    max-width: 16px;
-                }
-                QToolButton:hover { background: $accent_tint; }
-            """))
             camera_button.clicked.connect(
                 lambda _checked=False, row=index: self.open_camera_settings(row)
             )
@@ -358,7 +343,7 @@ class VideoSettingsDialog(QDialog):
                 row_resolution, row_audio_name, row_audio_device, row_offset
             ))
         grid.setColumnStretch(3, 1)
-        grid.setColumnMinimumWidth(4, 16)
+        grid.setColumnMinimumWidth(4, 20)
         grid.setColumnStretch(4, 0)
         layout.addLayout(grid)
         scan_row = QHBoxLayout()
@@ -1447,21 +1432,25 @@ class MultiSourceRecorderWidget(QWidget):
 
     def update_button_style(self, button_style):
         self.button_style = button_style
-        if not button_style:
-            return
-        for button in self.findChildren(QPushButton):
-            button.setCursor(Qt.PointingHandCursor)
-            if button.property("skipGlobalStyle"):
-                continue
-            button.setStyleSheet(button_style)
+        if button_style:
+            for button in self.findChildren(QPushButton):
+                button.setCursor(Qt.PointingHandCursor)
+                if button.property("skipGlobalStyle"):
+                    continue
+                button.setStyleSheet(button_style)
         self.reskin()
 
     def reskin(self):
         """Links and glyph buttons follow the lock / converting skin like the bubbles do."""
         link = theme.link_button_style()
-        for widget in (self.video_settings_link, self.recording_log_link):
+        accent = theme.skin().accent
+        for widget, glyph in (
+            (self.video_settings_link, "settings"),
+            (self.recording_log_link, "log"),
+        ):
             widget.setStyleSheet(link)
-        reskin_icon_buttons(self, theme.skin().accent)
+            set_link_glyph(widget, glyph, accent)
+        reskin_icon_buttons(self, accent)
 
     def _source_type_id(self, combo):
         return combo.currentData() or "stream_url"
