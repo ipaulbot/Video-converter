@@ -13,7 +13,9 @@ PRINTERS_SCRIPT = cim("Win32_Printer", ("Name", "DriverName", "PortName", "Defau
                                         "WorkOffline", "Comment", "PrintProcessor", "Priority"))
 SPOOLER_SCRIPT = cim("Win32_Service", ("State", "StartMode"), where="Name='Spooler'")
 
-COLUMNS = [("Name", "Name"), ("Driver", "Driver"), ("Port", "Port"), ("Port Type", "Port Type"), ("Status", "Status"),
+# A queue name and a port are both network locations, so both keep a key redaction recognises.
+COLUMNS = [("PrinterName", "Name"), ("Driver", "Driver"),
+           ("PortName", "Port"), ("Port Type", "Port Type"), ("Status", "Status"),
            ("Error State", "Error State"), ("Extended Status", "Extended Status"), ("Default", "Default"),
            ("Shared", "Shared"), ("Share Name", "Share Name"), ("Network", "Network"), ("Offline", "Offline"),
            ("Location", "Location"), ("Comment", "Comment"), ("Print Processor", "Print Processor"),
@@ -43,7 +45,7 @@ def port_kind(port_name) -> str:
 
 
 def build(printers, spooler) -> dict:
-    rows = [{"Name": p.get("Name", ""), "Driver": p.get("DriverName", ""), "Port": p.get("PortName", ""),
+    rows = [{"PrinterName": p.get("Name", ""), "Driver": p.get("DriverName", ""), "PortName": p.get("PortName", ""),
              "Port Type": port_kind(p.get("PortName")), "Status": decode.lookup(decode.PRINTER_STATUS, p.get("PrinterStatus")),
              "Error State": decode.lookup(decode.PRINTER_ERROR_STATE, p.get("DetectedErrorState")),
              "Extended Status": decode.lookup(decode.PRINTER_EXTENDED_STATUS, p.get("ExtendedPrinterStatus")),
@@ -51,11 +53,12 @@ def build(printers, spooler) -> dict:
              "Shared": yes_no(p.get("Shared")), "Share Name": p.get("ShareName") or "", "Network": yes_no(p.get("Network")),
              "Offline": yes_no(p.get("WorkOffline")), "Location": p.get("Location") or "", "Comment": p.get("Comment") or "",
              "Print Processor": p.get("PrintProcessor", ""), "Priority": p.get("Priority", "")} for p in rows_of(printers)]
-    rows.sort(key=lambda r: (r["Default"] != "Yes", str(r["Name"]).lower()))
+    rows.sort(key=lambda r: (r["Default"] != "Yes", str(r["PrinterName"]).lower()))
     spooler = first_dict(spooler)
-    summary = {"Printers": len(rows), "Default Printer": next((r["Name"] for r in rows if r["Default"] == "Yes"), "None"),
+    summary = {"Printers": len(rows),
+               "Default Printer": next((r["PrinterName"] for r in rows if r["Default"] == "Yes"), "None"),
                "Network Printers": sum(1 for r in rows if r["Network"] == "Yes"),
-               "Offline": ", ".join(r["Name"] for r in rows if r["Offline"] == "Yes") or "None",
+               "Offline": [r["PrinterName"] for r in rows if r["Offline"] == "Yes"] or "None",
                "Print Spooler": f"{spooler.get('State')} ({spooler.get('StartMode')})" if spooler.get("State") else "Not found"}
     return {"groups": [{"title": "Summary", "rows": summary}], "rows": rows}
 

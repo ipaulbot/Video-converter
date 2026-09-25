@@ -188,7 +188,8 @@ def build(results: dict, is_admin: bool, elapsed: dict) -> dict:
         "Memory": _first(summary_rows, "Installed Memory", "Memory") or _first(memory_rows, "Installed Memory"),
         "Video": _first(summary_rows, "Video Adapters", "Video", "GPU") or ", ".join(video_names),
         "System Drive Free": f"{system_free} ({system_pct})" if system_free and system_pct else system_free or system_pct,
-        "Cameras": ", ".join(camera_names) or "None detected",
+        # Kept as rows so redaction still sees one camera name per value; the renderer joins them.
+        "Cameras": camera_names or "None detected",
         "HASP / Sentinel Dongles": ", ".join(dongle_names) or "None detected",
         "GigE Adapters": ", ".join(str(row.get("Adapter") or "") for row in gige if row.get("Adapter")) or "None detected",
     }

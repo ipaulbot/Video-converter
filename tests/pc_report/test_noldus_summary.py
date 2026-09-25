@@ -94,7 +94,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Memory"], "32.0 GB")
         self.assertEqual(rows["Video"], "RTX 3060")
         self.assertEqual(rows["System Drive Free"], "8.0 GB (8.0 %)")
-        self.assertEqual(rows["Cameras"], "Basler ace acA1920")
+        self.assertEqual(rows["Cameras"], ["Basler ace acA1920"])
         self.assertEqual(rows["HASP / Sentinel Dongles"], "SafeNet Inc. Sentinel HASP Key")
         self.assertEqual(rows["GigE Adapters"], "Ethernet")
         self.assertEqual(rows["Elapsed Total"], "15.8 s")

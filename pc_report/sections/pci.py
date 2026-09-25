@@ -19,7 +19,9 @@ Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object { $_.InstanceId -like
 COLUMNS = [("Name", "Name"), ("Vendor", "Vendor"), ("Vendor ID", "Vendor ID"), ("Device ID", "Device ID"),
            ("Subsystem", "Subsystem"), ("Revision", "Revision"), ("Class", "Class"),
            ("Bus / Device / Function", "Bus / Device / Function"), ("Location", "Location"),
-           ("Driver Version", "Driver Version"), ("Driver Date", "Driver Date"), ("Status", "Status"), ("Instance", "Instance")]
+           ("Driver Version", "Driver Version"), ("Driver Date", "Driver Date"), ("Status", "Status"),
+           # The key must stay InstanceId so redaction recognises the PnP instance path.
+           ("InstanceId", "Instance")]
 _IDS = re.compile(r"VEN_([0-9A-Fa-f]{4})&DEV_([0-9A-Fa-f]{4})(?:&SUBSYS_([0-9A-Fa-f]{8}))?(?:&REV_([0-9A-Fa-f]{2}))?")
 
 
@@ -51,7 +53,7 @@ def build(pnp, props) -> dict:
                      "Subsystem": sub, "Revision": rev, "Class": d.get("PNPClass") or "", "Bus / Device / Function": _bdf(p),
                      "Location": p.get("Location", ""), "Driver Version": p.get("DriverVersion", ""),
                      "Driver Date": fmt_date(p.get("DriverDate")) if p.get("DriverDate") else "",
-                     "Status": d.get("Status") or "", "Instance": inst})
+                     "Status": d.get("Status") or "", "InstanceId": inst})
     rows.sort(key=lambda r: (r["Bus / Device / Function"] == "", r["Bus / Device / Function"], r["Name"].lower()))
     vendors: dict[str, int] = {}
     for r in rows:

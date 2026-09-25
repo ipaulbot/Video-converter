@@ -161,7 +161,7 @@ _DEVICE_ID_KEYS = frozenset({"instanceid", "parentinstanceid", "deviceid", "devi
                              "pnpdeviceid", "instancename", "devicepath", "symboliclink",
                              "containerid", "parent", "locationpaths"})
 _NETWORK_LOCATION_KEYS = frozenset({"portname", "sharename", "servername", "location",
-                                    "defaultprinter", "offline"})
+                                    "printername", "defaultprinter", "offline"})
 # Windows' "this device has no container" placeholder; it identifies nothing.
 _NULL_CONTAINER_GUID = "{00000000-0000-0000-ffff-ffffffffffff}"
 _EMAIL_ADDRESS = re.compile(r"(?<![\w.+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")

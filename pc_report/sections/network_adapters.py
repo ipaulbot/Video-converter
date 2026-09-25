@@ -1,7 +1,9 @@
 """Network Adapters: NDIS view, WMI view, IP interface settings and every advanced property per adapter."""
 from __future__ import annotations
 
-from .. import decode
+import re
+
+from .. import decode, privacy
 from ..format import bitrate_to_mbps, fmt_date, fmt_datetime, yes_no
 from ..ps import cim
 from ..section import Section, as_list, kv_groups, list_table, rows_of, sub_heading
@@ -32,6 +34,17 @@ HIDDEN_COLUMNS = [("Name", "Name"), ("Description", "Description"), ("Status", "
 DHCP = {0: "", 1: "Enabled", 2: "Disabled"}
 CONNECTION = {0: "", 1: "Connected", 2: "Disconnected"}
 _NON_PHYSICAL_NAMES = ("wan miniport", "bluetooth", "vethernet", "npcap")
+_MAC_PROPERTIES = ("networkaddress", "mac", "locallyadministeredaddress")
+_LOCATION_PROPERTIES = ("ip", "dns", "gateway", "server", "host")
+_MAC_LIKE = re.compile(
+    r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f])"
+    r"|(?<![0-9A-Za-z])[0-9A-Fa-f]{12}(?![0-9A-Za-z])"
+)
+
+
+def _mask_mac_like(value: str) -> str:
+    """Mask MAC-shaped tokens only, so placeholders such as ``--`` stay readable."""
+    return _MAC_LIKE.sub(lambda match: privacy.mask_mac(match.group(0)), str(value))
 
 
 def _link_speed(value) -> str:
@@ -55,6 +68,24 @@ def _is_physical(adapter: dict, wmi: dict) -> bool:
         not adapter.get("Virtual") and bool(adapter.get("ConnectorPresent"))
     )
     return detected and not excluded
+
+
+def _advanced_row(prop: dict) -> dict:
+    """One advanced-property row, sanitised by what its keyword says the value is.
+
+    Advanced properties flatten into generic ``Value``/``Raw`` cells, so the redactor has no key
+    to go on: an overridden ``NetworkAddress`` would otherwise render a complete MAC address.
+    """
+    name = prop.get("DisplayName", "")
+    keyword = prop.get("RegistryKeyword", "")
+    value = prop.get("DisplayValue", "")
+    raw = ", ".join(str(item) for item in as_list(prop.get("RegistryValue")))
+    subject = privacy.norm_key(f"{keyword} {name}")
+    if any(token in subject for token in _MAC_PROPERTIES):
+        value, raw = _mask_mac_like(value), _mask_mac_like(raw)
+    elif any(token in subject for token in _LOCATION_PROPERTIES):
+        value, raw = privacy.mask_value_locations(value), privacy.mask_value_locations(raw)
+    return {"Property": name, "Value": value, "Keyword": keyword, "Raw": raw}
 
 
 def build(adapters, advanced, ipif, wmi) -> dict:
@@ -135,15 +166,7 @@ def build(adapters, advanced, ipif, wmi) -> dict:
             "Driver Provider": adapter.get("DriverProvider", ""),
             "Driver File": adapter.get("DriverFileName", ""),
         }
-        advanced_rows = [
-            {
-                "Property": prop.get("DisplayName", ""),
-                "Value": prop.get("DisplayValue", ""),
-                "Keyword": prop.get("RegistryKeyword", ""),
-                "Raw": ", ".join(str(value) for value in as_list(prop.get("RegistryValue"))),
-            }
-            for prop in adv_by_name.get(name, [])
-        ]
+        advanced_rows = [_advanced_row(prop) for prop in adv_by_name.get(name, [])]
         advanced_rows.sort(key=lambda row: (
             str(row["Property"]).casefold(),
             str(row["Keyword"]).casefold(),
