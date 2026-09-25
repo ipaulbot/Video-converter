@@ -9,7 +9,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{74EC2172-0BAD-4D01-8F77-997B2BE0722A}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{74EC2172-0BAD-4D01-8F77-997B2BE0722A}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -21,7 +21,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{4EE0EF92-3456-3399-A645-B7B72B089877}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{4EE0EF92-3456-3399-A645-B7B72B089877}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -33,7 +33,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{00001801-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{00001801-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -45,7 +45,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{00001800-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{00001800-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -57,7 +57,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{0000E003-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD00C06D_C00000000"
+  "DeviceID": "BTHENUM\\{0000E003-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -69,7 +69,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{78DFA50A-FCA4-98B8-C24A-9D5E0B651547}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{78DFA50A-FCA4-98B8-C24A-9D5E0B651547}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Bluetooth Peripheral Device",
@@ -81,7 +81,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{671955C4-B6F6-ED9D-9F4E-C764D708D79B}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{671955C4-B6F6-ED9D-9F4E-C764D708D79B}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "BTFASTPAIR",
@@ -93,7 +93,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{DF21FE2C-2515-4FDB-8886-F12C4D67927C}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{DF21FE2C-2515-4FDB-8886-F12C4D67927C}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "BTNOTIFYR",
@@ -105,7 +105,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "BTHENUM\\{0000FF01-0000-1000-8000-00805F9B34FF}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{0000FF01-0000-1000-8000-00805F9B34FF}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Intel Tile Device",
@@ -117,7 +117,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "{2F2B7B01-597A-434C-8DD6-D27CD46EF73C}\\INTELTILEDEVICE\\6&88C6C02&0"
+  "DeviceID": "{2********************************73C}\\INTELTILEDEVICE\\6&88C6C02&0"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -129,7 +129,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{26939803-6E0A-4FD1-B3E1-2D934CFB8ECD}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{2********************************ECD}"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -141,7 +141,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{EF641A12-5DB2-40DD-92C4-809AE8E8DC2A}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{E********************************C2A}"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -153,7 +153,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{BCB1D8C9-90E3-4F3B-9C49-52A7DA47A8D5}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{B********************************8D5}"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -165,7 +165,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{9D60D884-392D-4EB7-AFE3-8A08512D86A8}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{9********************************6A8}"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -177,7 +177,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{50D77E4E-6162-4948-919C-E35A2843E76F}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{5********************************76F}"
  },
  {
   "DeviceName": "Audio Endpoint",
@@ -189,7 +189,7 @@
   "InfName": "audioendpoint.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{EEABAB49-23F7-4600-B2FE-682F8D64A725}"
+  "DeviceID": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{E********************************725}"
  },
  {
   "DeviceName": "Microsoft AC Adapter",
@@ -225,7 +225,7 @@
   "InfName": "bth.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\DEV_183F708F38FB\\7&22FD4E5&0&BLUETOOTHDEVICE_183F708F38FB"
+  "DeviceID": "BTHENUM\\DEV_183F70******\\7&22FD4E5&0&BLUETOOTHDEVICE_183F70******"
  },
  {
   "DeviceName": "Bluetooth Device",
@@ -237,7 +237,7 @@
   "InfName": "bth.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\DEV_F44EFD00C06D\\7&22FD4E5&0&BLUETOOTHDEVICE_F44EFD00C06D"
+  "DeviceID": "BTHENUM\\DEV_F44EFD******\\7&22FD4E5&0&BLUETOOTHDEVICE_F44EFD******"
  },
  {
   "DeviceName": "Bluetooth Device",
@@ -249,7 +249,7 @@
   "InfName": "bth.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\DEV_F873DFD1920E\\7&22FD4E5&0&BLUETOOTHDEVICE_F873DFD1920E"
+  "DeviceID": "BTHENUM\\DEV_F873DF******\\7&22FD4E5&0&BLUETOOTHDEVICE_F873DF******"
  },
  {
   "DeviceName": "Bluetooth Device (RFCOMM Protocol TDI)",
@@ -273,7 +273,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLE\\DEV_4A9EBDC39A33\\7&9377338&0&4A9EBDC39A33"
+  "DeviceID": "BTHLE\\DEV_4A9EBD******\\7&9377338&0&4A9EBD******"
  },
  {
   "DeviceName": "Bluetooth LE Device",
@@ -285,7 +285,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLE\\DEV_CC2D11CB424A\\7&9377338&0&CC2D11CB424A"
+  "DeviceID": "BTHLE\\DEV_CC2D11******\\7&9377338&0&CC2D11******"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -297,7 +297,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{7365A0AE-E596-129D-D84A-88DB1FFBCC04}_4A9EBDC39A33\\8&1DFE3610&0&000A"
+  "DeviceID": "BTHLEDEVICE\\{7365A0AE-E596-129D-D84A-88DB1FFBCC04}_4A9EBD******\\8&1DFE3610&0&000A"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -309,7 +309,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{7798082B-B7B7-45A6-9933-563492EFE04E}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0210"
+  "DeviceID": "BTHLEDEVICE\\{7798082B-B7B7-45A6-9933-563492EFE04E}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0210"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -321,7 +321,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{4715650B-5E9D-4AC2-B898-A4FC0AA5DF78}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0200"
+  "DeviceID": "BTHLEDEVICE\\{4715650B-5E9D-4AC2-B898-A4FC0AA5DF78}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0200"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -333,7 +333,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{0000FDB4-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\\8&1DFE3610&0&002C"
+  "DeviceID": "BTHLEDEVICE\\{0000FDB4-0000-1000-8000-00805F9B34FB}_4A9EBD******\\8&1DFE3610&0&002C"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -345,7 +345,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{0000FE78-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\\8&1DFE3610&0&0012"
+  "DeviceID": "BTHLEDEVICE\\{0000FE78-0000-1000-8000-00805F9B34FB}_4A9EBD******\\8&1DFE3610&0&0012"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -357,7 +357,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{5052494D-2DAB-0341-6972-6F6861424C45}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0051"
+  "DeviceID": "BTHLEDEVICE\\{5052494D-2DAB-0341-6972-6F6861424C45}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0051"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -369,7 +369,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{9BD708D7-64C7-4E9F-9DED-F6B6C4551967}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0140"
+  "DeviceID": "BTHLEDEVICE\\{9BD708D7-64C7-4E9F-9DED-F6B6C4551967}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0140"
  },
  {
   "DeviceName": "Bluetooth LE Generic Attribute Service",
@@ -381,7 +381,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{0000FE2C-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0100"
+  "DeviceID": "BTHLEDEVICE\\{0000FE2C-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0100"
  },
  {
   "DeviceName": "Device Information Service",
@@ -393,7 +393,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{0000180A-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0060"
+  "DeviceID": "BTHLEDEVICE\\{0000180A-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0060"
  },
  {
   "DeviceName": "Generic Access Profile",
@@ -405,7 +405,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{00001800-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0001"
+  "DeviceID": "BTHLEDEVICE\\{00001800-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0001"
  },
  {
   "DeviceName": "Generic Access Profile",
@@ -417,7 +417,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{00001800-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\\8&1DFE3610&0&0001"
+  "DeviceID": "BTHLEDEVICE\\{00001800-0000-1000-8000-00805F9B34FB}_4A9EBD******\\8&1DFE3610&0&0001"
  },
  {
   "DeviceName": "Generic Attribute Profile",
@@ -429,7 +429,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{00001801-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\\8&1DFE3610&0&0006"
+  "DeviceID": "BTHLEDEVICE\\{00001801-0000-1000-8000-00805F9B34FB}_4A9EBD******\\8&1DFE3610&0&0006"
  },
  {
   "DeviceName": "Generic Attribute Profile",
@@ -441,7 +441,7 @@
   "InfName": "bthleenum.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHLEDEVICE\\{00001801-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11CB424A\\8&2AEAAF63&1&0011"
+  "DeviceID": "BTHLEDEVICE\\{00001801-0000-1000-8000-00805F9B34FB}_DEV_VID&01004C_PID&2017_REV&0001_CC2D11******\\8&2AEAAF63&1&0011"
  },
  {
   "DeviceName": "Intel(R) Wireless Bluetooth(R)",
@@ -465,7 +465,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD00C06D_C00000000"
+  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Avrcp Transport Driver",
@@ -477,7 +477,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Avrcp Transport Driver",
@@ -489,7 +489,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Avrcp Transport Driver",
@@ -501,7 +501,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD00C06D_C00000000"
+  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Avrcp Transport Driver",
@@ -513,7 +513,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{0000110C-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Avrcp Transport Driver",
@@ -525,7 +525,7 @@
   "InfName": "microsoft_bluetooth_avrcptransport.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{0000110E-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Enumerator",
@@ -561,7 +561,7 @@
   "InfName": "bth.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{00001000-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{00001000-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "USB Video Device",
@@ -585,7 +585,7 @@
   "InfName": "usbvideo.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_046D&PID_08E5&MI_00\\8&1AE969C&1&0000"
+  "DeviceID": "USB\\VID_046D&PID_08E5&MI_00\\8&**********0000"
  },
  {
   "DeviceName": "ACPI x64-based PC",
@@ -669,7 +669,7 @@
   "InfName": "oem60.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_46A6&SUBSYS_0B101028&REV_0C\\3&11583659&3&10"
+  "DeviceID": "PCI\\VEN_8086&DEV_46A6&SUBSYS_0B101028&REV_0C\\3&*********3&10"
  },
  {
   "DeviceName": "NVIDIA RTX A1000 Laptop GPU",
@@ -693,7 +693,7 @@
   "InfName": "c_firmware.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "UEFI\\RES_{E72475A2-B8F0-4217-BBEA-3304B187AE54}\\0"
+  "DeviceID": "UEFI\\RES_{E********************************E54}\\0"
  },
  {
   "DeviceName": "NVMe Firmware 11.20.01.09",
@@ -705,7 +705,7 @@
   "InfName": "oem277.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "UEFI\\RES_{AAC4A8CC-A312-11EB-BCBC-0242AC130002}\\0"
+  "DeviceID": "UEFI\\RES_{A********************************002}\\0"
  },
  {
   "DeviceName": "System Firmware 1.37.0",
@@ -717,7 +717,7 @@
   "InfName": "oem173.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "UEFI\\RES_{AD971D77-4495-408C-9F7B-C39790511B8E}\\0"
+  "DeviceID": "UEFI\\RES_{A********************************B8E}\\0"
  },
  {
   "DeviceName": "Standard SATA AHCI Controller",
@@ -729,7 +729,7 @@
   "InfName": "mshdc.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "PCI\\VEN_8086&DEV_51D3&SUBSYS_0B101028&REV_01\\3&11583659&3&B8"
+  "DeviceID": "PCI\\VEN_8086&DEV_51D3&SUBSYS_0B101028&REV_01\\3&*********3&B8"
  },
  {
   "DeviceName": "Converted Portable Device Control device",
@@ -753,7 +753,7 @@
   "InfName": "oem251.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "{DEA5AE2A-D1FD-438A-A091-CBD484788436}\\VID_8087&PID_0AC2\\5&22D778D6&0&00"
+  "DeviceID": "{D********************************436}\\VID_8087&PID_0AC2\\5&22D778D6&0&00"
  },
  {
   "DeviceName": "HID PCI Minidriver for ISS",
@@ -765,7 +765,7 @@
   "InfName": "oem251.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "{DEA5AE2A-D1FD-438A-A091-CBD484788436}\\VID_8087&PID_0AC2\\5&22D778D6&0&01"
+  "DeviceID": "{D********************************436}\\VID_8087&PID_0AC2\\5&22D778D6&0&01"
  },
  {
   "DeviceName": "HID PCI Minidriver for ISS",
@@ -777,7 +777,7 @@
   "InfName": "oem251.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "{DEA5AE2A-D1FD-438A-A091-CBD484788436}\\VID_8087&PID_0AC2\\5&22D778D6&0&02"
+  "DeviceID": "{D********************************436}\\VID_8087&PID_0AC2\\5&22D778D6&0&02"
  },
  {
   "DeviceName": "HID-compliant consumer control device",
@@ -981,7 +981,7 @@
   "InfName": "input.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_290B&PID_0900&MI_03\\8&DC47E82&4&0003"
+  "DeviceID": "USB\\VID_290B&PID_0900&MI_03\\8&**********0003"
  },
  {
   "DeviceName": "USB Input Device",
@@ -993,7 +993,7 @@
   "InfName": "input.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_06C4&PID_C413\\2050335E4242"
+  "DeviceID": "USB\\VID_06C4&PID_C413\\20******4242"
  },
  {
   "DeviceName": "USB Input Device",
@@ -1041,7 +1041,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\ESCL\\00000000-0000-1000-8000-001823324BC7"
+  "DeviceID": "SWD\\ESCL\\00******************************4BC7"
  },
  {
   "DeviceName": "HID Keyboard Device",
@@ -1137,7 +1137,7 @@
   "InfName": "microsoft_bluetooth_a2dp_src.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth A2dp Source",
@@ -1149,7 +1149,7 @@
   "InfName": "microsoft_bluetooth_a2dp_src.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth A2dp Source",
@@ -1161,7 +1161,7 @@
   "InfName": "microsoft_bluetooth_a2dp_src.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD00C06D_C00000000"
+  "DeviceID": "BTHENUM\\{0000110B-0000-1000-8000-00805F9B34FB}_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD******_C00000000"
  },
  {
   "DeviceName": "Realtek Audio",
@@ -1197,7 +1197,7 @@
   "InfName": "wdma_usb.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_290B&PID_0900&MI_00\\8&DC47E82&4&0000"
+  "DeviceID": "USB\\VID_290B&PID_0900&MI_00\\8&**********0000"
  },
  {
   "DeviceName": "USB Audio Device",
@@ -1209,7 +1209,7 @@
   "InfName": "wdma_usb.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_046D&PID_08E5&MI_02\\8&1AE969C&1&0002"
+  "DeviceID": "USB\\VID_046D&PID_08E5&MI_02\\8&**********0002"
  },
  {
   "DeviceName": "Generic PnP Monitor",
@@ -1269,7 +1269,7 @@
   "InfName": "oem294.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_10EC&DEV_525A&SUBSYS_0B101028&REV_01\\00000001004CE00000"
+  "DeviceID": "PCI\\VEN_10EC&DEV_525A&SUBSYS_0B101028&REV_01\\00************0000"
  },
  {
   "DeviceName": "Bluetooth Device (Personal Area Network)",
@@ -1305,7 +1305,7 @@
   "InfName": "oem284.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_1A1E&SUBSYS_0B101028&REV_01\\3&11583659&3&FE"
+  "DeviceID": "PCI\\VEN_8086&DEV_1A1E&SUBSYS_0B101028&REV_01\\3&*********3&FE"
  },
  {
   "DeviceName": "Intel(R) Wi-Fi 6E AX211 160MHz",
@@ -1317,7 +1317,7 @@
   "InfName": "oem98.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51F0&SUBSYS_40908086&REV_01\\3&11583659&3&A3"
+  "DeviceID": "PCI\\VEN_8086&DEV_51F0&SUBSYS_40908086&REV_01\\3&*********3&A3"
  },
  {
   "DeviceName": "Microsoft Kernel Debug Network Adapter",
@@ -1341,7 +1341,7 @@
   "InfName": "netvwifimp.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "{5D624F94-8850-40C3-A3FA-A4FD2080BAF3}\\VWIFIMP_WFD\\4&8CC444&0&18"
+  "DeviceID": "{5********************************AF3}\\VWIFIMP_WFD\\4&8CC444&0&18"
  },
  {
   "DeviceName": "Microsoft Wi-Fi Direct Virtual Adapter",
@@ -1353,7 +1353,7 @@
   "InfName": "netvwifimp.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "{5D624F94-8850-40C3-A3FA-A4FD2080BAF3}\\VWIFIMP_WFD\\4&8CC444&0&17"
+  "DeviceID": "{5********************************AF3}\\VWIFIMP_WFD\\4&8CC444&0&17"
  },
  {
   "DeviceName": "WAN Miniport (IKEv2)",
@@ -1461,7 +1461,7 @@
   "InfName": "bthspp.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&226E64CF&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&226E64CF&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Standard Serial over Bluetooth link",
@@ -1473,7 +1473,7 @@
   "InfName": "bthspp.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_LOCALMFG&0000\\7&226E64CF&0&000000000000_00000004"
+  "DeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_LOCALMFG&0000\\7&226E64CF&0&000000******_00000004"
  },
  {
   "DeviceName": "Microsoft enhanced Point and Print driver",
@@ -1485,7 +1485,7 @@
   "InfName": "prnms004.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{AF1B04E3-D7E5-48E0-97F3-F59684717D7A}"
+  "DeviceID": "SWD\\PRINTENUM\\{A********************************D7A}"
  },
  {
   "DeviceName": "Microsoft IPP Class Driver",
@@ -1497,7 +1497,7 @@
   "InfName": "prnms012.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\WSD-B8136383-1826-454B-810E-0C4A05D5A2E0"
+  "DeviceID": "SWD\\PRINTENUM\\WSD-B8******************************A2E0"
  },
  {
   "DeviceName": "Xerox C230/C235 V4 PCL6",
@@ -1509,7 +1509,7 @@
   "InfName": "oem214.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\PRINTENUM\\{9DA27979-798A-46F8-A92F-12BEC528714F}"
+  "DeviceID": "SWD\\PRINTENUM\\{9********************************14F}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1521,7 +1521,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{AB83C0FF-7481-4CE2-8B08-3B04EA4FA539}"
+  "DeviceID": "SWD\\PRINTENUM\\{A********************************539}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1533,7 +1533,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{A44CA389-9ED6-4C45-BA72-129CB9245F80}"
+  "DeviceID": "SWD\\PRINTENUM\\{A********************************F80}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1545,7 +1545,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{BBBFACF8-49C5-4AB4-B40E-C31DB67B953C}"
+  "DeviceID": "SWD\\PRINTENUM\\{B********************************53C}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1557,7 +1557,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{5FBFA917-560B-49D2-B690-7F59428785D8}"
+  "DeviceID": "SWD\\PRINTENUM\\{5********************************5D8}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1569,7 +1569,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{DA0EAB8D-9912-4081-A03B-A30969921672}"
+  "DeviceID": "SWD\\PRINTENUM\\{D********************************672}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1581,7 +1581,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{68475554-09F9-4C72-8279-C022DC49AF1E}"
+  "DeviceID": "SWD\\PRINTENUM\\{6********************************F1E}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1605,7 +1605,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{FE2A6CB5-0DDB-4570-8A3B-1F33630EEA75}"
+  "DeviceID": "SWD\\PRINTENUM\\{F********************************A75}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1617,7 +1617,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{9682EF53-8E5F-45DF-8295-586587F04276}"
+  "DeviceID": "SWD\\PRINTENUM\\{9********************************276}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1629,7 +1629,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{CCB6EF8B-9238-4F23-8E1F-4B064ECA7756}"
+  "DeviceID": "SWD\\PRINTENUM\\{C********************************756}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1641,7 +1641,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{261CCB9D-C469-42F6-8836-34385FA1D3DE}"
+  "DeviceID": "SWD\\PRINTENUM\\{2********************************3DE}"
  },
  {
   "DeviceName": "Local Print Queue",
@@ -1653,7 +1653,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{E318DF81-CADB-4C96-AF7F-9DC8D5D401CC}"
+  "DeviceID": "SWD\\PRINTENUM\\{E********************************1CC}"
  },
  {
   "DeviceName": "Network Printer Connection",
@@ -1665,7 +1665,7 @@
   "InfName": "printqueue.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\PRINTENUM\\{8EBA1A67-C34E-40CB-A5FD-836F25E12DDB}"
+  "DeviceID": "SWD\\PRINTENUM\\{8********************************DDB}"
  },
  {
   "DeviceName": "Intel Processor",
@@ -1929,7 +1929,7 @@
   "InfName": "vhdmp.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "{8E7BD593-6E6C-4C52-86A6-77175494DD8E}\\MSVHDHBA\\1&3030E83&0&01"
+  "DeviceID": "{8********************************D8E}\\MSVHDHBA\\1&3030E83&0&01"
  },
  {
   "DeviceName": "Standard NVM Express Controller",
@@ -2013,7 +2013,7 @@
   "InfName": "oem194.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{BC7814A1-A80E-44B3-87C6-652EAC676387}#DTTEXTCOMPONENT&4&39C68AB4&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{B********************************387}#DTTEXTCOMPONENT&4&39C68AB4&0"
  },
  {
   "DeviceName": "Intel(R) Graphics Software",
@@ -2037,7 +2037,7 @@
   "InfName": "oem343.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{24016F90-83D3-41B2-A8CF-5ACFAD05B529}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{2********************************529}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
  },
  {
   "DeviceName": "Intel(R) Management Engine WMI Provider",
@@ -2061,7 +2061,7 @@
   "InfName": "oem363.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{322D459E-4D85-49B2-A700-B7DF5808268C}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{3********************************68C}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
  },
  {
   "DeviceName": "Intel(R) PCD Telemetry IPF Extension Provider",
@@ -2073,7 +2073,7 @@
   "InfName": "oem364.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{D10BFA0C-8CB5-4674-8428-3633604B8C33}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{D********************************C33}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
  },
  {
   "DeviceName": "Intel(R) PerfMon IPF Extension Provider",
@@ -2085,7 +2085,7 @@
   "InfName": "oem365.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{F7BC2682-70EB-4557-B9E0-86B069B3709C}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{F********************************09C}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
  },
  {
   "DeviceName": "Intel(R) SoC Thermal IPF Extension Provider",
@@ -2097,7 +2097,7 @@
   "InfName": "oem367.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{03849B83-DE07-4366-ADDD-7B5DBB16ECFC}#IPFEFPROVIDERCOMPONENT&4&39C68AB4&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{0********************************CFC}#IPFEFPROVIDERCOMPONENT&4&39C68AB4&0"
  },
  {
   "DeviceName": "Intel(R) System Config IPF Extension Provider",
@@ -2109,7 +2109,7 @@
   "InfName": "oem368.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{F2D8C2CD-6407-49EE-8BD1-7213A57B87F6}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{F********************************7F6}#IPFEFPROVIDERCOMPONENT&5&313A6142&0"
  },
  {
   "DeviceName": "Intel(R) Wireless Manageability",
@@ -2121,7 +2121,7 @@
   "InfName": "oem342.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{BABE2782-EB1B-46A7-871A-F043D3200542}#WIMAN_COMPONENT&4&268CC699&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{B********************************542}#WIMAN_COMPONENT&4&268CC699&0"
  },
  {
   "DeviceName": "Realtek Asio Component",
@@ -2133,7 +2133,7 @@
   "InfName": "oem255.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{C3A63EDD-2D27-4B66-B155-5E94B43D926A}#REALTEKASIO&6&12151464&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{C********************************26A}#REALTEKASIO&6&12151464&0"
  },
  {
   "DeviceName": "Realtek Audio Effects Component",
@@ -2145,7 +2145,7 @@
   "InfName": "oem352.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{C3A63EDD-2D27-4B66-B155-5E94B43D926A}#REALTEKAPO&6&12151464&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{C********************************26A}#REALTEKAPO&6&12151464&0"
  },
  {
   "DeviceName": "Realtek Audio Universal Service",
@@ -2157,7 +2157,7 @@
   "InfName": "oem353.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{C3A63EDD-2D27-4B66-B155-5E94B43D926A}#REALTEKSRV&6&12151464&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{C********************************26A}#REALTEKSRV&6&12151464&0"
  },
  {
   "DeviceName": "Thunderbolt(TM) HSA Component",
@@ -2181,7 +2181,7 @@
   "InfName": "oem304.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{3ED78669-04CF-413C-A8DF-553436CEA20F}#WAVESAPO&6&12151464&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{3********************************20F}#WAVESAPO&6&12151464&0"
  },
  {
   "DeviceName": "XeroxDesktopPrintExperience",
@@ -2193,7 +2193,7 @@
   "InfName": "oem70.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{B176D53F-D3AC-7AAD-8BD1-06E04D03F802}#XEROXDESKTOPPRINTEXPERIENCE&2&1B5B2BF6&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{B********************************802}#XEROXDESKTOPPRINTEXPERIENCE&2&1B5B2BF6&0"
  },
  {
   "DeviceName": "XeroxDesktopPrintExperience",
@@ -2205,7 +2205,7 @@
   "InfName": "oem70.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "SWD\\DRIVERENUM\\{6175C8AF-DFD9-0485-23AA-06E04D03F802}#XEROXDESKTOPPRINTEXPERIENCE&2&2AA8C495&0"
+  "DeviceID": "SWD\\DRIVERENUM\\{6********************************802}#XEROXDESKTOPPRINTEXPERIENCE&2&2AA8C495&0"
  },
  {
   "DeviceName": "Canon TR8500 series",
@@ -2217,7 +2217,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\IPP\\00000000-0000-1000-8000-001823324BC7"
+  "DeviceID": "SWD\\IPP\\00******************************4BC7"
  },
  {
   "DeviceName": "Generic software device",
@@ -2241,7 +2241,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MSRRAS\\{5E259276-BC7E-40E3-B93B-8F89B5F3ABC0}"
+  "DeviceID": "SWD\\MSRRAS\\{5********************************BC0}"
  },
  {
   "DeviceName": "Generic software device",
@@ -2265,7 +2265,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\RADIO\\{1B4CE105-2813-4888-8539-25691CA0F1A7}"
+  "DeviceID": "SWD\\RADIO\\{1********************************1A7}"
  },
  {
   "DeviceName": "Generic software device",
@@ -2277,7 +2277,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\RADIO\\{3DB5895D-CC28-44B3-AD3D-6F01A782B8D2}"
+  "DeviceID": "SWD\\RADIO\\{3********************************8D2}"
  },
  {
   "DeviceName": "Generic software device",
@@ -2289,7 +2289,7 @@
   "InfName": "c_swdevice.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "SWD\\MSDAS\\{CE958E9A-424F-4C88-86F4-11314821E75A}"
+  "DeviceID": "SWD\\MSDAS\\{C********************************75A}"
  },
  {
   "DeviceName": "NVIDIA Platform Controllers and Framework",
@@ -2397,7 +2397,7 @@
   "InfName": "oem253.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_464F&SUBSYS_0B101028&REV_02\\3&11583659&3&40"
+  "DeviceID": "PCI\\VEN_8086&DEV_464F&SUBSYS_0B101028&REV_02\\3&*********3&40"
  },
  {
   "DeviceName": "Intel(R) Host Bridge/DRAM Registers - 4641",
@@ -2409,7 +2409,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_4641&SUBSYS_0B101028&REV_02\\3&11583659&3&00"
+  "DeviceID": "PCI\\VEN_8086&DEV_4641&SUBSYS_0B101028&REV_02\\3&*********3&00"
  },
  {
   "DeviceName": "Intel(R) Innovation Platform Framework Extensible Framework",
@@ -2529,7 +2529,7 @@
   "InfName": "oem195.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_461D&SUBSYS_0B101028&REV_02\\3&11583659&3&20"
+  "DeviceID": "PCI\\VEN_8086&DEV_461D&SUBSYS_0B101028&REV_02\\3&*********3&20"
  },
  {
   "DeviceName": "Intel(R) Integrated Sensor Solution",
@@ -2541,7 +2541,7 @@
   "InfName": null,
   "IsSigned": null,
   "Signer": null,
-  "DeviceID": "PCI\\VEN_8086&DEV_51FC&SUBSYS_0B101028&REV_01\\3&11583659&3&90"
+  "DeviceID": "PCI\\VEN_8086&DEV_51FC&SUBSYS_0B101028&REV_01\\3&*********3&90"
  },
  {
   "DeviceName": "Intel(R) LPC Controller - 5182",
@@ -2553,7 +2553,7 @@
   "InfName": "oem247.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_5182&SUBSYS_0B101028&REV_01\\3&11583659&3&F8"
+  "DeviceID": "PCI\\VEN_8086&DEV_5182&SUBSYS_0B101028&REV_01\\3&*********3&F8"
  },
  {
   "DeviceName": "Intel(R) Management Engine Interface #1",
@@ -2565,7 +2565,7 @@
   "InfName": "oem313.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51E0&SUBSYS_0B101028&REV_01\\3&11583659&3&B0"
+  "DeviceID": "PCI\\VEN_8086&DEV_51E0&SUBSYS_0B101028&REV_01\\3&*********3&B0"
  },
  {
   "DeviceName": "Intel(R) PCI Express Root Port #10 - 51B1",
@@ -2577,7 +2577,7 @@
   "InfName": "oem247.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51B1&SUBSYS_0B101028&REV_01\\3&11583659&3&E8"
+  "DeviceID": "PCI\\VEN_8086&DEV_51B1&SUBSYS_0B101028&REV_01\\3&*********3&E8"
  },
  {
   "DeviceName": "Intel(R) PEG10 - 460D",
@@ -2589,7 +2589,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_460D&SUBSYS_0B101028&REV_02\\3&11583659&3&08"
+  "DeviceID": "PCI\\VEN_8086&DEV_460D&SUBSYS_0B101028&REV_02\\3&*********3&08"
  },
  {
   "DeviceName": "Intel(R) PEG60 - 464D",
@@ -2601,7 +2601,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_464D&SUBSYS_0B101028&REV_02\\3&11583659&3&30"
+  "DeviceID": "PCI\\VEN_8086&DEV_464D&SUBSYS_0B101028&REV_02\\3&*********3&30"
  },
  {
   "DeviceName": "Intel(R) PEG62 - 463D",
@@ -2613,7 +2613,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_463D&SUBSYS_0B101028&REV_02\\3&11583659&3&32"
+  "DeviceID": "PCI\\VEN_8086&DEV_463D&SUBSYS_0B101028&REV_02\\3&*********3&32"
  },
  {
   "DeviceName": "Intel(R) Power Engine Plug-in",
@@ -2649,7 +2649,7 @@
   "InfName": "oem69.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51E8&SUBSYS_0B101028&REV_01\\3&11583659&3&A8"
+  "DeviceID": "PCI\\VEN_8086&DEV_51E8&SUBSYS_0B101028&REV_01\\3&*********3&A8"
  },
  {
   "DeviceName": "Intel(R) Serial IO I2C Host Controller - 51E9",
@@ -2661,7 +2661,7 @@
   "InfName": "oem69.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51E9&SUBSYS_0B101028&REV_01\\3&11583659&3&A9"
+  "DeviceID": "PCI\\VEN_8086&DEV_51E9&SUBSYS_0B101028&REV_01\\3&*********3&A9"
  },
  {
   "DeviceName": "Intel(R) Shared SRAM - 51EF",
@@ -2673,7 +2673,7 @@
   "InfName": "oem247.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51EF&SUBSYS_0B101028&REV_01\\3&11583659&3&A2"
+  "DeviceID": "PCI\\VEN_8086&DEV_51EF&SUBSYS_0B101028&REV_01\\3&*********3&A2"
  },
  {
   "DeviceName": "Intel(R) SMBus - 51A3",
@@ -2685,7 +2685,7 @@
   "InfName": "oem247.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51A3&SUBSYS_0B101028&REV_01\\3&11583659&3&FC"
+  "DeviceID": "PCI\\VEN_8086&DEV_51A3&SUBSYS_0B101028&REV_01\\3&*********3&FC"
  },
  {
   "DeviceName": "Intel(R) SPI (flash) Controller - 51A4",
@@ -2697,7 +2697,7 @@
   "InfName": "oem247.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51A4&SUBSYS_0B101028&REV_01\\3&11583659&3&FD"
+  "DeviceID": "PCI\\VEN_8086&DEV_51A4&SUBSYS_0B101028&REV_01\\3&*********3&FD"
  },
  {
   "DeviceName": "Intel(R) TypeC PCIe - 463F",
@@ -2709,7 +2709,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_463F&SUBSYS_0B101028&REV_02\\3&11583659&3&39"
+  "DeviceID": "PCI\\VEN_8086&DEV_463F&SUBSYS_0B101028&REV_02\\3&*********3&39"
  },
  {
   "DeviceName": "Intel(R) TypeC PCIe - 466E",
@@ -2721,7 +2721,7 @@
   "InfName": "oem246.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_466E&SUBSYS_0B101028&REV_02\\3&11583659&3&38"
+  "DeviceID": "PCI\\VEN_8086&DEV_466E&SUBSYS_0B101028&REV_02\\3&*********3&38"
  },
  {
   "DeviceName": "Intel\u00ae Smart Sound Technology BUS",
@@ -2733,7 +2733,7 @@
   "InfName": "oem256.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_51C8&SUBSYS_0B101028&REV_01\\3&11583659&3&FB"
+  "DeviceID": "PCI\\VEN_8086&DEV_51C8&SUBSYS_0B101028&REV_01\\3&*********3&FB"
  },
  {
   "DeviceName": "Intel\u00ae Smart Sound Technology Detection Verification",
@@ -2769,7 +2769,7 @@
   "InfName": "oem167.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "{DEA5AE2A-D1FD-438A-A091-CBD484788435}\\ISH_BUS\\4&33E02FF0&0&"
+  "DeviceID": "{D********************************435}\\ISH_BUS\\4&33E02FF0&0&"
  },
  {
   "DeviceName": "Logitech Gaming Virtual Bus Enumerator",
@@ -2841,7 +2841,7 @@
   "InfName": "microsoft_bluetooth_hfp_ag.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DFD1920E_C00000000"
+  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&0001004C_PID&2017\\7&22FD4E5&0&F873DF******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Hands-Free Profile AudioGateway role",
@@ -2853,7 +2853,7 @@
   "InfName": "microsoft_bluetooth_hfp_ag.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&0001004C_PID&200F\\7&22FD4E5&0&183F708F38FB_C00000000"
+  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&0001004C_PID&200F\\7&22FD4E5&0&183F70******_C00000000"
  },
  {
   "DeviceName": "Microsoft Bluetooth Hands-Free Profile AudioGateway role",
@@ -2865,7 +2865,7 @@
   "InfName": "microsoft_bluetooth_hfp_ag.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD00C06D_C00000000"
+  "DeviceID": "BTHENUM\\{0000111E-0000-1000-8000-00805F9B34FB}_HCIBYPASS_VID&000103E0_PID&301B\\7&22FD4E5&0&F44EFD******_C00000000"
  },
  {
   "DeviceName": "Microsoft Hyper-V PCI Server",
@@ -3261,7 +3261,7 @@
   "InfName": "oem150.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "PCI\\VEN_8086&DEV_463E&SUBSYS_0B101028&REV_02\\3&11583659&3&6A"
+  "DeviceID": "PCI\\VEN_8086&DEV_463E&SUBSYS_0B101028&REV_02\\3&*********3&6A"
  },
  {
   "DeviceName": "UMBus Enumerator",
@@ -3417,7 +3417,7 @@
   "InfName": "oem274.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows Hardware Compatibility Publisher",
-  "DeviceID": "USB\\HASP\\8&1A2440F0&4&00"
+  "DeviceID": "USB\\HASP\\8&*********4&00"
  },
  {
   "DeviceName": "Sentinel HL Key",
@@ -3477,7 +3477,7 @@
   "InfName": "usb.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_046D&PID_08E5\\4137126F"
+  "DeviceID": "USB\\VID_046D&PID_08E5\\********"
  },
  {
   "DeviceName": "USB Composite Device",
@@ -3489,7 +3489,7 @@
   "InfName": "usb.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_17E9&PID_6006\\2206068723"
+  "DeviceID": "USB\\VID_17E9&PID_6006\\**********"
  },
  {
   "DeviceName": "USB Composite Device",
@@ -3501,7 +3501,7 @@
   "InfName": "usb.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "USB\\VID_290B&PID_0900\\J95PCE81266W"
+  "DeviceID": "USB\\VID_290B&PID_0900\\J9******266W"
  },
  {
   "DeviceName": "USB Root Hub (USB 3.0)",
@@ -3537,7 +3537,7 @@
   "InfName": "usbxhci.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "PCI\\VEN_8086&DEV_461E&SUBSYS_0B101028&REV_02\\3&11583659&3&68"
+  "DeviceID": "PCI\\VEN_8086&DEV_461E&SUBSYS_0B101028&REV_02\\3&*********3&68"
  },
  {
   "DeviceName": "USB xHCI Compliant Host Controller",
@@ -3549,7 +3549,7 @@
   "InfName": "usbxhci.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "PCI\\VEN_8086&DEV_51ED&SUBSYS_0B101028&REV_01\\3&11583659&3&A0"
+  "DeviceID": "PCI\\VEN_8086&DEV_51ED&SUBSYS_0B101028&REV_01\\3&*********3&A0"
  },
  {
   "DeviceName": "Volume",
@@ -3561,7 +3561,7 @@
   "InfName": "volume.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "STORAGE\\VOLUME\\{7249CB33-AE5E-11ED-80FA-806E6F6E6963}#0000000000100000"
+  "DeviceID": "STORAGE\\VOLUME\\{7********************************963}#0000000000100000"
  },
  {
   "DeviceName": "Volume",
@@ -3573,7 +3573,7 @@
   "InfName": "volume.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "STORAGE\\VOLUME\\{7249CB34-AE5E-11ED-80FA-806E6F6E6963}#0000000000100000"
+  "DeviceID": "STORAGE\\VOLUME\\{7********************************963}#0000000000100000"
  },
  {
   "DeviceName": "Volume",
@@ -3585,7 +3585,7 @@
   "InfName": "volume.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "STORAGE\\VOLUME\\{7249CB33-AE5E-11ED-80FA-806E6F6E6963}#0000000006500000"
+  "DeviceID": "STORAGE\\VOLUME\\{7********************************963}#0000000006500000"
  },
  {
   "DeviceName": "Volume",
@@ -3597,7 +3597,7 @@
   "InfName": "volume.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "STORAGE\\VOLUME\\{7249CB33-AE5E-11ED-80FA-806E6F6E6963}#000000771C500000"
+  "DeviceID": "STORAGE\\VOLUME\\{7********************************963}#000000771C500000"
  },
  {
   "DeviceName": "Volume",
@@ -3609,6 +3609,6 @@
   "InfName": "volume.inf",
   "IsSigned": true,
   "Signer": "Microsoft Windows",
-  "DeviceID": "STORAGE\\VOLUME\\{7249CB33-AE5E-11ED-80FA-806E6F6E6963}#0000000007500000"
+  "DeviceID": "STORAGE\\VOLUME\\{7********************************963}#0000000007500000"
  }
 ]

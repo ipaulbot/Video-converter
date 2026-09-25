@@ -4,7 +4,7 @@
   "InterfaceIndex": 19,
   "InterfaceDescription": "Intel(R) Ethernet Connection (16) I219-LM",
   "Status": "Up",
-  "MacAddress": "C8:4B:D6:**:**:**",
+  "MacAddress": "C8************:**",
   "LinkSpeed": "1 Gbps",
   "IPv4Address": [
    "192.168.*.*/24"
@@ -27,7 +27,7 @@
   "InterfaceIndex": 3,
   "InterfaceDescription": "Intel(R) Wi-Fi 6E AX211 160MHz",
   "Status": "Up",
-  "MacAddress": "28:6B:35:**:**:**",
+  "MacAddress": "28************:**",
   "LinkSpeed": "1.2 Gbps",
   "IPv4Address": [
    "192.168.*.*/24"
@@ -57,7 +57,7 @@
   "InterfaceIndex": 15,
   "InterfaceDescription": "Dell Giga Ethernet",
   "Status": "Disconnected",
-  "MacAddress": "C8:4B:D6:**:**:**",
+  "MacAddress": "C8************:**",
   "LinkSpeed": "1 Gbps",
   "IPv4Address": [
    "169.254.*.*/16"
@@ -84,7 +84,7 @@
   "InterfaceIndex": 16,
   "InterfaceDescription": "Bluetooth Device (Personal Area Network)",
   "Status": "Disconnected",
-  "MacAddress": "28:6B:35:**:**:**",
+  "MacAddress": "28************:**",
   "LinkSpeed": "3 Mbps",
   "IPv4Address": [
    "169.254.*.*/16"

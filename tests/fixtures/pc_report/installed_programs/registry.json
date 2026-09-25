@@ -78,7 +78,7 @@
   "SystemComponent": null
  },
  {
-  "Name": "Daheng Galaxy SDK1.12.2102.9251",
+  "Name": "*** Galaxy SDK1.12.2102.9251",
   "Version": "",
   "Publisher": "Daheng Imaging.",
   "InstallDate": "20230505",
@@ -202,7 +202,7 @@
   "InstallLocation": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Aseprite",
   "InstallSource": "",
   "EstimatedSize": null,
-  "Uninstall": "\"C:\\Program Files (x86)\\Steam\\steam.exe\" steam://uninstall/431730",
+  "Uninstall": "\"C:\\Program Files (x86)\\Steam\\steam.exe\" steam://***/431730",
   "Architecture": "x64",
   "Scope": "Machine",
   "SystemComponent": null
@@ -1359,7 +1359,7 @@
   "InstallLocation": "C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe",
   "InstallSource": "",
   "EstimatedSize": null,
-  "Uninstall": "C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\uninstall.exe",
+  "Uninstall": "C:\\Program Files\\Google\\Drive File Stream\\131.0.*.*\\uninstall.exe",
   "Architecture": "x64",
   "Scope": "Machine",
   "SystemComponent": null
@@ -2847,7 +2847,7 @@
   "SystemComponent": null
  },
  {
-  "Name": "Baldur's Gate II: Enhanced Edition",
+  "Name": "***'s Gate II: Enhanced Edition",
   "Version": "2.6.6.0",
   "Publisher": "GOG.com",
   "InstallDate": "20241007",
@@ -3049,7 +3049,7 @@
   "InstallLocation": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application",
   "InstallSource": "",
   "EstimatedSize": 2158047,
-  "Uninstall": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\153.0.4234.48\\Installer\\setup.exe\" --uninstall --msedge --channel=stable --system-level --verbose-logging",
+  "Uninstall": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\153.0.4234.48\\Installer\\setup.exe\" --uninstall --msedge --channel=*** --system-level --verbose-logging",
   "Architecture": "x86",
   "Scope": "Machine",
   "SystemComponent": null
@@ -5974,7 +5974,7 @@
   "InstallLocation": "",
   "InstallSource": "",
   "EstimatedSize": null,
-  "Uninstall": "C:\\Program Files\\Common Files\\Microsoft Shared\\VSTO\\10.0\\VSTOInstaller.exe /Uninstall https://dl.getsidekick.com/outlook/vsto/Sidekick.vsto",
+  "Uninstall": "C:\\Program Files\\Common Files\\Microsoft Shared\\VSTO\\10.0\\VSTOInstaller.exe /Uninstall https://***.com/outlook/vsto/Sidekick.vsto",
   "Architecture": "",
   "Scope": "User",
   "SystemComponent": null

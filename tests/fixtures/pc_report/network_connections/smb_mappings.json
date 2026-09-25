@@ -1,12 +1,12 @@
 [
  {
   "LocalPath": "T:",
-  "RemotePath": "\\\\192.168.*.*\\temp",
+  "RemotePath": "\\\\<redacted>\\temp",
   "Status": 2
  },
  {
   "LocalPath": "V:",
-  "RemotePath": "\\\\192.168.*.*\\Applications",
+  "RemotePath": "\\\\<redacted>\\Applications",
   "Status": 5
  },
  {

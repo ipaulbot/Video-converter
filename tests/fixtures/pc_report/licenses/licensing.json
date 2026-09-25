@@ -1,7 +1,7 @@
 {
  "ProductId": "00*****************A558",
- "OA3xOriginalProductKey": "6G***********************R4TG",
- "OA3xOriginalProductKeyDescription": "[4*******************M:DM",
+ "OA3xOriginalProductKey": "*****************************",
+ "OA3xOriginalProductKeyDescription": "*************************",
  "KeyManagementServiceMachine": "",
  "Products": [
   {
@@ -9,7 +9,7 @@
    "Description": "Office 19, VOLUME_KMSCLIENT channel",
    "LicenseStatus": 5,
    "PartialProductKey": "*****",
-   "ProductKeyChannel": "Vo*****GVLK",
+   "ProductKeyChannel": "***********",
    "LicenseFamily": "Office19ProjectPro2019VL_KMS_Client_AE",
    "GracePeriodRemaining": 0
   },
@@ -45,7 +45,7 @@
    "Description": "Office 19, RETAIL(MAK) channel",
    "LicenseStatus": 1,
    "PartialProductKey": "*****",
-   "ProductKeyChannel": "Vo****:MAK",
+   "ProductKeyChannel": "**********",
    "LicenseFamily": "Office19VisioPro2019VL_MAK_AE",
    "GracePeriodRemaining": 0
   }

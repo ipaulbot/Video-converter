@@ -113,7 +113,7 @@
  },
  {
   "Name": "GoogleDriveFS",
-  "Command": "\"C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe\" --startup_mode",
+  "Command": "\"C:\\Program Files\\Google\\Drive File Stream\\131.0.*.*\\GoogleDriveFS.exe\" --startup_mode",
   "Location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
   "Enabled": false,
   "Kind": "Registry"

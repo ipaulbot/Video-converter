@@ -77,7 +77,7 @@
  {
   "Scope": "Machine",
   "Name": "JAVA_HOME",
-  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\"
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.*.*-hotspot\\"
  },
  {
   "Scope": "Machine",
@@ -92,7 +92,7 @@
  {
   "Scope": "Machine",
   "Name": "Path",
-  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.1.8-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\"
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.*.*-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.*.*-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\"
  },
  {
   "Scope": "Machine",
@@ -107,7 +107,7 @@
  {
   "Scope": "Machine",
   "Name": "PROCESSOR_IDENTIFIER",
-  "Value": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  "Value": "In*********************************************ntel"
  },
  {
   "Scope": "Machine",
@@ -177,7 +177,7 @@
  {
   "Scope": "User",
   "Name": "JAVA_HOME",
-  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot"
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.*.*-hotspot"
  },
  {
   "Scope": "User",
@@ -282,7 +282,7 @@
  {
   "Scope": "Process",
   "Name": "COMPUTERNAME",
-  "Value": "PC*NAME"
+  "Value": "*******"
  },
  {
   "Scope": "Process",
@@ -402,7 +402,7 @@
  {
   "Scope": "Process",
   "Name": "JAVA_HOME",
-  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot"
+  "Value": "C:\\Program Files\\Microsoft\\jdk-17.0.*.*-hotspot"
  },
  {
   "Scope": "Process",
@@ -412,7 +412,7 @@
  {
   "Scope": "Process",
   "Name": "LOGONSERVER",
-  "Value": "\\\\*****-SRV"
+  "Value": "***********"
  },
  {
   "Scope": "Process",
@@ -442,7 +442,7 @@
  {
   "Scope": "Process",
   "Name": "Path",
-  "Value": "c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\node_modules\\@vscode\\ripgrep\\bin;C:\\Program Files\\Microsoft\\jdk-17.0.19.10-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.1.8-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Python312;C:\\Program Files\\Python312\\Scripts;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Windsurf\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;c:\\users\\<redacted>\\.local\\bin;c:\\users\\<redacted>\\appdata\\roaming\\python\\python312\\scripts;C:\\Users\\<redacted>\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\<redacted>\\AppData\\Local\\PowerToys\\DSCModules\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Google.PlatformTools_Microsoft.Winget.Source_8wekyb3d8bbwe\\platform-tools;C:\\src\\flutter\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\platform-tools;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\cmdline-tools\\latest\\bin;C:\\Users\\<redacted>\\AppData\\Roaming\\npm"
+  "Value": "c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\node_modules\\@vscode\\ripgrep\\bin;C:\\Program Files\\Microsoft\\jdk-17.0.*.*-hotspot\\bin;C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.*.*-hotspot\\bin;c:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;C:\\Program Files\\Google\\Chrome\\Application;C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win64_x64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win64;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenICam\\bin\\Win32_i86;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\APIDll\\Win32;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64_win\\compiler;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Share;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\NoldusIPP 8\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 21\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\Common Files\\Noldus\\Noldus Shared\\Noldus LeadTools Package 23\\;C:\\Program Files\\nodejs\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Python312;C:\\Program Files\\Python312\\Scripts;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Windsurf\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;c:\\users\\<redacted>\\.local\\bin;c:\\users\\<redacted>\\appdata\\roaming\\python\\python312\\scripts;C:\\Users\\<redacted>\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\<redacted>\\AppData\\Local\\PowerToys\\DSCModules\\;C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Google.PlatformTools_Microsoft.Winget.Source_8wekyb3d8bbwe\\platform-tools;C:\\src\\flutter\\bin;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\platform-tools;C:\\Users\\<redacted>\\AppData\\Local\\Android\\Sdk\\cmdline-tools\\latest\\bin;C:\\Users\\<redacted>\\AppData\\Roaming\\npm"
  },
  {
   "Scope": "Process",
@@ -457,7 +457,7 @@
  {
   "Scope": "Process",
   "Name": "PROCESSOR_IDENTIFIER",
-  "Value": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  "Value": "In*********************************************ntel"
  },
  {
   "Scope": "Process",
@@ -552,12 +552,12 @@
  {
   "Scope": "Process",
   "Name": "USERDOMAIN",
-  "Value": "WO***ROUP"
+  "Value": "*********"
  },
  {
   "Scope": "Process",
   "Name": "USERDOMAIN_ROAMINGPROFILE",
-  "Value": "WO***ROUP"
+  "Value": "*********"
  },
  {
   "Scope": "Process",
@@ -607,7 +607,7 @@
  {
   "Scope": "Process",
   "Name": "VSCODE_NLS_CONFIG",
-  "Value": "{\"userLocale\":\"en-us\",\"osLocale\":\"en-us\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"C:\\\\Users\\\\user\\\\AppData\\\\Local\\\\Programs\\\\cursor\\\\resources\\\\app\\\\out\\\\nls.messages.json\",\"locale\":\"en-us\",\"availableLanguages\":{}}"
+  "Value": "{\"userLocale\":\"en-us\",\"osLocale\":\"en-us\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"C:\\\\***\\\\user\\\\***\\\\Local\\\\***\\\\cursor\\\\***\\\\app\\\\***\\\\***.json\",\"locale\":\"en-us\",\"availableLanguages\":{}}"
  },
  {
   "Scope": "Process",

@@ -34,7 +34,7 @@
   "FreeSpace": null,
   "VolumeSerialNumber": null,
   "Compressed": null,
-  "ProviderName": "\\\\192.168.*.*\\temp",
+  "ProviderName": "\\\\<redacted>\\temp",
   "Description": "Network Connection",
   "MediaType": 0
  },
@@ -47,7 +47,7 @@
   "FreeSpace": null,
   "VolumeSerialNumber": null,
   "Compressed": null,
-  "ProviderName": "\\\\192.168.*.*\\Applications",
+  "ProviderName": "\\\\<redacted>\\Applications",
   "Description": "Network Connection",
   "MediaType": 0
  }

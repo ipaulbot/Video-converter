@@ -36,7 +36,7 @@
   "ProviderName": "Programs"
  },
  {
-  "Name": "Daheng Galaxy SDK1.12.2102.9251",
+  "Name": "*** Galaxy SDK1.12.2102.9251",
   "Version": "",
   "Publisher": "Daheng Imaging.",
   "ProviderName": "Programs"
@@ -1902,7 +1902,7 @@
   "ProviderName": "msi"
  },
  {
-  "Name": "Baldur's Gate II: Enhanced Edition",
+  "Name": "***'s Gate II: Enhanced Edition",
   "Version": "2.6.6.0",
   "Publisher": "GOG.com",
   "ProviderName": "Programs"

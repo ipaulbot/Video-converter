@@ -54,7 +54,7 @@
   "AdapterDACType": "Internal",
   "VideoProcessor": "Intel(R) Iris(R) Xe Graphics Family",
   "VideoArchitecture": 5,
-  "PNPDeviceID": "PCI\\VEN_8086&DEV_46A6&SUBSYS_0B101028&REV_0C\\3&11583659&3&10",
+  "PNPDeviceID": "PCI\\VEN_8086&DEV_46A6&SUBSYS_0B101028&REV_0C\\3&*********3&10",
   "CurrentHorizontalResolution": 2560,
   "CurrentVerticalResolution": 1440,
   "CurrentRefreshRate": 59,

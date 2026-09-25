@@ -332,7 +332,7 @@
   "StartName": "LocalSystem",
   "PathName": "C:\\Windows\\system32\\svchost.exe -k appmodel -p",
   "ProcessId": 3292,
-  "Description": "Provides facilities for managing UWP apps access to app capabilities as well as checking an app's access to specific app capabilities",
+  "Description": "Pr*******************************************************************************************************************************ties",
   "ServiceType": "Share Process",
   "DelayedAutoStart": false,
   "ExitCode": 0
@@ -371,7 +371,7 @@
   "StartName": "LocalSystem",
   "PathName": "C:\\Windows\\system32\\svchost.exe -k netsvcs",
   "ProcessId": 3712,
-  "Description": "Copies user certificates and root certificates from smart cards into the current user's certificate store, detects when a smart card is inserted into a smart card reader, and, if needed, installs the smart card Plug and Play minidriver.",
+  "Description": "Co**************************************************************************************************************************************************************************************************************************************ver.",
   "ServiceType": "Share Process",
   "DelayedAutoStart": false,
   "ExitCode": 0
@@ -982,7 +982,7 @@
   "StartName": "NT AUTHORITY\\NetworkService",
   "PathName": "C:\\Windows\\system32\\svchost.exe -k NetworkService -p",
   "ProcessId": 1328,
-  "Description": "The DNS Client service (dnscache) caches Domain Name System (DNS) names and registers the full computer name for this computer. If the service is stopped, DNS names will continue to be resolved. However, the results of DNS name queries will not be cached and the computer's name will not be registered. If the service is disabled, any services that explicitly depend on it will fail to start.",
+  "Description": "Th**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************art.",
   "ServiceType": "Share Process",
   "DelayedAutoStart": false,
   "ExitCode": 0
@@ -1853,7 +1853,7 @@
   "StartName": "LocalSystem",
   "PathName": "C:\\Windows\\system32\\svchost.exe -k LocalSystemNetworkRestricted -p",
   "ProcessId": 0,
-  "Description": "Provides process isolation for cryptographic keys used to authenticate to a user\u2019s associated identity providers. If this service is disabled, all uses and management of these keys will not be available, which includes machine logon and single-sign on for apps and websites. This service starts and stops automatically. It is recommended that you do not reconfigure this service.",
+  "Description": "Pr*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************ice.",
   "ServiceType": "Share Process",
   "DelayedAutoStart": false,
   "ExitCode": 0
@@ -3530,7 +3530,7 @@
   "StartName": "NT AUTHORITY\\LocalService",
   "PathName": "C:\\Windows\\System32\\svchost.exe -k LocalServiceAndNoImpersonation -p",
   "ProcessId": 0,
-  "Description": "WCNCSVC hosts the Windows Connect Now Configuration which is Microsoft's Implementation of Wireless Protected Setup (WPS) protocol. This is used to configure Wireless LAN settings for an Access Point (AP) or a Wireless Device. The service is started programmatically as needed.",
+  "Description": "WC*******************************************************************************************************************************************************************************************************************************************************************************ded.",
   "ServiceType": "Share Process",
   "DelayedAutoStart": false,
   "ExitCode": 1077

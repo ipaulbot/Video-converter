@@ -10,14 +10,14 @@
  "BootDevice": "\\Device\\HarddiskVolume1",
  "SystemDevice": "\\Device\\HarddiskVolume3",
  "SystemStartOptions": null,
- "RegisteredUser": "No*****dmin",
+ "RegisteredUser": "***********",
  "Organization": "",
  "OSLanguage": 1033,
  "MUILanguages": [
   "en-US"
  ],
  "Description": "",
- "CSName": "PC*NAME",
+ "CSName": "*******",
  "OperatingSystemSKU": 48,
  "ProductType": 1,
  "DataExecutionPrevention_Available": true,
