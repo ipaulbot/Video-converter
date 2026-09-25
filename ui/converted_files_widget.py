@@ -1,15 +1,28 @@
-from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMenu, QMessageBox, QHeaderView,
-    QTextEdit, QDialog, QHBoxLayout, QPushButton, QLabel, QAbstractItemView, QStyledItemDelegate,
-    QStyleOptionViewItem, QApplication, QStyle
-)
-from PyQt5.QtCore import QCoreApplication, pyqtSignal, Qt
 import os
 import subprocess
-from utils.logger import logger
+
+from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
+from PyQt5.QtWidgets import (
+    QAbstractItemView,
+    QApplication,
+    QDialog,
+    QHBoxLayout,
+    QHeaderView,
+    QMenu,
+    QMessageBox,
+    QPushButton,
+    QStyle,
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
+    QTableWidget,
+    QTableWidgetItem,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
 from ui import theme
-
-
+from utils.logger import logger
 
 
 def _tr(source: str) -> str:
@@ -83,6 +96,7 @@ class _ClipPrefixDelegate(QStyledItemDelegate):
 class ConvertedFilesWidget(QWidget):
     file_converted_signal = pyqtSignal(str, dict, str, bool)  # file_name, deletion_info, destination_folder, success
     preview_requested = pyqtSignal(str)  # emit file path when selection changes
+    play_requested = pyqtSignal(str)  # file path the user wants to open in the Media Player
     drop_files_signal = pyqtSignal(list)  # emit list of file paths dropped onto the table
 
     def __init__(self, parent=None, button_style=None):
@@ -214,6 +228,21 @@ class ConvertedFilesWidget(QWidget):
 
         # Add container to main layout
         layout.addWidget(self.table_container)
+        actions_row = QHBoxLayout()
+        actions_row.setContentsMargins(0, 6, 0, 0)
+        actions_row.addStretch(1)
+        self.play_button = QPushButton(_tr("Play"))
+        self.play_button.setFixedSize(60, 24)
+        self.play_button.setCursor(Qt.PointingHandCursor)
+        self.play_button.setToolTip(
+            _tr("Open the selected file in the Media Player tab")
+        )
+        self.play_button.setStyleSheet(clear_button.styleSheet())
+        self.play_button.setProperty('skipGlobalStyle', True)
+        self.play_button.clicked.connect(self.request_play_selected)
+        self.play_button.hide()
+        actions_row.addWidget(self.play_button)
+        layout.addLayout(actions_row)
         self.setLayout(layout)
         self.file_converted_signal.connect(self.add_converted_file)
         self.table_widget.doubleClicked.connect(self.open_file_location)
@@ -452,13 +481,17 @@ class ConvertedFilesWidget(QWidget):
         file_path = file_item.data(Qt.UserRole)
         dest_folder = self.table_widget.item(row, 1).text()
         menu = QMenu(self)
+        play_action = menu.addAction(_tr("Play in Media Player"))
+        menu.addSeparator()
         open_folder_action = menu.addAction(_tr("Open Containing Folder"))
         open_log_action = menu.addAction(_tr("Open Log File"))
         copy_action = menu.addAction(_tr("Copy File Path"))
         menu.addSeparator()
         settings_action = menu.addAction(_tr("Settings"))
         action = menu.exec_(self.table_widget.viewport().mapToGlobal(pos))
-        if action == open_folder_action:
+        if action == play_action and file_path:
+            self.play_requested.emit(file_path)
+        elif action == open_folder_action:
             self.open_folder(dest_folder)
         elif action == open_log_action:
             self.open_log_file(file_path)
@@ -505,7 +538,7 @@ class ConvertedFilesWidget(QWidget):
         elif os.path.exists(log_log):
             log_file = log_log
         if log_file:
-            with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(log_file, encoding='utf-8', errors='ignore') as f:
                 content = f.read()
             dlg = QDialog(self)
             dlg.setWindowTitle(_tr("Log for %(name)s")
@@ -537,6 +570,7 @@ class ConvertedFilesWidget(QWidget):
         """Update the clear button style"""
         if hasattr(self, 'table_widget') and self.table_widget.cornerWidget():
             self.table_widget.cornerWidget().setStyleSheet(new_style)
+        self.play_button.setStyleSheet(new_style)
 
     def clear_logs(self):
         # Delete all .txt logs in the log folder
@@ -556,6 +590,7 @@ class ConvertedFilesWidget(QWidget):
         """Emit preview signal when a row is selected."""
         try:
             indexes = self.table_widget.selectionModel().selectedRows()
+            self.play_button.setVisible(bool(indexes))
             if not indexes:
                 self.preview_requested.emit("")
                 return
@@ -566,6 +601,18 @@ class ConvertedFilesWidget(QWidget):
                 self.preview_requested.emit(file_path)
         except Exception:
             logger.debug("ConvertedFilesWidget._handle_selection_changed: suppressed error", exc_info=True)
+
+    def selected_file_path(self):
+        indexes = self.table_widget.selectionModel().selectedRows()
+        if not indexes:
+            return ""
+        item = self.table_widget.item(indexes[0].row(), 0)
+        return str(item.data(Qt.UserRole) or "") if item else ""
+
+    def request_play_selected(self):
+        path = self.selected_file_path()
+        if path:
+            self.play_requested.emit(path)
 
     def _format_path_for_display(self, path, max_chars=0):
         """Return full path; kept for future custom formatting."""

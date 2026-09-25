@@ -542,6 +542,7 @@ class VideoConverterApp(QMainWindow):
             )
         except Exception:
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
+        self.converted_files_widget.play_requested.connect(self.play_in_media_player)
         # Clean modern styling for converted files widget
         self.converted_files_widget.setStyleSheet(theme.qss("QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
         converted_layout.addWidget(self.converted_files_widget)
@@ -1375,7 +1376,10 @@ class VideoConverterApp(QMainWindow):
             return self.media_player_widget
         widget = MediaPlayerWidget(
             self,
-            button_style=getattr(self, 'current_button_style', None)
+            button_style=getattr(self, 'current_button_style', None),
+            settings=self.settings,
+            save_settings=lambda: save_settings(self.settings),
+            threadpool=self.threadpool,
         )
         self.media_player_widget = widget
         placeholder = getattr(self, 'media_player_placeholder', None)
@@ -1385,6 +1389,22 @@ class VideoConverterApp(QMainWindow):
             self.media_player_placeholder = None
         self.media_player_layout.insertWidget(0, widget)
         return widget
+
+    def play_in_media_player(self, path):
+        """Converted Files -> Media Player: show the tab for this session and play `path`."""
+        if not path or not os.path.exists(path):
+            return
+        widget = self._ensure_media_player_widget()
+        index = self.tabs.indexOf(self.media_player_tab_scroll)
+        if index >= 0:
+            try:
+                self.tabs.setTabVisible(index, True)
+            except AttributeError:
+                self.media_player_tab_scroll.setVisible(True)
+            self.tabs.setCurrentIndex(index)
+        panel = widget.selected_panel()
+        if panel.load_media(path):
+            widget.play_all()
 
     def _on_tab_changed_for_layout_preview(self, _index=None):
         media_scroll = getattr(self, 'media_player_tab_scroll', None)
