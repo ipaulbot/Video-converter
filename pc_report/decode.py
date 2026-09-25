@@ -158,6 +158,15 @@ PC_SYSTEM_TYPES = {0: "Unspecified", 1: "Desktop", 2: "Mobile", 3: "Workstation"
 DOMAIN_ROLES = {0: "Standalone Workstation", 1: "Member Workstation", 2: "Standalone Server",
                 3: "Member Server", 4: "Backup Domain Controller", 5: "Primary Domain Controller"}
 
+SYSTEM_STATE = {
+    1: "Other",
+    2: "Unknown",
+    3: "Safe",
+    4: "Warning",
+    5: "Critical",
+    6: "Non-recoverable",
+}
+
 NETBIOS_OPTIONS = {0: "Default (from DHCP)", 1: "Enabled", 2: "Disabled"}
 
 POWER_PLATFORM_ROLES = {0: "Unspecified", 1: "Desktop", 2: "Mobile", 3: "Workstation",

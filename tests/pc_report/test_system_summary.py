@@ -289,6 +289,11 @@ class FixtureTests(unittest.TestCase):
             "BIOS",
         ):
             self.assertTrue(rows[label], label)
+        self.assertTrue(rows["Boot Time"])
+        self.assertIn("cores / threads", rows["Processor"])
+        self.assertTrue(rows["Memory Type"])
+        self.assertIn("% load", rows["Physical Memory"])
+        self.assertIn("20", rows["BIOS"])
         c_drive = next(
             (row for row in data["drives"] if row.get("Drive") == "C:"), None
         )

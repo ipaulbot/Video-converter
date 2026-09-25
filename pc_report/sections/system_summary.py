@@ -68,14 +68,6 @@ WINSAT_SCRIPT = cim(
 )
 POWER_ARGS = ["powercfg", "/getactivescheme"]
 
-STATE = {
-    1: "Other",
-    2: "Unknown",
-    3: "Safe",
-    4: "Warning",
-    5: "Critical",
-    6: "Non-recoverable",
-}
 DRIVE_COLUMNS = [
     ("Drive", "Drive"),
     ("Label", "Label"),
@@ -207,9 +199,11 @@ def build(
         "User Name": cs.get("UserName", ""),
         "Boot State": cs.get("BootupState", ""),
         "Power Supply State": decode.lookup(
-            STATE, cs.get("PowerSupplyState")
+            decode.SYSTEM_STATE, cs.get("PowerSupplyState")
         ),
-        "Thermal State": decode.lookup(STATE, cs.get("ThermalState")),
+        "Thermal State": decode.lookup(
+            decode.SYSTEM_STATE, cs.get("ThermalState")
+        ),
         "Hypervisor Present": yes_no(cs.get("HypervisorPresent")),
     }
 
