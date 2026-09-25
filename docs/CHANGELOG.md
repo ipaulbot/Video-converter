@@ -172,3 +172,42 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Two new figures (Media Player, Video Settings); all figures recaptured with
   stand-in device names and paths, and captions corrected to match what is shown.
   Regenerated the 2.3.0 PDF and DOCX manuals; the README names the 2.3.0 files.
+
+### User interface
+
+- Two window modes from the burger menu, Window > Compact mode (1024x640, the
+  former default look) and Full window mode (maximised). The choice persists;
+  tool tabs re-flow for each mode.
+- Every tool tab sits in a "leaf" card (rounded top-left and bottom-right
+  corners, square elsewhere); the drop zone and preview box use the same shape.
+- Button hierarchy: the gradient bubble is reserved for the primary actions
+  (Start/Stop, Settings bar). Tool tabs use small filled buttons, text links and
+  flat glyph icons instead of a uniform bubble.
+- Compact mode fits all seven tool tabs in the tab bar without scroll arrows; a
+  narrower window elides tab titles rather than hiding tabs.
+- PC Report: hint paragraphs removed, heart pulses under the logo while a report
+  runs and stays lit when it finishes, Open report / Open folder are links, and a
+  "Run as administrator" link relaunches NVC elevated for the admin-only fields.
+- Media Player: icon transport bar (play/pause, stop, restart, fullscreen,
+  playlist, mute), icon Load/Clear per panel and an icon playlist dock; fixes
+  clipped buttons in narrow windows.
+- Lossless Editor: compact tool row, icon Add/Clear on the merge list header,
+  end time placeholder "end of file".
+- Multi-Source Recorder: Recording properties and Output settings stack in
+  Compact and sit side by side in Full; the file location field shows the tail
+  of long paths with an icon Open button; a note explains that USB cameras are
+  always re-encoded when "copy" is selected.
+- Video Settings: Output quality now changes the recording (Default veryfast/18,
+  High medium/16, Balanced veryfast/20, Compact faster/24) and is saved with
+  presets; "Use maximum recording time" is bound to the tab's Timer; the unused
+  Time format / Decimals controls are gone.
+
+### Fixes
+
+- Converted Files: Clear button appears once the table has rows (it was never shown).
+- Per-file conversion logs honour Settings > Folders > Log Folder.
+- pyproject.toml version matches the application (2.3.0); a test keeps them in sync.
+- Help opens the manual for the saved interface language.
+- PC report Noldus Summary reports wall-clock collection time separately from
+  the time summed across parallel sections (previously "370 s" for a 91 s run).
+- Recorder test no longer depends on a webcam being attached.
