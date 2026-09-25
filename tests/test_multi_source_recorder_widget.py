@@ -139,7 +139,9 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget._deliver_audio_devices(["Microphone A"])
 
     def test_selecting_usb_directshow_updates_preview_guidance(self):
-        widget = MultiSourceRecorderWidget(auto_preview=False)
+        # "Opening preview" only appears once a camera name is filled in, so
+        # supply one rather than depending on whatever is plugged in today.
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
         row = widget.source_rows[0]
         source_type = row[2]
         source = row[3]
