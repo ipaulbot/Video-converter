@@ -8,6 +8,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
     QDialogButtonBox,
+    QMessageBox,
     QPlainTextEdit,
     QPushButton,
     QSizePolicy,
@@ -327,7 +328,8 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertIn("text-decoration: underline", dialog.preset_load_button.styleSheet())
         self.assertIn("background: transparent", dialog.preset_set_button.styleSheet())
         self.assertFalse(hasattr(dialog, "preset_save_button"))
-        self.assertFalse(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_delete_button"))
 
     def test_video_settings_preset_actions_are_left_aligned_bracketed_links(self):
         widget = MultiSourceRecorderWidget()
@@ -347,14 +349,18 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(dialog.preset_action_layout.indexOf(dialog.preset_close_bracket), 4)
         self.assertLessEqual(dialog.preset_combo.maximumWidth(), 120)
 
-    def test_video_settings_dialog_uses_four_fixed_preset_slots(self):
+    def test_video_settings_dialog_uses_disk_preset_actions(self):
         widget = MultiSourceRecorderWidget()
+        widget.list_recorder_presets = lambda: ["Alpha", "Beta"]
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
         self.assertEqual(
             [dialog.preset_combo.itemText(index) for index in range(dialog.preset_combo.count())],
-            ["Custom 1", "Custom 2", "Custom 3", "Custom 4"],
+            ["Alpha", "Beta"],
         )
+        self.assertTrue(hasattr(dialog, "preset_save_as_button"))
+        self.assertTrue(hasattr(dialog, "preset_delete_button"))
+        self.assertFalse(dialog.preset_path_edit.isHidden())
 
     def test_video_settings_dialog_defaults_empty_rows_to_no_source_selected(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
@@ -391,6 +397,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
     def test_video_settings_dialog_shows_selected_preset_path(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Custom 3"]
         widget.recorder_preset_path = lambda name: f"C:\\Presets\\{name}.json"
 
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
@@ -404,14 +411,60 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         calls = []
         widget.list_recorder_presets = lambda: ["Default"]
         widget.recorder_preset_path = lambda name: f"C:\\Presets\\{name}.json"
-        widget.load_named_recorder_preset = lambda name: calls.append(("load", name))
-        widget.save_named_recorder_preset = lambda name: calls.append(("save", name))
+        widget.load_named_recorder_preset = lambda name: (
+            calls.append(("load", name)) or widget.capture_recorder_settings()
+        )
+        widget.save_named_recorder_preset = lambda name: (
+            calls.append(("save", name)) or widget.capture_recorder_settings()
+        )
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
         dialog.load_selected_preset()
         dialog.set_selected_preset()
 
-        self.assertEqual(calls, [("load", "Custom 1"), ("save", "Custom 1")])
+        self.assertEqual(calls, [("load", "Default"), ("save", "Default")])
+
+    def test_video_settings_lists_disk_presets_and_refreshes_on_open(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha", "Beta"]
+
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        self.assertEqual(
+            [dialog.preset_combo.itemText(index) for index in range(dialog.preset_combo.count())],
+            ["Alpha", "Beta"],
+        )
+
+    def test_video_settings_dirty_marker_ignores_version(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha"]
+        widget.load_named_recorder_preset = lambda name: widget.capture_recorder_settings()
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        dialog.loaded_preset_name = "Alpha"
+        dialog.loaded_preset_settings = widget.capture_recorder_settings()
+        dialog.loaded_preset_settings["version"] = 999
+
+        dialog.update_preset_dirty_marker()
+        self.assertEqual(dialog.preset_combo.currentText(), "Alpha")
+
+        widget.source_rows[0][2].setCurrentIndex(1)
+        dialog.update_preset_dirty_marker()
+        self.assertEqual(dialog.preset_combo.currentText(), "Alpha *")
+
+    def test_delete_selected_preset_confirms_and_refreshes(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.list_recorder_presets = lambda: ["Alpha"]
+        deleted = []
+        widget.delete_named_recorder_preset = lambda name: deleted.append(name)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        with patch(
+            "ui.multi_source_recorder_widget.QMessageBox.question",
+            return_value=QMessageBox.Yes,
+        ):
+            dialog.delete_selected_preset()
+
+        self.assertEqual(deleted, ["Alpha"])
 
     def test_video_settings_basler_camera_settings_use_pylon_dialog(self):
         widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)

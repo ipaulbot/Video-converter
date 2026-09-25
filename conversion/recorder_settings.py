@@ -1,6 +1,8 @@
 import json
 import os
 
+from utils.logger import logger
+
 RECORDER_SETTINGS_VERSION = 1
 
 
@@ -70,6 +72,14 @@ def list_recorder_presets(preset_dir):
         return []
     presets = []
     for filename in os.listdir(preset_dir):
-        if filename.lower().endswith(".json"):
-            presets.append(os.path.splitext(filename)[0])
+        if not filename.lower().endswith(".json"):
+            continue
+        path = os.path.join(preset_dir, filename)
+        try:
+            with open(path, encoding="utf-8") as handle:
+                normalize_recorder_settings(json.load(handle))
+        except (OSError, ValueError, TypeError) as exc:
+            logger.warning("Skipping unreadable recorder preset %s: %s", path, exc)
+            continue
+        presets.append(os.path.splitext(filename)[0])
     return sorted(presets)

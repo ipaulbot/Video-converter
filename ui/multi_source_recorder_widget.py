@@ -41,6 +41,7 @@ from conversion.recorder_settings import (
     load_recorder_settings,
     normalize_recorder_settings,
     preset_file_path,
+    safe_preset_name,
     save_recorder_settings,
 )
 from conversion.recording_commands import (
@@ -359,12 +360,13 @@ class VideoSettingsDialog(QDialog):
         self.preset_combo = QComboBox()
         self.preset_combo.setEditable(False)
         self.preset_combo.setMaximumWidth(120)
-        self.preset_combo.addItems(["Custom 1", "Custom 2", "Custom 3", "Custom 4"])
         self.preset_path_edit = QLineEdit()
         self.preset_path_edit.setReadOnly(True)
         self.preset_path_edit.setMinimumWidth(120)
         self.preset_load_button = QPushButton(_tr("Load"))
         self.preset_set_button = QPushButton(_tr("Set"))
+        self.preset_save_as_button = QPushButton(_tr("Save as..."))
+        self.preset_delete_button = QPushButton(_tr("Delete"))
         self.preset_open_bracket = QLabel(_tr("["))
         self.preset_separator = QLabel(_tr("/"))
         self.preset_close_bracket = QLabel(_tr("]"))
@@ -387,9 +389,11 @@ class VideoSettingsDialog(QDialog):
         self.preset_combo.currentTextChanged.connect(lambda _text: self.update_selected_preset_path())
         self.preset_load_button.clicked.connect(self.load_selected_preset)
         self.preset_set_button.clicked.connect(self.set_selected_preset)
+        self.preset_save_as_button.clicked.connect(self.save_preset_as)
+        self.preset_delete_button.clicked.connect(self.delete_selected_preset)
         preset_layout.addWidget(QLabel(_tr("Video Preset:")))
         preset_layout.addWidget(self.preset_combo)
-        self.preset_path_edit.hide()
+        preset_layout.addWidget(self.preset_path_edit)
         preset_action_layout = QHBoxLayout()
         self.preset_action_layout = preset_action_layout
         preset_action_layout.setContentsMargins(0, 0, 0, 0)
@@ -405,9 +409,10 @@ class VideoSettingsDialog(QDialog):
         preset_action_widget.setMaximumWidth(90)
         preset_action_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         preset_layout.addWidget(preset_action_widget)
+        preset_layout.addWidget(self.preset_save_as_button)
+        preset_layout.addWidget(self.preset_delete_button)
         preset_group.setLayout(preset_layout)
         layout.addWidget(preset_group)
-        self.update_selected_preset_path()
 
         lower_row = QHBoxLayout()
         output_group = QGroupBox(_tr("Output settings"))
@@ -457,9 +462,13 @@ class VideoSettingsDialog(QDialog):
         buttons.accepted.connect(self.accept_with_changes)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
+        self.loaded_preset_name = ""
+        self.loaded_preset_settings = None
+        self.refresh_preset_list()
 
     def apply_changes(self):
         self.apply_to_sources()
+        self.update_preset_dirty_marker()
         parent = self.parent()
         if parent and hasattr(parent, "refresh_previews_from_sources"):
             parent.refresh_previews_from_sources()
@@ -471,7 +480,7 @@ class VideoSettingsDialog(QDialog):
         self.accept()
 
     def selected_preset_name(self):
-        return self.preset_combo.currentText().strip() or "Default"
+        return self.preset_combo.currentText().removesuffix(" *").strip()
 
     def update_selected_preset_path(self):
         parent = self.parent()
@@ -482,33 +491,99 @@ class VideoSettingsDialog(QDialog):
             self.preset_path_edit.setText(name)
 
     def load_selected_preset(self):
+        name = self.selected_preset_name()
         parent = self.parent()
-        if parent and hasattr(parent, "load_named_recorder_preset"):
-            parent.load_named_recorder_preset(self.selected_preset_name())
-            self.apply_parent_state_to_dialog()
+        if not name or not parent:
+            return
+        self.loaded_preset_settings = parent.load_named_recorder_preset(name)
+        self.loaded_preset_name = name
+        self.apply_parent_state_to_dialog()
+        self.refresh_preset_list(name)
 
     def save_selected_preset(self):
         self.set_selected_preset()
 
     def set_selected_preset(self):
-        self.apply_changes()
+        name = self.selected_preset_name()
         parent = self.parent()
-        if parent and hasattr(parent, "save_named_recorder_preset"):
-            parent.save_named_recorder_preset(self.selected_preset_name())
-            self.refresh_preset_list()
+        if not name or not parent:
+            return
+        self.apply_changes()
+        self.loaded_preset_settings = parent.save_named_recorder_preset(name)
+        self.loaded_preset_name = name
+        self.refresh_preset_list(name)
 
     def save_preset_as(self):
-        name, accepted = QInputDialog.getText(self, "Save Video Preset", "Preset name:", text=self.selected_preset_name())
-        if accepted and name.strip():
-            self.preset_combo.setCurrentText(name.strip())
-            self.save_selected_preset()
+        name, accepted = QInputDialog.getText(
+            self,
+            _tr("Save Video Preset"),
+            _tr("Preset name:"),
+            text=self.selected_preset_name(),
+        )
+        if not accepted or not name.strip():
+            return
+        safe_name = safe_preset_name(name)
+        self.apply_changes()
+        self.loaded_preset_settings = self.parent().save_named_recorder_preset(safe_name)
+        self.loaded_preset_name = safe_name
+        self.refresh_preset_list(safe_name)
 
-    def refresh_preset_list(self):
-        current = self.selected_preset_name()
+    def delete_selected_preset(self):
+        name = self.selected_preset_name()
+        if not name:
+            return
+        answer = QMessageBox.question(
+            self,
+            _tr("Delete Video Preset"),
+            _tr("Delete preset '%(name)s'?") % {"name": name},
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if answer != QMessageBox.Yes:
+            return
+        self.parent().delete_named_recorder_preset(name)
+        self.loaded_preset_name = ""
+        self.loaded_preset_settings = None
+        self.refresh_preset_list()
+
+    def refresh_preset_list(self, selected_name=""):
+        parent = self.parent()
+        names = (
+            parent.list_recorder_presets()
+            if parent and hasattr(parent, "list_recorder_presets")
+            else []
+        )
+        current = selected_name or self.selected_preset_name().removesuffix(" *")
         self.preset_combo.blockSignals(True)
         self.preset_combo.clear()
-        self.preset_combo.addItems(["Custom 1", "Custom 2", "Custom 3", "Custom 4"])
-        self.preset_combo.setCurrentText(current)
+        self.preset_combo.addItems(names)
+        if current in names:
+            self.preset_combo.setCurrentText(current)
+        self.preset_combo.blockSignals(False)
+        self.update_selected_preset_path()
+
+    def _comparable_settings(self, settings):
+        value = normalize_recorder_settings(settings)
+        value.pop("version", None)
+        return value
+
+    def update_preset_dirty_marker(self):
+        if not self.loaded_preset_name or self.loaded_preset_settings is None:
+            return
+        current = self.parent().capture_recorder_settings()
+        dirty = self._comparable_settings(current) != self._comparable_settings(
+            self.loaded_preset_settings
+        )
+        text = (
+            _tr("%(name)s *") % {"name": self.loaded_preset_name}
+            if dirty
+            else self.loaded_preset_name
+        )
+        index = self.preset_combo.currentIndex()
+        if index < 0:
+            return
+        self.preset_combo.blockSignals(True)
+        self.preset_combo.setItemText(index, text)
         self.preset_combo.blockSignals(False)
         self.update_selected_preset_path()
 
@@ -1953,16 +2028,24 @@ class MultiSourceRecorderWidget(QWidget):
         return preset_file_path(self.recorder_presets_dir(), name)
 
     def list_recorder_presets(self):
-        presets = list_recorder_presets(self.recorder_presets_dir())
-        return presets or ["Default"]
+        return list_recorder_presets(self.recorder_presets_dir())
 
     def save_named_recorder_preset(self, name):
-        save_recorder_settings(self.recorder_preset_path(name), self.capture_recorder_settings())
+        settings = self.capture_recorder_settings()
+        save_recorder_settings(self.recorder_preset_path(name), settings)
+        return settings
 
     def load_named_recorder_preset(self, name):
-        self.apply_recorder_settings(load_recorder_settings(self.recorder_preset_path(name)))
+        settings = load_recorder_settings(self.recorder_preset_path(name))
+        self.apply_recorder_settings(settings)
         self.refresh_previews_from_sources()
         self.save_current_recorder_settings()
+        return settings
+
+    def delete_named_recorder_preset(self, name):
+        path = self.recorder_preset_path(name)
+        if os.path.exists(path):
+            os.remove(path)
 
     def _send_axis_ptz_url(self, url):
         if not url:
