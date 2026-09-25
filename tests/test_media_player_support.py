@@ -1,3 +1,5 @@
+import json
+import subprocess
 import unittest
 
 from ui.media_player_support import (
@@ -7,7 +9,10 @@ from ui.media_player_support import (
     frame_index,
     frame_step_ms,
     parse_frame_rate,
+    player_convert_settings,
+    probe_media_info,
     total_frames,
+    unsupported_message,
 )
 
 
@@ -57,3 +62,95 @@ class FrameMathTests(unittest.TestCase):
             "0:00:01.000 / 0:00:02.000 · frame 25 / 50",
         )
         self.assertEqual(format_readout(1_000, 2_000, 0), "0:00:01.000 / 0:00:02.000")
+
+
+PROBE_JSON = {
+    "streams": [
+        {"codec_type": "video", "codec_name": "hevc", "r_frame_rate": "30000/1001",
+         "avg_frame_rate": "30000/1001", "nb_frames": "300"},
+        {"codec_type": "audio", "codec_name": "opus", "r_frame_rate": "0/0"},
+    ],
+    "format": {"format_name": "matroska,webm", "duration": "10.010000"},
+}
+
+
+class ProbeTests(unittest.TestCase):
+    def test_probe_media_info_parses_streams_and_format(self):
+        calls = []
+
+        def runner(command, **kwargs):
+            calls.append(command)
+            return subprocess.CompletedProcess(command, 0, stdout=json.dumps(PROBE_JSON), stderr="")
+
+        info = probe_media_info("C:\\Videos\\clip.mkv", runner=runner)
+        self.assertTrue(info["ok"])
+        self.assertAlmostEqual(info["fps"], 29.97, places=2)
+        self.assertEqual(info["nb_frames"], 300)
+        self.assertEqual(info["duration_ms"], 10_010)
+        self.assertEqual(info["container"], "matroska")
+        self.assertEqual(info["vcodec"], "hevc")
+        self.assertEqual(info["acodec"], "opus")
+        self.assertEqual(calls[0][-1], "C:\\Videos\\clip.mkv")
+        self.assertIn("-show_entries", calls[0])
+        self.assertIn("json", calls[0])
+
+    def test_probe_media_info_falls_back_to_avg_frame_rate(self):
+        payload = {"streams": [{"codec_type": "video", "codec_name": "h264",
+                                "r_frame_rate": "0/0", "avg_frame_rate": "25/1"}],
+                   "format": {"format_name": "mov,mp4,m4a", "duration": "2"}}
+        info = probe_media_info("x.mp4", runner=lambda c, **k: subprocess.CompletedProcess(c, 0, json.dumps(payload), ""))
+        self.assertEqual(info["fps"], 25.0)
+        self.assertEqual(info["container"], "mov")
+        self.assertEqual(info["acodec"], "")
+
+    def test_probe_media_info_reports_failure(self):
+        def boom(command, **kwargs):
+            raise subprocess.TimeoutExpired(command, 1)
+
+        info = probe_media_info("x.mp4", runner=boom)
+        self.assertFalse(info["ok"])
+        self.assertEqual(info["fps"], 0.0)
+        failed = probe_media_info("x.mp4", runner=lambda c, **k: subprocess.CompletedProcess(c, 1, "", "bad"))
+        self.assertFalse(failed["ok"])
+        garbage = probe_media_info("x.mp4", runner=lambda c, **k: subprocess.CompletedProcess(c, 0, "not json", ""))
+        self.assertFalse(garbage["ok"])
+
+
+class UnsupportedMessageTests(unittest.TestCase):
+    def test_message_names_codecs_and_container(self):
+        info = {"ok": True, "vcodec": "hevc", "acodec": "opus", "container": "matroska"}
+        self.assertEqual(unsupported_message(info), "Windows cannot play hevc/opus in matroska.")
+
+    def test_message_without_audio_and_with_gaps(self):
+        self.assertEqual(
+            unsupported_message({"ok": True, "vcodec": "prores", "acodec": "", "container": "mov"}),
+            "Windows cannot play prores in mov.",
+        )
+        self.assertEqual(
+            unsupported_message({"ok": True, "vcodec": "", "acodec": "", "container": ""}),
+            "Windows cannot play unknown in unknown.",
+        )
+
+    def test_message_when_probe_failed(self):
+        self.assertEqual(unsupported_message({"ok": False}), "Windows cannot play this file.")
+
+
+class ConvertPresetTests(unittest.TestCase):
+    def test_player_convert_settings_pins_the_fixed_preset(self):
+        base = {"destination_folder": "C:\\Videos\\Out", "video_codec": "libx265", "use_gpu": True,
+                "copy_only": True, "text_overlay": "Elapsed Time", "delete_after_conversion": True,
+                "use_backup": True, "custom_console_command": "-vf hflip", "output_format": "gif"}
+        settings = player_convert_settings(base)
+        self.assertEqual(settings["destination_folder"], "C:\\Videos\\Out")
+        self.assertEqual(settings["output_format"], "mp4")
+        self.assertEqual(settings["video_codec"], "libx264")
+        self.assertEqual(settings["audio_codec"], "aac")
+        self.assertEqual(settings["audio_bitrate"], "160k")
+        self.assertFalse(settings["use_gpu"])
+        self.assertFalse(settings["copy_only"])
+        self.assertFalse(settings["delete_after_conversion"])
+        self.assertFalse(settings["use_backup"])
+        self.assertEqual(settings["text_overlay"], "None")
+        self.assertEqual(settings["custom_console_command"], "-crf 20 -preset veryfast -movflags +faststart")
+        # The caller's dict is not mutated.
+        self.assertEqual(base["video_codec"], "libx265")
