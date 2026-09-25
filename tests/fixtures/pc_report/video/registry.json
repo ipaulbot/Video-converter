@@ -1,0 +1,38 @@
+[
+ {
+  "Key": "0003",
+  "DriverDesc": "NVIDIA RTX A1000 Laptop GPU",
+  "MatchingDeviceId": "pci\\ven_10de&dev_25b9&subsys_0b101028",
+  "qwMemorySize": 4294967296,
+  "DriverVersion": "32.0.15.9671",
+  "DriverDate": "6-9-2026",
+  "ProviderName": "NVIDIA"
+ },
+ {
+  "Key": "0004",
+  "DriverDesc": "DisplayLink USB Device",
+  "MatchingDeviceId": "USB\\VID_17E9&PID_6006&MI_00",
+  "qwMemorySize": null,
+  "DriverVersion": "9.3.3324.0",
+  "DriverDate": "4-16-2020",
+  "ProviderName": "DisplayLink"
+ },
+ {
+  "Key": "0005",
+  "DriverDesc": "Intel(R) Iris(R) Xe Graphics",
+  "MatchingDeviceId": "PCI\\VEN_8086&DEV_46A6&SUBSYS_0B101028",
+  "qwMemorySize": null,
+  "DriverVersion": "32.0.101.7088",
+  "DriverDate": "6-17-2026",
+  "ProviderName": "Intel Corporation"
+ },
+ {
+  "Key": "0006",
+  "DriverDesc": "DisplayLink USB Device",
+  "MatchingDeviceId": "USB\\VID_17E9&PID_6006&MI_01",
+  "qwMemorySize": null,
+  "DriverVersion": "9.3.3324.0",
+  "DriverDate": "4-16-2020",
+  "ProviderName": "DisplayLink"
+ }
+]

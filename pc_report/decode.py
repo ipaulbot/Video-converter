@@ -313,6 +313,13 @@ AVAILABILITY = {1: "Other", 2: "Unknown", 3: "Running / Full power", 4: "Warning
                 17: "Power save - warning", 18: "Paused", 19: "Not ready", 20: "Not configured",
                 21: "Quiesced"}
 
+PNP_MONITOR_VENDORS = {
+    "DEL": "Dell", "SAM": "Samsung", "LGD": "LG Display", "GSM": "LG", "AUO": "AU Optronics", "BOE": "BOE",
+    "ACR": "Acer", "AOC": "AOC", "BNQ": "BenQ", "HWP": "HP", "HPN": "HP", "LEN": "Lenovo", "PHL": "Philips",
+    "VSC": "ViewSonic", "IVM": "Iiyama", "SNY": "Sony", "NEC": "NEC", "MSI": "MSI", "ASU": "ASUS", "AUS": "ASUS",
+    "EIZ": "Eizo", "ENC": "Eizo", "CMN": "Chi Mei", "SHP": "Sharp", "APP": "Apple", "MEI": "Panasonic",
+}
+
 BATTERY_STATUS = {
     1: "Discharging", 2: "Unknown / AC power", 3: "Fully charged", 4: "Low", 5: "Critical",
     6: "Charging", 7: "Charging and high", 8: "Charging and low", 9: "Charging and critical",
