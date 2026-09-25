@@ -1,0 +1,191 @@
+[
+ {
+  "Name": "msacm.imaadpcm",
+  "File": "imaadp32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msadpcm",
+  "File": "msadp32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msg711",
+  "File": "msg711.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.msgsm610",
+  "File": "msgsm32.acm",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.i420",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.iyuv",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.mrle",
+  "File": "msrle32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.msvc",
+  "File": "msvidc32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.uyvy",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yuy2",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yvu9",
+  "File": "tsbyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "vidc.yvyu",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.l3acm",
+  "File": "C:\\Windows\\System32\\l3codeca.acm",
+  "Version": "1, 9, 0, 0401",
+  "Company": "Fraunhofer Institut Integrierte Schaltungen IIS",
+  "Architecture": "x64"
+ },
+ {
+  "Name": "msacm.imaadpcm",
+  "File": "imaadp32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msadpcm",
+  "File": "msadp32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msg711",
+  "File": "msg711.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.msgsm610",
+  "File": "msgsm32.acm",
+  "Version": "10.0.19041.3636 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.cvid",
+  "File": "iccvid.dll",
+  "Version": "1.10.0.11",
+  "Company": "Radius Inc.",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.i420",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.iyuv",
+  "File": "iyuv_32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.mrle",
+  "File": "msrle32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.msvc",
+  "File": "msvidc32.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.uyvy",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yuy2",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yvu9",
+  "File": "tsbyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "vidc.yvyu",
+  "File": "msyuv.dll",
+  "Version": "10.0.19041.1 (WinBuild.160101.0800)",
+  "Company": "Microsoft Corporation",
+  "Architecture": "x86"
+ },
+ {
+  "Name": "msacm.l3acm",
+  "File": "C:\\Windows\\SysWOW64\\l3codeca.acm",
+  "Version": "1, 9, 0, 0401",
+  "Company": "Fraunhofer Institut Integrierte Schaltungen IIS",
+  "Architecture": "x86"
+ }
+]

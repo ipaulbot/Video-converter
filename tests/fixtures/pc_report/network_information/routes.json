@@ -1,0 +1,18 @@
+[
+ {
+  "InterfaceAlias": "Wi-Fi",
+  "DestinationPrefix": "0.0.0.0/0",
+  "NextHop": "192.168.*.*",
+  "RouteMetric": 0,
+  "InterfaceMetric": 30,
+  "AddressFamily": 2
+ },
+ {
+  "InterfaceAlias": "Wi-Fi",
+  "DestinationPrefix": "::/0",
+  "NextHop": "fe80::*",
+  "RouteMetric": 16,
+  "InterfaceMetric": 30,
+  "AddressFamily": 23
+ }
+]

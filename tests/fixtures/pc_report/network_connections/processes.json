@@ -1,0 +1,1442 @@
+[
+ {
+  "Id": 24648,
+  "ProcessName": "AdobeCollabSync"
+ },
+ {
+  "Id": 27832,
+  "ProcessName": "AdobeCollabSync"
+ },
+ {
+  "Id": 41172,
+  "ProcessName": "AdobeIPCBroker"
+ },
+ {
+  "Id": 6460,
+  "ProcessName": "AdobeUpdateService"
+ },
+ {
+  "Id": 11884,
+  "ProcessName": "AggregatorHost"
+ },
+ {
+  "Id": 8772,
+  "ProcessName": "ApplicationFrameHost"
+ },
+ {
+  "Id": 6452,
+  "ProcessName": "armsvc"
+ },
+ {
+  "Id": 58684,
+  "ProcessName": "backgroundTaskHost"
+ },
+ {
+  "Id": 43840,
+  "ProcessName": "CCXProcess"
+ },
+ {
+  "Id": 7112,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 25364,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 25864,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 27516,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 33992,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 34448,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 35756,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 41164,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 45128,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 51836,
+  "ProcessName": "chrome"
+ },
+ {
+  "Id": 42916,
+  "ProcessName": "chrome-native-host"
+ },
+ {
+  "Id": 25664,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 34044,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 38772,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 42920,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 46160,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 48372,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 50884,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 51212,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 57448,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 63432,
+  "ProcessName": "claude"
+ },
+ {
+  "Id": 44280,
+  "ProcessName": "cmd"
+ },
+ {
+  "Id": 64216,
+  "ProcessName": "cmd"
+ },
+ {
+  "Id": 6864,
+  "ProcessName": "CmWebAdmin"
+ },
+ {
+  "Id": 6548,
+  "ProcessName": "CodeMeter"
+ },
+ {
+  "Id": 18808,
+  "ProcessName": "CompPkgSrv"
+ },
+ {
+  "Id": 6228,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 7916,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 10776,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 11420,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 19652,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 19668,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 19752,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 19768,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 19792,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 26912,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 48760,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 57168,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 57928,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 65004,
+  "ProcessName": "conhost"
+ },
+ {
+  "Id": 9624,
+  "ProcessName": "cowork-svc"
+ },
+ {
+  "Id": 6728,
+  "ProcessName": "CptService"
+ },
+ {
+  "Id": 12760,
+  "ProcessName": "crashpad_handler"
+ },
+ {
+  "Id": 884,
+  "ProcessName": "csrss"
+ },
+ {
+  "Id": 1324,
+  "ProcessName": "csrss"
+ },
+ {
+  "Id": 10620,
+  "ProcessName": "ctfmon"
+ },
+ {
+  "Id": 2564,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 12984,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 15332,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 26680,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 27188,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 30984,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 40068,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 40352,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 40700,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 44496,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 46424,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 48916,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 57608,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 61924,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 62384,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 65712,
+  "ProcessName": "Cursor"
+ },
+ {
+  "Id": 5244,
+  "ProcessName": "dasHost"
+ },
+ {
+  "Id": 10284,
+  "ProcessName": "dasHost"
+ },
+ {
+  "Id": 1028,
+  "ProcessName": "DefenderSessionHelper"
+ },
+ {
+  "Id": 19660,
+  "ProcessName": "Dell.CoreServices.Client"
+ },
+ {
+  "Id": 23496,
+  "ProcessName": "Dell.Remediation.Agent"
+ },
+ {
+  "Id": 6512,
+  "ProcessName": "Dell.TechHub"
+ },
+ {
+  "Id": 19688,
+  "ProcessName": "Dell.TechHub.Analytics.SubAgent"
+ },
+ {
+  "Id": 19744,
+  "ProcessName": "Dell.TechHub.DataManager.SubAgent"
+ },
+ {
+  "Id": 19632,
+  "ProcessName": "Dell.TechHub.Diagnostics.SubAgent"
+ },
+ {
+  "Id": 19644,
+  "ProcessName": "Dell.TechHub.Instrumentation.SubAgent"
+ },
+ {
+  "Id": 20824,
+  "ProcessName": "Dell.TechHub.Instrumentation.UserProcess"
+ },
+ {
+  "Id": 19620,
+  "ProcessName": "Dell.Update.SubAgent"
+ },
+ {
+  "Id": 6664,
+  "ProcessName": "DellFFDPWmiService"
+ },
+ {
+  "Id": 10848,
+  "ProcessName": "dllhost"
+ },
+ {
+  "Id": 50456,
+  "ProcessName": "dllhost"
+ },
+ {
+  "Id": 61136,
+  "ProcessName": "dllhost"
+ },
+ {
+  "Id": 2724,
+  "ProcessName": "dwm"
+ },
+ {
+  "Id": 8816,
+  "ProcessName": "epmd"
+ },
+ {
+  "Id": 7652,
+  "ProcessName": "erl"
+ },
+ {
+  "Id": 6856,
+  "ProcessName": "erlsrv"
+ },
+ {
+  "Id": 6832,
+  "ProcessName": "esif_uf"
+ },
+ {
+  "Id": 4400,
+  "ProcessName": "explorer"
+ },
+ {
+  "Id": 53672,
+  "ProcessName": "FileCoAuth"
+ },
+ {
+  "Id": 1624,
+  "ProcessName": "fontdrvhost"
+ },
+ {
+  "Id": 1628,
+  "ProcessName": "fontdrvhost"
+ },
+ {
+  "Id": 6892,
+  "ProcessName": "hasplms"
+ },
+ {
+  "Id": 8452,
+  "ProcessName": "hasplmv"
+ },
+ {
+  "Id": 64472,
+  "ProcessName": "HelpPane"
+ },
+ {
+  "Id": 0,
+  "ProcessName": "Idle"
+ },
+ {
+  "Id": 12604,
+  "ProcessName": "inet_gethost"
+ },
+ {
+  "Id": 6600,
+  "ProcessName": "IntelAudioService"
+ },
+ {
+  "Id": 2368,
+  "ProcessName": "IntelCpHDCPSvc"
+ },
+ {
+  "Id": 7836,
+  "ProcessName": "IntelGraphicsSoftware.Service"
+ },
+ {
+  "Id": 4912,
+  "ProcessName": "ipf_helper"
+ },
+ {
+  "Id": 6536,
+  "ProcessName": "ipf_uf"
+ },
+ {
+  "Id": 6520,
+  "ProcessName": "ipfsvc"
+ },
+ {
+  "Id": 6748,
+  "ProcessName": "jhi_service"
+ },
+ {
+  "Id": 17984,
+  "ProcessName": "LCore"
+ },
+ {
+  "Id": 16212,
+  "ProcessName": "LockApp"
+ },
+ {
+  "Id": 6816,
+  "ProcessName": "LogiRegistryService"
+ },
+ {
+  "Id": 21168,
+  "ProcessName": "logitechg_discord"
+ },
+ {
+  "Id": 15536,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 23796,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 24612,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 24756,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 25192,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 25456,
+  "ProcessName": "LogiTune"
+ },
+ {
+  "Id": 24324,
+  "ProcessName": "LogiTuneAgent"
+ },
+ {
+  "Id": 6876,
+  "ProcessName": "LogiTuneUpdater"
+ },
+ {
+  "Id": 43860,
+  "ProcessName": "LogonUI"
+ },
+ {
+  "Id": 1396,
+  "ProcessName": "LsaIso"
+ },
+ {
+  "Id": 1404,
+  "ProcessName": "lsass"
+ },
+ {
+  "Id": 6584,
+  "ProcessName": "mcsvc"
+ },
+ {
+  "Id": 4060,
+  "ProcessName": "Memory Compression"
+ },
+ {
+  "Id": 16744,
+  "ProcessName": "Microsoft.CmdPal.UI"
+ },
+ {
+  "Id": 6908,
+  "ProcessName": "MicrosoftSearchInBing"
+ },
+ {
+  "Id": 23036,
+  "ProcessName": "MonitorianPlus"
+ },
+ {
+  "Id": 25888,
+  "ProcessName": "MoUsoCoreWorker"
+ },
+ {
+  "Id": 6956,
+  "ProcessName": "MpDefenderCoreService"
+ },
+ {
+  "Id": 400,
+  "ProcessName": "msedge"
+ },
+ {
+  "Id": 36540,
+  "ProcessName": "msedge"
+ },
+ {
+  "Id": 48644,
+  "ProcessName": "msedge"
+ },
+ {
+  "Id": 50384,
+  "ProcessName": "msedge"
+ },
+ {
+  "Id": 57156,
+  "ProcessName": "msedge"
+ },
+ {
+  "Id": 1856,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 7016,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 23068,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 30036,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 31368,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 36248,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 36992,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 37216,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 46284,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 48076,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 52196,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 61512,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 62196,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 62568,
+  "ProcessName": "msedgewebview2"
+ },
+ {
+  "Id": 6764,
+  "ProcessName": "MsMpEng"
+ },
+ {
+  "Id": 16816,
+  "ProcessName": "ms-teams"
+ },
+ {
+  "Id": 43236,
+  "ProcessName": "ms-teams"
+ },
+ {
+  "Id": 4720,
+  "ProcessName": "MusNotifyIcon"
+ },
+ {
+  "Id": 10312,
+  "ProcessName": "nginx"
+ },
+ {
+  "Id": 10748,
+  "ProcessName": "nginx"
+ },
+ {
+  "Id": 9288,
+  "ProcessName": "nginx-winsw"
+ },
+ {
+  "Id": 11436,
+  "ProcessName": "NisSrv"
+ },
+ {
+  "Id": 17956,
+  "ProcessName": "NLinxAgent"
+ },
+ {
+  "Id": 6640,
+  "ProcessName": "NLinxDiagnosticService"
+ },
+ {
+  "Id": 66536,
+  "ProcessName": "node"
+ },
+ {
+  "Id": 58928,
+  "ProcessName": "notepad++"
+ },
+ {
+  "Id": 3408,
+  "ProcessName": "NVDisplay.Container"
+ },
+ {
+  "Id": 5024,
+  "ProcessName": "NVDisplay.Container"
+ },
+ {
+  "Id": 6756,
+  "ProcessName": "nvWmi64"
+ },
+ {
+  "Id": 13940,
+  "ProcessName": "nvWmi64"
+ },
+ {
+  "Id": 6680,
+  "ProcessName": "OfficeClickToRun"
+ },
+ {
+  "Id": 46812,
+  "ProcessName": "olk"
+ },
+ {
+  "Id": 21392,
+  "ProcessName": "OneDrive"
+ },
+ {
+  "Id": 22512,
+  "ProcessName": "OneDrive.Sync.Service"
+ },
+ {
+  "Id": 19380,
+  "ProcessName": "ONENOTEM"
+ },
+ {
+  "Id": 1740,
+  "ProcessName": "PhoneExperienceHost"
+ },
+ {
+  "Id": 52508,
+  "ProcessName": "powershell"
+ },
+ {
+  "Id": 54732,
+  "ProcessName": "powershell"
+ },
+ {
+  "Id": 12768,
+  "ProcessName": "PowerToys"
+ },
+ {
+  "Id": 15788,
+  "ProcessName": "PowerToys.AlwaysOnTop"
+ },
+ {
+  "Id": 15748,
+  "ProcessName": "PowerToys.Awake"
+ },
+ {
+  "Id": 15660,
+  "ProcessName": "PowerToys.ColorPickerUI"
+ },
+ {
+  "Id": 14784,
+  "ProcessName": "PowerToys.CropAndLock"
+ },
+ {
+  "Id": 16448,
+  "ProcessName": "PowerToys.FancyZones"
+ },
+ {
+  "Id": 16512,
+  "ProcessName": "PowerToys.Peek.UI"
+ },
+ {
+  "Id": 16576,
+  "ProcessName": "PowerToys.PowerLauncher"
+ },
+ {
+  "Id": 6740,
+  "ProcessName": "PowerToys.QuickAccess"
+ },
+ {
+  "Id": 3728,
+  "ProcessName": "PresentationFontCache"
+ },
+ {
+  "Id": 11404,
+  "ProcessName": "PresentMonService"
+ },
+ {
+  "Id": 44192,
+  "ProcessName": "python"
+ },
+ {
+  "Id": 47828,
+  "ProcessName": "python"
+ },
+ {
+  "Id": 204,
+  "ProcessName": "Registry"
+ },
+ {
+  "Id": 1852,
+  "ProcessName": "RtkAudUService64"
+ },
+ {
+  "Id": 6608,
+  "ProcessName": "RtkAudUService64"
+ },
+ {
+  "Id": 7232,
+  "ProcessName": "RtkAudUService64"
+ },
+ {
+  "Id": 4808,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 9684,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 14832,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 15004,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 15016,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 15316,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 16936,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 22520,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 64324,
+  "ProcessName": "RuntimeBroker"
+ },
+ {
+  "Id": 15240,
+  "ProcessName": "SearchApp"
+ },
+ {
+  "Id": 45456,
+  "ProcessName": "SearchFilterHost"
+ },
+ {
+  "Id": 7792,
+  "ProcessName": "SearchIndexer"
+ },
+ {
+  "Id": 22888,
+  "ProcessName": "SearchProtocolHost"
+ },
+ {
+  "Id": 120,
+  "ProcessName": "Secure System"
+ },
+ {
+  "Id": 5788,
+  "ProcessName": "SecurityHealthService"
+ },
+ {
+  "Id": 17724,
+  "ProcessName": "SecurityHealthSystray"
+ },
+ {
+  "Id": 1376,
+  "ProcessName": "services"
+ },
+ {
+  "Id": 26596,
+  "ProcessName": "ServiceShell"
+ },
+ {
+  "Id": 16240,
+  "ProcessName": "ShellExperienceHost"
+ },
+ {
+  "Id": 6592,
+  "ProcessName": "ShuttleEngine"
+ },
+ {
+  "Id": 25028,
+  "ProcessName": "ShuttleHelper"
+ },
+ {
+  "Id": 4156,
+  "ProcessName": "sihost"
+ },
+ {
+  "Id": 728,
+  "ProcessName": "smss"
+ },
+ {
+  "Id": 4836,
+  "ProcessName": "spoolsv"
+ },
+ {
+  "Id": 8584,
+  "ProcessName": "sqlservr"
+ },
+ {
+  "Id": 6632,
+  "ProcessName": "sqlwriter"
+ },
+ {
+  "Id": 14608,
+  "ProcessName": "StartMenuExperienceHost"
+ },
+ {
+  "Id": 22940,
+  "ProcessName": "SupportAssistAgent"
+ },
+ {
+  "Id": 8,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 880,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1044,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1064,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1120,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1164,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1232,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1328,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1592,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1728,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1784,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1828,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1920,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 1932,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2008,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2016,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2032,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2040,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2068,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2100,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2208,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2436,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2484,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2520,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2532,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2636,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2648,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2660,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2672,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2828,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 2840,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3092,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3104,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3148,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3212,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3292,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3304,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3580,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3712,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3780,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3820,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3836,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3844,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3852,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3904,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 3984,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4040,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4048,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4056,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4188,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4372,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4388,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4468,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5104,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5260,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5300,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5520,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5808,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 5980,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6040,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6140,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6476,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6528,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6620,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6652,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6704,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6712,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6792,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6848,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6900,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 6920,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 7124,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 7404,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 7412,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 7660,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 7800,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 8212,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 8272,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 8776,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 10708,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 11268,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 12800,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 13400,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 15544,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 19384,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 19412,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 22000,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 22580,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 22668,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 24964,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 25068,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 25756,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 25856,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 30876,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 31668,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 37512,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 38580,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 43040,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 55056,
+  "ProcessName": "svchost"
+ },
+ {
+  "Id": 4,
+  "ProcessName": "System"
+ },
+ {
+  "Id": 16828,
+  "ProcessName": "SystemSettings"
+ },
+ {
+  "Id": 7056,
+  "ProcessName": "TabTip"
+ },
+ {
+  "Id": 11980,
+  "ProcessName": "taskhostw"
+ },
+ {
+  "Id": 23292,
+  "ProcessName": "taskhostw"
+ },
+ {
+  "Id": 6688,
+  "ProcessName": "TbtP2pShortcutService"
+ },
+ {
+  "Id": 6964,
+  "ProcessName": "TeamViewer_Service"
+ },
+ {
+  "Id": 14808,
+  "ProcessName": "TextInputHost"
+ },
+ {
+  "Id": 12016,
+  "ProcessName": "uhssvc"
+ },
+ {
+  "Id": 2628,
+  "ProcessName": "unsecapp"
+ },
+ {
+  "Id": 8832,
+  "ProcessName": "unsecapp"
+ },
+ {
+  "Id": 18216,
+  "ProcessName": "unsecapp"
+ },
+ {
+  "Id": 7872,
+  "ProcessName": "UserOOBEBroker"
+ },
+ {
+  "Id": 7708,
+  "ProcessName": "VisoDiagnosticsService"
+ },
+ {
+  "Id": 7808,
+  "ProcessName": "VisoServices"
+ },
+ {
+  "Id": 7716,
+  "ProcessName": "VisoWebServer"
+ },
+ {
+  "Id": 26532,
+  "ProcessName": "vmcompute"
+ },
+ {
+  "Id": 59012,
+  "ProcessName": "vmmem"
+ },
+ {
+  "Id": 1872,
+  "ProcessName": "vmwp"
+ },
+ {
+  "Id": 12352,
+  "ProcessName": "Wacom_NotifyUtil"
+ },
+ {
+  "Id": 14388,
+  "ProcessName": "Wacom_Tablet"
+ },
+ {
+  "Id": 11912,
+  "ProcessName": "Wacom_TabletUser"
+ },
+ {
+  "Id": 14628,
+  "ProcessName": "Wacom_TouchUser"
+ },
+ {
+  "Id": 11376,
+  "ProcessName": "WacomHost"
+ },
+ {
+  "Id": 6672,
+  "ProcessName": "WavesAudioService"
+ },
+ {
+  "Id": 18148,
+  "ProcessName": "WavesSvc64"
+ },
+ {
+  "Id": 6696,
+  "ProcessName": "WavesSysSvc64"
+ },
+ {
+  "Id": 21320,
+  "ProcessName": "WebexHost"
+ },
+ {
+  "Id": 12340,
+  "ProcessName": "win32sysinfo"
+ },
+ {
+  "Id": 1304,
+  "ProcessName": "wininit"
+ },
+ {
+  "Id": 1480,
+  "ProcessName": "winlogon"
+ },
+ {
+  "Id": 6188,
+  "ProcessName": "wlanext"
+ },
+ {
+  "Id": 54016,
+  "ProcessName": "WmiApSrv"
+ },
+ {
+  "Id": 4760,
+  "ProcessName": "WmiPrvSE"
+ },
+ {
+  "Id": 5148,
+  "ProcessName": "WmiPrvSE"
+ },
+ {
+  "Id": 6720,
+  "ProcessName": "WMIRegistrationService"
+ },
+ {
+  "Id": 6772,
+  "ProcessName": "WTabletServicePro"
+ },
+ {
+  "Id": 4404,
+  "ProcessName": "WUDFHost"
+ },
+ {
+  "Id": 5348,
+  "ProcessName": "WUDFHost"
+ },
+ {
+  "Id": 5432,
+  "ProcessName": "WUDFHost"
+ },
+ {
+  "Id": 5612,
+  "ProcessName": "WUDFHost"
+ },
+ {
+  "Id": 7160,
+  "ProcessName": "WUDFHost"
+ },
+ {
+  "Id": 6808,
+  "ProcessName": "XeroxPrintJobEventManagerService"
+ }
+]

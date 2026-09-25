@@ -1,0 +1,50 @@
+[
+ {
+  "Name": "USB Audio Device",
+  "Manufacturer": "(Generic USB Audio)",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "USB\\VID_046D&PID_08E5&MI_02\\8&**********0002",
+  "ConfigManagerErrorCode": 0
+ },
+ {
+  "Name": "Realtek Audio",
+  "Manufacturer": "Realtek",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "INTELAUDIO\\FUNC_01&VEN_10EC&DEV_0236&SUBSYS_10280B10&REV_1000\\5&20942AFB&0&0001DIF_000A&UIF_0000",
+  "ConfigManagerErrorCode": 0
+ },
+ {
+  "Name": "DisplayLink USB Audio Adapter",
+  "Manufacturer": "DisplayLink",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "USB\\VID_17E9&PID_6006&MI_02\\7&23587639&0&0002",
+  "ConfigManagerErrorCode": 0
+ },
+ {
+  "Name": "Intel\u00ae Smart Sound Technology for Bluetooth\u00ae Audio",
+  "Manufacturer": "Intel(R) Corporation",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "INTELAUDIO\\CTLR_DEV_51C8&LINKTYPE_03&DEVTYPE_00&VEN_8086&DEV_AE30&SUBSYS_0B101028&REV_0001\\5&20942AFB&0&0000DIF_000A&UIF_0000",
+  "ConfigManagerErrorCode": 0
+ },
+ {
+  "Name": "Intel\u00ae Smart Sound Technology for USB Audio",
+  "Manufacturer": "Intel(R) Corporation",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "INTELAUDIO\\CTLR_DEV_51C8&LINKTYPE_06&DEVTYPE_06&VEN_8086&DEV_AE50&SUBSYS_0B101028&REV_0001\\0602DIF_000A&UIF_0000",
+  "ConfigManagerErrorCode": 0
+ },
+ {
+  "Name": "USB Audio Device",
+  "Manufacturer": "(Generic USB Audio)",
+  "Status": "OK",
+  "StatusInfo": 3,
+  "PNPDeviceID": "USB\\VID_290B&PID_0900&MI_00\\8&**********0000",
+  "ConfigManagerErrorCode": 0
+ }
+]

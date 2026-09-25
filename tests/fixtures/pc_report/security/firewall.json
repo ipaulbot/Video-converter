@@ -1,0 +1,29 @@
+[
+ {
+  "Name": "Domain",
+  "Enabled": 1,
+  "DefaultInboundAction": 0,
+  "DefaultOutboundAction": 0,
+  "NotifyOnListen": 1,
+  "LogFileName": "%systemroot%\\system32\\LogFiles\\Firewall\\pfirewall.log",
+  "LogMaxSizeKilobytes": 4096
+ },
+ {
+  "Name": "Private",
+  "Enabled": 1,
+  "DefaultInboundAction": 0,
+  "DefaultOutboundAction": 0,
+  "NotifyOnListen": 1,
+  "LogFileName": "%systemroot%\\system32\\LogFiles\\Firewall\\pfirewall.log",
+  "LogMaxSizeKilobytes": 4096
+ },
+ {
+  "Name": "Public",
+  "Enabled": 1,
+  "DefaultInboundAction": 0,
+  "DefaultOutboundAction": 0,
+  "NotifyOnListen": 1,
+  "LogFileName": "%systemroot%\\system32\\LogFiles\\Firewall\\pfirewall.log",
+  "LogMaxSizeKilobytes": 4096
+ }
+]

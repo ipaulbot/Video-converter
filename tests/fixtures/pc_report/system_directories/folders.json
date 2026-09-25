@@ -1,0 +1,178 @@
+[
+ {
+  "Name": "AdminTools",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Administrative Tools"
+ },
+ {
+  "Name": "ApplicationData",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming"
+ },
+ {
+  "Name": "CDBurning",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\Windows\\Burn\\Burn"
+ },
+ {
+  "Name": "CommonAdminTools",
+  "Path": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Administrative Tools"
+ },
+ {
+  "Name": "CommonApplicationData",
+  "Path": "C:\\ProgramData"
+ },
+ {
+  "Name": "CommonDesktopDirectory",
+  "Path": "C:\\Users\\<redacted>\\Desktop"
+ },
+ {
+  "Name": "CommonDocuments",
+  "Path": "C:\\Users\\<redacted>\\Documents"
+ },
+ {
+  "Name": "CommonMusic",
+  "Path": "C:\\Users\\<redacted>\\Music"
+ },
+ {
+  "Name": "CommonPictures",
+  "Path": "C:\\Users\\<redacted>\\Pictures"
+ },
+ {
+  "Name": "CommonProgramFiles",
+  "Path": "C:\\Program Files\\Common Files"
+ },
+ {
+  "Name": "CommonProgramFilesX86",
+  "Path": "C:\\Program Files (x86)\\Common Files"
+ },
+ {
+  "Name": "CommonPrograms",
+  "Path": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"
+ },
+ {
+  "Name": "CommonStartMenu",
+  "Path": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu"
+ },
+ {
+  "Name": "CommonStartup",
+  "Path": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+ },
+ {
+  "Name": "CommonTemplates",
+  "Path": "C:\\ProgramData\\Microsoft\\Windows\\Templates"
+ },
+ {
+  "Name": "CommonVideos",
+  "Path": "C:\\Users\\<redacted>\\Videos"
+ },
+ {
+  "Name": "Cookies",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\Windows\\INetCookies"
+ },
+ {
+  "Name": "Desktop",
+  "Path": "C:\\Users\\<redacted>\\Desktop"
+ },
+ {
+  "Name": "DesktopDirectory",
+  "Path": "C:\\Users\\<redacted>\\Desktop"
+ },
+ {
+  "Name": "Favorites",
+  "Path": "C:\\Users\\<redacted>\\Favorites"
+ },
+ {
+  "Name": "Fonts",
+  "Path": "C:\\Windows\\Fonts"
+ },
+ {
+  "Name": "History",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\Windows\\History"
+ },
+ {
+  "Name": "InternetCache",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Local\\Microsoft\\Windows\\INetCache"
+ },
+ {
+  "Name": "LocalApplicationData",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Local"
+ },
+ {
+  "Name": "MyDocuments",
+  "Path": "C:\\Users\\<redacted>\\Documents"
+ },
+ {
+  "Name": "MyMusic",
+  "Path": "C:\\Users\\<redacted>\\Music"
+ },
+ {
+  "Name": "MyPictures",
+  "Path": "C:\\Users\\<redacted>\\Pictures"
+ },
+ {
+  "Name": "MyVideos",
+  "Path": "C:\\Users\\<redacted>\\Videos"
+ },
+ {
+  "Name": "NetworkShortcuts",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Network Shortcuts"
+ },
+ {
+  "Name": "Personal",
+  "Path": "C:\\Users\\<redacted>\\Documents"
+ },
+ {
+  "Name": "PrinterShortcuts",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Printer Shortcuts"
+ },
+ {
+  "Name": "ProgramFiles",
+  "Path": "C:\\Program Files"
+ },
+ {
+  "Name": "ProgramFilesX86",
+  "Path": "C:\\Program Files (x86)"
+ },
+ {
+  "Name": "Programs",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs"
+ },
+ {
+  "Name": "Recent",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Recent"
+ },
+ {
+  "Name": "Resources",
+  "Path": "C:\\Windows\\resources"
+ },
+ {
+  "Name": "SendTo",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\SendTo"
+ },
+ {
+  "Name": "StartMenu",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu"
+ },
+ {
+  "Name": "Startup",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+ },
+ {
+  "Name": "System",
+  "Path": "C:\\Windows\\system32"
+ },
+ {
+  "Name": "SystemX86",
+  "Path": "C:\\Windows\\SysWOW64"
+ },
+ {
+  "Name": "Templates",
+  "Path": "C:\\Users\\<redacted>\\AppData\\Roaming\\Microsoft\\Windows\\Templates"
+ },
+ {
+  "Name": "UserProfile",
+  "Path": "C:\\Users\\<redacted>"
+ },
+ {
+  "Name": "Windows",
+  "Path": "C:\\Windows"
+ }
+]

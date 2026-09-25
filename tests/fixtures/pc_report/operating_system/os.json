@@ -1,0 +1,27 @@
+{
+ "Caption": "Microsoft Windows 10 Pro",
+ "Version": "10.0.19045",
+ "BuildNumber": "19045",
+ "OSArchitecture": "64-bit",
+ "InstallDate": "/Date(1676580922000)/",
+ "LastBootUpTime": "/Date(1790159236500)/",
+ "WindowsDirectory": "C:\\Windows",
+ "SystemDirectory": "C:\\Windows\\system32",
+ "BootDevice": "\\Device\\HarddiskVolume1",
+ "SystemDevice": "\\Device\\HarddiskVolume3",
+ "SystemStartOptions": null,
+ "RegisteredUser": "***********",
+ "Organization": "",
+ "OSLanguage": 1033,
+ "MUILanguages": [
+  "en-US"
+ ],
+ "Description": "",
+ "CSName": "*******",
+ "OperatingSystemSKU": 48,
+ "ProductType": 1,
+ "DataExecutionPrevention_Available": true,
+ "DataExecutionPrevention_SupportPolicy": 2,
+ "EncryptionLevel": 256,
+ "PortableOperatingSystem": false
+}

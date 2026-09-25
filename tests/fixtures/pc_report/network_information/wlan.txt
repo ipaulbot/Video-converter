@@ -1,0 +1,23 @@
+
+There is 1 interface on the system: 
+
+    Name                   : Wi-Fi
+    Description            : Intel(R) Wi-Fi 6E AX211 160MHz
+    GUID                   : <redacted>
+    Physical address       : 28:6b:35:**:**:**
+    State                  : connected
+    SSID                   : <redacted>
+    BSSID                  : <redacted>
+    Network type           : Infrastructure
+    Radio type             : 802.11ax
+    Authentication         : WPA2-Personal
+    Cipher                 : CCMP
+    Connection mode        : Profile
+    Channel                : 44
+    Receive rate (Mbps)    : 1201
+    Transmit rate (Mbps)   : 1201
+    Signal                 : 90%
+    Profile                : <redacted>
+
+    Hosted network status  : Not available
+

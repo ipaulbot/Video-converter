@@ -1,0 +1,16 @@
+[
+ {
+  "Name": "Intel(R) USB 3.10 eXtensible Host Controller - 1.20 (Microsoft)",
+  "Manufacturer": "Generic USB xHCI Host Controller",
+  "Status": "OK",
+  "PNPDeviceID": "PCI\\VEN_8086&DEV_51ED&SUBSYS_0B101028&REV_01\\3&*********3&A0",
+  "ProtocolSupported": 16
+ },
+ {
+  "Name": "Intel(R) USB 3.20 eXtensible Host Controller - 1.20 (Microsoft)",
+  "Manufacturer": "Generic USB xHCI Host Controller",
+  "Status": "OK",
+  "PNPDeviceID": "PCI\\VEN_8086&DEV_461E&SUBSYS_0B101028&REV_02\\3&*********3&68",
+  "ProtocolSupported": 16
+ }
+]

@@ -1,0 +1,36 @@
+[
+ {
+  "Number": 1,
+  "FriendlyName": "KBG50ZNS512G NVMe KIOXIA 512GB",
+  "SerialNumber": "00**********************************8FD.",
+  "PartitionStyle": "GPT",
+  "IsBoot": true,
+  "IsSystem": true,
+  "IsReadOnly": false,
+  "IsOffline": false,
+  "NumberOfPartitions": 4,
+  "Size": 512110190592,
+  "AllocatedSize": 512109142016,
+  "Location": "PCI Slot 2 : Bus 3 : Device 0 : Function 0 : Adapter 1",
+  "Guid": "{4********************************e06}",
+  "OperationalStatus": "Online",
+  "Path": "\\\\?\\scsi#disk&ven_nvme&prod_kbg50zns512g_nvm#5&187f7995&0&000000#{53f56307-b6bf-11d0-94f2-00a0c91efb8b}"
+ },
+ {
+  "Number": 0,
+  "FriendlyName": "WDC WD10SPSX-75A6WT0",
+  "SerialNumber": "  **************SV90",
+  "PartitionStyle": "GPT",
+  "IsBoot": false,
+  "IsSystem": false,
+  "IsReadOnly": false,
+  "IsOffline": false,
+  "NumberOfPartitions": 1,
+  "Size": 1000204886016,
+  "AllocatedSize": 1000204886016,
+  "Location": "Integrated : Bus 0 : Device 23 : Function 0 : Adapter 0 : Port 0",
+  "Guid": "{d********************************230}",
+  "OperationalStatus": "Online",
+  "Path": "\\\\?\\scsi#disk&ven_wdc&prod_wd10spsx-75a6wt0#4&380b149f&0&000000#{53f56307-b6bf-11d0-94f2-00a0c91efb8b}"
+ }
+]

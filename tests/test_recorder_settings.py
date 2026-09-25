@@ -48,7 +48,7 @@ class RecorderSettingsTests(unittest.TestCase):
 
             save_recorder_settings(path, settings)
 
-            with open(path, "r", encoding="utf-8") as handle:
+            with open(path, encoding="utf-8") as handle:
                 raw = json.load(handle)
             self.assertEqual(raw["output"]["base_name"], "Task")
             self.assertEqual(load_recorder_settings(path), settings)

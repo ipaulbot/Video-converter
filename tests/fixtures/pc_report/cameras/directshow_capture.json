@@ -1,0 +1,128 @@
+[
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source",
+  "CLSID": "{3193F794-0CE7-485D-A61D-7289A4ADBFCE}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 2",
+  "CLSID": "{E52E7DD2-0002-4469-9E5B-C30AE8EFC8CB}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 3",
+  "CLSID": "{B676F844-A989-4603-BAA6-389F5E395CD9}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 4",
+  "CLSID": "{594EE599-5FCD-4C11-B343-5084875573E7}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "DevicePath": "Daheng Imaging Device 1 Device Path\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Medialooks Screen Capture",
+  "CLSID": "{10360012-2216-4246-B3AF-5CB99BE58D62}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "AXIS P5534 [x64]",
+  "CLSID": "{D9BF4085-E5A6-4320-A626-5318CB7D57D0}",
+  "DevicePath": "@device:sw:{8********************************E86}\\{2********************************345}",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "OBS Virtual Camera",
+  "CLSID": "{A3FCE0F5-3493-419F-958A-ABA1250EC20B}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "SplitCam Virtual Camera",
+  "CLSID": "{D9F675A4-B126-4FFD-92DE-9FD9AD597E10}",
+  "DevicePath": "",
+  "Architecture": "x64"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source",
+  "CLSID": "{3193F794-0CE7-485D-A61D-7289A4ADBFCE}",
+  "DevicePath": "Basler GenICam Generic Device Path",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 2",
+  "CLSID": "{E52E7DD2-0002-4469-9E5B-C30AE8EFC8CB}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 3",
+  "CLSID": "{B676F844-A989-4603-BAA6-389F5E395CD9}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Basler GenICam Source 4",
+  "CLSID": "{594EE599-5FCD-4C11-B343-5084875573E7}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Daheng Imaging Device 1",
+  "CLSID": "{012B42C2-30B4-4745-925E-CE80C6ED66AC}",
+  "DevicePath": "Daheng Imaging Device 1 Device Path\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "OBS Virtual Camera",
+  "CLSID": "{A3FCE0F5-3493-419F-958A-ABA1250EC20B}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "Euresys Source Filter",
+  "CLSID": "{C8D2D5D0-02DF-41D4-BD80-7681CD059B52}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ },
+ {
+  "Category": "Video Capture Sources",
+  "Name": "SplitCam Virtual Camera",
+  "CLSID": "{D9F675A4-B126-4FFD-92DE-9FD9AD597E10}",
+  "DevicePath": "",
+  "Architecture": "x86"
+ }
+]

@@ -1,0 +1,6 @@
+{
+ "Name": "Cooling Device",
+ "DesiredSpeed": null,
+ "Status": "OK",
+ "ActiveCooling": true
+}

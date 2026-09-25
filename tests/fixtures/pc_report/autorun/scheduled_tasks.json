@@ -1,0 +1,98 @@
+[
+ {
+  "Name": "Adobe Acrobat Update Task",
+  "Path": "\\",
+  "State": "Ready",
+  "Author": "Adobe Systems Incorporated",
+  "Action": "C:\\Program Files (x86)\\Common Files\\Adobe\\ARM\\1.0\\AdobeARM.exe",
+  "Triggers": "Logon, Daily",
+  "LastRun": "/Date(1790286040000)/",
+  "NextRun": "/Date(1790341200000)/",
+  "LastResult": 0,
+  "Run As (account name)": ""
+ },
+ {
+  "Name": "Adobe Uninstaller",
+  "Path": "\\",
+  "State": "Ready",
+  "Author": "Adobe Systems Inc.",
+  "Action": "C:\\Program Files (x86)\\Adobe\\Adobe Creative Cloud\\ACC\\Creative Cloud.exe --sapCode=PHSP --productVersion=24.7.4 --productPlatform=win64 --appletID=AppsPanel_BL --appletVersion=1.0 --appMode=Uninstall",
+  "Triggers": "Registration",
+  "LastRun": "/Date(1787154101000)/",
+  "NextRun": null,
+  "LastResult": 0,
+  "Run As (account name)": ""
+ },
+ {
+  "Name": "AdobeGCInvoker-1.0",
+  "Path": "\\",
+  "State": "Ready",
+  "Author": "Adobe Systems Inc.",
+  "Action": "C:\\Program Files (x86)\\Common Files\\Adobe\\AdobeGCClient\\agcinvokerutility.exe -mode=scheduled",
+  "Triggers": "Daily",
+  "LastRun": "/Date(1790267064000)/",
+  "NextRun": "/Date(1790353464000)/",
+  "LastResult": 0,
+  "Run As (account name)": ""
+ },
+ {
+  "Name": "AdobeGCInvokerLogon",
+  "Path": "\\",
+  "State": "Ready",
+  "Author": "Adobe Systems Inc.",
+  "Action": "C:\\Program Files (x86)\\Common Files\\Adobe\\AdobeGCClient\\agcinvokerutility.exe --logon",
+  "Triggers": "Logon",
+  "LastRun": "/Date(1789911762000)/",
+  "NextRun": null,
+  "LastResult": 0,
+  "Run As (account name)": ""
+ },
+ {
+  "Name": "Launch Adobe CCXProcess",
+  "Path": "\\",
+  "State": "Running",
+  "Author": "WORKGROUP\\user",
+  "Action": "\"C:\\Program Files\\Adobe\\Adobe Creative Cloud Experience\\CCXProcess.exe\"",
+  "Triggers": "Daily",
+  "LastRun": "/Date(1790279572000)/",
+  "NextRun": "/Date(1790365972000)/",
+  "LastResult": 2147946720,
+  "Run As (account name)": "****"
+ },
+ {
+  "Name": "ZoomUpdateTaskUser-S-1-5-21-<redacted>",
+  "Path": "\\",
+  "State": "Ready",
+  "Author": "Zoom Communications, Inc.",
+  "Action": "\"C:\\Users\\<redacted>\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe\" --action=UpdateSchedule",
+  "Triggers": "Daily",
+  "LastRun": "/Date(1790290616000)/",
+  "NextRun": "/Date(1790294216000)/",
+  "LastResult": 0,
+  "Run As (account name)": "****"
+ },
+ {
+  "Name": "AppleSoftwareUpdate",
+  "Path": "\\Apple\\",
+  "State": "Ready",
+  "Author": "",
+  "Action": "C:\\Program Files (x86)\\Apple Software Update\\SoftwareUpdate.exe -task",
+  "Triggers": "Weekly",
+  "LastRun": "/Date(1790159430000)/",
+  "NextRun": "/Date(1790506006000)/",
+  "LastResult": 0,
+  "Run As (account name)": ""
+ },
+ {
+  "Name": "Autorun for user",
+  "Path": "\\PowerToys\\",
+  "State": "Ready",
+  "Author": "WORKGROUP\\user",
+  "Action": "C:\\Users\\<redacted>\\AppData\\Local\\PowerToys\\PowerToys.exe",
+  "Triggers": "Logon",
+  "LastRun": "/Date(943938000000)/",
+  "NextRun": null,
+  "LastResult": 267011,
+  "Run As (account name)": "****"
+ }
+]

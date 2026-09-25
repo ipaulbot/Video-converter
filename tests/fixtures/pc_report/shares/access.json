@@ -1,0 +1,92 @@
+[
+ {
+  "Name": "IPC$",
+  "AccountName": "BUILTIN\\Administrators",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "C$",
+  "AccountName": "BUILTIN\\Administrators",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "D$",
+  "AccountName": "BUILTIN\\Administrators",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "IPC$",
+  "AccountName": "BU******************tors",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "C$",
+  "AccountName": "BU******************tors",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "D$",
+  "AccountName": "BU******************tors",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "D$",
+  "AccountName": "NT AUTHORITY\\INTERACTIVE",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "IPC$",
+  "AccountName": "NT AUTHORITY\\INTERACTIVE",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "C$",
+  "AccountName": "NT AUTHORITY\\INTERACTIVE",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "print$",
+  "AccountName": "Everyone",
+  "AccessControlType": 0,
+  "AccessRight": 2
+ },
+ {
+  "Name": "print$",
+  "AccountName": "BUILTIN\\Administrators",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "VisoFiles-d9******************************a9bd$",
+  "AccountName": "Everyone",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "ADMIN$",
+  "AccountName": "BUILTIN\\Administrators",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "ADMIN$",
+  "AccountName": "BU******************tors",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ },
+ {
+  "Name": "ADMIN$",
+  "AccountName": "NT AUTHORITY\\INTERACTIVE",
+  "AccessControlType": 0,
+  "AccessRight": 0
+ }
+]

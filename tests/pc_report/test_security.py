@@ -1,0 +1,162 @@
+import json
+import os
+import tempfile
+import unittest
+from pathlib import Path
+
+from pc_report.section import REQUIRES_ADMIN
+from pc_report.sections import security as mod
+from tests.pc_report import support
+
+SC = [{"Kind": "AntiVirusProduct", "Name": "Windows Defender", "State": 397568, "Path": "C:\\x.exe", "Timestamp": "Mon"},
+      {"Kind": "FirewallProduct", "Name": "Vendor FW", "State": 266256, "Path": "", "Timestamp": ""}]
+DEF = {"AMProductVersion": "4.18.1", "AMEngineVersion": "1.1.2", "AntivirusSignatureVersion": "1.4",
+       "AntivirusSignatureLastUpdated": "/Date(1758000000000)/", "RealTimeProtectionEnabled": True,
+       "IsTamperProtected": True, "NISEnabled": True, "QuickScanEndTime": None, "FullScanEndTime": None,
+       "QuickScanAge": 2, "FullScanAge": 4294967295}
+FW = [{"Name": "Domain", "Enabled": 1, "DefaultInboundAction": 4, "DefaultOutboundAction": 2, "NotifyOnListen": 0,
+       "LogFileName": "%systemroot%\\pfirewall.log", "LogMaxSizeKilobytes": 4096}]
+DG = {"VirtualizationBasedSecurityStatus": 2, "SecurityServicesConfigured": [1, 2], "SecurityServicesRunning": [2],
+      "AvailableSecurityProperties": [1, 2, 3, 5, 7], "RequiredSecurityProperties": [0],
+      "CodeIntegrityPolicyEnforcementStatus": 2, "UsermodeCodeIntegrityPolicyEnforcementStatus": 0}
+ADMINS = {"Members": [{"Name": "PC-NAME\\Administrator", "ObjectClass": "User", "PrincipalSource": "Local"}],
+          "Source": "LocalAccounts", "Error": ""}
+NET = "Force user logoff how long after time expires?:       Never\nMinimum password length:                              8\nLockout threshold:                                    Never\nThe command completed successfully.\n"
+
+
+class BuildTests(unittest.TestCase):
+    def setUp(self):
+        self.data = mod.build(SC, DEF, FW, DG, {"TpmPresent": True, "TpmReady": True, "ManufacturerIdTxt": "IFX "},
+                              [{"MountPoint": "C:", "ProtectionStatus": 1, "EncryptionMethod": 7, "EncryptionPercentage": 100,
+                                "VolumeStatus": 1, "KeyProtector": "Tpm, RecoveryPassword"}], ADMINS, NET)
+
+    def test_security_center_rows(self):
+        av = self.data["security_center"][0]
+        self.assertEqual(av["Kind"], "Antivirus")
+        self.assertEqual(av["State"], "On")
+        self.assertEqual(av["Signatures"], "Up to date")
+
+    def test_defender_and_firewall(self):
+        rows = mod.flatten(self.data)
+        self.assertEqual(rows["Real-time Protection"], "Yes")
+        self.assertEqual(rows["Last Full Scan"], "Never")
+        fw = self.data["firewall"][0]
+        self.assertEqual(fw["Enabled"], "Yes")
+        self.assertEqual(fw["Inbound"], "Block")
+        self.assertEqual(fw["Outbound"], "Allow")
+
+    def test_device_guard_decoded(self):
+        rows = mod.flatten(self.data)
+        self.assertEqual(rows["Virtualization-based Security"], "Running")
+        self.assertEqual(rows["Security Services Running"], "Memory integrity (HVCI)")
+        self.assertEqual(rows["Kernel-mode Code Integrity"], "Enforced")
+
+    def test_security_center_state_decodes_every_state_and_signature(self):
+        states = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "On", 0x22: "Unknown (0x22)"}
+        signatures = {0x00: "Up to date", 0x10: "Out of date", 0x20: "Unknown"}
+        for state_byte, state_label in states.items():
+            for signature_byte, signature_label in signatures.items():
+                with self.subTest(state=state_byte, signature=signature_byte):
+                    packed = (0x06 << 16) | (state_byte << 8) | signature_byte
+                    self.assertEqual(
+                        mod.decode.security_center_state(packed),
+                        (state_label, signature_label),
+                    )
+
+    def test_device_guard_no_services_reads_none_not_other(self):
+        dg = {**DG, "SecurityServicesConfigured": [0], "SecurityServicesRunning": [0]}
+        data = mod.build(SC, DEF, FW, dg, None, None, ADMINS, NET)
+        rows = mod.flatten(data)
+        self.assertEqual(rows["Security Services Configured"], "None")
+        self.assertEqual(rows["Security Services Running"], "None")
+
+    def test_password_policy_numbers_survive_redaction(self):
+        from pc_report.privacy import redact_payload
+        rows = redact_payload({"Minimum password length": "8", "Maximum password age (days)": "42",
+                               "Length of password history maintained": "24", "Password": "hunter22"})
+        self.assertEqual(rows["Minimum password length"], "8")
+        self.assertEqual(rows["Maximum password age (days)"], "42")
+        self.assertEqual(rows["Length of password history maintained"], "24")
+        self.assertEqual(rows["Password"], "********")
+
+    def test_device_guard_tables_match_windows_values(self):
+        service_labels = [
+            "Credential Guard", "Memory integrity (HVCI)", "System Guard Secure Launch",
+            "SMM Firmware Measurement", "Kernel-mode Hardware-enforced Stack Protection",
+            "Kernel-mode Hardware-enforced Stack Protection (audit)",
+            "Hypervisor-Enforced Paging Translation",
+        ]
+        property_labels = [
+            "Hypervisor support", "Secure Boot", "DMA protection", "Secure Memory Overwrite",
+            "NX protections", "SMM mitigations", "Mode Based Execution Control", "APIC virtualization",
+        ]
+        for code, label in enumerate(service_labels, 1):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_SERVICES, code), label)
+        for code, label in enumerate(property_labels, 1):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_AVAILABLE, code), label)
+        self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_SERVICES, 99), "Other (99)")
+        for code, label in enumerate(("Off", "Enabled but not running", "Running")):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_VBS_STATUS, code), label)
+
+    def test_tpm_bitlocker_and_accounts(self):
+        rows = mod.flatten(self.data)
+        self.assertEqual(rows["TPM Present"], "Yes")
+        self.assertEqual(rows["TPM Manufacturer"], "IFX")
+        self.assertEqual(rows["Minimum password length"], "8")
+        bl = self.data["bitlocker"][0]
+        self.assertEqual(bl["Protection"], "On")
+        self.assertEqual(bl["Method"], "XTS-AES 256")
+
+    def test_requires_admin_placeholders(self):
+        data = mod.build([], {}, [], {}, REQUIRES_ADMIN, REQUIRES_ADMIN,
+                         {"Members": [], "Source": "LocalAccounts", "Error": ""}, "")
+        self.assertEqual(mod.flatten(data)["TPM"], REQUIRES_ADMIN)
+        self.assertEqual(data["bitlocker"], REQUIRES_ADMIN)
+        html = mod.render(data, support.render_ctx())
+        self.assertEqual(html.count("Requires administrator"), 2)
+
+    def test_local_administrator_members_render(self):
+        data = mod.build([], {}, [], {}, {}, [],
+                         {"Members": [{"Name": "PC\\Administrator", "ObjectClass": "User",
+                                      "PrincipalSource": "Local"}],
+                          "Source": "LocalAccounts", "Error": ""}, "")
+        html = mod.render(data, support.render_ctx())
+        self.assertEqual(len(data["admins"]), 1)
+        self.assertIn("Administrator", data["admins"][0]["Local Administrators"])
+        self.assertIn("Administrator", html)
+
+    def test_local_administrator_error_renders_unavailable(self):
+        data = mod.build([], {}, [], {}, {}, [],
+                         {"Members": [], "Source": "", "Error": "boom"}, "")
+        html = mod.render(data, support.render_ctx())
+        self.assertIn("Unavailable (see notes)", html)
+
+
+class FixtureTests(unittest.TestCase):
+    def test_collect_notes_local_administrator_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture_dir = Path(tmp) / "security"
+            fixture_dir.mkdir()
+            (fixture_dir / "local_admins.json").write_text(
+                json.dumps({"Members": [], "Source": "", "Error": "boom"}),
+                encoding="utf-8",
+            )
+            ctx = support.FixtureSectionContext(mod.SECTION, root=Path(tmp))
+            mod.collect(ctx)
+        self.assertIn("local administrators: boom", ctx.notes)
+
+    def test_collect_and_render_from_fixtures(self):
+        data, html, ctx = support.collect_and_render(mod.SECTION)
+        self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
+        for label in ("Antivirus", "Real-time Protection", "Inbound", "Virtualization-based Security",
+                      "Local Administrators", "Requires administrator"):
+            self.assertIn(label, html, label)
+        admins_html = html.split("<h3>Local Administrators</h3>", 1)[1]
+        expected = "<tbody><tr>" if data["admins"] else "Unavailable (see notes)"
+        self.assertIn(expected, admins_html)
+        username = os.environ.get("USERNAME")
+        if username:
+            self.assertNotIn(username.lower(), html.lower())
+
+    def test_renders_empty(self):
+        support.assert_renders_empty(self, mod.SECTION)

@@ -1,0 +1,6 @@
+{
+ "MaxCapacity": 67108864,
+ "MaxCapacityEx": 67108864,
+ "MemoryDevices": 2,
+ "MemoryErrorCorrection": 3
+}

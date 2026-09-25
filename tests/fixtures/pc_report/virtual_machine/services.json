@@ -1,0 +1,17 @@
+[
+ {
+  "Name": "HvHost",
+  "State": "Running",
+  "StartMode": "Manual"
+ },
+ {
+  "Name": "vmcompute",
+  "State": "Running",
+  "StartMode": "Manual"
+ },
+ {
+  "Name": "vmicheartbeat",
+  "State": "Stopped",
+  "StartMode": "Manual"
+ }
+]

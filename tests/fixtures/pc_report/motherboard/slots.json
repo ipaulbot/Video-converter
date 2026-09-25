@@ -1,0 +1,37 @@
+[
+ {
+  "SlotDesignation": "PCI-Express 0",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 10
+ },
+ {
+  "SlotDesignation": "PCI-Express 1",
+  "CurrentUsage": 4,
+  "MaxDataWidth": 5
+ },
+ {
+  "SlotDesignation": "PCI-Express 2",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 5
+ },
+ {
+  "SlotDesignation": "PCI-Express 3",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 5
+ },
+ {
+  "SlotDesignation": "PCI-Express 4",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 5
+ },
+ {
+  "SlotDesignation": "PCI-Express 5",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 5
+ },
+ {
+  "SlotDesignation": "PCI-Express 6",
+  "CurrentUsage": 3,
+  "MaxDataWidth": 5
+ }
+]

@@ -1,0 +1,74 @@
+[
+ {
+  "Name": "ADMIN$",
+  "Path": "C:\\Windows",
+  "Description": "Remote Admin",
+  "ShareType": 0,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": true
+ },
+ {
+  "Name": "C$",
+  "Path": "C:\\",
+  "Description": "Default share",
+  "ShareType": 0,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": true
+ },
+ {
+  "Name": "D$",
+  "Path": "D:\\",
+  "Description": "Default share",
+  "ShareType": 0,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": true
+ },
+ {
+  "Name": "IPC$",
+  "Path": "",
+  "Description": "Remote IPC",
+  "ShareType": 3,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": true
+ },
+ {
+  "Name": "print$",
+  "Path": "C:\\Windows\\system32\\spool\\drivers",
+  "Description": "Printer Drivers",
+  "ShareType": 0,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": false
+ },
+ {
+  "Name": "VisoFiles-d9******************************a9bd$",
+  "Path": "C:\\Users\\<redacted>\\Documents",
+  "Description": "",
+  "ShareType": 0,
+  "ShareState": 1,
+  "CurrentUsers": 0,
+  "CachingMode": 1,
+  "EncryptData": false,
+  "FolderEnumerationMode": 1,
+  "Special": false
+ }
+]

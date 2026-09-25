@@ -1,0 +1,53 @@
+{
+ "ProductId": "00*****************A558",
+ "OA3xOriginalProductKey": "*****************************",
+ "OA3xOriginalProductKeyDescription": "*************************",
+ "KeyManagementServiceMachine": "",
+ "Products": [
+  {
+   "Name": "Office 19, Office19ProjectPro2019VL_KMS_Client_AE edition",
+   "Description": "Office 19, VOLUME_KMSCLIENT channel",
+   "LicenseStatus": 5,
+   "PartialProductKey": "*****",
+   "ProductKeyChannel": "***********",
+   "LicenseFamily": "Office19ProjectPro2019VL_KMS_Client_AE",
+   "GracePeriodRemaining": 0
+  },
+  {
+   "Name": "Office 16, Office16O365ProPlusR_Grace edition",
+   "Description": "Office 16, RETAIL(Grace) channel",
+   "LicenseStatus": 5,
+   "PartialProductKey": "*****",
+   "ProductKeyChannel": "******",
+   "LicenseFamily": "Office16O365ProPlusR_Grace",
+   "GracePeriodRemaining": 0
+  },
+  {
+   "Name": "Office 16, Office16OneNoteFreeR_Bypass edition",
+   "Description": "Office 16, RETAIL(Free) channel",
+   "LicenseStatus": 1,
+   "PartialProductKey": "*****",
+   "ProductKeyChannel": "******",
+   "LicenseFamily": "Office16OneNoteFreeR_Bypass",
+   "GracePeriodRemaining": 0
+  },
+  {
+   "Name": "Windows(R), Professional edition",
+   "Description": "Windows(R) Operating System, RETAIL channel",
+   "LicenseStatus": 1,
+   "PartialProductKey": "*****",
+   "ProductKeyChannel": "******",
+   "LicenseFamily": "Professional",
+   "GracePeriodRemaining": 0
+  },
+  {
+   "Name": "Office 19, Office19VisioPro2019VL_MAK_AE edition",
+   "Description": "Office 19, RETAIL(MAK) channel",
+   "LicenseStatus": 1,
+   "PartialProductKey": "*****",
+   "ProductKeyChannel": "**********",
+   "LicenseFamily": "Office19VisioPro2019VL_MAK_AE",
+   "GracePeriodRemaining": 0
+  }
+ ]
+}

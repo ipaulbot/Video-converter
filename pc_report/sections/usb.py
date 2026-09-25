@@ -1,0 +1,214 @@
+"""USB controllers, hubs, devices, topology details, and selective suspend."""
+from __future__ import annotations
+
+import re
+
+from .. import decode
+from ..format import yes_no
+from ..ps import cim
+from ..section import Section, kv_groups, list_table, rows_of, sub_heading
+
+CTRL_SCRIPT = cim("Win32_USBController", ("Name", "Manufacturer", "Status", "PNPDeviceID", "ProtocolSupported"))
+HUBS_SCRIPT = cim("Win32_USBHub", ("Name", "DeviceID", "Status", "PNPDeviceID", "Description"))
+DEVICES_SCRIPT = r"""
+Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object { $_.InstanceId -like 'USB\*' } | ForEach-Object {
+  $props = @{}
+  try {
+    Get-PnpDeviceProperty -InstanceId $_.InstanceId -ErrorAction SilentlyContinue | ForEach-Object {
+      $props[$_.KeyName] = $_.Data
+    }
+  } catch {}
+  [pscustomobject]@{
+    InstanceId = $_.InstanceId
+    FriendlyName = [string]$_.FriendlyName
+    Class = [string]$_.Class
+    Manufacturer = [string]$_.Manufacturer
+    Status = [string]$_.Status
+    Present = $_.Present
+    Service = [string]$_.Service
+    ParentInstanceId = [string]$props['DEVPKEY_Device_Parent']
+    Location = [string]$props['DEVPKEY_Device_LocationInfo']
+    Address = $props['DEVPKEY_Device_Address']
+    Speed = [string]$props['DEVPKEY_Device_UsbSpeed']
+    Problem = $props['DEVPKEY_Device_ProblemCode']
+  }
+}
+"""
+SUSPEND_ARGS = ["powercfg", "/q", "SCHEME_CURRENT", "2a737441-1930-4402-8d77-b2bebba308a3"]
+SELECTIVE_SUSPEND_GUID = "48e6b7a6-50f5-4782-a5d4-53bb8f07e226"
+
+_VIDPID = re.compile(r"VID_([0-9A-Fa-f]{4})&PID_([0-9A-Fa-f]{4})")
+_GUID = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    re.IGNORECASE,
+)
+_SETTING_VALUE = re.compile(r"0x[0-9A-Fa-f]{8}")
+
+CTRL_COLUMNS = [("Name", "Name"), ("Manufacturer", "Manufacturer"), ("Protocol", "Protocol"),
+                ("USB Generation (from name)", "USB Generation (from name)"),
+                ("Status", "Status"), ("PNPDeviceID", "PnP Device ID")]
+HUB_COLUMNS = [("Name", "Name"), ("Status", "Status"), ("DeviceID", "Device ID")]
+DEV_COLUMNS = [("Name", "Name"), ("VID / PID", "VID / PID"), ("Class", "Class"),
+               ("Manufacturer", "Manufacturer"), ("Speed", "Speed"), ("Service", "Service"),
+               ("Status", "Status"), ("Problem", "Problem"), ("Present", "Present"),
+               ("ParentInstanceId", "Parent"), ("Location", "Location"), ("InstanceId", "Instance")]
+
+
+def _suspend(text: str) -> dict:
+    parsed = {"scheme": "", "ac": "Unknown", "dc": "Unknown", "found": False}
+    lines = text.splitlines()
+    setting_index = next(
+        (index for index, line in enumerate(lines)
+         if SELECTIVE_SUSPEND_GUID.casefold() in line.casefold()),
+        None,
+    )
+    if setting_index is None:
+        return parsed
+
+    parsed["found"] = True
+    subgroup_index = next(
+        (index for index in range(setting_index - 1, -1, -1)
+         if "2a737441-1930-4402-8d77-b2bebba308a3" in lines[index].casefold()),
+        setting_index,
+    )
+    for line in reversed(lines[:subgroup_index]):
+        match = _GUID.search(line)
+        if not match:
+            continue
+        friendly = re.search(r"\(([^()]*)\)\s*$", line[match.end():])
+        if friendly:
+            parsed["scheme"] = friendly.group(1).strip()
+            break
+
+    values = []
+    for line in lines[setting_index + 1:]:
+        guids = _GUID.findall(line)
+        if any(guid.casefold() != SELECTIVE_SUSPEND_GUID for guid in guids):
+            break
+        values.extend(_SETTING_VALUE.findall(line))
+
+    def state(index: int) -> str:
+        if index >= len(values):
+            return "Unknown"
+        value = int(values[index], 16)
+        if value == 0:
+            return "Disabled"
+        if value == 1:
+            return "Enabled"
+        return values[index]
+
+    parsed["ac"] = state(0)
+    parsed["dc"] = state(1)
+    return parsed
+
+
+def _problem(value) -> str:
+    code = decode.to_int(value)
+    if code in (None, 0):
+        return ""
+    return f"{code}: {decode.lookup(decode.PNP_ERROR_CODES, code)}"
+
+
+def _device_sort_key(row: dict) -> tuple:
+    parent = str(row.get("ParentInstanceId") or "").casefold()
+    location = str(row.get("Location") or "").casefold()
+    address = decode.to_int(row.get("_Address"))
+    return (parent, location, address is None, address or 0, str(row.get("Name") or "").casefold(),
+            str(row.get("InstanceId") or "").casefold())
+
+
+def _usb_generation_from_name(name) -> str:
+    text = str(name or "")
+    if re.search(r"\b3(?:\.(?:0|1|10|2|20))?\b", text, re.IGNORECASE) or re.search(r"\bxHCI\b", text, re.IGNORECASE):
+        return "USB 3.x"
+    if re.search(r"\b(?:EHCI|Enhanced)\b", text, re.IGNORECASE):
+        return "USB 2.0"
+    if re.search(r"\b(?:UHCI|OHCI)\b", text, re.IGNORECASE):
+        return "USB 1.x"
+    return ""
+
+
+def build(controllers, hubs, devices, suspend_text) -> dict:
+    suspend = _suspend(suspend_text)
+    ctrl = [{"Name": c.get("Name", ""), "Manufacturer": c.get("Manufacturer", ""),
+             "Protocol": decode.lookup(decode.USB_PROTOCOLS, c.get("ProtocolSupported")),
+             "USB Generation (from name)": _usb_generation_from_name(c.get("Name")),
+             "Status": c.get("Status", ""), "PNPDeviceID": c.get("PNPDeviceID", "")}
+            for c in rows_of(controllers)]
+    ctrl.sort(key=lambda row: (str(row["Name"]).casefold(), str(row["PNPDeviceID"]).casefold()))
+    hub_rows = [{"Name": h.get("Name") or h.get("Description", ""), "Status": h.get("Status", ""),
+                 "DeviceID": h.get("DeviceID", ""), "PNPDeviceID": h.get("PNPDeviceID", "")}
+                for h in rows_of(hubs)]
+    hub_rows.sort(key=lambda row: (str(row["DeviceID"]).casefold(), str(row["Name"]).casefold()))
+
+    dev_rows = []
+    for device in rows_of(devices):
+        instance_id = str(device.get("InstanceId") or "")
+        match = _VIDPID.search(instance_id)
+        parent = device.get("ParentInstanceId")
+        if parent in (None, ""):
+            parent = device.get("Parent", "")
+        dev_rows.append({
+            "Name": device.get("FriendlyName") or "",
+            "VID / PID": f"{match.group(1).upper()} / {match.group(2).upper()}" if match else "",
+            "Class": device.get("Class", ""),
+            "Manufacturer": device.get("Manufacturer", ""),
+            "Speed": device.get("Speed", ""),
+            "Service": device.get("Service", ""),
+            "Status": device.get("Status", ""),
+            "Problem": _problem(device.get("Problem", device.get("ConfigManagerErrorCode"))),
+            "Present": yes_no(device.get("Present")),
+            "ParentInstanceId": parent,
+            "Location": device.get("Location", ""),
+            "InstanceId": instance_id,
+            "_Address": device.get("Address"),
+        })
+    dev_rows.sort(key=_device_sort_key)
+    for row in dev_rows:
+        del row["_Address"]
+
+    summary = {
+        "Controllers": len(ctrl),
+        "Hubs": len(hub_rows),
+        "USB Devices Present": sum(1 for row in dev_rows if row["Present"] == "Yes"),
+        "USB Devices Not Present": sum(1 for row in dev_rows if row["Present"] != "Yes"),
+        "Selective Suspend (AC)": suspend["ac"] if suspend_text else "",
+        "Selective Suspend (DC)": suspend["dc"] if suspend_text else "",
+    }
+    return {"groups": [{"title": "Summary", "rows": summary}], "controllers": ctrl,
+            "hubs": hub_rows, "devices": dev_rows}
+
+
+def hasp_devices(data) -> list[str]:
+    out = []
+    for row in rows_of((data or {}).get("devices") if isinstance(data, dict) else None):
+        vid = str(row.get("VID / PID") or "")[:4]
+        name = str(row.get("Name") or "")
+        if vid == "0529" or re.search(r"hasp|sentinel", name, re.IGNORECASE):
+            out.append(name)
+    return out
+
+
+def collect(ctx):
+    suspend = ctx.text("selective_suspend", SUSPEND_ARGS)
+    data = build(ctx.query("controllers", CTRL_SCRIPT), ctx.query("hubs", HUBS_SCRIPT),
+                 ctx.query("devices", DEVICES_SCRIPT, timeout=90), suspend)
+    summary = data["groups"][0]["rows"]
+    if not suspend:
+        summary["Selective Suspend (AC)"] = "Unknown"
+        summary["Selective Suspend (DC)"] = "Unknown"
+        ctx.note("USB selective suspend: powercfg output was unavailable")
+    elif not _suspend(suspend)["found"]:
+        ctx.note("USB selective suspend: powercfg output was not recognised")
+    return data
+
+
+def render(data, ctx):
+    data = data if isinstance(data, dict) else {}
+    return (kv_groups(data.get("groups"))
+            + sub_heading("Controllers") + list_table(CTRL_COLUMNS, data.get("controllers"))
+            + sub_heading("Hubs") + list_table(HUB_COLUMNS, data.get("hubs"))
+            + sub_heading("Devices") + list_table(DEV_COLUMNS, data.get("devices")))
+
+
+SECTION = Section(key="usb", title="USB", group="Hardware", collect=collect, render=render, timeout=90)

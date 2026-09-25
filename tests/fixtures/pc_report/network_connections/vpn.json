@@ -1,0 +1,10 @@
+{
+ "Name": "Noldus Secure VPN",
+ "ServerAddress": "***.com",
+ "ConnectionStatus": "Disconnected",
+ "TunnelType": "Sstp",
+ "AuthenticationMethod": [
+  "Eap"
+ ],
+ "SplitTunneling": false
+}

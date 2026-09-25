@@ -1,0 +1,20 @@
+[
+ {
+  "Name": "Standard Serial over Bluetooth link (COM3)",
+  "DeviceID": "COM3",
+  "Description": "Standard Serial over Bluetooth link",
+  "MaxBaudRate": 9600,
+  "ProviderType": "RS232 Serial Port",
+  "Status": "OK",
+  "PNPDeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_LOCALMFG&0000\\7&226E64CF&0&000000******_00000004"
+ },
+ {
+  "Name": "Standard Serial over Bluetooth link (COM5)",
+  "DeviceID": "COM5",
+  "Description": "Standard Serial over Bluetooth link",
+  "MaxBaudRate": 9600,
+  "ProviderType": "RS232 Serial Port",
+  "Status": "OK",
+  "PNPDeviceID": "BTHENUM\\{00001101-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&2017\\7&226E64CF&0&F873DF******_C00000000"
+ }
+]

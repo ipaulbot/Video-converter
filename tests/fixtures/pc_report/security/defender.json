@@ -1,0 +1,18 @@
+{
+ "AMProductVersion": "4.18.26080.4",
+ "AMEngineVersion": "1.1.26080.3",
+ "AMServiceEnabled": true,
+ "AntivirusEnabled": true,
+ "AntivirusSignatureVersion": "1.459.374.0",
+ "AntivirusSignatureLastUpdated": "/Date(1790225701000)/",
+ "AntispywareEnabled": true,
+ "RealTimeProtectionEnabled": true,
+ "IsTamperProtected": false,
+ "NISEnabled": true,
+ "BehaviorMonitorEnabled": true,
+ "IoavProtectionEnabled": true,
+ "QuickScanEndTime": "/Date(1790238124827)/",
+ "FullScanEndTime": null,
+ "QuickScanAge": 0,
+ "FullScanAge": 4294967295
+}

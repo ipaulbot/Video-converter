@@ -1,0 +1,68 @@
+[
+ {
+  "DeviceName": "SplitCam Audio Mixer",
+  "DriverVersion": "16.10.24.612",
+  "DriverDate": "/Date(1589760000000)/",
+  "DriverProviderName": "Jannes Peters"
+ },
+ {
+  "DeviceName": "Microsoft Streaming Service Proxy",
+  "DriverVersion": "10.0.19041.1",
+  "DriverDate": "/Date(1150848000000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "Intel\u00ae Smart Sound Technology for Bluetooth\u00ae Audio",
+  "DriverVersion": "10.29.0.12635",
+  "DriverDate": "/Date(1771372800000)/",
+  "DriverProviderName": "Intel(R) Corporation"
+ },
+ {
+  "DeviceName": "Intel\u00ae Smart Sound Technology for USB Audio",
+  "DriverVersion": "10.29.0.12635",
+  "DriverDate": "/Date(1771372800000)/",
+  "DriverProviderName": "Intel(R) Corporation"
+ },
+ {
+  "DeviceName": "Realtek Audio",
+  "DriverVersion": "6.0.9954.2",
+  "DriverDate": "/Date(1770854400000)/",
+  "DriverProviderName": "Realtek Semiconductor Corp."
+ },
+ {
+  "DeviceName": "USB Audio Device",
+  "DriverVersion": "10.0.19041.5794",
+  "DriverDate": "/Date(1743984000000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "Microsoft Bluetooth A2dp Source",
+  "DriverVersion": "10.0.19041.1",
+  "DriverDate": "/Date(1575590400000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "Microsoft Bluetooth A2dp Source",
+  "DriverVersion": "10.0.19041.1",
+  "DriverDate": "/Date(1575590400000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "Microsoft Bluetooth A2dp Source",
+  "DriverVersion": "10.0.19041.1",
+  "DriverDate": "/Date(1575590400000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "USB Audio Device",
+  "DriverVersion": "10.0.19041.5794",
+  "DriverDate": "/Date(1743984000000)/",
+  "DriverProviderName": "Microsoft"
+ },
+ {
+  "DeviceName": "DisplayLink USB Audio Adapter",
+  "DriverVersion": "9.3.3309.0",
+  "DriverDate": "/Date(1586390400000)/",
+  "DriverProviderName": "DisplayLink Corp."
+ }
+]

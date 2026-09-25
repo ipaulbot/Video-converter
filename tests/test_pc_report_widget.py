@@ -1,10 +1,11 @@
-import unittest
 import inspect
+import unittest
+from unittest.mock import Mock, patch
 
 from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
 
-from ui.pc_report_dialog import PCReportWidget
 from ui.main_window import VideoConverterApp
+from ui.pc_report_dialog import PCReportWidget, _PCReportWorker
 
 
 class PCReportWidgetTests(unittest.TestCase):
@@ -35,6 +36,93 @@ class PCReportWidgetTests(unittest.TestCase):
 
         self.assertTrue(path.endswith(".html"))
         self.assertIn("PC_Report", path)
+
+    def test_worker_uses_registry_options_and_section_progress(self):
+        worker = _PCReportWorker(
+            {
+                "updates": False,
+                "programs": True,
+                "security": False,
+                "redact": True,
+            }
+        )
+        progress = []
+        worker.progress.connect(progress.append)
+
+        def fake_run_all(options, progress_cb, cancel):
+            progress_cb("Operating System", 1, 40)
+            return {"total_seconds": 0.1}, {}, {}
+
+        with (
+            patch("ui.pc_report_dialog.run_all", side_effect=fake_run_all) as run_all,
+            patch("ui.pc_report_dialog.render_html", return_value="<html></html>"),
+        ):
+            worker._generate()
+
+        self.assertEqual(
+            run_all.call_args.args[0],
+            {
+                "updates": False,
+                "programs": True,
+                "security": False,
+                "redact": True,
+            },
+        )
+        self.assertEqual(progress, ["Operating System (1/40)", "Rendering HTML..."])
+
+    def test_shutdown_is_a_noop_without_a_worker(self):
+        widget = PCReportWidget()
+        widget.shutdown()
+        self.assertIsNone(widget.worker)
+
+    def test_worker_cancel_sets_its_event(self):
+        worker = _PCReportWorker({})
+        self.assertFalse(worker.cancel_event.is_set())
+        worker.cancel()
+        self.assertTrue(worker.cancel_event.is_set())
+
+    def test_shutdown_cancels_and_waits_for_a_running_worker(self):
+        widget = PCReportWidget()
+        worker = Mock()
+        worker.isRunning.return_value = True
+        widget.worker = worker
+        widget.shutdown()
+        worker.cancel.assert_called_once_with()
+        worker.requestInterruption.assert_called_once_with()
+        worker.wait.assert_called_once_with(5000)
+
+    def test_worker_failure_page_is_escaped_redacted_and_logged(self):
+        worker = _PCReportWorker({"redact": True})
+        pages = []
+        worker.finished.connect(lambda html, _json: pages.append(html))
+        message = r"<b>boom</b> & C:\Users\jane\AppData\report.html missing"
+
+        with (
+            patch.object(_PCReportWorker, "_generate", side_effect=RuntimeError(message)),
+            patch("ui.pc_report_dialog.logger") as logger,
+        ):
+            worker.run()
+
+        page = pages[0]
+        self.assertNotIn("jane", page)
+        self.assertNotIn("<b>boom</b>", page)
+        self.assertIn("&lt;b&gt;boom&lt;/b&gt;", page)
+        self.assertIn("&amp;", page)
+        self.assertIn("<h1>PC Report Failed</h1>", page)
+        logger.exception.assert_called_once()
+
+    def test_worker_failure_page_keeps_paths_when_redaction_is_off(self):
+        worker = _PCReportWorker({"redact": False})
+        pages = []
+        worker.finished.connect(lambda html, _json: pages.append(html))
+
+        with (
+            patch.object(_PCReportWorker, "_generate", side_effect=RuntimeError(r"C:\Users\jane\x")),
+            patch("ui.pc_report_dialog.logger"),
+        ):
+            worker.run()
+
+        self.assertIn("jane", pages[0])
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)

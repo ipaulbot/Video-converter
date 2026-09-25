@@ -1,0 +1,6 @@
+{
+ "EnableFrameServerMode": null,
+ "EnableFrameServerModeWow": null,
+ "FrameServerStatus": "Stopped",
+ "FrameServerStartType": "Manual"
+}

@@ -1,0 +1,59 @@
+[
+ {
+  "Table": "DSDT"
+ },
+ {
+  "Table": "FACS"
+ },
+ {
+  "Table": "FADT"
+ },
+ {
+  "Table": "RSDT"
+ },
+ {
+  "Table": "SSD1"
+ },
+ {
+  "Table": "SSD2"
+ },
+ {
+  "Table": "SSD3"
+ },
+ {
+  "Table": "SSD4"
+ },
+ {
+  "Table": "SSD5"
+ },
+ {
+  "Table": "SSD6"
+ },
+ {
+  "Table": "SSD7"
+ },
+ {
+  "Table": "SSD8"
+ },
+ {
+  "Table": "SSD9"
+ },
+ {
+  "Table": "SSDA"
+ },
+ {
+  "Table": "SSDB"
+ },
+ {
+  "Table": "SSDC"
+ },
+ {
+  "Table": "SSDD"
+ },
+ {
+  "Table": "SSDE"
+ },
+ {
+  "Table": "SSDT"
+ }
+]

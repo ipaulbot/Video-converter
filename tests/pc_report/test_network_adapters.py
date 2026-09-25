@@ -1,0 +1,153 @@
+import unittest
+
+from pc_report.privacy import redact_payload
+from pc_report.sections import network_adapters as mod
+from tests.pc_report import support
+
+ADAPTERS = [{"Name": "Ethernet", "InterfaceDescription": "Intel(R) Ethernet Connection I219-LM", "ifIndex": 12, "Status": "Up",
+             "MacAddress": "AA-BB-CC-DD-EE-FF", "LinkSpeed": "1 Gbps", "MediaType": "802.3", "PhysicalMediaType": "802.3",
+             "MtuSize": 1500, "DriverVersion": "12.19.2.45", "DriverDate": "2023-10-05", "DriverProvider": "Intel",
+             "DriverFileName": "e1d68x64.sys", "DriverDescription": "Intel(R) Ethernet Connection I219-LM", "PnPDeviceID": "PCI\\VEN_8086&DEV_15BB\\3",
+             "InterfaceGuid": "{guid}", "Virtual": False, "Hidden": False, "FullDuplex": True, "PromiscuousMode": False,
+             "ReceiveLinkSpeed": 1000000000, "TransmitLinkSpeed": 1000000000, "ConnectorPresent": True, "NdisVersion": "6.85"}]
+ADVANCED = [{"Name": "Ethernet", "DisplayName": "Jumbo Packet", "DisplayValue": "9014 Bytes", "RegistryKeyword": "*JumboPacket", "RegistryValue": ["9014"]},
+            {"Name": "Ethernet", "DisplayName": "Receive Buffers", "DisplayValue": "2048", "RegistryKeyword": "*ReceiveBuffers", "RegistryValue": ["2048"]},
+            {"Name": "Ethernet", "DisplayName": "Interrupt Moderation", "DisplayValue": "Enabled", "RegistryKeyword": "*InterruptModeration", "RegistryValue": ["1"]}]
+IPIF = [{"ifIndex": 12, "AddressFamily": 2, "NlMtu": 1500, "InterfaceMetric": 25, "Dhcp": 1, "ConnectionState": 1},
+        {"ifIndex": 12, "AddressFamily": 23, "NlMtu": 1500, "InterfaceMetric": 25, "Dhcp": 1, "ConnectionState": 1}]
+WMI = [{"Name": "Intel(R) Ethernet Connection I219-LM", "NetConnectionID": "Ethernet", "NetConnectionStatus": 2, "PhysicalAdapter": True,
+        "AdapterType": "Ethernet 802.3", "Speed": 1000000000, "MACAddress": "AA:BB:CC:DD:EE:FF", "Manufacturer": "Intel",
+        "PNPDeviceID": "PCI\\VEN_8086&DEV_15BB\\3", "Index": 3, "InterfaceIndex": 12, "TimeOfLastReset": "/Date(1758000000000)/"}]
+
+
+class BuildTests(unittest.TestCase):
+    def setUp(self):
+        self.data = mod.build(ADAPTERS, ADVANCED, IPIF, WMI)
+
+    def test_adapter_groups(self):
+        a = self.data["adapters"][0]
+        rows = {}
+        for g in a["groups"]:
+            rows.update(g["rows"])
+        self.assertEqual(a["name"], "Ethernet")
+        self.assertEqual(rows["Description"], "Intel(R) Ethernet Connection I219-LM")
+        self.assertEqual(rows["Link Speed"], "1 Gbps")
+        self.assertEqual(rows["Connection Status"], "Connected")
+        self.assertEqual(rows["IPv4 Metric"], 25)
+        self.assertEqual(rows["IPv4 DHCP"], "Enabled")
+        self.assertEqual(rows["Physical"], "Yes")
+        self.assertEqual(rows["Adapter Type"], "Ethernet 802.3")
+
+    def test_advanced_and_gige(self):
+        self.assertEqual(
+            [row["Property"] for row in self.data["adapters"][0]["advanced"]],
+            ["Interrupt Moderation", "Jumbo Packet", "Receive Buffers"],
+        )
+        g = self.data["gige"][0]
+        self.assertEqual(g["Jumbo Packet"], "9014 Bytes")
+        self.assertEqual(g["Receive Buffers"], "2048")
+        self.assertEqual(g["Interrupt Moderation"], "Enabled")
+        self.assertEqual(g["Transmit Buffers"], "")
+
+    def test_summary(self):
+        rows = dict(self.data["groups"][0]["rows"])
+        self.assertEqual(rows["Adapters"], 1)
+        self.assertEqual(rows["Physical Adapters"], 1)
+        self.assertEqual(rows["Hidden Adapters"], 0)
+        self.assertEqual(rows["Connected"], 1)
+
+    def test_hidden_adapters_are_collapsed_but_visible_adapters_keep_details(self):
+        virtual = {
+            "Name": "vEthernet (Default Switch)", "ifIndex": "bad", "Status": "Down",
+            "InterfaceDescription": "Hyper-V Virtual Ethernet Adapter", "MacAddress": "11-22-33-44-55-66",
+            "LinkSpeed": 1000000000, "Virtual": True, "Hidden": True, "ConnectorPresent": False,
+        }
+        data = mod.build([virtual, ADAPTERS[0]], ADVANCED[0], IPIF[0], WMI[0])
+
+        self.assertEqual([row["name"] for row in data["adapters"]], ["Ethernet"])
+        self.assertEqual(data["adapters"][0]["advanced"][0]["Property"], "Jumbo Packet")
+        self.assertEqual(data["hidden"], [{
+            "Name": "vEthernet (Default Switch)",
+            "Description": "Hyper-V Virtual Ethernet Adapter",
+            "Status": "Down",
+            "Virtual": "Yes",
+            "MAC": "11-22-33-44-55-66",
+        }])
+        self.assertEqual(dict(data["groups"][0]["rows"])["Hidden Adapters"], 1)
+        self.assertEqual(len(data["gige"]), 1)
+        self.assertEqual(data["gige"][0]["Adapter"], "Ethernet")
+
+    def test_missing_join_keys_never_match_each_other(self):
+        adapter = {
+            "Name": "", "InterfaceDescription": "", "ifIndex": None, "Status": "Down",
+            "Virtual": False, "Hidden": False, "ConnectorPresent": False,
+        }
+        advanced = [{"Name": None, "DisplayName": "Should not join", "RegistryKeyword": "*RSS"}]
+        ipif = [{"ifIndex": None, "AddressFamily": 2, "InterfaceMetric": 99}]
+        wmi = [{"InterfaceIndex": None, "Manufacturer": "Wrong", "PhysicalAdapter": True}]
+
+        data = mod.build([adapter], advanced, ipif, wmi)
+        rows = {}
+        for group in data["adapters"][0]["groups"]:
+            rows.update(group["rows"])
+
+        self.assertEqual(rows["Manufacturer"], "")
+        self.assertEqual(rows["IPv4 Metric"], "")
+        self.assertEqual(data["adapters"][0]["advanced"], [])
+        self.assertEqual(data["gige"], [])
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, advanced):
+        data = mod.build(ADAPTERS, advanced, IPIF, WMI)
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_an_overridden_mac_is_masked_in_both_the_value_and_the_raw_cell(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "Locally Administered Address",
+                     "DisplayValue": "02-1A-2B-3C-4D-5E", "RegistryKeyword": "NetworkAddress",
+                     "RegistryValue": ["021A2B3C4D5E"]}]
+
+        html = self._html(advanced)
+
+        for sensitive in ("02-1A-2B-3C-4D-5E", "021A2B3C4D5E", "3C-4D-5E", "3C4D5E"):
+            self.assertNotIn(sensitive, html)
+        self.assertIn("02:1A:2B:**:**:**", html)
+        self.assertIn("Locally Administered Address", html)
+
+    def test_address_related_properties_lose_hosts_and_addresses(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "iSCSI Boot DNS Server",
+                     "DisplayValue": "dns-01.corp.example", "RegistryKeyword": "*DnsServerAddress",
+                     "RegistryValue": ["203.0.113.9"]}]
+
+        html = self._html(advanced)
+
+        self.assertNotIn("dns-01.corp.example", html)
+        self.assertNotIn("203.0.113.9", html)
+        self.assertIn("iSCSI Boot DNS Server", html)
+
+    def test_placeholder_values_of_mac_properties_stay_readable(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "Network Address", "DisplayValue": "Not Present",
+                     "RegistryKeyword": "NetworkAddress", "RegistryValue": []}]
+
+        self.assertIn("Not Present", self._html(advanced))
+
+    def test_ordinary_properties_are_untouched(self):
+        html = self._html(ADVANCED)
+
+        self.assertIn("9014 Bytes", html)
+        self.assertIn("Interrupt Moderation", html)
+
+
+class FixtureTests(unittest.TestCase):
+    def test_collect_and_render_from_fixtures(self):
+        _data, html, ctx = support.collect_and_render(mod.SECTION)
+        self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
+        self.assertIn("<th>Link Speed</th>", html)
+        self.assertIn("<th>MAC Address</th>", html)
+        self.assertIn("Advanced properties", html)
+        self.assertIn("Hidden and virtual adapters", html)
+        self.assertNotIn("AA-BB-CC-DD-EE-FF", html)
+        self.assertLess(html.count("<tr>"), 400)
+
+    def test_renders_empty(self):
+        support.assert_renders_empty(self, mod.SECTION)

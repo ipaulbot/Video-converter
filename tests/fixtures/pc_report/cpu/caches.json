@@ -1,0 +1,82 @@
+[
+ {
+  "Purpose": "L1 Cache",
+  "Level": 3,
+  "InstalledSize": 288,
+  "MaxCacheSize": 288,
+  "Associativity": 9,
+  "CacheType": 4,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L1 Cache",
+  "Level": 3,
+  "InstalledSize": 192,
+  "MaxCacheSize": 192,
+  "Associativity": 7,
+  "CacheType": 3,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L2 Cache",
+  "Level": 4,
+  "InstalledSize": 7680,
+  "MaxCacheSize": 7680,
+  "Associativity": 1,
+  "CacheType": 5,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L3 Cache",
+  "Level": 5,
+  "InstalledSize": 24576,
+  "MaxCacheSize": 24576,
+  "Associativity": 9,
+  "CacheType": 5,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L1 Cache",
+  "Level": 3,
+  "InstalledSize": 256,
+  "MaxCacheSize": 256,
+  "Associativity": 7,
+  "CacheType": 4,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L1 Cache",
+  "Level": 3,
+  "InstalledSize": 512,
+  "MaxCacheSize": 512,
+  "Associativity": 7,
+  "CacheType": 3,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L2 Cache",
+  "Level": 4,
+  "InstalledSize": 4096,
+  "MaxCacheSize": 4096,
+  "Associativity": 8,
+  "CacheType": 5,
+  "CacheSpeed": null,
+  "Status": "OK"
+ },
+ {
+  "Purpose": "L3 Cache",
+  "Level": 5,
+  "InstalledSize": 24576,
+  "MaxCacheSize": 24576,
+  "Associativity": 9,
+  "CacheType": 5,
+  "CacheSpeed": null,
+  "Status": "OK"
+ }
+]

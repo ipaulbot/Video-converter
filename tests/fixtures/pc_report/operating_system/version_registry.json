@@ -1,0 +1,14 @@
+{
+ "ProductName": "Windows 10 Pro",
+ "EditionID": "Professional",
+ "DisplayVersion": "22H2",
+ "ReleaseId": "2009",
+ "CurrentBuild": "19045",
+ "UBR": 6456,
+ "BuildLab": "19041.vb_release.191206-1406",
+ "BuildLabEx": "19041.1.amd64fre.vb_release.191206-1406",
+ "BuildBranch": "vb_release",
+ "InstallationType": "Client",
+ "RegisteredOwner": "***********",
+ "RegisteredOrganization": ""
+}

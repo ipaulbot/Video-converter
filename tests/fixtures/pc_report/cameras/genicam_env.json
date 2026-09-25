@@ -1,0 +1,10 @@
+[
+ {
+  "Name": "GENICAM_GENTL32_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\Win32\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win32"
+ },
+ {
+  "Name": "GENICAM_GENTL64_PATH",
+  "Value": "C:\\Program Files\\Basler\\pylon 7\\Runtime\\x64\\;C:\\Program Files\\Daheng Imaging\\GalaxySDK\\GenTL\\Win64"
+ }
+]

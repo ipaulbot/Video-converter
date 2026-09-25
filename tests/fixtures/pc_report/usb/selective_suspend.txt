@@ -1,0 +1,9 @@
+Power Scheme GUID: 900503f7-ad42-401d-86e4-eccab8b0e1b1  (4Media Software Studio Power Scheme)
+  Subgroup GUID: 2a737441-1930-4402-8d77-b2bebba308a3  (USB settings)
+    Power Setting GUID: 48e6b7a6-50f5-4782-a5d4-53bb8f07e226  (USB selective suspend setting)
+      Possible Setting Index: 000
+      Possible Setting Friendly Name: Disabled
+      Possible Setting Index: 001
+      Possible Setting Friendly Name: Enabled
+    Current AC Power Setting Index: 0x00000001
+    Current DC Power Setting Index: 0x00000001

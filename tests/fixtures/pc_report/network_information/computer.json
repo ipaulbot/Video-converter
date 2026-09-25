@@ -1,0 +1,9 @@
+{
+ "Name": "PC-NAME",
+ "Domain": "example.local",
+ "PartOfDomain": true,
+ "DomainRole": 1,
+ "Workgroup": null,
+ "DNSHostName": "*******",
+ "Description": "AT/AT COMPATIBLE"
+}

@@ -1,0 +1,19 @@
+{
+ "EnableLUA": 1,
+ "ConsentPromptBehaviorAdmin": 1,
+ "SecureBoot": 1,
+ "LongPathsEnabled": 1,
+ "HiberbootEnabled": 0,
+ "HibernateEnabled": null,
+ "NoAutoUpdate": 0,
+ "AUOptions": 4,
+ "InsiderBranch": null,
+ "DisableSR": null,
+ "RebootPendingCBS": false,
+ "RebootRequiredWU": false,
+ "PendingFileRename": true,
+ "FirmwareType": "UEFI",
+ "SafeMode": null,
+ "KernelVersion": "10.0.19041.6456",
+ "DotNetRelease": 533325
+}

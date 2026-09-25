@@ -1,0 +1,3347 @@
+[
+ {
+  "Path": "\\\\PC-NAME\\processor information(_total)\\% processor utility",
+  "InstanceName": "_total",
+  "CookedValue": 2.707428704800546
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_12768_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1324_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14608_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_14808_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15240_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15536_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_15660_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16212_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16240_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16448_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16512_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16576_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16744_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16816_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_16828_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_1740_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_19644_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2368_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_2724_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_34448_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_38772_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_43236_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4400_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4404_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_4_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_4_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_51212_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_52196_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_53556_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_10_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_11_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_12_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_2_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_3_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_4_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_5_engtype_security",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_6_engtype_videoencode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_7_engtype_ofa_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_8_engtype_vr",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_62384_luid_0x00000000_0x000168f3_phys_0_eng_9_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_66580_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_6740_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_10_engtype_legacyoverlay",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_11_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_12_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_1_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_2_engtype_copy",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_3_engtype_videoprocessing",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_4_engtype_videodecode",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_5_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_6_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_7_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_8_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_)\\utilization percentage",
+  "InstanceName": "pid_7112_luid_0x00000000_0x000164e8_phys_0_eng_9_engtype_",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_0_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_10_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_11_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_12_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_13_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_14_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_15_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_16_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_17_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_18_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_19_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_1_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_20_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_2_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_3_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_4_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_5_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_6_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_7_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_8_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu engine(pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d)\\utilization percentage",
+  "InstanceName": "pid_8772_luid_0x00000000_0x000168cb_phys_0_eng_9_engtype_3d",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu adapter memory(luid_0x00000000_0x000164e8_phys_0)\\dedicated usage",
+  "InstanceName": "luid_0x00000000_0x000164e8_phys_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu adapter memory(luid_0x00000000_0x000168cb_phys_0)\\dedicated usage",
+  "InstanceName": "luid_0x00000000_0x000168cb_phys_0",
+  "CookedValue": 0
+ },
+ {
+  "Path": "\\\\PC-NAME\\gpu adapter memory(luid_0x00000000_0x000168f3_phys_0)\\dedicated usage",
+  "InstanceName": "luid_0x00000000_0x000168f3_phys_0",
+  "CookedValue": 245358592
+ }
+]

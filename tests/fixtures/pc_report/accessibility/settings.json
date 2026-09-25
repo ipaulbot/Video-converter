@@ -1,0 +1,18 @@
+{
+ "StickyKeys": "510",
+ "ToggleKeys": "62",
+ "FilterKeys": null,
+ "MouseKeys": "62",
+ "SoundSentry": "2",
+ "HighContrast": "126",
+ "Keyboard Response": "126",
+ "TimeOut": "2",
+ "ShowSounds": "0",
+ "Keyboard Preference": "0",
+ "Blind Access": "0",
+ "CursorBlinkRate": "530",
+ "CaretWidth": 1,
+ "MouseScheme": "Windows Aero",
+ "TextScaleFactor": 100,
+ "HighContrastScheme": ""
+}

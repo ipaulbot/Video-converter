@@ -1590,6 +1590,12 @@ class VideoConverterApp(QMainWindow):
                 player.shutdown()
         except Exception:
             logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
+        try:
+            pc_report = getattr(self, 'pc_report_widget', None)
+            if pc_report and hasattr(pc_report, 'shutdown'):
+                pc_report.shutdown()
+        except Exception:
+            logger.debug("VideoConverterApp.shutdown: suppressed error", exc_info=True)
         # Wait for the update-check QThread to finish. If the window (and thus the QThread
         # wrapper) is destroyed while the thread is still running, Qt aborts the process
         # ("QThread: Destroyed while thread is still running") - a non-deterministic crash
