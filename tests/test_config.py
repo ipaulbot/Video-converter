@@ -50,6 +50,29 @@ class ConfigTests(unittest.TestCase):
 
         self.assertFalse(settings["visible_tool_tabs"]["multi_source_recorder"])
 
+    def test_media_player_defaults_are_present(self):
+        normalized = normalize_settings({})
+        self.assertEqual(
+            normalized["media_player"],
+            {"last_folder": "", "panel_count": 2, "volume": 100, "muted": False},
+        )
+
+    def test_media_player_group_is_normalized(self):
+        normalized = normalize_settings({"media_player": {
+            "last_folder": 123, "panel_count": 3, "volume": 250, "muted": "yes",
+        }})
+        self.assertEqual(normalized["media_player"]["last_folder"], "123")
+        self.assertEqual(normalized["media_player"]["panel_count"], 2)
+        self.assertEqual(normalized["media_player"]["volume"], 100)
+        self.assertTrue(normalized["media_player"]["muted"])
+        normalized = normalize_settings({"media_player": {"panel_count": "4", "volume": -5}})
+        self.assertEqual(normalized["media_player"]["panel_count"], 4)
+        self.assertEqual(normalized["media_player"]["volume"], 0)
+
+    def test_media_player_group_survives_non_dict(self):
+        normalized = normalize_settings({"media_player": "garbage"})
+        self.assertEqual(normalized["media_player"]["panel_count"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()
