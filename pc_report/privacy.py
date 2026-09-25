@@ -103,6 +103,18 @@ _BTH_MAC_OR_GUID = re.compile(
     r"\{[^{}]*\}|(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
 )
 _PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u2019)s\b)", re.IGNORECASE)
+_PERSONAL_NAME_KEYS = {
+    "description", "name", "friendlyname", "devicename",
+    "instancename", "productname", "caption",
+}
+_POSSESSIVE_OWNER = re.compile(
+    r"(^|[(-]\s*)(?:[a-z0-9.-]+(?:\s+[a-z0-9.-]+){0,2})((?:'|\u2019)s\b)",
+    re.IGNORECASE,
+)
+_PERSONAL_DEVICE_OWNER = re.compile(
+    r"^(?:[a-z0-9.-]+(?:\s+[a-z0-9.-]+){0,2})\s+(?=(?:iphone|ipad|galaxy)\b)",
+    re.IGNORECASE,
+)
 _CANONICAL_BLUETOOTH_NETWORK_NAME = re.compile(
     r"^Bluetooth Network Connection(?: \d+)?$",
     re.IGNORECASE,
@@ -147,6 +159,18 @@ def redact_instance_id(value):
     if not segment or _GENERIC_INSTANCE_SEGMENT.match(segment):
         return value
     return f"{stem}\\{mask_string(segment)}"
+
+
+def _redact_personal_device_name(value: str) -> str:
+    if value.startswith("***"):
+        return value
+    if _POSSESSIVE_OWNER.search(value):
+        return _POSSESSIVE_OWNER.sub(r"\1***\2", value)
+    if _PERSONAL_DEVICE_OWNER.search(value):
+        return _PERSONAL_DEVICE_OWNER.sub("*** ", value)
+    if _PERSONAL_DEVICE_NAME.search(value):
+        return mask_string(value)
+    return value
 
 
 def _is_well_known_account(value) -> bool:
@@ -303,7 +327,7 @@ def redact_payload(data, options=None, *, env=None):
                         out[name_key] = mask_string(out[name_key])
             for name_key in ("FriendlyName", "Name"):
                 if isinstance(out.get(name_key), str) and _PERSONAL_DEVICE_NAME.search(out[name_key]):
-                    out[name_key] = mask_string(out[name_key])
+                    out[name_key] = _redact_personal_device_name(out[name_key])
             # Name/Value rows (environment variables, registry dumps): the name says what is sensitive.
             if isinstance(out.get("Name"), str) and "Value" in out and _name_is_sensitive(out["Name"]):
                 out["Value"] = mask_string(out["Value"])
@@ -326,6 +350,8 @@ def redact_payload(data, options=None, *, env=None):
                 return value
             return mask_string(value)
         if isinstance(value, str):
+            if key_l in _PERSONAL_NAME_KEYS:
+                value = _redact_personal_device_name(value)
             return redact_command_line(value) if key_l == "commandline" else redact_user_paths(value)
         return value
 

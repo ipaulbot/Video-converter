@@ -12,7 +12,13 @@ DRIVERS_SCRIPT = cim("Win32_PnPSignedDriver", ("DeviceName", "DriverVersion", "D
 
 DEV_COLUMNS = [("Name", "Name"), ("Manufacturer", "Manufacturer"), ("Status", "Status"), ("Driver Version", "Driver Version"),
                ("Driver Date", "Driver Date"), ("Driver Provider", "Driver Provider"), ("PnP Device ID", "PnP Device ID")]
-EP_COLUMNS = [("Name", "Name"), ("Direction", "Direction"), ("Status", "Status"), ("Present", "Present"), ("Instance", "Instance")]
+EP_COLUMNS = [("Name", "Name"), ("Direction", "Direction"), ("Status", "Status"), ("Present", "Present"), ("InstanceId", "Instance")]
+
+
+def _flag(value) -> bool:
+    if value is True or value == 1:
+        return True
+    return isinstance(value, str) and value.strip().casefold() in {"1", "true", "yes"}
 
 
 def _direction(instance_id: str) -> str:
@@ -25,6 +31,7 @@ def _direction(instance_id: str) -> str:
 
 
 def build(devices, endpoints, drivers, dx) -> dict:
+    direct_sound = dx.get("DirectSound", dx) if isinstance(dx, dict) else dx
     drv_by_name = {str(d.get("DeviceName") or "").lower(): d for d in rows_of(drivers)}
     dev_rows = []
     for d in rows_of(devices):
@@ -35,12 +42,12 @@ def build(devices, endpoints, drivers, dx) -> dict:
                          "Driver Provider": drv.get("DriverProviderName", ""), "PnP Device ID": d.get("PNPDeviceID", "")})
     dev_rows.sort(key=lambda row: str(row["Name"]).casefold())
     ep_rows = [{"Name": e.get("FriendlyName", ""), "Direction": _direction(e.get("InstanceId")), "Status": e.get("Status", ""),
-                "Present": yes_no(e.get("Present")), "Instance": e.get("InstanceId", "")} for e in rows_of(endpoints)]
-    ep_rows.sort(key=lambda r: (r["Direction"] != "Playback", str(r["Name"]).lower(), str(r["Instance"]).lower()))
-    playback = next((d.get("Description", "") for d in dx_list(dx, "SoundDevices", "SoundDevice")
-                     if str(d.get("DefaultSoundPlayback")).lower() == "true"), "")
-    capture = next((d.get("Description", "") for d in dx_list(dx, "SoundCaptureDevices", "SoundCaptureDevice")
-                    if str(d.get("DefaultSoundRecording")).lower() == "true"), "")
+                "Present": yes_no(e.get("Present")), "InstanceId": e.get("InstanceId", "")} for e in rows_of(endpoints)]
+    ep_rows.sort(key=lambda r: (r["Direction"] != "Playback", str(r["Name"]).lower(), str(r["InstanceId"]).lower()))
+    playback = next((d.get("Description", "") for d in dx_list(direct_sound, "SoundDevices", "SoundDevice")
+                     if _flag(d.get("DefaultSoundPlayback"))), "")
+    capture = next((d.get("Description", "") for d in dx_list(direct_sound, "SoundCaptureDevices", "SoundCaptureDevice")
+                    if _flag(d.get("DefaultSoundRecording"))), "")
     summary = {"Sound Devices": len(dev_rows), "Playback Endpoints": sum(1 for r in ep_rows if r["Direction"] == "Playback"),
                "Capture Endpoints": sum(1 for r in ep_rows if r["Direction"] == "Capture"),
                "Default Playback": playback, "Default Capture": capture}

@@ -18,7 +18,7 @@
   "Present": false
  },
  {
-  "FriendlyName": "Mi****************************************o P)",
+  "FriendlyName": "Microphone (USB - ***\u2019s Beats Studio P)",
   "Status": "OK",
   "InstanceId": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{B********************************8D5}",
   "Present": true
@@ -30,13 +30,13 @@
   "Present": true
  },
  {
-  "FriendlyName": "He*****************************************************dio)",
+  "FriendlyName": "Headset (***\u2019s Beats Studio Pro Hands-Free AG Audio)",
   "Status": "Unknown",
   "InstanceId": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{5********************************6F1}",
   "Present": false
  },
  {
-  "FriendlyName": "He*******************************************reo)",
+  "FriendlyName": "Headphones (***\u2019s Beats Studio Pro Stereo)",
   "Status": "Unknown",
   "InstanceId": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{5********************************C6F}",
   "Present": false
@@ -54,13 +54,13 @@
   "Present": false
  },
  {
-  "FriendlyName": "Sp**************************************o P)",
+  "FriendlyName": "Speakers (USB - ***\u2019s Beats Studio P)",
   "Status": "OK",
   "InstanceId": "SWD\\MMDEVAPI\\{0.0.0.00000000}.{9********************************6A8}",
   "Present": true
  },
  {
-  "FriendlyName": "He*****************************************************dio)",
+  "FriendlyName": "Headset (***\u2019s Beats Studio Pro Hands-Free AG Audio)",
   "Status": "Unknown",
   "InstanceId": "SWD\\MMDEVAPI\\{0.0.1.00000000}.{5********************************79C}",
   "Present": false

@@ -1,6 +1,6 @@
 {
  "SystemInformation": {
-  "Time": "9/24/2026, 20:37:51",
+  "Time": "9/24/2026, 20:49:38",
   "MachineName": "PC-NAME",
   "MachineId": "{B********************************0C0}",
   "OperatingSystem": "Windows 10 Pro 64-bit (10.0, Build 19045) (19041.vb_release.191206-1406)",
@@ -12,7 +12,7 @@
   "Processor": "12th Gen Intel(R) Core(TM) i7-12700H (20 CPUs), ~2.3GHz",
   "Memory": "32768MB RAM",
   "AvaliableOSMem": "32452MB RAM",
-  "PageFile": "27739MB used, 9809MB available",
+  "PageFile": "26910MB used, 10637MB available",
   "WindowsDir": "C:\\Windows",
   "DirectXVersion": "DirectX 12",
   "DXSetupParameters": "Not found",
@@ -1195,7 +1195,7 @@
      "PlayCPUOverheadSwBuffers": "0"
     },
     {
-     "Description": "Speakers (USB - Clark Kent\u2019s Beats Studio P)",
+     "Description": "Speakers (USB - ***\u2019s Beats Studio P)",
      "HardwareID": "US******************************I_00",
      "ManufacturerID": "N/A",
      "ProductID": "***",
@@ -1274,7 +1274,7 @@
      "Formats": "0"
     },
     {
-     "Description": "Microphone (USB - Clark Kent\u2019s Beats Studio P)",
+     "Description": "Microphone (USB - ***\u2019s Beats Studio P)",
      "DriverName": "USBAUDIO.sys",
      "DriverVersion": "10.0.19041.5794",
      "DriverLanguage": "English",
@@ -1967,7 +1967,7 @@
   "LogicalDisk": [
    {
     "DriveLetter": "C:",
-    "FreeSpace": "98176339968",
+    "FreeSpace": "98162888704",
     "MaxSpace": "511452434432",
     "FileSystem": "NTFS",
     "Model": "KBG50ZNS512G NVMe KIOXIA 512GB",
@@ -1977,7 +1977,7 @@
    },
    {
     "DriveLetter": "D:",
-    "FreeSpace": "2698760192",
+    "FreeSpace": "2698215424",
     "MaxSpace": "1000203087872",
     "FileSystem": "NTFS",
     "Model": "WDC WD10SPSX-75A6WT0",
@@ -7703,7 +7703,7 @@
     "FileVersion": "10.00.19041.0001"
    },
    {
-    "Name": "Mi****************************************o P)",
+    "Name": "Microphone (USB - ***\u2019s Beats Studio P)",
     "FilterCatagory": "Audio Capture Sources",
     "Merit": "2097152",
     "Inputs": "0",
@@ -7865,7 +7865,7 @@
     "FileVersion": "10.00.19041.5794"
    },
    {
-    "Name": "US***************************io P",
+    "Name": "USB - ***\u2019s Beats Studio P",
     "FilterCatagory": "WDM Streaming Capture Devices",
     "Merit": "2097152",
     "Inputs": "2",
@@ -7937,7 +7937,7 @@
     "FileVersion": ""
    },
    {
-    "Name": "US***************************io P",
+    "Name": "USB - ***\u2019s Beats Studio P",
     "FilterCatagory": "WDM Streaming Rendering Devices",
     "Merit": "2097152",
     "Inputs": "2",
@@ -8126,7 +8126,7 @@
     "FileVersion": "10.00.19041.5794"
    },
    {
-    "Name": "Sp**************************************o P)",
+    "Name": "Speakers (USB - ***\u2019s Beats Studio P)",
     "FilterCatagory": "Audio Renderers",
     "Merit": "2097152",
     "Inputs": "1",
@@ -8153,7 +8153,7 @@
     "FileVersion": "10.00.19041.5856"
    },
    {
-    "Name": "Di***************************************************o P)",
+    "Name": "DirectSound: Speakers (USB - ***\u2019s Beats Studio P)",
     "FilterCatagory": "Audio Renderers",
     "Merit": "2097152",
     "Inputs": "1",

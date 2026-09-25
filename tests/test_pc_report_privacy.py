@@ -225,6 +225,37 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotEqual(redacted[3]["FriendlyName"], rows[3]["FriendlyName"])
         self.assertEqual(redacted[4]["Name"], rows[4]["Name"])
 
+    def test_possessive_owner_is_masked_in_device_description(self):
+        payload = {"Description": "Clark Kent\u2019s Beats Studio P"}
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted["Description"], "***\u2019s Beats Studio P")
+
+    def test_possessive_owner_is_masked_in_wrapped_device_description(self):
+        payload = {"Description": "Speakers (USB - Clark Kent\u2019s Beats Studio P)"}
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted["Description"], "Speakers (USB - ***\u2019s Beats Studio P)")
+
+    def test_owner_prefix_is_masked_for_personal_device_family(self):
+        payload = {"FriendlyName": "Pat Galaxy S24"}
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted["FriendlyName"], "*** Galaxy S24")
+
+    def test_nonpersonal_device_description_is_unchanged(self):
+        payload = {"Description": "Speakers (Realtek(R) Audio)"}
+
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
+
+    def test_possessive_text_outside_device_name_keys_is_unchanged(self):
+        payload = {"Path": "Bob's folder"}
+
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
+
     def test_bluetooth_names_matching_descriptions_are_kept(self):
         row = {
             "Name": "  Bluetooth   Peripheral Device ",

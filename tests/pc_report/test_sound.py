@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import sound as mod
 from tests.pc_report import support
 
@@ -24,12 +25,40 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Default Playback"], "Speakers (Realtek(R) Audio)")
         self.assertEqual(rows["Default Capture"], "Microphone (USB Camera)")
 
+    def test_numeric_dxdiag_flags_select_defaults(self):
+        dx = {
+            "SoundDevices": {"SoundDevice": [
+                {"Description": "Not Default", "DefaultSoundPlayback": "0"},
+                {"Description": "Default Speakers", "DefaultSoundPlayback": "1"},
+            ]},
+            "SoundCaptureDevices": {"SoundCaptureDevice": [
+                {"Description": "Default Microphone", "DefaultSoundRecording": "1"},
+                {"Description": "Not Default", "DefaultSoundRecording": "0"},
+            ]},
+        }
+
+        rows = dict(mod.build([], [], [], dx)["groups"][0]["rows"])
+
+        self.assertEqual(rows["Default Playback"], "Default Speakers")
+        self.assertEqual(rows["Default Capture"], "Default Microphone")
+
+    def test_endpoint_instance_id_remains_redactable(self):
+        endpoint_id = r"SWD\MMDEVAPI\{0.0.0.00000000}.{0123abcd-4567-89ab-cdef-0123456789ab}"
+
+        data = mod.build([], [{"FriendlyName": "Speakers", "InstanceId": endpoint_id}], [], {})
+        redacted = redact_payload(data, {"redact": True}, env={})
+
+        self.assertIn("InstanceId", redacted["endpoints"][0])
+        self.assertNotEqual(redacted["endpoints"][0]["InstanceId"], endpoint_id)
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
         _data, html, ctx = support.collect_and_render(mod.SECTION)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<th>Direction</th>", html)
+        self.assertRegex(html, r"Default Playback</th><td>(?!\s*</td>)")
+        self.assertRegex(html, r"Default Capture</th><td>(?!\s*</td>)")
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)
