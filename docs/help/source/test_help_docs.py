@@ -154,6 +154,16 @@ class ContentTests(unittest.TestCase):
         self.assertIn("time-restrictions", ids)
         self.assertIn("converted-files", ids)
 
+    def test_pc_report_chapter_lists_every_section_in_registry_order(self):
+        import importlib
+
+        pc_registry = importlib.import_module("pc_report.registry")
+        titles = [pc_registry.by_key(key).title for key in pc_registry.ORDER]
+        text = self._chapter_text("help", "pc-report")
+        for title in titles:
+            self.assertIn(title, text, title)
+        self.assertNotIn("redaction enabled", text.lower())
+
     def test_every_supported_locale_validates(self):
         cl.validate_all(registry.SUPPORTED_DOCUMENT_TAGS)
 

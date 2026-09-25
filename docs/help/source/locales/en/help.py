@@ -317,9 +317,12 @@ CHAPTERS: list[dict] = [
         "title": "Media Inspection",
         "blocks": [
             {"type": "para", "text": (
-                "The Inspection tab uses FFprobe to show a readable summary and the detailed "
-                "JSON metadata. The summary includes duration, file size, bitrate, streams, "
-                "codecs, dimensions, frame rate, audio details, and keyframe estimates.")},
+                "The Video Inspection Tool tab has Summary and Detailed JSON sub-tabs. Drop a "
+                "file on either sub-tab to populate both. Summary lists File, Container, "
+                "Duration, Size, Bitrate and Number of Streams. It then lists each video, "
+                "audio and subtitle stream, including its codec and the applicable resolution, "
+                "frame rate or channels. A Keyframe Analysis (First 30s) block follows the "
+                "stream details. Detailed JSON shows the raw ffprobe -print_format json output.")},
             {"type": "figure", "fig_id": "FIG-04"},
         ],
     },
@@ -328,18 +331,70 @@ CHAPTERS: list[dict] = [
         "title": "PC Report Tool",
         "blocks": [
             {"type": "para", "text": (
-                "The PC Report tool gathers system information to help with support and "
-                "troubleshooting. It covers the operating system, updates, installed programs, "
-                "security status, hardware, network, services, processes, environment details, "
-                "printers, drivers, codecs, and NVC-specific information.")},
+                "The PC Report tool gathers system information for support and troubleshooting.")},
+            {"type": "steps", "items": [
+                "Click Generate PC Report.",
+                "Wait for collection to finish. Some collectors can take a while.",
+                "Click Open Report to open the generated HTML, or click Open Folder to open the "
+                "Desktop.",
+                "The report is saved as Desktop\\PC_Report_YYYYMMDD_HHMMSS.html. If that name "
+                "already exists, NVC chooses a unique name and never overwrites the existing file.",
+            ]},
             {"type": "figure", "fig_id": "FIG-05"},
+            {"type": "para", "text": (
+                "The report opens with Report Health (timing, empty sections and warnings) and "
+                "then these sections:")},
+            {"type": "code", "lines": [
+                "Noldus Summary",
+                "Operating System",
+                "Installed Updates",
+                "Licenses",
+                "System Directories",
+                "System Files",
+                "Installed Programs",
+                "Security",
+                "Accessibility",
+                "Environment",
+                "Regional Settings",
+                "Processes",
+                "Services",
+                "Drivers",
+                "Autorun",
+                "Codecs",
+                "MMC Snap-ins",
+                "System Summary",
+                "Motherboard",
+                "BIOS",
+                "CPU",
+                "Memory",
+                "Sensors",
+                "Devices",
+                "PCI",
+                "System Slots",
+                "Network Adapters",
+                "Video",
+                "Monitors",
+                "Sound",
+                "Storage Devices",
+                "Logical Disks",
+                "Ports",
+                "USB",
+                "Printers",
+                "Virtual Machine",
+                "Cameras",
+                "Network Information",
+                "Shares",
+                "Network Connections",
+            ]},
             {"type": "note", "items": [
-                "Privacy: PC reports can include sensitive machine details. With redaction "
-                "enabled, NVC masks common sensitive values such as licence keys, serial "
-                "numbers, MAC addresses and user profile paths. Review any report before "
-                "sharing it outside your organisation.",
-                "Some Windows collectors -- drivers, devices, network connections and "
-                "processes -- can take a while on large systems.",
+                "Redaction is always on. NVC masks serial numbers, licence keys, passwords and "
+                "tokens, user and machine names, hostnames, IP and MAC addresses, proxy settings, "
+                "UNC paths and user profile paths. Review a report before sharing it anyway.",
+                "Some values need administrator rights and show \"Requires administrator\" when "
+                "NVC runs normally. Right-click NVC and choose Run as administrator for a "
+                "complete report.",
+                "Drivers, devices, network connections and processes are the slow collectors on "
+                "large systems.",
             ]},
         ],
     },
@@ -349,19 +404,24 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "The Lossless Editor tab provides FFmpeg stream-copy tools. These operations are "
-                "fast because they avoid re-encoding wherever possible.")},
+                "fast because they avoid re-encoding wherever possible. Output container choices "
+                "are mp4, mkv, mov, avi and m4a; Extract Audio always uses m4a.")},
             {"type": "figure", "fig_id": "FIG-06"},
             {"type": "table", "headers": ("Operation", "What it does"), "rows": [
                 ("Trim Losslessly",
                  "Cuts a section between start and end timestamps using stream copy."),
                 ("Remux",
-                 "Rewraps media into another container such as MP4, MKV, MOV or AVI."),
+                 "Rewraps media into mp4, mkv, mov or avi without re-encoding."),
                 ("Extract Audio",
-                 "Writes the first audio stream to an audio-only file."),
+                 "Writes the first audio stream to an audio-only m4a file."),
                 ("Remove Audio",
                  "Writes a silent, video-only copy."),
                 ("Merge Losslessly",
                  "Joins compatible clips using the FFmpeg concat demuxer."),
+                ("Add Files",
+                 "Adds source clips to the merge list."),
+                ("Clear",
+                 "Removes every source clip from the merge list."),
             ]},
             {"type": "note", "items": [
                 "Lossless operations need compatible codecs and containers. If FFmpeg fails, the "
