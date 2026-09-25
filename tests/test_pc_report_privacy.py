@@ -113,6 +113,17 @@ class PcReportPrivacyTests(unittest.TestCase):
         for private_part in ("2734529186", "23328706", "2630127308", "5137"):
             self.assertNotIn(private_part, value)
 
+    def test_redact_payload_scrubs_guids_in_general_string_values(self):
+        guid = "d980b6bc-d2dd-478f-a048-b826f0bea9bd"
+
+        redacted = redact_payload(
+            {"Name": f"Generated Share-{guid}$"},
+            {"redact": True},
+            env={},
+        )
+
+        self.assertNotIn(guid, redacted["Name"])
+
     def test_redact_payload_leaves_well_known_sids_readable(self):
         payload = {"system": "S-1-5-18", "administrators": "S-1-5-32-544"}
 
@@ -168,13 +179,29 @@ class PcReportPrivacyTests(unittest.TestCase):
     def test_storage_network_paths_mask_remote_hosts(self):
         values = {
             "ProviderName": r"\\fileserver\share",
+            "RemotePath": r"\\backupserver\archive",
             "Network Path (host name)": r"\\192.168.31.12\temp",
         }
 
         redacted = redact_payload(values, {"redact": True}, env={})
 
         self.assertEqual(redacted["ProviderName"], r"\\<redacted>\share")
+        self.assertEqual(redacted["RemotePath"], r"\\<redacted>\archive")
         self.assertEqual(redacted["Network Path (host name)"], r"\\192.168.*.*\temp")
+
+    def test_share_permissions_keep_well_known_accounts_readable(self):
+        payload = [
+            {"AccountName": "Everyone"},
+            {"AccountName": r"BUILTIN\Administrators"},
+            {"AccountName": r"NT AUTHORITY\Authenticated Users"},
+            {"AccountName": "Authenticated Users"},
+            {"AccountName": r"LAB\Researchers"},
+        ]
+
+        redacted = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(redacted[:4], payload[:4])
+        self.assertNotEqual(redacted[4]["AccountName"], payload[4]["AccountName"])
 
     def test_printer_fields_mask_ip_addresses_and_unc_hosts(self):
         guid = "b8136383-1826-454b-810e-0c4a05d5a2e0"
@@ -577,6 +604,21 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertIn("Enabled:", out["User Proxy"])
         self.assertIn(":8080", out["WinHTTP Proxy"])
         self.assertIn("<local>", out["Proxy Bypass"])
+
+    def test_vpn_server_address_masks_hostnames_and_ip_addresses(self):
+        host = redact_payload(
+            {"ServerAddress": "vpn.private.example"},
+            {"redact": True},
+            env={},
+        )
+        address = redact_payload(
+            {"ServerAddress": "192.168.10.55"},
+            {"redact": True},
+            env={},
+        )
+
+        self.assertEqual(host["ServerAddress"], "***.example")
+        self.assertEqual(address["ServerAddress"], "192.168.*.*")
 
     def test_name_value_rows_mask_sensitive_names_only(self):
         rows = [{"Name": "USERNAME", "Value": "pat"}, {"Name": "Path", "Value": r"C:\Users\pat\bin"},

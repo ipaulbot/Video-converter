@@ -31,12 +31,16 @@ MAC_TOKENS = ("macaddress", "permanentaddress", "physicaladdress")
 HOST_TOKENS = (
     "proxyserver", "proxyoverride", "proxybypass", "bypasslist",
     "autoconfigurl", "userproxy", "winhttpproxy",
+    "remotepath", "serveraddress",
 )
 SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER", "COMPUTERNAME",
                        "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME", "IGCCSVC_DB",
                        "__CURSOR_SANDBOX_ENV_RESTORE", "CURSOR_CONVERSATION_ID",
                        "CHROME_CRASHPAD_PIPE_NAME", "VSCODE_IPC_HOOK"}
 WELL_KNOWN_ACCOUNTS = frozenset({
+    "everyone",
+    "authenticated users",
+    r"builtin\administrators",
     "localsystem",
     r"nt authority\system",
     r"nt authority\localservice",
@@ -481,7 +485,10 @@ def redact_payload(data, options=None, *, env=None):
             return redact_instance_id(value)
         if any(t in key_l for t in MAC_TOKENS):
             return mask_mac(value)
-        if key_l in {"providername", "networkpathhostname", "networkpath"}:
+        if (
+            key_l in {"providername", "networkpathhostname", "networkpath"}
+            or key_l.startswith("remotepath")
+        ):
             return redact_unc_host(value)
         if key_l in {"portname", "sharename", "servername", "location", "comment"}:
             return redact_network_locations(value)
@@ -500,6 +507,8 @@ def redact_payload(data, options=None, *, env=None):
                 return value
             return mask_string(value)
         if isinstance(value, str):
+            if key_l == "name":
+                value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
             if key_l in _PERSONAL_NAME_KEYS:
                 value = _redact_personal_device_name(value)
             return redact_command_line(value) if key_l == "commandline" else redact_user_paths(value)

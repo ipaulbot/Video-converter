@@ -1,0 +1,7 @@
+{
+ "EnableInsecureGuestLogons": true,
+ "RequireSecuritySignature": false,
+ "EnableSecuritySignature": true,
+ "EnableMultiChannel": true,
+ "SMB1": null
+}

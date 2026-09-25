@@ -1,0 +1,22 @@
+[
+ {
+  "LocalPath": "T:",
+  "RemotePath": "\\\\192.168.*.*\\temp",
+  "Status": 2
+ },
+ {
+  "LocalPath": "V:",
+  "RemotePath": "\\\\192.168.*.*\\Applications",
+  "Status": 5
+ },
+ {
+  "LocalPath": "h:",
+  "RemotePath": "\\\\<redacted>\\dfs-prod\\company\\Home Directories\\user",
+  "Status": 6
+ },
+ {
+  "LocalPath": "q:",
+  "RemotePath": "\\\\<redacted>\\dfs-prod\\company",
+  "Status": 6
+ }
+]

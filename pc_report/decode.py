@@ -365,6 +365,44 @@ NET_CONNECTION_STATUS = {0: "Disconnected", 1: "Connecting", 2: "Connected", 3: 
                          7: "Media disconnected", 8: "Authenticating", 9: "Authentication succeeded",
                          10: "Authentication failed", 11: "Invalid address", 12: "Credentials required"}
 
+SHARE_TYPE = {
+    0: "Disk",
+    1: "Print queue",
+    2: "Device",
+    3: "IPC",
+    2147483648: "Disk (admin)",
+    2147483649: "Print queue (admin)",
+    2147483650: "Device (admin)",
+    2147483651: "IPC (admin)",
+}
+SHARE_STATE = {0: "Pending", 1: "Online", 2: "Offline"}
+SHARE_CACHING = {
+    0: "Manual",
+    1: "Documents",
+    2: "Programs",
+    3: "None",
+    4: "BranchCache",
+    5: "Unknown",
+}
+SHARE_ACCESS_CONTROL = {0: "Allow", 1: "Deny"}
+SHARE_ACCESS_RIGHT = {0: "Full", 1: "Change", 2: "Read", 3: "Custom"}
+
+TCP_STATE = {
+    1: "Closed",
+    2: "Listen",
+    3: "SynSent",
+    4: "SynReceived",
+    5: "Established",
+    6: "FinWait1",
+    7: "FinWait2",
+    8: "CloseWait",
+    9: "Closing",
+    10: "LastAck",
+    11: "TimeWait",
+    12: "DeleteTCB",
+    100: "Bound",
+}
+
 PORT_CONNECTOR_TYPES = {
     0: "Unknown", 1: "Other", 2: "Male", 3: "Female", 4: "Shielded", 5: "Unshielded", 6: "SCSI (A) High-Density",
     7: "SCSI (A) Low-Density", 8: "SCSI (P) High-Density", 9: "SCSI SCA-I", 10: "SCSI SCA-II",
