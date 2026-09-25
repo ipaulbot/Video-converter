@@ -1110,3 +1110,18 @@ class MediaPlayerWidget(QWidget):
                 panel.player.setVideoOutput(None)
             except Exception:
                 logger.debug("MediaPlayerWidget.shutdown: suppressed error", exc_info=True)
+        self._drain_media_backend()
+
+    @staticmethod
+    def _drain_media_backend(rounds=4):
+        """Let the Windows media backend finish closing before players die.
+
+        `stop()` + `setMedia(QMediaContent())` only *start* the WMF session
+        close; the confirmation arrives later as posted events into the
+        QMediaPlayer. Destroying the player before they land leaves the
+        backend calling into freed memory, and the process dies with an
+        access violation on the next event-loop pass -- i.e. somewhere far
+        from here. Only posted events are delivered: no timers, no sockets.
+        """
+        for _ in range(rounds):
+            QCoreApplication.sendPostedEvents()
