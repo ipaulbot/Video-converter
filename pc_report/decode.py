@@ -379,6 +379,13 @@ PORT_TYPES = {0: "None", 1: "Parallel Port XT/AT Compatible", 2: "Parallel Port 
               31: "Network Port", 32: "SATA", 33: "SAS", 34: "MFDP (Multi-Function Display Port)",
               35: "Thunderbolt", 160: "8251 Compatible", 161: "8251 FIFO Compatible", 255: "Other"}
 
+USB_PROTOCOLS = {
+    16: "USB",
+    17: "USB 1.1",
+    18: "USB 2.0",
+    19: "USB 3.0",
+}
+
 # --- windows update ----------------------------------------------------------
 
 WU_OPERATION = {1: "Installation", 2: "Uninstallation", 3: "Other"}

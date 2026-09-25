@@ -189,6 +189,14 @@ class PcReportPrivacyTests(unittest.TestCase):
                     self.assertEqual(redacted.rsplit("\\", 1)[0], value.rsplit("\\", 1)[0])
                     self.assertNotEqual(redacted.rsplit("\\", 1)[1], value.rsplit("\\", 1)[1])
 
+    def test_usb_parent_instance_ids_mask_trailing_serial_segments(self):
+        value = r"USB\VID_1234&PID_5678\PRIVATE-PARENT-SERIAL"
+
+        redacted = redact_payload({"ParentInstanceId": value}, {"redact": True}, env={})
+
+        self.assertEqual(redacted["ParentInstanceId"].rsplit("\\", 1)[0], value.rsplit("\\", 1)[0])
+        self.assertNotEqual(redacted["ParentInstanceId"].rsplit("\\", 1)[1], value.rsplit("\\", 1)[1])
+
     def test_bluetooth_instance_ids_mask_mac_tokens_outside_guids(self):
         ids = [
             r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&BLUETOOTHDEVICE_183F708F38FB",

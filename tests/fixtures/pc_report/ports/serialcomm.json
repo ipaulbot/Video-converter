@@ -1,0 +1,10 @@
+[
+ {
+  "Name": "\\Device\\BthModem1",
+  "Value": "COM3"
+ },
+ {
+  "Name": "\\Device\\BthModem0",
+  "Value": "COM5"
+ }
+]

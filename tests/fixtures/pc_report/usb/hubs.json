@@ -1,0 +1,107 @@
+[
+ {
+  "Name": "Generic SuperSpeed USB Hub",
+  "DeviceID": "USB\\VID_05E3&PID_0625\\6&11D30B64&0&2",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_05E3&PID_0625\\6&11D30B64&0&2",
+  "Description": "Generic SuperSpeed USB Hub"
+ },
+ {
+  "Name": "USB Composite Device",
+  "DeviceID": "USB\\VID_0C45&PID_6A14\\5&24A9A0E1&0&6",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_0C45&PID_6A14\\5&24A9A0E1&0&6",
+  "Description": "USB Composite Device"
+ },
+ {
+  "Name": "Generic USB Hub",
+  "DeviceID": "USB\\VID_214B&PID_7250\\5&24A9A0E1&0&3",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_214B&PID_7250\\5&24A9A0E1&0&3",
+  "Description": "Generic USB Hub"
+ },
+ {
+  "Name": "Generic SuperSpeed USB Hub",
+  "DeviceID": "USB\\VID_05E3&PID_0625\\5&200FD594&0&3",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_05E3&PID_0625\\5&200FD594&0&3",
+  "Description": "Generic SuperSpeed USB Hub"
+ },
+ {
+  "Name": "USB Root Hub (USB 3.0)",
+  "DeviceID": "USB\\ROOT_HUB30\\4&3462A947&0&0",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\ROOT_HUB30\\4&3462A947&0&0",
+  "Description": "USB Root Hub (USB 3.0)"
+ },
+ {
+  "Name": "USB Composite Device",
+  "DeviceID": "USB\\VID_17E9&PID_6006\\**********",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_17E9&PID_6006\\**********",
+  "Description": "USB Composite Device"
+ },
+ {
+  "Name": "USB Composite Device",
+  "DeviceID": "USB\\VID_046D&PID_08E5\\********",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_046D&PID_08E5\\********",
+  "Description": "USB Composite Device"
+ },
+ {
+  "Name": "Generic USB Hub",
+  "DeviceID": "USB\\VID_05E3&PID_0610\\5&24A9A0E1&0&2",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_05E3&PID_0610\\5&24A9A0E1&0&2",
+  "Description": "Generic USB Hub"
+ },
+ {
+  "Name": "USB Root Hub (USB 3.0)",
+  "DeviceID": "USB\\ROOT_HUB30\\4&1DB6A91B&0&0",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\ROOT_HUB30\\4&1DB6A91B&0&0",
+  "Description": "USB Root Hub (USB 3.0)"
+ },
+ {
+  "Name": "Generic USB Hub",
+  "DeviceID": "USB\\VID_05E3&PID_0610\\6&31A1622E&0&2",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_05E3&PID_0610\\6&31A1622E&0&2",
+  "Description": "Generic USB Hub"
+ },
+ {
+  "Name": "USB Composite Device",
+  "DeviceID": "USB\\VID_413C&PID_2113\\6&39D99F1B&0&3",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_413C&PID_2113\\6&39D99F1B&0&3",
+  "Description": "USB Composite Device"
+ },
+ {
+  "Name": "USB Composite Device",
+  "DeviceID": "USB\\VID_290B&PID_0900\\J9******266W",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_290B&PID_0900\\J9******266W",
+  "Description": "USB Composite Device"
+ },
+ {
+  "Name": "Sentinel USB Key",
+  "DeviceID": "USB\\VID_0529&PID_0001\\7&11C8840E&0&3",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\VID_0529&PID_0001\\7&11C8840E&0&3",
+  "Description": "Sentinel USB Key"
+ },
+ {
+  "Name": "Sentinel HASP Key",
+  "DeviceID": "USB\\HASP\\8&*********4&00",
+  "Status": "OK",
+  "PNPDeviceID": "USB\\HASP\\8&*********4&00",
+  "Description": "Sentinel HASP Key"
+ },
+ {
+  "Name": "Sentinel HL Key",
+  "DeviceID": "ALADDIN\\VID0529&PID0001&HASPHL\\8&1A2440F0&4&00",
+  "Status": "OK",
+  "PNPDeviceID": "ALADDIN\\VID0529&PID0001&HASPHL\\8&1A2440F0&4&00",
+  "Description": "Sentinel HL Key"
+ }
+]

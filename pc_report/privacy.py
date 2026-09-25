@@ -352,7 +352,7 @@ def redact_payload(data, options=None, *, env=None):
         if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
             return value
         key_l = norm_key(key)
-        if key_l in {"instanceid", "deviceid", "pnpdeviceid", "instancename"}:
+        if key_l in {"instanceid", "parentinstanceid", "deviceid", "pnpdeviceid", "instancename"}:
             if isinstance(value, str) and _GUID_FULL.fullmatch(value):
                 return mask_string(value)
             return redact_instance_id(value)
