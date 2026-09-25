@@ -2,6 +2,7 @@ import os
 import threading
 
 from PyQt5.QtCore import QCoreApplication, Qt, QTimer, QUrl, pyqtSignal
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (
@@ -13,6 +14,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QShortcut,
     QSizePolicy,
     QSlider,
     QVBoxLayout,
@@ -20,6 +22,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.media_player_parts import FullscreenHost
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
     format_readout,
@@ -271,6 +274,13 @@ class PlayerPanel(QWidget):
                 break
         event.acceptProposedAction()
 
+    def mouseDoubleClickEvent(self, event):
+        if self.host is not None and hasattr(self.host, "toggle_fullscreen"):
+            self.host.toggle_fullscreen()
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
+
 
 class MediaPlayerWidget(QWidget):
     """Observer-style synchronized multi-panel player (up to four clips at once)."""
@@ -342,9 +352,26 @@ class MediaPlayerWidget(QWidget):
         positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
         for panel, (row, col) in zip(self.panels, positions, strict=True):
             self.grid.addWidget(panel, row, col)
-        layout.addLayout(self.grid, 1)
 
-        layout.addLayout(self._build_transport_bar())
+        self.stage = QWidget(self)
+        stage_layout = QHBoxLayout(self.stage)
+        stage_layout.setContentsMargins(0, 0, 0, 0)
+        stage_layout.setSpacing(8)
+        stage_layout.addLayout(self.grid, 1)
+        self._stage_layout = stage_layout
+        layout.addWidget(self.stage, 1)
+
+        self.transport_widget = QWidget(self)
+        self.transport_widget.setLayout(self._build_transport_bar())
+        layout.addWidget(self.transport_widget)
+        self._main_layout = layout
+        self._fullscreen_host = None
+        self._bar_hide_timer = QTimer(self)
+        self._bar_hide_timer.setSingleShot(True)
+        self._bar_hide_timer.setInterval(3000)
+        self._bar_hide_timer.timeout.connect(self._hide_transport_bar)
+        self.shortcuts = {}
+        self._rebind_shortcuts()
 
     def _build_transport_bar(self):
         bar = QVBoxLayout()
@@ -380,6 +407,11 @@ class MediaPlayerWidget(QWidget):
         self.restart_btn.setCursor(Qt.PointingHandCursor)
         self.restart_btn.clicked.connect(self.restart_all)
 
+        self.fullscreen_btn = QPushButton(_tr("Fullscreen"))
+        self.fullscreen_btn.setCursor(Qt.PointingHandCursor)
+        self.fullscreen_btn.setToolTip(_tr("Show the panels fullscreen (F). Esc returns."))
+        self.fullscreen_btn.clicked.connect(self.toggle_fullscreen)
+
         speed_label = QLabel(_tr("Speed"))
         speed_label.setStyleSheet(theme.video_label_style())
         self.speed_combo = QComboBox()
@@ -412,6 +444,7 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.play_btn)
         button_row.addWidget(self.stop_btn)
         button_row.addWidget(self.restart_btn)
+        button_row.addWidget(self.fullscreen_btn)
         button_row.addStretch(1)
         button_row.addWidget(panels_label)
         button_row.addWidget(self.panels_combo)
@@ -422,9 +455,101 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.mute_btn)
         bar.addLayout(button_row)
         if self.button_style:
-            for button in (self.play_btn, self.stop_btn, self.restart_btn, self.mute_btn):
+            for button in (
+                self.play_btn, self.stop_btn, self.restart_btn, self.fullscreen_btn, self.mute_btn
+            ):
                 button.setStyleSheet(self.button_style)
         return bar
+
+    # --- shortcuts -------------------------------------------------------
+    def _shortcut_table(self):
+        return {
+            "Space": self.toggle_play_all,
+            "Home": self.restart_all,
+            "Left": lambda: self.step_frames(-1),
+            "Right": lambda: self.step_frames(1),
+            "Shift+Left": lambda: self.seek_relative_ms(-5000),
+            "Shift+Right": lambda: self.seek_relative_ms(5000),
+            "Up": lambda: self.adjust_volume(5),
+            "Down": lambda: self.adjust_volume(-5),
+            "M": self.toggle_mute,
+            "F": self.toggle_fullscreen,
+            "Escape": self.exit_fullscreen,
+            "N": self.playlist_next,
+            "P": self.playlist_previous,
+        }
+
+    def _rebind_shortcuts(self):
+        for shortcut in self.shortcuts.values():
+            shortcut.setParent(None)
+            shortcut.deleteLater()
+        self.shortcuts = {}
+        for key, slot in self._shortcut_table().items():
+            shortcut = QShortcut(QKeySequence(key), self)
+            shortcut.setContext(Qt.WidgetWithChildrenShortcut)
+            shortcut.activated.connect(slot)
+            self.shortcuts[key] = shortcut
+
+    def toggle_mute(self):
+        self.set_muted(not self.is_muted())
+
+    def playlist_next(self):
+        pass  # Task 8
+
+    def playlist_previous(self):
+        pass  # Task 8
+
+    # --- fullscreen ------------------------------------------------------
+    def is_fullscreen(self):
+        return self._fullscreen_host is not None
+
+    def toggle_fullscreen(self):
+        if self.is_fullscreen():
+            self.exit_fullscreen()
+        else:
+            self.enter_fullscreen()
+
+    def enter_fullscreen(self):
+        if self.is_fullscreen():
+            return
+        host = FullscreenHost()
+        host.exit_requested.connect(self.exit_fullscreen)
+        host.mouse_moved.connect(self._show_transport_bar)
+        self._stage_index = self._main_layout.indexOf(self.stage)
+        self._main_layout.removeWidget(self.stage)
+        self._main_layout.removeWidget(self.transport_widget)
+        host.take(self.stage)
+        host.take(self.transport_widget)
+        self._fullscreen_host = host
+        self.fullscreen_btn.setText(_tr("Exit fullscreen"))
+        host.showFullScreen()
+        host.setFocus()
+        self._show_transport_bar()
+
+    def exit_fullscreen(self):
+        host = self._fullscreen_host
+        if host is None:
+            return
+        self._bar_hide_timer.stop()
+        host.release()
+        self._fullscreen_host = None
+        self._main_layout.insertWidget(self._stage_index, self.stage, 1)
+        self._main_layout.insertWidget(self._stage_index + 1, self.transport_widget)
+        self.stage.show()
+        self.transport_widget.show()
+        self.fullscreen_btn.setText(_tr("Fullscreen"))
+        host.close()
+        host.deleteLater()
+        self._rebind_shortcuts()
+
+    def _show_transport_bar(self):
+        self.transport_widget.show()
+        if self.is_fullscreen():
+            self._bar_hide_timer.start()
+
+    def _hide_transport_bar(self):
+        if self.is_fullscreen():
+            self.transport_widget.hide()
 
     # --- audio & persistence ---------------------------------------------
     @property
@@ -665,6 +790,8 @@ class MediaPlayerWidget(QWidget):
         self.time_label.setText(format_readout(master_ms, self.timeline_duration_ms(), fps, nb_frames))
 
     def shutdown(self):
+        self.exit_fullscreen()
+        self._bar_hide_timer.stop()
         for timer in self._timers:
             timer.stop()
         try:

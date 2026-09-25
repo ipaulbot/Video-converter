@@ -3,6 +3,8 @@ import tempfile
 import time
 import unittest
 
+from PyQt5.QtCore import QEvent, QPointF, Qt
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QApplication
 
 from ui.media_player_widget import (
@@ -243,6 +245,57 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             time.sleep(0.01)
         self.assertAlmostEqual(panel.fps(), 29.97, places=2)
         self.assertEqual(panel.nb_frames(), 10)
+
+    def test_shortcut_table_maps_keys_to_slots(self):
+        widget = self._widget()
+        calls = []
+        widget.toggle_play_all = lambda: calls.append("play")
+        widget.step_frames = lambda delta: calls.append(("step", delta))
+        widget.seek_relative_ms = lambda delta: calls.append(("seek", delta))
+        widget.adjust_volume = lambda delta: calls.append(("vol", delta))
+        widget.toggle_mute = lambda: calls.append("mute")
+        widget.toggle_fullscreen = lambda: calls.append("fs")
+        widget.playlist_next = lambda: calls.append("next")
+        widget.playlist_previous = lambda: calls.append("prev")
+        widget._rebind_shortcuts()
+        for key in ("Space", "Left", "Right", "Shift+Left", "Shift+Right", "Up", "Down", "M", "F", "N", "P"):
+            widget.shortcuts[key].activated.emit()
+        self.assertEqual(calls, ["play", ("step", -1), ("step", 1), ("seek", -5000), ("seek", 5000),
+                                 ("vol", 5), ("vol", -5), "mute", "fs", "next", "prev"])
+        self.assertEqual(widget.shortcuts["Space"].context(), Qt.WidgetWithChildrenShortcut)
+
+    def test_fullscreen_reparents_stage_and_restores(self):
+        widget = self._widget()
+        widget.show()
+        stage_parent = widget.stage.parentWidget()
+        widget.toggle_fullscreen()
+        self.assertTrue(widget.is_fullscreen())
+        self.assertIs(widget.stage.parentWidget(), widget._fullscreen_host)
+        self.assertIs(widget.transport_widget.parentWidget(), widget._fullscreen_host)
+        widget.toggle_fullscreen()
+        self.assertFalse(widget.is_fullscreen())
+        self.assertIs(widget.stage.parentWidget(), stage_parent)
+        self.assertIsNone(widget._fullscreen_host)
+        self.assertTrue(widget.transport_widget.isVisibleTo(widget))
+
+    def test_fullscreen_bar_hides_after_timeout_and_returns_on_mouse(self):
+        widget = self._widget()
+        widget.show()
+        widget.enter_fullscreen()
+        widget._bar_hide_timer.timeout.emit()
+        self.assertFalse(widget.transport_widget.isVisibleTo(widget._fullscreen_host))
+        widget._fullscreen_host.mouse_moved.emit()
+        self.assertTrue(widget.transport_widget.isVisibleTo(widget._fullscreen_host))
+        self.assertTrue(widget._bar_hide_timer.isActive())
+        widget.exit_fullscreen()
+
+    def test_double_clicking_a_panel_toggles_fullscreen(self):
+        widget = self._widget()
+        toggles = []
+        widget.toggle_fullscreen = lambda: toggles.append(1)
+        widget.panels[0].mouseDoubleClickEvent(QMouseEvent(
+            QEvent.MouseButtonDblClick, QPointF(5, 5), Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
+        self.assertEqual(toggles, [1])
 
 
 if __name__ == "__main__":
