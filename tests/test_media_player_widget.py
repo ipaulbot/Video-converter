@@ -7,8 +7,9 @@ import unittest
 from PyQt5.QtCore import QEvent, QPointF, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QToolButton
 
+from ui import theme
 from ui.media_player_widget import (
     MAX_PANELS,
     PANEL_COUNT_OPTIONS,
@@ -96,10 +97,51 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         try:
             # With no media loaded play_all is a no-op and the label stays "Play all".
             widget.toggle_play_all()
-            self.assertEqual(widget.play_btn.text(), "Play all")
+            self.assertEqual(widget.play_btn.toolTip(), "Play all")
             self.assertFalse(widget._is_playing)
         finally:
             widget.shutdown()
+
+    def test_transport_is_an_icon_toolbar(self):
+        widget, _panel = self._loaded_widget_with_fake_player()
+        for button, tip in (
+            (widget.play_btn, "Play all"),
+            (widget.stop_btn, "Stop all"),
+            (widget.restart_btn, "Restart"),
+            (widget.fullscreen_btn, "Fullscreen (F)"),
+            (widget.playlist_btn, "Playlist"),
+            (widget.mute_btn, "Mute (M)"),
+        ):
+            self.assertIsInstance(button, QToolButton, tip)
+            self.assertFalse(button.icon().isNull(), tip)
+            self.assertEqual(button.toolTip(), tip)
+            self.assertEqual(button.text(), "", tip)
+        widget.play_all()
+        self.assertEqual(widget.play_btn.toolTip(), "Pause all")
+        widget.stop_all()
+        self.assertEqual(widget.play_btn.toolTip(), "Play all")
+        widget.mute_btn.setChecked(True)
+        self.assertEqual(widget.mute_btn.toolTip(), "Unmute (M)")
+
+    def test_panel_actions_are_icon_buttons(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        self.assertIsInstance(panel.load_btn, QToolButton)
+        self.assertIsInstance(panel.clear_btn, QToolButton)
+        self.assertEqual(panel.load_btn.toolTip(), "Load a file into this panel")
+
+    def test_layout_mode_sets_panel_min_height(self):
+        widget = self._widget()
+        widget.apply_layout_mode(theme.FULL)
+        self.assertEqual(
+            widget.panels[0].video_container.minimumHeight(),
+            theme.FULL.player_panel_min_h,
+        )
+        widget.apply_layout_mode(theme.COMPACT)
+        self.assertEqual(
+            widget.panels[0].video_container.minimumHeight(),
+            theme.COMPACT.player_panel_min_h,
+        )
 
     def test_each_panel_offset_defaults_to_zero(self):
         widget = MediaPlayerWidget()

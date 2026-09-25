@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
-    QPushButton,
     QShortcut,
     QSizePolicy,
     QSlider,
@@ -30,6 +29,7 @@ from PyQt5.QtWidgets import (
 
 from conversion.worker import ConversionWorker, WorkerSignals
 from ui import theme
+from ui.glyph_icons import glyph_icon, make_icon_button
 from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
@@ -169,14 +169,21 @@ class PlayerPanel(QWidget):
             "(positive) so its action lines up with the other panels.")
         )
 
-        self.load_btn = QPushButton(_tr("Load"))
-        self.load_btn.setMaximumWidth(58)
-        self.load_btn.setCursor(Qt.PointingHandCursor)
+        accent = theme.skin().accent
+        self.load_btn = make_icon_button(
+            "folder_open",
+            _tr("Load a file into this panel"),
+            accent,
+            size=24,
+        )
         self.load_btn.clicked.connect(self.browse_for_media)
 
-        self.clear_btn = QPushButton(_tr("Clear"))
-        self.clear_btn.setMaximumWidth(58)
-        self.clear_btn.setCursor(Qt.PointingHandCursor)
+        self.clear_btn = make_icon_button(
+            "clear",
+            _tr("Clear this panel"),
+            accent,
+            size=24,
+        )
         self.clear_btn.clicked.connect(self.clear_media)
 
         controls.addWidget(self.name_label)
@@ -469,6 +476,7 @@ class MediaPlayerWidget(QWidget):
         self._bar_hide_timer.timeout.connect(self._hide_transport_bar)
         self.shortcuts = {}
         self._rebind_shortcuts()
+        self.apply_layout_mode(theme.metrics())
 
     def _build_transport_bar(self):
         bar = QVBoxLayout()
@@ -490,27 +498,27 @@ class MediaPlayerWidget(QWidget):
         bar.addLayout(seek_row)
 
         button_row = QHBoxLayout()
-        button_row.setSpacing(8)
+        button_row.setSpacing(4)
 
-        self.play_btn = QPushButton(_tr("Play all"))
-        self.play_btn.setCursor(Qt.PointingHandCursor)
+        accent = theme.skin().accent
+        self._icon_color = accent
+        self.play_btn = make_icon_button("play", _tr("Play all"), accent)
         self.play_btn.clicked.connect(self.toggle_play_all)
 
-        self.stop_btn = QPushButton(_tr("Stop all"))
-        self.stop_btn.setCursor(Qt.PointingHandCursor)
+        self.stop_btn = make_icon_button("stop", _tr("Stop all"), accent)
         self.stop_btn.clicked.connect(self.stop_all)
 
-        self.restart_btn = QPushButton(_tr("Restart"))
-        self.restart_btn.setCursor(Qt.PointingHandCursor)
+        self.restart_btn = make_icon_button("restart", _tr("Restart"), accent)
         self.restart_btn.clicked.connect(self.restart_all)
 
-        self.fullscreen_btn = QPushButton(_tr("Fullscreen"))
-        self.fullscreen_btn.setCursor(Qt.PointingHandCursor)
-        self.fullscreen_btn.setToolTip(_tr("Show the panels fullscreen (F). Esc returns."))
+        self.fullscreen_btn = make_icon_button(
+            "fullscreen",
+            _tr("Fullscreen (F)"),
+            accent,
+        )
         self.fullscreen_btn.clicked.connect(self.toggle_fullscreen)
-        self.playlist_btn = QPushButton(_tr("Playlist"))
+        self.playlist_btn = make_icon_button("playlist", _tr("Playlist"), accent)
         self.playlist_btn.setCheckable(True)
-        self.playlist_btn.setCursor(Qt.PointingHandCursor)
         self.playlist_btn.toggled.connect(self._on_playlist_toggled)
 
         speed_label = QLabel(_tr("Speed"))
@@ -529,9 +537,8 @@ class MediaPlayerWidget(QWidget):
         self.volume_slider.setFixedWidth(110)
         self.volume_slider.setToolTip(_tr("Volume for every panel"))
         self.volume_slider.valueChanged.connect(self._on_volume_slider_changed)
-        self.mute_btn = QPushButton(_tr("Mute"))
+        self.mute_btn = make_icon_button("volume", _tr("Mute (M)"), accent)
         self.mute_btn.setCheckable(True)
-        self.mute_btn.setCursor(Qt.PointingHandCursor)
         self.mute_btn.toggled.connect(self._on_mute_toggled)
 
         panels_label = QLabel(_tr("Panels"))
@@ -545,6 +552,7 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.play_btn)
         button_row.addWidget(self.stop_btn)
         button_row.addWidget(self.restart_btn)
+        button_row.addSpacing(12)
         button_row.addWidget(self.fullscreen_btn)
         button_row.addWidget(self.playlist_btn)
         button_row.addStretch(1)
@@ -556,17 +564,11 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.volume_slider)
         button_row.addWidget(self.mute_btn)
         bar.addLayout(button_row)
-        if self.button_style:
-            for button in (
-                self.play_btn,
-                self.stop_btn,
-                self.restart_btn,
-                self.fullscreen_btn,
-                self.playlist_btn,
-                self.mute_btn,
-            ):
-                button.setStyleSheet(self.button_style)
         return bar
+
+    def apply_layout_mode(self, metrics):
+        for panel in self.panels:
+            panel.video_container.setMinimumHeight(metrics.player_panel_min_h)
 
     # --- shortcuts -------------------------------------------------------
     def _shortcut_table(self):
@@ -632,7 +634,6 @@ class MediaPlayerWidget(QWidget):
         host.take(self.stage)
         host.take(self.transport_widget)
         self._fullscreen_host = host
-        self.fullscreen_btn.setText(_tr("Exit fullscreen"))
         host.showFullScreen()
         host.setFocus()
         self._show_transport_bar()
@@ -648,7 +649,6 @@ class MediaPlayerWidget(QWidget):
         self._main_layout.insertWidget(self._stage_index + 1, self.transport_widget)
         self.stage.show()
         self.transport_widget.show()
-        self.fullscreen_btn.setText(_tr("Fullscreen"))
         host.close()
         host.deleteLater()
         self._rebind_shortcuts()
@@ -719,7 +719,12 @@ class MediaPlayerWidget(QWidget):
         self._persist(volume=int(value))
 
     def _on_mute_toggled(self, checked):
-        self.mute_btn.setText(_tr("Unmute") if checked else _tr("Mute"))
+        self.mute_btn.setIcon(
+            glyph_icon("muted" if checked else "volume", self._icon_color, 20)
+        )
+        self.mute_btn.setToolTip(
+            _tr("Unmute (M)") if checked else _tr("Mute (M)")
+        )
         self._apply_audio_to_panels()
         self._persist(muted=bool(checked))
 
@@ -937,6 +942,14 @@ class MediaPlayerWidget(QWidget):
         else:
             self.play_all()
 
+    def _set_play_glyph(self, playing):
+        self.play_btn.setIcon(
+            glyph_icon("pause" if playing else "play", self._icon_color, 20)
+        )
+        self.play_btn.setToolTip(
+            _tr("Pause all") if playing else _tr("Play all")
+        )
+
     def play_all(self):
         panels = self.active_panels()
         if not panels:
@@ -950,21 +963,21 @@ class MediaPlayerWidget(QWidget):
             )
             panel.player.play()
         self._is_playing = True
-        self.play_btn.setText(_tr("Pause all"))
+        self._set_play_glyph(playing=True)
 
     def pause_all(self):
         for panel in self.panels:
             if panel.player is not None:
                 panel.player.pause()
         self._is_playing = False
-        self.play_btn.setText(_tr("Play all"))
+        self._set_play_glyph(playing=False)
 
     def stop_all(self):
         for panel in self.panels:
             if panel.player is not None:
                 panel.player.stop()
         self._is_playing = False
-        self.play_btn.setText(_tr("Play all"))
+        self._set_play_glyph(playing=False)
         self._set_slider_value(0)
         self._update_time_label(0)
 
