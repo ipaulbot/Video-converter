@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 
 from pc_report import privacy
@@ -139,8 +140,6 @@ class PcReportPrivacyTests(unittest.TestCase):
             r"USBSTOR\DISK&VEN_TEST&PROD_DRIVE\DISK-SERIAL",
             r"SCSI\DISK&VEN_TEST&PROD_DRIVE\4&PRIVATE&0&000000",
             r"SWD\WPDBUSENUM\{PRIVATE-PHONE-ID}",
-            r"BTHENUM\DEV_001122334455\7&PRIVATE&0&BLUETOOTHDEVICE_001122334455",
-            r"BTHLE\DEV_001122334455\8&PRIVATE&0&001122334455",
             r"DISPLAY\DEL1234\MONITOR-SERIAL",
         ]
         for key in ("InstanceId", "DeviceID", "PNPDeviceID"):
@@ -149,6 +148,41 @@ class PcReportPrivacyTests(unittest.TestCase):
                     redacted = redact_payload({key: value}, {"redact": True}, env={})[key]
                     self.assertEqual(redacted.rsplit("\\", 1)[0], value.rsplit("\\", 1)[0])
                     self.assertNotEqual(redacted.rsplit("\\", 1)[1], value.rsplit("\\", 1)[1])
+
+    def test_bluetooth_instance_ids_mask_mac_tokens_outside_guids(self):
+        ids = [
+            r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&BLUETOOTHDEVICE_183F708F38FB",
+            r"BTHENUM\{0000110C-0000-1000-8000-00805F9B34FB}_VID&0001004C_PID&200F\7&22FD4E5&0&183F708F38FB_C00000000",
+            r"BTHLE\DEV_4A9EBDC39A33\7&9377338&0&4A9EBDC39A33",
+            r"BTHLEDEVICE\{0000FE78-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\8&1DFE3610&0&0012",
+        ]
+        expected_mac = [
+            "183F******FB",
+            "183F******FB",
+            "4A9E******33",
+            "4A9E******33",
+        ]
+        token = re.compile(r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])")
+        braces = re.compile(r"\{[^{}]*\}")
+
+        for key in ("InstanceId", "DeviceID", "PNPDeviceID"):
+            for value, masked_mac in zip(ids, expected_mac, strict=True):
+                with self.subTest(key=key, value=value):
+                    redacted = redact_payload({key: value}, {"redact": True}, env={})[key]
+                    self.assertIsNone(token.search(braces.sub("", redacted)))
+                    self.assertIn(masked_mac, redacted)
+                    if "{" in value:
+                        self.assertIn("00805F9B34FB", redacted)
+
+    def test_bluetooth_instance_id_masking_does_not_change_other_id_rules(self):
+        pci = r"PCI\VEN_8086&DEV_51EF&SUBSYS_0B4A1028&REV_01\3&11583659&0&A0"
+        usb = r"USB\VID_290B&PID_0900\J9AB12CD266W"
+
+        self.assertEqual(redact_payload({"DeviceID": pci}, {"redact": True}, env={})["DeviceID"], pci)
+        self.assertNotEqual(
+            redact_payload({"DeviceID": usb}, {"redact": True}, env={})["DeviceID"],
+            usb,
+        )
 
     def test_device_instance_ids_preserve_generic_and_nonportable_paths(self):
         ids = [
@@ -183,6 +217,38 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotEqual(redacted[2]["Name"], rows[2]["Name"])
         self.assertNotEqual(redacted[3]["FriendlyName"], rows[3]["FriendlyName"])
         self.assertEqual(redacted[4]["Name"], rows[4]["Name"])
+
+    def test_bluetooth_names_matching_descriptions_are_kept(self):
+        row = {
+            "Name": "  Bluetooth   Peripheral Device ",
+            "FriendlyName": "BLUETOOTH PERIPHERAL DEVICE",
+            "Description": "Bluetooth Peripheral Device",
+            "DeviceID": r"BTHENUM\{0000110C-0000-1000-8000-00805F9B34FB}",
+        }
+
+        redacted = redact_payload(row, {"redact": True}, env={})
+
+        self.assertEqual(redacted["Name"], row["Name"])
+        self.assertEqual(redacted["FriendlyName"], row["FriendlyName"])
+
+    def test_bluetooth_names_differing_from_descriptions_are_masked(self):
+        rows = [
+            {
+                "Name": "Clint's AirPods Pro",
+                "Description": "Bluetooth Device",
+                "DeviceID": r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&183F708F38FB",
+            },
+            {
+                "Name": "AirPods Pro Avrcp Transport",
+                "Description": "Microsoft Bluetooth Avrcp Transport Driver",
+                "PNPDeviceID": r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&183F708F38FB",
+            },
+        ]
+
+        redacted = redact_payload(rows, {"redact": True}, env={})
+
+        self.assertNotEqual(redacted[0]["Name"], rows[0]["Name"])
+        self.assertNotEqual(redacted[1]["Name"], rows[1]["Name"])
 
     def test_start_name_leaves_well_known_accounts_readable(self):
         payload = [

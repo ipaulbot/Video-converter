@@ -95,6 +95,9 @@ _PORTABLE_INSTANCE_PREFIXES = (
     "BTHENUM\\", "BTHLE\\", "DISPLAY\\",
 )
 _GENERIC_INSTANCE_SEGMENT = re.compile(r"^\d+&[0-9A-F]+&0&", re.IGNORECASE)
+_BTH_MAC_OR_GUID = re.compile(
+    r"\{[^{}]*\}|(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
+)
 _PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u2019)s\b)", re.IGNORECASE)
 
 
@@ -120,6 +123,15 @@ def redact_instance_id(value):
     if not isinstance(value, str):
         return value
     upper = value.upper()
+    if upper.startswith("BTH"):
+        return _BTH_MAC_OR_GUID.sub(
+            lambda match: (
+                match.group(0)
+                if match.group(0).startswith("{")
+                else f"{match.group(0)[:4]}******{match.group(0)[-2:]}"
+            ),
+            value,
+        )
     if not upper.startswith(_PORTABLE_INSTANCE_PREFIXES) or "\\" not in value:
         return value
     stem, segment = value.rsplit("\\", 1)
@@ -258,9 +270,24 @@ def redact_payload(data, options=None, *, env=None):
                 ),
                 "",
             )
-            if instance_id.upper().startswith(("BTHENUM\\", "BTHLE\\")):
+            if instance_id.upper().startswith("BTH"):
+                description = out.get("Description")
+                normalized_description = (
+                    " ".join(description.split()).casefold()
+                    if isinstance(description, str)
+                    else None
+                )
                 for name_key in ("FriendlyName", "Name"):
-                    if name_key in out:
+                    name = out.get(name_key)
+                    normalized_name = (
+                        " ".join(name.split()).casefold()
+                        if isinstance(name, str)
+                        else None
+                    )
+                    if name_key in out and (
+                        normalized_description is None
+                        or normalized_name != normalized_description
+                    ):
                         out[name_key] = mask_string(out[name_key])
             for name_key in ("FriendlyName", "Name"):
                 if isinstance(out.get(name_key), str) and _PERSONAL_DEVICE_NAME.search(out[name_key]):
