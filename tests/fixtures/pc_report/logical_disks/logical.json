@@ -1,0 +1,54 @@
+[
+ {
+  "DeviceID": "C:",
+  "VolumeName": "",
+  "DriveType": 3,
+  "FileSystem": "NTFS",
+  "Size": 511452434432,
+  "FreeSpace": 98155139072,
+  "VolumeSerialNumber": "********",
+  "Compressed": false,
+  "ProviderName": null,
+  "Description": "Local Fixed Disk",
+  "MediaType": 12
+ },
+ {
+  "DeviceID": "D:",
+  "VolumeName": "Data",
+  "DriveType": 3,
+  "FileSystem": "NTFS",
+  "Size": 1000203087872,
+  "FreeSpace": 2697994240,
+  "VolumeSerialNumber": "********",
+  "Compressed": false,
+  "ProviderName": null,
+  "Description": "Local Fixed Disk",
+  "MediaType": 12
+ },
+ {
+  "DeviceID": "T:",
+  "VolumeName": null,
+  "DriveType": 4,
+  "FileSystem": null,
+  "Size": null,
+  "FreeSpace": null,
+  "VolumeSerialNumber": null,
+  "Compressed": null,
+  "ProviderName": "\\\\192.168.*.*\\temp",
+  "Description": "Network Connection",
+  "MediaType": 0
+ },
+ {
+  "DeviceID": "V:",
+  "VolumeName": null,
+  "DriveType": 4,
+  "FileSystem": null,
+  "Size": null,
+  "FreeSpace": null,
+  "VolumeSerialNumber": null,
+  "Compressed": null,
+  "ProviderName": "\\\\192.168.*.*\\Applications",
+  "Description": "Network Connection",
+  "MediaType": 0
+ }
+]

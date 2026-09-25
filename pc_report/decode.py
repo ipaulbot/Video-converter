@@ -302,6 +302,19 @@ SLOT_MAX_DATA_WIDTH = {0: "8 bit", 1: "16 bit", 2: "32 bit", 3: "64 bit", 4: "12
 DRIVE_TYPES = {0: "Unknown", 1: "No root directory", 2: "Removable", 3: "Local disk",
                4: "Network drive", 5: "CD-ROM", 6: "RAM disk"}
 
+GPT_PARTITION_TYPES = {
+    "{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}": "EFI System",
+    "{e3c9e316-0b5c-4db8-817d-f92df00215ae}": "Microsoft Reserved",
+    "{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}": "Basic Data",
+    "{de94bba4-06d1-4d40-a16a-bfd50179d6ac}": "Windows Recovery",
+    "{5808c8aa-7e8f-42e0-85d2-e1e90434cfb3}": "LDM Metadata",
+    "{af9b60a0-1431-4f62-bc68-3311714a69ad}": "LDM Data",
+    "{0fc63daf-8483-4772-8e79-3d69d8477de4}": "Linux Filesystem",
+    "{0657fd6d-a4ab-43c4-84e5-0933c84b4f4f}": "Linux Swap",
+}
+
+BITLOCKER_PROTECTION = {0: "Off", 1: "On", 2: "Unknown"}
+
 VIDEO_ARCHITECTURE = {1: "Other", 2: "Unknown", 3: "CGA", 4: "EGA", 5: "VGA", 6: "SVGA", 7: "MDA",
                       8: "HGC", 9: "MCGA", 10: "8514A", 11: "XGA", 12: "Linear Frame Buffer",
                       160: "PC-98"}

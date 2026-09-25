@@ -1,0 +1,16 @@
+[
+ {
+  "DriveLetter": "C",
+  "DiskNumber": 1,
+  "PartitionNumber": 3,
+  "BusType": "NVMe",
+  "DiskModel": "KBG50ZNS512G NVMe KIOXIA 512GB"
+ },
+ {
+  "DriveLetter": "D",
+  "DiskNumber": 0,
+  "PartitionNumber": 1,
+  "BusType": "SATA",
+  "DiskModel": "WDC WD10SPSX-75A6WT0"
+ }
+]

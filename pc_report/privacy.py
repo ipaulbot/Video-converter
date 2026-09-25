@@ -18,6 +18,7 @@ _NON_ALNUM = re.compile(r"[^a-z0-9]")
 SENSITIVE_TOKENS = (
     "serial", "productkey", "partialproductkey", "productid", "oa3x", "licensekey",
     "password", "passwd", "pwd", "token", "secret", "credential", "apikey",
+    "uniqueid", "keyprotectorid", "guid",
     "uuid", "assettag", "registeredowner", "registereduser", "registeredorganization", "organization",
     "owner", "username", "startname", "logonserver",
     "ssid", "computername", "csname", "hostname", "hardwareid", "processorid", "machineguid", "domainname",
@@ -41,6 +42,7 @@ WELL_KNOWN_ACCOUNTS = frozenset({
 
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
+_UNC_PATH = re.compile(r"^(\\\\)([^\\]+)(\\.*)?$")
 _GUID_FULL = re.compile(
     r"\{?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
     r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}?"
@@ -222,6 +224,19 @@ def mask_ip(value):
     return _IPV6.sub(_mask_v6, s)
 
 
+def redact_unc_host(value):
+    if not isinstance(value, str):
+        return value
+    match = _UNC_PATH.match(value)
+    if not match:
+        return mask_ip(value)
+    host = match.group(2)
+    masked_host = mask_ip(host)
+    if masked_host == host:
+        masked_host = "<redacted>"
+    return f"{match.group(1)}{masked_host}{match.group(3) or ''}"
+
+
 def redact_user_paths(path):
     if not path:
         return path
@@ -337,12 +352,14 @@ def redact_payload(data, options=None, *, env=None):
         if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
             return value
         key_l = norm_key(key)
-        if key_l in {"instanceid", "deviceid", "pnpdeviceid"}:
+        if key_l in {"instanceid", "deviceid", "pnpdeviceid", "instancename"}:
             if isinstance(value, str) and _GUID_FULL.fullmatch(value):
                 return mask_string(value)
             return redact_instance_id(value)
         if any(t in key_l for t in MAC_TOKENS):
             return mask_mac(value)
+        if key_l in {"providername", "networkpathhostname", "networkpath"}:
+            return redact_unc_host(value)
         if any(t in key_l for t in IP_TOKENS):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):

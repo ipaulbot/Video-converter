@@ -141,6 +141,39 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         self.assertNotEqual(redacted["MachineId"], machine_id)
 
+    def test_storage_unique_and_bitlocker_identifiers_are_masked(self):
+        values = {
+            "UniqueId": "eui.0123456789ABCDEF",
+            "Guid": "{89ABCDEF-0123-4567-89AB-CDEF01234567}",
+            "KeyProtectorId": "{01234567-89AB-CDEF-0123-456789ABCDEF}",
+            "RecoveryPassword": "111111-222222-333333-444444-555555-666666-777777-888888",
+        }
+
+        redacted = redact_payload(values, {"redact": True}, env={})
+
+        for key, value in values.items():
+            with self.subTest(key=key):
+                self.assertNotEqual(redacted[key], value)
+
+    def test_smart_instance_name_masks_trailing_serial_segment(self):
+        value = r"SCSI\Disk&Ven_NVMe&Prod_Samsung_SSD_980\PRIVATE-SERIAL"
+
+        redacted = redact_payload({"InstanceName": value}, {"redact": True}, env={})
+
+        self.assertEqual(redacted["InstanceName"].rsplit("\\", 1)[0], value.rsplit("\\", 1)[0])
+        self.assertNotEqual(redacted["InstanceName"].rsplit("\\", 1)[1], value.rsplit("\\", 1)[1])
+
+    def test_storage_network_paths_mask_remote_hosts(self):
+        values = {
+            "ProviderName": r"\\fileserver\share",
+            "Network Path (host name)": r"\\192.168.31.12\temp",
+        }
+
+        redacted = redact_payload(values, {"redact": True}, env={})
+
+        self.assertEqual(redacted["ProviderName"], r"\\<redacted>\share")
+        self.assertEqual(redacted["Network Path (host name)"], r"\\192.168.*.*\temp")
+
     def test_device_instance_ids_mask_trailing_serial_segments(self):
         ids = [
             r"USB\VID_1234&PID_5678\PHONE-SERIAL",

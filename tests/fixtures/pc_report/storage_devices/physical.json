@@ -1,0 +1,38 @@
+[
+ {
+  "DeviceId": "1",
+  "FriendlyName": "KBG50ZNS512G NVMe KIOXIA 512GB",
+  "Model": "KBG50ZNS512G NVMe KIOXIA 512GB",
+  "Manufacturer": null,
+  "SerialNumber": "00**********************************8FD.",
+  "MediaType": "SSD",
+  "BusType": "NVMe",
+  "Size": 512110190592,
+  "HealthStatus": "Healthy",
+  "OperationalStatus": "OK",
+  "FirmwareVersion": "11200109",
+  "SpindleSpeed": 0,
+  "PhysicalSectorSize": 4096,
+  "LogicalSectorSize": 512,
+  "Usage": "Auto-Select",
+  "UniqueId": "eu******************************88FD"
+ },
+ {
+  "DeviceId": "0",
+  "FriendlyName": "WDC WD10SPSX-75A6WT0",
+  "Model": "WDC WD10SPSX-75A6WT0",
+  "Manufacturer": null,
+  "SerialNumber": "WX******SV90",
+  "MediaType": "HDD",
+  "BusType": "SATA",
+  "Size": 1000204886016,
+  "HealthStatus": "Healthy",
+  "OperationalStatus": "OK",
+  "FirmwareVersion": "11087211",
+  "SpindleSpeed": "Unknown",
+  "PhysicalSectorSize": 4096,
+  "LogicalSectorSize": 512,
+  "Usage": "Auto-Select",
+  "UniqueId": "50**********E946"
+ }
+]

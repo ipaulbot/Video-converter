@@ -1,0 +1,24 @@
+[
+ {
+  "DriveLetter": "D",
+  "FileSystemLabel": "Data",
+  "FileSystem": "NTFS",
+  "HealthStatus": "Healthy",
+  "OperationalStatus": "OK",
+  "AllocationUnitSize": 4096,
+  "Size": 1000203087872,
+  "SizeRemaining": 2697990144,
+  "DriveType": "Fixed"
+ },
+ {
+  "DriveLetter": "C",
+  "FileSystemLabel": "",
+  "FileSystem": "NTFS",
+  "HealthStatus": "Healthy",
+  "OperationalStatus": "OK",
+  "AllocationUnitSize": 4096,
+  "Size": 511452434432,
+  "SizeRemaining": 98156851200,
+  "DriveType": "Fixed"
+ }
+]
