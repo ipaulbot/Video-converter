@@ -180,11 +180,11 @@ class RecordingCommandTests(unittest.TestCase):
             [command[index:index + 2] for index in range(len(command) - 1)],
         )
 
-    def test_no_audio_mute_and_zero_volume_all_emit_an(self):
+    def test_mute_and_zero_volume_emit_an_even_for_sources_with_embedded_audio(self):
         cases = [
-            {"audio_device": "No Audio"},
             {"audio_device": "Microphone A", "mute": True},
             {"audio_device": "Microphone A", "volume": "0"},
+            {"audio_device": "No Audio", "mute": True},
         ]
         for kwargs in cases:
             with self.subTest(kwargs=kwargs):
@@ -194,6 +194,32 @@ class RecordingCommandTests(unittest.TestCase):
                 self.assertEqual(command.count("-i"), 1)
                 self.assertIn("-an", command)
                 self.assertNotIn("-c:a", command)
+
+    def test_no_microphone_keeps_a_file_sources_embedded_audio(self):
+        # "No Audio" means no microphone was added; the file's own sound track survives.
+        h264 = build_record_command("ffmpeg.exe", "sample.mp4", "out.mp4", "h264", "", audio_device="No Audio")
+        self.assertEqual(h264[h264.index("-map", h264.index("-map") + 1) + 1], "0:a?")
+        self.assertEqual(h264[h264.index("-c:a") + 1], "aac")
+        self.assertNotIn("-an", h264)
+        copy = build_record_command("ffmpeg.exe", "sample.mp4", "out.mp4", "copy", "")
+        self.assertEqual(copy[copy.index("-c:v") + 1], "copy")
+        self.assertEqual(copy[copy.index("-c:a") + 1], "copy")
+        self.assertNotIn("-an", copy)
+
+    def test_no_microphone_directshow_video_is_silent(self):
+        command = build_record_command("ffmpeg.exe", "video=Camera A", "out.mp4", "h264", "")
+        self.assertIn("-an", command)
+        self.assertNotIn("0:a?", command)
+
+    def test_rtsp_h264_without_microphone_keeps_stream_audio_but_copy_mode_drops_it(self):
+        h264 = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "h264", "")
+        self.assertIn("0:a?", h264)
+        self.assertEqual(h264[h264.index("-c:a") + 1], "aac")
+        copy = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "")
+        self.assertIn("-an", copy)
+        preview = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "", preview_pipe=True)
+        self.assertIn("0:a?", preview)
+        self.assertNotIn("-an", preview)
 
     def test_record_command_with_preview_pipe_for_rtsp_uses_shared_decoder_split(self):
         command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mp4", "copy", "", preview_pipe=True)

@@ -129,6 +129,15 @@ def _audio_enabled(audio_device, mute=False, volume="100"):
     return bool(device and device != "No Audio" and not mute and gain > 0)
 
 
+def _silenced(mute=False, volume="100"):
+    """Mute or volume 0: the row wants no sound at all, embedded or microphone."""
+    try:
+        gain = int(str(volume or "100"))
+    except ValueError:
+        gain = 100
+    return bool(mute) or gain <= 0
+
+
 def _directshow_av_source(video_source, audio_device):
     video_name = str(video_source or "").strip()
     if video_name.lower().startswith("video="):
@@ -184,6 +193,11 @@ def build_record_command(
         else:
             _add_directshow_audio_input(command, audio_device)
             audio_map = "1:a"
+    # "No Audio" means no microphone was chosen, not "strip the source's own sound": a file or
+    # network stream keeps its embedded audio unless the row is muted. RTSP stream-copy stays
+    # video-only as before (camera audio codecs rarely copy into MP4).
+    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
+    keep_embedded_audio = not has_audio and not _silenced(mute, volume) and not is_directshow
 
     if preview_pipe:
         # Both DirectShow and RTSP/HTTP sources use a single decoded video stream that
@@ -203,11 +217,15 @@ def build_record_command(
             command.extend(["-map", audio_map])
             if not is_directshow:
                 command.append("-shortest")
+        elif keep_embedded_audio:
+            command.extend(["-map", "0:a?"])
         else:
             command.append("-an")
         command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
         if has_audio:
             _append_audio_encoding_options(command, volume)
+        elif keep_embedded_audio:
+            command.extend(["-c:a", "aac"])
         command.extend([
             output_file,
             "-map", "[p]",
@@ -218,20 +236,26 @@ def build_record_command(
         ])
         return command
 
+    copy_video = codec_mode == "copy" and not is_directshow
+    if copy_video and is_network_source:
+        keep_embedded_audio = False
     command.extend(["-map", "0:v"])
     if has_audio:
         command.extend(["-map", audio_map])
         if not is_directshow:
             command.append("-shortest")
+    elif keep_embedded_audio:
+        command.extend(["-map", "0:a?"])
     else:
         command.append("-an")
-    is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
-    if codec_mode == "copy" and (is_network_source or not is_directshow):
+    if copy_video:
         command.extend(["-c:v", "copy"])
     else:
         command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
     if has_audio:
         _append_audio_encoding_options(command, volume)
+    elif keep_embedded_audio:
+        command.extend(["-c:a", "copy" if copy_video else "aac"])
     command.append(output_file)
     return command
 
