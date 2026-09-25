@@ -5,10 +5,12 @@ import unittest
 
 from PyQt5.QtCore import QEvent, QPointF, Qt
 from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import QApplication
 
 from ui.media_player_widget import (
     MAX_PANELS,
+    PANEL_COUNT_OPTIONS,
     MediaPlayerWidget,
     format_timecode,
     panel_seek_position_ms,
@@ -296,6 +298,56 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         widget.panels[0].mouseDoubleClickEvent(QMouseEvent(
             QEvent.MouseButtonDblClick, QPointF(5, 5), Qt.LeftButton, Qt.LeftButton, Qt.NoModifier))
         self.assertEqual(toggles, [1])
+
+    def test_clicking_a_panel_selects_it_and_shows_its_playlist(self):
+        widget = self._widget()
+        widget.panels[1].on_selected(widget.panels[1])
+        self.assertIs(widget.selected_panel(), widget.panels[1])
+        self.assertTrue(widget.panels[1].selected)
+        self.assertFalse(widget.panels[0].selected)
+        self.assertIs(widget.playlist_dock.model, widget.panels[1].playlist)
+
+    def test_playlist_visible_by_default_only_for_one_panel(self):
+        widget = self._widget()
+        widget.show()
+        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+        widget.panels_combo.setCurrentIndex(0)
+        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+        widget.playlist_btn.setChecked(False)
+        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+
+    def test_playlist_next_and_previous_load_into_selected_panel(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        loaded = []
+        panel.load_media = lambda path: loaded.append(path) or True
+        panel.playlist.add(["a.mp4", "b.mp4", "c.mp4"])
+        panel._media_path = "a.mp4"
+        widget.playlist_next()
+        panel._media_path = loaded[-1]
+        widget.playlist_next()
+        panel._media_path = loaded[-1]
+        widget.playlist_next()
+        widget.playlist_previous()
+        self.assertEqual(loaded, ["b.mp4", "c.mp4", "a.mp4", "c.mp4"])
+
+    def test_auto_advance_only_with_one_visible_panel(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        loaded = []
+        panel.load_media = lambda path: loaded.append(path) or True
+        panel.playlist.add(["a.mp4", "b.mp4"])
+        panel._media_path = "a.mp4"
+        widget._is_playing = True
+        widget.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(2))
+        widget._on_media_status_changed(QMediaPlayer.EndOfMedia, panel)
+        self.assertEqual(loaded, [])
+        self.assertFalse(widget._is_playing)
+        widget._is_playing = True
+        widget.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(1))
+        widget.play_all = lambda: loaded.append("play")
+        widget._on_media_status_changed(QMediaPlayer.EndOfMedia, panel)
+        self.assertEqual(loaded, ["b.mp4", "play"])
 
 
 if __name__ == "__main__":

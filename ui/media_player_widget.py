@@ -22,9 +22,11 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
-from ui.media_player_parts import FullscreenHost
+from ui.media_player_parts import FullscreenHost, PlaylistDock
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
+    PlaylistModel,
+    collect_video_files,
     format_readout,
     frame_step_ms,
     probe_media_info,
@@ -101,11 +103,14 @@ class PlayerPanel(QWidget):
         self._media_path = ""
         self.player = None
         self.probe_info = {}
+        self.playlist = PlaylistModel()
+        self.selected = False
         # The host wires these so the player can drive the shared timeline once created.
         self.on_duration_changed = None
         self.on_media_status_changed = None
         self.on_player_created = None
         self.on_probe_finished = None
+        self.on_selected = None
         self._build_ui()
 
     def _build_ui(self):
@@ -200,8 +205,29 @@ class PlayerPanel(QWidget):
         if callable(self.on_duration_changed):
             self.player.durationChanged.connect(self.on_duration_changed)
         if callable(self.on_media_status_changed):
-            self.player.mediaStatusChanged.connect(self.on_media_status_changed)
+            self.player.mediaStatusChanged.connect(
+                lambda status, panel=self: self.on_media_status_changed(status, panel)
+            )
         return self.player
+
+    def set_selected(self, selected):
+        self.selected = bool(selected)
+        border = (
+            theme.qss("2px solid $accent")
+            if self.selected
+            else "1px solid transparent"
+        )
+        self.setStyleSheet(
+            "PlayerPanel { "
+            + theme.video_panel_style()
+            + f" border: {border}; "
+            + " }"
+        )
+
+    def mousePressEvent(self, event):
+        if callable(self.on_selected):
+            self.on_selected(self)
+        super().mousePressEvent(event)
 
     def apply_audio(self, volume, muted):
         if self.player is not None:
@@ -318,6 +344,7 @@ class MediaPlayerWidget(QWidget):
             self.mute_btn.setChecked(group["muted"])
             self.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(group["panel_count"]))
             self.set_visible_panel_count(group["panel_count"])
+            self.playlist_btn.setChecked(group["panel_count"] == 1)
             self._apply_audio_to_panels()
         finally:
             self._restoring = False
@@ -347,6 +374,7 @@ class MediaPlayerWidget(QWidget):
             panel.on_duration_changed = self._on_any_duration_changed
             panel.on_media_status_changed = self._on_media_status_changed
             panel.on_player_created = self._on_player_created
+            panel.on_selected = self._on_panel_selected
             self.panels.append(panel)
         # 2x2 grid layout positions.
         positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
@@ -358,6 +386,14 @@ class MediaPlayerWidget(QWidget):
         stage_layout.setContentsMargins(0, 0, 0, 0)
         stage_layout.setSpacing(8)
         stage_layout.addLayout(self.grid, 1)
+        self.playlist_dock = PlaylistDock(self.stage)
+        self.playlist_dock.activate_requested.connect(self._play_from_playlist)
+        self.playlist_dock.files_requested.connect(self.add_playlist_files)
+        self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
+        stage_layout.addWidget(self.playlist_dock)
+        self.playlist_dock.hide()
+        self.selected_index = 0
+        self.select_panel(0)
         self._stage_layout = stage_layout
         layout.addWidget(self.stage, 1)
 
@@ -411,6 +447,10 @@ class MediaPlayerWidget(QWidget):
         self.fullscreen_btn.setCursor(Qt.PointingHandCursor)
         self.fullscreen_btn.setToolTip(_tr("Show the panels fullscreen (F). Esc returns."))
         self.fullscreen_btn.clicked.connect(self.toggle_fullscreen)
+        self.playlist_btn = QPushButton(_tr("Playlist"))
+        self.playlist_btn.setCheckable(True)
+        self.playlist_btn.setCursor(Qt.PointingHandCursor)
+        self.playlist_btn.toggled.connect(self._on_playlist_toggled)
 
         speed_label = QLabel(_tr("Speed"))
         speed_label.setStyleSheet(theme.video_label_style())
@@ -445,6 +485,7 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.stop_btn)
         button_row.addWidget(self.restart_btn)
         button_row.addWidget(self.fullscreen_btn)
+        button_row.addWidget(self.playlist_btn)
         button_row.addStretch(1)
         button_row.addWidget(panels_label)
         button_row.addWidget(self.panels_combo)
@@ -456,7 +497,12 @@ class MediaPlayerWidget(QWidget):
         bar.addLayout(button_row)
         if self.button_style:
             for button in (
-                self.play_btn, self.stop_btn, self.restart_btn, self.fullscreen_btn, self.mute_btn
+                self.play_btn,
+                self.stop_btn,
+                self.restart_btn,
+                self.fullscreen_btn,
+                self.playlist_btn,
+                self.mute_btn,
             ):
                 button.setStyleSheet(self.button_style)
         return bar
@@ -494,10 +540,14 @@ class MediaPlayerWidget(QWidget):
         self.set_muted(not self.is_muted())
 
     def playlist_next(self):
-        pass  # Task 8
+        was_playing = self._is_playing
+        if self._advance_playlist(1) and was_playing:
+            self.play_all()
 
     def playlist_previous(self):
-        pass  # Task 8
+        was_playing = self._is_playing
+        if self._advance_playlist(-1) and was_playing:
+            self.play_all()
 
     # --- fullscreen ------------------------------------------------------
     def is_fullscreen(self):
@@ -615,6 +665,80 @@ class MediaPlayerWidget(QWidget):
     def _on_player_created(self, panel):
         panel.apply_audio(self.volume(), self.is_muted())
 
+    # --- selection & playlist --------------------------------------------
+    def select_panel(self, index):
+        if not (0 <= index < len(self.panels)):
+            return
+        self.selected_index = index
+        for panel in self.panels:
+            panel.set_selected(panel.index == index)
+        panel = self.panels[index]
+        self.playlist_dock.set_model(
+            panel.playlist,
+            _tr("Panel %(number)s") % {"number": index + 1},
+        )
+        self.playlist_dock.select_path(panel._media_path)
+
+    def selected_panel(self):
+        panel = self.panels[self.selected_index]
+        if panel.isHidden():
+            return self.panels[0]
+        return panel
+
+    def _on_panel_selected(self, panel):
+        self.select_panel(panel.index)
+
+    def toggle_playlist(self):
+        self.playlist_btn.setChecked(not self.playlist_btn.isChecked())
+
+    def _on_playlist_toggled(self, checked):
+        self.playlist_dock.setVisible(bool(checked))
+
+    def add_playlist_files(self):
+        paths, _ = QFileDialog.getOpenFileNames(
+            self,
+            _tr("Add videos to playlist"),
+            self.last_folder(),
+            VIDEO_NAME_FILTER,
+        )
+        if paths:
+            self.set_last_folder(paths[0])
+            self.playlist_dock.add_paths(paths)
+
+    def add_playlist_folder(self):
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            _tr("Add a folder of videos"),
+            self.last_folder(),
+        )
+        if folder:
+            self.set_last_folder(folder)
+            self.playlist_dock.add_paths(collect_video_files(folder))
+
+    def _play_from_playlist(self, path):
+        panel = self.selected_panel()
+        if panel.load_media(path):
+            self.playlist_dock.select_path(path)
+            self.play_all()
+
+    def _advance_playlist(self, step):
+        panel = self.selected_panel()
+        model = panel.playlist
+        current = model.index_of(panel._media_path)
+        target = (
+            model.next_index(current)
+            if step > 0
+            else model.previous_index(current)
+        )
+        if target is None:
+            return False
+        path = model.items[target]
+        if not panel.load_media(path):
+            return False
+        panel._media_path = path
+        self.playlist_dock.select_path(path)
+        return True
+
     # --- panel visibility -------------------------------------------------
     def set_visible_panel_count(self, count):
         for index, panel in enumerate(self.panels):
@@ -626,6 +750,7 @@ class MediaPlayerWidget(QWidget):
     def _on_panel_count_changed(self, _index):
         count = self.panels_combo.currentData()
         self.set_visible_panel_count(count)
+        self.playlist_btn.setChecked(int(count) == 1)
         self._persist(panel_count=int(count))
 
     # --- active players ---------------------------------------------------
@@ -753,11 +878,19 @@ class MediaPlayerWidget(QWidget):
         self.position_slider.setRange(0, self.timeline_duration_ms())
         self._update_time_label(self.position_slider.value())
 
-    def _on_media_status_changed(self, status):
-        if status == QMediaPlayer.EndOfMedia and self._is_playing:
-            # When the longest clip finishes, pause every panel so they stay aligned
-            # rather than letting shorter clips loop or freeze out of sync.
-            self.pause_all()
+    def _on_media_status_changed(self, status, panel=None):
+        if status != QMediaPlayer.EndOfMedia or not self._is_playing:
+            return
+        selected = self.selected_panel()
+        if (
+            self.visible_panel_count() == 1
+            and panel is selected
+            and len(selected.playlist.items) > 1
+            and self._advance_playlist(1)
+        ):
+            self.play_all()
+            return
+        self.pause_all()
 
     def _on_tick(self):
         if not self._is_playing or self._suppress_seek:
