@@ -178,7 +178,7 @@
  {
   "Capability": "webcam",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
   "Value": "",
   "LastUsedStart": 133807467499381694,
   "LastUsedStop": 133807482258202459
@@ -186,7 +186,7 @@
  {
   "Capability": "webcam",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#Microsoft#Teams#current#Teams.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#Microsoft#Teams#current#Teams.exe",
   "Value": "",
   "LastUsedStart": 133468697727284591,
   "LastUsedStop": 133468697730032404
@@ -194,7 +194,7 @@
  {
   "Capability": "webcam",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Roaming#Zoom#bin#Zoom.exe",
+  "App": "C:#Users#<redacted>#AppData#Roaming#Zoom#bin#Zoom.exe",
   "Value": "",
   "LastUsedStart": 134335217999100139,
   "LastUsedStop": 134335224902166059
@@ -202,7 +202,7 @@
  {
   "Capability": "webcam",
   "Hive": "HKCU",
-  "App": "C:#Users#user#Desktop#Python Projects#NVC 4#ffmpeg.exe",
+  "App": "C:#Users#<redacted>#Desktop#Python Projects#NVC 4#ffmpeg.exe",
   "Value": "",
   "LastUsedStart": 134303435735017920,
   "LastUsedStop": 134303440906209224
@@ -458,7 +458,7 @@
  {
   "Capability": "microphone",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
   "Value": "",
   "LastUsedStart": 133807464556634569,
   "LastUsedStop": 133807482258322474
@@ -466,7 +466,7 @@
  {
   "Capability": "microphone",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#Microsoft#Teams#current#Teams.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#Microsoft#Teams#current#Teams.exe",
   "Value": "",
   "LastUsedStart": 133468665733125882,
   "LastUsedStop": 133468697704582990
@@ -474,7 +474,7 @@
  {
   "Capability": "microphone",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#Perplexity#Comet#Application#comet.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#Perplexity#Comet#Application#comet.exe",
   "Value": "",
   "LastUsedStart": 134177984619357435,
   "LastUsedStop": 134177984787969536
@@ -482,7 +482,7 @@
  {
   "Capability": "microphone",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Local#Programs#cursor#Cursor.exe",
+  "App": "C:#Users#<redacted>#AppData#Local#Programs#cursor#Cursor.exe",
   "Value": "",
   "LastUsedStart": 134318006934691116,
   "LastUsedStop": 134318007068438951
@@ -490,7 +490,7 @@
  {
   "Capability": "microphone",
   "Hive": "HKCU",
-  "App": "C:#Users#user#AppData#Roaming#Zoom#bin#Zoom.exe",
+  "App": "C:#Users#<redacted>#AppData#Roaming#Zoom#bin#Zoom.exe",
   "Value": "",
   "LastUsedStart": 134339721297662811,
   "LastUsedStop": 134339721297681980

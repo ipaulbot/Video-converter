@@ -13,6 +13,8 @@ class PcReportPrivacyTests(unittest.TestCase):
             r"\Users\jane\x": r"\Users\<redacted>\x",
             "D:/Users/jane/x": "D:/Users/<redacted>/x",
             r"C:\Users\Public\x": r"C:\Users\<redacted>\x",
+            "C:#Users#jane#AppData#Local#app.exe": "C:#Users#<redacted>#AppData#Local#app.exe",
+            "C:#Users#Public#Documents": "C:#Users#<redacted>#Documents",
             r"C:\Windows\Users2\x": r"C:\Windows\Users2\x",
         }
         for value, expected in cases.items():

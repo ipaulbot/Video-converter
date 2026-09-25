@@ -262,7 +262,7 @@ def redact_user_paths(path):
     if not path:
         return path
     return re.sub(
-        r"((?:[A-Z]:)?[\\/]Users[\\/])[^\\/;\"']+",
+        r"((?:[A-Z]:)?[\\/#]Users[\\/#])[^\\/#;\"']+",
         r"\1<redacted>",
         str(path),
         flags=re.IGNORECASE,

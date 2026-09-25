@@ -2,11 +2,10 @@
 from __future__ import annotations
 
 import datetime
-import os
 import re
 
 from .. import decode
-from ..format import yes_no
+from ..format import fmt_datetime, yes_no
 from ..ps import dx_list
 from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
 
@@ -48,17 +47,40 @@ foreach ($cap in 'webcam','microphone') {
 }
 """
 
-CAMERA_CLASSES = {"Camera", "Image"}
-CAMERA_NAME = re.compile(r"camera|webcam|basler|pylon|gige|daheng|flir|ids |imaging|capture", re.I)
-TRANSPORT = re.compile(r"basler|pylon|gige|gentl|transport layer|coaxpress|camera link|euresys|daheng|galaxy", re.I)
+CAMERA_NAME = re.compile(r"\b(camera|webcam|cam)\b", re.I)
+TRANSPORT_PATTERNS = [
+    (re.compile(r"\b(?:pylon|Basler)\b", re.I), "Basler"),
+    (re.compile(r"\b(?:MATRIX VISION|mvIMPACT)\b", re.I), "MATRIX VISION"),
+    (re.compile(r"\b(?:FLIR|Spinnaker)\b", re.I), "FLIR"),
+    (re.compile(r"\b(?:IDS(?:\s+peak)?|uEye)\b", re.I), "IDS"),
+    (re.compile(r"\b(?:Allied Vision|Vimba)\b", re.I), "Allied Vision"),
+    (re.compile(r"\bGenICam\b", re.I), "GenICam"),
+    (re.compile(r"\bGenTL\b", re.I), "GenTL"),
+    (re.compile(r"\bGigE\b", re.I), "GigE"),
+    (re.compile(r"\b(?:Teledyne|DALSA|Sapera)\b", re.I), "Teledyne DALSA"),
+    (re.compile(r"\b(?:Lucid|Arena SDK)\b", re.I), "Lucid"),
+    (re.compile(r"\b(?:The Imaging Source|IC Imaging)\b", re.I), "The Imaging Source"),
+    (re.compile(r"\bEuresys\b", re.I), "Euresys"),
+    (re.compile(r"\b(?:Daheng|Galaxy)\b", re.I), "Daheng Imaging"),
+    (re.compile(r"\b(?:transport layer|CoaXPress|Camera Link)\b", re.I), "Camera transport"),
+]
+GENICAM_ENV_SCRIPT = "Get-ChildItem Env: -ErrorAction SilentlyContinue | Where-Object { $_.Name -like 'GENICAM_*' } | Select-Object Name,Value"
 
 PNP_COLUMNS = [("Name", "Name"), ("Class", "Class"), ("Manufacturer", "Manufacturer"), ("Status", "Status"), ("Problem", "Problem"),
                ("Service", "Service"), ("Present", "Present"), ("Device Instance", "Device Instance")]
 DS_COLUMNS = [("Name", "Name"), ("CLSID", "CLSID"), ("Device Path", "Device Path"), ("Architecture", "Architecture")]
 DX_COLUMNS = [("Name", "Name"), ("Category", "Category"), ("Manufacturer", "Manufacturer"), ("Hardware ID", "Hardware ID"),
               ("Driver", "Driver"), ("Driver Date", "Driver Date"), ("Service", "Service"), ("Problem", "Problem"), ("Location", "Location")]
-CONSENT_COLUMNS = [("Capability", "Capability"), ("Scope", "Scope"), ("Application", "Application"), ("Access", "Access"),
-                   ("Last Used Start", "Last Used Start"), ("Last Used Stop", "Last Used Stop"), ("In Use Now", "In Use Now")]
+CONSENT_COLUMNS = [("App", "App"), ("Camera", "Camera"), ("Microphone", "Microphone"), ("Last Used", "Last Used")]
+
+
+def is_camera(row) -> bool:
+    cls = str(row.get("PNPClass") or row.get("Class") or "")
+    if cls.casefold() == "camera":
+        return True
+    if str(row.get("Service") or "").casefold() == "usbvideo":
+        return True
+    return cls.casefold() in {"image", "media"} and bool(CAMERA_NAME.search(str(row.get("Name") or "")))
 
 
 def filetime(value) -> str:
@@ -67,7 +89,7 @@ def filetime(value) -> str:
         return ""
     try:
         dt = datetime.datetime(1601, 1, 1, tzinfo=datetime.UTC) + datetime.timedelta(microseconds=n / 10)
-        return dt.astimezone().strftime("%Y-%m-%d %H:%M")
+        return fmt_datetime(dt.astimezone().isoformat())
     except (OverflowError, ValueError, OSError):
         return ""
 
@@ -86,7 +108,7 @@ def build(pnp, ds, dx, frame_server, consent, env, programs) -> dict:
     for d in rows_of(pnp):
         name = str(d.get("Name") or "")
         cls = str(d.get("PNPClass") or "")
-        if cls not in CAMERA_CLASSES and not (d.get("Service") == "usbvideo") and not (cls == "Media" and CAMERA_NAME.search(name)):
+        if not is_camera(d):
             continue
         code = decode.to_int(d.get("ConfigManagerErrorCode")) or 0
         pnp_rows.append({"Name": name, "Class": cls, "Manufacturer": d.get("Manufacturer") or "", "Status": d.get("Status") or "",
@@ -113,24 +135,40 @@ def build(pnp, ds, dx, frame_server, consent, env, programs) -> dict:
         "Frame Server Service": f"{fs.get('FrameServerStatus')} ({fs.get('FrameServerStartType')})" if fs.get("FrameServerStatus") else "Not found",
     }
     consent_rows = {}
-    apps = []
+    apps_by_name = {}
     for c in rows_of(consent):
         cap = "Camera" if c.get("Capability") == "webcam" else "Microphone"
         scope = _scope(c.get("Hive"))
         if c.get("App") == "(global)":
             consent_rows[f"{cap} Access ({scope})"] = c.get("Value") or "Not set"
             continue
-        start, stop = decode.to_int(c.get("LastUsedStart")) or 0, decode.to_int(c.get("LastUsedStop")) or 0
-        apps.append({"Capability": cap, "Scope": scope, "Application": _app_name(c.get("App")), "Access": c.get("Value") or "",
-                     "Last Used Start": filetime(start), "Last Used Stop": filetime(stop),
-                     "In Use Now": yes_no(bool(start and (stop == 0 or stop < start)))})
-    apps.sort(key=lambda r: (r["In Use Now"] != "Yes", r["Capability"], r["Application"].lower()))
-    genicam = {k: [p for p in str(v).split(";") if p] for k, v in sorted(env.items()) if k.upper().startswith("GENICAM_GENTL")}
+        app_name = _app_name(c.get("App"))
+        app = apps_by_name.setdefault(app_name, {"App": app_name, "Camera": "", "Microphone": "", "_last_used": 0})
+        app[cap] = c.get("Value") or ""
+        app["_last_used"] = max(app["_last_used"], decode.to_int(c.get("LastUsedStop")) or 0)
+    apps = []
+    for app in apps_by_name.values():
+        last_used = app.pop("_last_used")
+        app["Last Used"] = filetime(last_used)
+        apps.append(app)
+    apps.sort(key=lambda row: row["App"].casefold())
+    genicam = {
+        str(row.get("Name")): [path for path in str(row.get("Value") or "").split(";") if path]
+        for row in rows_of(env)
+        if str(row.get("Name") or "").upper().startswith("GENICAM_GENTL")
+    }
+    genicam = dict(sorted(genicam.items()))
     if not genicam:
         genicam = {"GenICam GenTL Producers": "No GENICAM_GENTL*_PATH variables set"}
-    layers = sorted(f"{p.get('Name')} {p.get('Version') or ''}".strip() for p in rows_of(programs)
-                    if TRANSPORT.search(f"{p.get('Name', '')} {p.get('Publisher', '')}"))
-    transport = {"Basler / GigE Transport Layers": layers or "None found in installed programs"}
+    layers = set()
+    for program in rows_of(programs):
+        search_text = f"{program.get('Name', '')} {program.get('Publisher', '')}"
+        for pattern, vendor in TRANSPORT_PATTERNS:
+            if pattern.search(search_text):
+                detail = f"{program.get('Name')} {program.get('Version') or ''}".strip()
+                layers.add(f"{vendor}: {detail}")
+                break
+    transport = {"Detected Camera Transport Layers": sorted(layers) or "None found in installed programs"}
     return {"groups": [{"title": "Windows Camera Frame Server", "rows": frame}, {"title": "Camera and Microphone Consent", "rows": consent_rows},
                        {"title": "GenICam", "rows": genicam}, {"title": "Transport Layers", "rows": transport}],
             "pnp": pnp_rows, "video_sources": video, "audio_sources": audio, "dxdiag": dxrows, "consent_apps": apps}
@@ -144,7 +182,7 @@ def flatten(data) -> dict:
 
 
 def camera_names(data) -> list[str]:
-    return [r.get("Name", "") for r in rows_of((data or {}).get("pnp") if isinstance(data, dict) else None)]
+    return [r.get("Name", "") for r in rows_of((data or {}).get("pnp") if isinstance(data, dict) else None) if is_camera(r)]
 
 
 def frame_server_enabled(data):
@@ -169,7 +207,7 @@ def collect(ctx):
     programs = (ctx.result("installed_programs") or {}).get("rows") if isinstance(ctx.result("installed_programs"), dict) else []
     return build(ctx.shared("pnp_entities"), ctx.query("directshow_capture", DS_SCRIPT), ctx.shared("dxdiag"),
                  first_dict(ctx.query("frame_server", FRAME_SERVER_SCRIPT)), ctx.query("consent", CONSENT_SCRIPT),
-                 dict(os.environ), programs)
+                 ctx.query("genicam_env", GENICAM_ENV_SCRIPT), programs)
 
 
 def render(data, ctx):
