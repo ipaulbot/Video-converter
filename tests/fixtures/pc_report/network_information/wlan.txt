@@ -15,8 +15,8 @@ There is 1 interface on the system:
     Connection mode        : Profile
     Channel                : 44
     Receive rate (Mbps)    : 1201
-    Transmit rate (Mbps)   : 919
-    Signal                 : 88% 
+    Transmit rate (Mbps)   : 1201
+    Signal                 : 90%
     Profile                : <redacted>
 
     Hosted network status  : Not available

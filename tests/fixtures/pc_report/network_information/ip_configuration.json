@@ -17,7 +17,7 @@
    null
   ],
   "DNSServer": [],
-  "NetProfileName": "Un**************work",
+  "NetProfileName": "Unidentified network",
   "NetProfileCategory": "Public",
   "IPv4Connectivity": "LocalNetwork",
   "IPv6Connectivity": "NoTraffic"
@@ -28,7 +28,7 @@
   "InterfaceDescription": "Intel(R) Wi-Fi 6E AX211 160MHz",
   "Status": "Up",
   "MacAddress": "28:6B:35:**:**:**",
-  "LinkSpeed": "919 Mbps",
+  "LinkSpeed": "1.2 Gbps",
   "IPv4Address": [
    "192.168.*.*/24"
   ],

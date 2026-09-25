@@ -3,7 +3,7 @@ import re
 import unittest
 
 from pc_report import privacy
-from pc_report.privacy import mask_string, redact_command_line, redact_payload, redact_user_paths
+from pc_report.privacy import mask_hosts, mask_string, redact_command_line, redact_payload, redact_user_paths
 from pc_report.render_json import render
 
 
@@ -496,6 +496,17 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotIn("private", out["DNSDomainSuffixSearchOrder"][0])
         self.assertNotIn("Private", out["NetProfileName"])
 
+    def test_well_known_network_profile_names_remain_readable(self):
+        payload = {
+            "Network Profile": "  Unidentified   network  ",
+            "NetProfileName": "HomeWiFi-5G",
+        }
+
+        out = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertEqual(out["Network Profile"], payload["Network Profile"])
+        self.assertNotEqual(out["NetProfileName"], payload["NetProfileName"])
+
     def test_network_raw_text_masks_addresses_mac_and_wireless_names(self):
         text = (
             "Name : Wi-Fi\n"
@@ -533,6 +544,39 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertIn("/config.pac", out["AutoConfigURL"])
         self.assertNotIn("winhttp.private.example", out["WinHTTP Proxy"])
         self.assertIn(":3128", out["WinHTTP Proxy"])
+
+    def test_mask_hosts_preserves_proxy_syntax_and_masks_hostnames(self):
+        cases = {
+            "proxy.corp.example:8080": "***.example:8080",
+            "*.corp.example;<local>": "*.***.example;<local>",
+            "http=proxy.corp.example:8080": "http=***.example:8080",
+            "http://pac.corp.example/proxy.pac": "http://***.example/proxy.pac",
+            "10.20.30.40:3128": "10.20.*.*:3128",
+            "<local>;direct;*;localhost;127.0.0.1": "<local>;direct;*;localhost;127.0.0.1",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(mask_hosts(value), expected)
+
+    def test_proxy_host_tokens_cover_raw_and_rendered_labels(self):
+        payload = {
+            "ProxyServer": "proxy.corp.example:8080",
+            "ProxyOverride": "*.corp.example;<local>",
+            "Proxy Bypass": "*.corp.example;<local>",
+            "AutoConfigURL": "http://pac.corp.example/proxy.pac",
+            "User Proxy": "Enabled: proxy.corp.example:8080",
+            "WinHTTP Proxy": "proxy.corp.example:8080 (bypass: *.corp.example;<local>)",
+            "Bypass List": "*.corp.example;<local>",
+        }
+
+        out = redact_payload(payload, {"redact": True}, env={})
+
+        self.assertNotIn("corp.example", repr(out))
+        self.assertEqual(out["ProxyServer"], "***.example:8080")
+        self.assertEqual(out["ProxyOverride"], "*.***.example;<local>")
+        self.assertIn("Enabled:", out["User Proxy"])
+        self.assertIn(":8080", out["WinHTTP Proxy"])
+        self.assertIn("<local>", out["Proxy Bypass"])
 
     def test_name_value_rows_mask_sensitive_names_only(self):
         rows = [{"Name": "USERNAME", "Value": "pat"}, {"Name": "Path", "Value": r"C:\Users\pat\bin"},

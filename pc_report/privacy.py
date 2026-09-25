@@ -28,6 +28,10 @@ SENSITIVE_TOKENS = (
 IP_TOKENS = ("ipv4", "ipv6", "ipaddress", "gateway", "dnsserver", "dhcpserver",
              "remoteaddress", "localaddress", "serveraddress", "winsserver", "nexthop")
 MAC_TOKENS = ("macaddress", "permanentaddress", "physicaladdress")
+HOST_TOKENS = (
+    "proxyserver", "proxyoverride", "proxybypass", "bypasslist",
+    "autoconfigurl", "userproxy", "winhttpproxy",
+)
 SENSITIVE_ENV_NAMES = {"USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "LOGONSERVER", "COMPUTERNAME",
                        "USERDOMAIN_ROAMINGPROFILE", "CLIENTNAME", "IGCCSVC_DB",
                        "__CURSOR_SANDBOX_ENV_RESTORE", "CURSOR_CONVERSATION_ID",
@@ -46,8 +50,6 @@ _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}
 _MAC = re.compile(r"(?<![0-9A-Fa-f])([0-9A-Fa-f]{2})[:-]([0-9A-Fa-f]{2})[:-]([0-9A-Fa-f]{2})(?:[:-][0-9A-Fa-f]{2}){3}(?![0-9A-Fa-f])")
 _WIRELESS_LINE = re.compile(r"(?im)^(\s*(?:BSSID|SSID|GUID|Profile)\s*:\s*).*$")
 _PROXY_TEXT_LINE = re.compile(r"(?im)^(\s*(?:Proxy Server\(s\)|AutoConfigURL)\s*:\s*).*$")
-_URL_HOST = re.compile(r"(?i)(https?://)(\[[^\]]+\]|[^/:;\s]+)")
-_PROXY_ENTRY_HOST = re.compile(r"(?i)((?:^|[;,])\s*(?:https?=)?)([^:;/\s=]+)(?=:\d+|[;,]|$)")
 _UNC_PATH = re.compile(r"^(\\\\)([^\\]+)(\\.*)?$")
 _UNC_HOST_PREFIX = re.compile(r"(\\\\)([^\\\s]+)(\\)")
 _GUID_FULL = re.compile(
@@ -128,6 +130,19 @@ _CANONICAL_BLUETOOTH_NETWORK_NAME = re.compile(
     r"^Bluetooth Network Connection(?: \d+)?$",
     re.IGNORECASE,
 )
+_WELL_KNOWN_NETWORK_PROFILE = re.compile(
+    r"^(?:unidentified network|identifying\.\.\.|network(?: \d+)?|"
+    r"public network|private network)(?: \([^)]*\))?$",
+    re.IGNORECASE,
+)
+_HOST_URL = re.compile(r"^(?P<scheme>[a-z][a-z0-9+.-]*://)(?P<host>\[[^\]]+\]|[^/:]+)(?P<rest>.*)$", re.IGNORECASE)
+_HOST_ASSIGNMENT = re.compile(r"^(?P<prefix>[a-z][a-z0-9+.-]*=)(?P<rest>.+)$", re.IGNORECASE)
+_HOST_PORT = re.compile(r"^(?P<host>.+?)(?P<port>:\d+)?$")
+_HOST_TOKEN = re.compile(r"^[A-Za-z0-9_-]+$")
+_WELL_KNOWN_HOSTS = frozenset({"<local>", "direct", "*", "localhost", "127.0.0.1"})
+_PROXY_PROSE = frozenset({
+    "access", "bypass", "disabled", "enabled", "list", "no", "proxy", "server",
+})
 
 
 def norm_key(key) -> str:
@@ -231,14 +246,67 @@ def mask_ip(value):
     return _IPV6.sub(_mask_v6, s)
 
 
-def redact_proxy_hosts(value):
-    """Mask host names in WinInet proxy strings and auto-config URLs."""
-    if isinstance(value, list):
-        return [redact_proxy_hosts(item) for item in value]
+def _mask_host_name(host: str) -> str:
+    if host.casefold() in _WELL_KNOWN_HOSTS:
+        return host
+    masked_ip = mask_ip(host)
+    if masked_ip != host:
+        return masked_ip
+    wildcard = host.startswith("*.")
+    name = host[2:] if wildcard else host
+    parts = name.split(".")
+    masked = f"***.{parts[-1]}" if len(parts) > 1 else "***"
+    return f"*.{masked}" if wildcard else masked
+
+
+def _mask_host_token(token: str) -> str:
+    leading_match = re.match(r'^[("\']*', token)
+    trailing_match = re.search(r'[)"\']*$', token)
+    leading = leading_match.group(0) if leading_match else ""
+    trailing = trailing_match.group(0) if trailing_match else ""
+    core = token[len(leading):len(token) - len(trailing) if trailing else None]
+    if not core or core.casefold() in _WELL_KNOWN_HOSTS:
+        return token
+
+    url = _HOST_URL.match(core)
+    if url:
+        return (
+            leading + url.group("scheme") + _mask_host_name(url.group("host"))
+            + url.group("rest") + trailing
+        )
+
+    assignment = _HOST_ASSIGNMENT.match(core)
+    prefix = assignment.group("prefix") if assignment else ""
+    entry = assignment.group("rest") if assignment else core
+    match = _HOST_PORT.match(entry)
+    if not match:
+        return token
+    host, port = match.group("host"), match.group("port") or ""
+    plain_host = host[2:] if host.startswith("*.") else host
+    if (
+        host.casefold() in _WELL_KNOWN_HOSTS
+        or host.casefold().rstrip(":") in _PROXY_PROSE
+        or not (_HOST_TOKEN.fullmatch(plain_host) or "." in plain_host)
+    ):
+        return token
+    return leading + prefix + _mask_host_name(host) + port + trailing
+
+
+def mask_hosts(value) -> str:
+    """Mask proxy/PAC host names while preserving schemes, ports, and separators."""
     if not isinstance(value, str):
         return value
-    masked = _URL_HOST.sub(lambda match: f"{match.group(1)}<redacted>", value)
-    return _PROXY_ENTRY_HOST.sub(lambda match: f"{match.group(1)}<redacted>", masked)
+    return "".join(
+        part if re.fullmatch(r"[;,\s]+", part) else _mask_host_token(part)
+        for part in re.split(r"([;,\s]+)", value)
+    )
+
+
+def redact_proxy_hosts(value):
+    """Backward-compatible proxy host redaction helper."""
+    if isinstance(value, list):
+        return [redact_proxy_hosts(item) for item in value]
+    return mask_hosts(value)
 
 
 def redact_text(text: str) -> str:
@@ -417,11 +485,17 @@ def redact_payload(data, options=None, *, env=None):
             return redact_unc_host(value)
         if key_l in {"portname", "sharename", "servername", "location", "comment"}:
             return redact_network_locations(value)
-        if key_l in {"proxyserver", "autoconfigurl", "winhttpproxy"}:
-            return redact_proxy_hosts(value)
+        if any(token in key_l for token in HOST_TOKENS):
+            return mask_hosts(value)
         if any(t in key_l for t in IP_TOKENS):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):
+            if (
+                key_l in {"networkprofile", "netprofilename"}
+                and isinstance(value, str)
+                and _WELL_KNOWN_NETWORK_PROFILE.fullmatch(" ".join(value.split()))
+            ):
+                return value
             if _is_well_known_account(value):
                 return value
             return mask_string(value)

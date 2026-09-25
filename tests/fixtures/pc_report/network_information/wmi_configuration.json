@@ -14,7 +14,7 @@
   "WINSPrimaryServer": null,
   "WINSSecondaryServer": null,
   "TcpipNetbiosOptions": 0,
-  "IPConnectionMetric": 35,
+  "IPConnectionMetric": 30,
   "MTU": null,
   "IPEnabled": true
  },

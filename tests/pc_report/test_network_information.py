@@ -1,6 +1,7 @@
 import unittest
 
 from pc_report.privacy import redact_payload
+from pc_report.section import RenderContext
 from pc_report.sections import network_information as mod
 from tests.pc_report import support
 
@@ -50,6 +51,32 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(wifi["Signal"], "91%")
         self.assertEqual(wifi["Radio Type"], "802.11ax")
 
+    def test_disabled_proxy_stays_disabled_after_redaction(self):
+        redacted = redact_payload(self.data, {"redact": True}, env={})
+
+        self.assertEqual(dict(redacted["groups"][1]["rows"])["User Proxy"], "Disabled")
+
+    def test_enabled_proxy_hosts_do_not_reach_rendered_html(self):
+        proxy = {
+            "ProxyEnable": 1,
+            "ProxyServer": "proxy.corp.example:8080",
+            "ProxyOverride": "*.corp.example;<local>",
+            "AutoConfigURL": "http://pac.corp.example/proxy.pac",
+        }
+        winhttp = (
+            "Proxy Server(s) : winhttp.corp.example:3128\n"
+            "Bypass List     : *.corp.example;<local>\n"
+        )
+        data = mod.build(CS, IPC, WMI, ROUTES, proxy, winhttp, WLAN)
+
+        html = mod.render(
+            redact_payload(data, {"redact": True}, env={}),
+            RenderContext(),
+        )
+
+        self.assertNotIn("corp.example", html)
+        self.assertIn("***.example", html)
+
     def test_redaction_masks_addresses(self):
         red = redact_payload(self.data, {"redact": True})
         rows = {}
@@ -97,6 +124,12 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(dict(data["groups"][1]["rows"])["WinHTTP Proxy"], "Not available")
         self.assertEqual(dict(data["groups"][2]["rows"])["Wi-Fi"], "Not available")
 
+    def test_empty_wlan_and_winhttp_inputs_are_not_available(self):
+        for value in ("", None):
+            with self.subTest(value=value):
+                self.assertEqual(mod._wifi_rows(value), {"Wi-Fi": "Not available"})
+                self.assertEqual(mod.winhttp_summary(value), "Not available")
+
     def test_wlan_parser_is_case_and_spacing_tolerant(self):
         text = " ssid: LabNet\n RADIO TYPE : 802.11ax\n signal: 91%\n"
 
@@ -139,3 +172,33 @@ class FixtureTests(unittest.TestCase):
         self.assertEqual(dict(data["groups"][2]["rows"])["Wi-Fi"], "Not available")
         self.assertTrue(any("winhttp" in note.lower() for note in ctx.notes))
         self.assertTrue(any("wlan" in note.lower() for note in ctx.notes))
+
+    def test_collect_notes_empty_command_text(self):
+        class Context:
+            def __init__(self, value):
+                self.value = value
+                self.notes = []
+
+            def query(self, name, script, timeout=None):
+                return None
+
+            def text(self, name, args, timeout=None):
+                return self.value
+
+            def note(self, text):
+                self.notes.append(text)
+
+        for value in ("", None):
+            with self.subTest(value=value):
+                ctx = Context(value)
+                data = mod.collect(ctx)
+                self.assertEqual(
+                    dict(data["groups"][1]["rows"])["WinHTTP Proxy"],
+                    "Not available",
+                )
+                self.assertEqual(
+                    dict(data["groups"][2]["rows"])["Wi-Fi"],
+                    "Not available",
+                )
+                self.assertTrue(any("winhttp" in note.lower() for note in ctx.notes))
+                self.assertTrue(any("wlan" in note.lower() for note in ctx.notes))
