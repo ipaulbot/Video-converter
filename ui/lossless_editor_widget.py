@@ -135,8 +135,9 @@ class LosslessEditorWidget(QWidget):
             (self.remove_audio_btn, self.remove_audio),
         ):
             button.clicked.connect(handler)
-            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
             action_row.addWidget(button)
+        action_row.addStretch(1)
         layout.addLayout(action_row)
 
         self.merge_list = QListWidget()

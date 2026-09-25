@@ -265,13 +265,17 @@ class VideoConverterApp(QMainWindow):
 
         # Store the full tab stylesheet as a template
         self.tab_stylesheet_template = (
-            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border: none; background: transparent; }}")
+            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: {tab_min}px; padding: {tab_pad}; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: {tab_font}pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border: none; background: transparent; }}")
         )
         # Set initial tab stylesheet with teal underline
         self.tabs = QTabWidget()
         self.tool_tab_cards = {}
         self.tabs.setCursor(Qt.PointingHandCursor)
-        self.tabs.setStyleSheet(self.tab_stylesheet_template.format(highlight="#43a296"))
+        # Shrink and elide tabs rather than growing scroll arrows when the
+        # bar is too narrow for every enabled tool tab.
+        self.tabs.setUsesScrollButtons(False)
+        self.tabs.setElideMode(Qt.ElideRight)
+        self.apply_tab_style("#43a296")
         # Conversion Log Tab
         self.log_tab = QWidget()
         log_tab_layout = QVBoxLayout(self.log_tab)
@@ -949,11 +953,13 @@ class VideoConverterApp(QMainWindow):
             central.layout().setContentsMargins(m, m, m, m)
         for widget in self.layout_mode_widgets():
             widget.apply_layout_mode(metrics)
+        if hasattr(self, "tabs"):
+            self.apply_tab_style(theme.highlight_color())
         if metrics.name == "full":
             self.showMaximized()
         else:
             self.showNormal()
-            self.resize(960, 600)
+            self.resize(*metrics.window_size)
             self.center_on_screen()
         if persist:
             save_settings(self.settings)
@@ -3067,9 +3073,15 @@ class VideoConverterApp(QMainWindow):
         highlight = theme.highlight_color()
 
         if hasattr(self, 'tabs'):
-            tab_style = self.tab_stylesheet_template.format(highlight=highlight)
-            self.tabs.setStyleSheet(tab_style)
+            self.apply_tab_style(highlight)
         self.update_preview_controls_style()
+
+    def apply_tab_style(self, highlight):
+        """Tab bar QSS for the current window mode with the given underline colour."""
+        m = theme.metrics()
+        self.tabs.setStyleSheet(self.tab_stylesheet_template.format(
+            highlight=highlight, tab_min=m.tab_min_w, tab_pad=m.tab_padding,
+            tab_font=m.tab_font_pt))
 
     def update_settings_display(self):
         """Update the current video settings display in the main area."""

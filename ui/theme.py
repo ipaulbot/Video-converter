@@ -635,9 +635,18 @@ class LayoutMetrics:
     recorder_stacked: bool
     player_panel_min_h: int
     pc_report_logo_w: int
+    # Tab bar: compact must fit all seven tool tabs beside the logo column
+    # without scroll arrows, so it drops the minimum width and tightens padding.
+    tab_min_w: int = 140
+    tab_padding: str = "10px 16px"
+    tab_font_pt: int = 9
+    window_size: tuple[int, int] = (0, 0)  # (0, 0) = leave the window size alone
 
 
-COMPACT: Final[LayoutMetrics] = LayoutMetrics("compact", 6, 4, 98, True, 160, 96)
+COMPACT: Final[LayoutMetrics] = LayoutMetrics(
+    "compact", 6, 4, 98, True, 160, 96,
+    tab_min_w=0, tab_padding="7px 6px", tab_font_pt=8, window_size=(1024, 640),
+)
 FULL: Final[LayoutMetrics] = LayoutMetrics("full", 12, 8, 260, False, 240, 140)
 LAYOUT_MODES: Final[tuple[str, ...]] = (COMPACT.name, FULL.name)
 _layout_by_name: Final[dict[str, LayoutMetrics]] = {

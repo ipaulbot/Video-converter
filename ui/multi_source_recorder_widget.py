@@ -986,6 +986,9 @@ class MultiSourceRecorderWidget(QWidget):
         self.source_type_map = {item["id"]: item for item in CAMERA_SOURCE_TYPES}
         self.output_quality = "Default"
         self._init_ui()
+        # Take all spare height in the tab card; otherwise the tab's footer row
+        # shares the surplus and its icons float mid-page in Full window mode.
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.preview_render_timer = QTimer(self)
         self.preview_render_timer.setInterval(100)
         self.preview_render_timer.timeout.connect(self._render_pending_preview_frames)
@@ -1112,7 +1115,9 @@ class MultiSourceRecorderWidget(QWidget):
             ))
             self.video_name_edits.append(label)
         self.update_preview_panel_visibility()
-        source_grid.setColumnStretch(3, 1)
+        # Every control column is capped in width, so give the spare room to an
+        # empty trailing column instead of letting Qt pad the Nr/Use columns.
+        source_grid.setColumnStretch(6, 1)
         source_group_layout = QVBoxLayout()
         source_group_layout.setContentsMargins(6, 6, 6, 6)
         source_group_layout.setSpacing(2)
