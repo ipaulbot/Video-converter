@@ -40,7 +40,7 @@ WELL_KNOWN_ACCOUNTS = frozenset({
     r"nt authority\network service",
 })
 
-_IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
+_IPV4 = re.compile(r"(?<![\d.])(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}(?![\d.])")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
 _UNC_PATH = re.compile(r"^(\\\\)([^\\]+)(\\.*)?$")
 _UNC_HOST_PREFIX = re.compile(r"(\\\\)([^\\\s]+)(\\)")

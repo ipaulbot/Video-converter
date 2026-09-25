@@ -178,9 +178,14 @@ class PcReportPrivacyTests(unittest.TestCase):
         guid = "b8136383-1826-454b-810e-0c4a05d5a2e0"
         values = {
             "PortName": [
+                "IP_192.168.1.20",
                 "192.168.31.12",
                 f"WSD-{guid}",
                 "OneNote_S-1-5-21-2734529186-23328706-2630127308-5137",
+                r"\\PRINTSRV\HP",
+                "USB001",
+                "nul:",
+                "PORTPROMPT:",
             ],
             "ShareName": r"\\printserver\queue",
             "ServerName": r"\\10.20.30.40\queue",
@@ -190,15 +195,23 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         redacted = redact_payload(values, {"redact": True}, env={})
 
-        self.assertEqual(redacted["PortName"][0], "192.168.*.*")
-        self.assertNotIn(guid, redacted["PortName"][1])
-        self.assertNotIn("2734529186", redacted["PortName"][2])
-        self.assertNotIn("5137", redacted["PortName"][2])
+        self.assertEqual(redacted["PortName"][0], "IP_192.168.*.*")
+        self.assertEqual(redacted["PortName"][1], "192.168.*.*")
+        self.assertNotIn(guid, redacted["PortName"][2])
+        self.assertNotIn("2734529186", redacted["PortName"][3])
+        self.assertNotIn("5137", redacted["PortName"][3])
+        self.assertEqual(redacted["PortName"][4], r"\\<redacted>\HP")
+        self.assertEqual(redacted["PortName"][5:], ["USB001", "nul:", "PORTPROMPT:"])
         self.assertEqual(redacted["ShareName"], r"\\<redacted>\queue")
         self.assertEqual(redacted["ServerName"], r"\\10.20.*.*\queue")
         self.assertEqual(redacted["Location"], r"\\<redacted>\lab")
         self.assertNotIn("comment-host", redacted["Comment"])
         self.assertNotIn("10.20.30.40", redacted["Comment"])
+
+    def test_version_like_ipv4_is_untouched_outside_ip_scoped_keys(self):
+        payload = {"Version": "12.19.2.66"}
+
+        self.assertEqual(redact_payload(payload, {"redact": True}, env={}), payload)
 
     def test_device_instance_ids_mask_trailing_serial_segments(self):
         ids = [

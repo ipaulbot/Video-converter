@@ -14,9 +14,48 @@ class BuildTests(unittest.TestCase):
         data = mod.build(PR, SP)
         self.assertEqual(data["rows"][0]["Status"], "Idle")
         self.assertEqual(data["rows"][0]["Default"], "Yes")
+        self.assertEqual(data["rows"][0]["Port Type"], "Virtual")
+        self.assertEqual(data["rows"][0]["Error State"], "")
+        self.assertEqual(data["rows"][0]["Extended Status"], "")
         rows = dict(data["groups"][0]["rows"])
         self.assertEqual(rows["Print Spooler"], "Running (Auto)")
         self.assertEqual(rows["Default Printer"], "Microsoft Print to PDF")
+
+    def test_port_kind_classifies_supported_port_families(self):
+        cases = {
+            "WSD-b8136383": "WSD",
+            "IP_192.168.1.20": "TCP/IP",
+            "192.168.1.20": "TCP/IP",
+            "printer.example.test": "TCP/IP",
+            "_printer.example.test": "TCP/IP",
+            r"\\PRINTSRV\HP": "Network share",
+            "USB001": "USB",
+            "USB": "USB",
+            "LPT1": "Local",
+            "COM3": "Local",
+            "nul:": "Virtual",
+            "PORTPROMPT:": "Virtual",
+            "SHRFAX:": "Virtual",
+            "FILE:": "Virtual",
+            "Microsoft.Office.OneNote_123": "App",
+            "OneNote_S-1-5-21-123": "App",
+            "custom-port": "Other",
+        }
+        for port_name, expected in cases.items():
+            with self.subTest(port_name=port_name):
+                self.assertEqual(mod.port_kind(port_name), expected)
+
+    def test_decodes_error_state_and_extended_status(self):
+        printer = {
+            **PR[0],
+            "DetectedErrorState": 8,
+            "ExtendedPrinterStatus": 7,
+        }
+
+        row = mod.build([printer], SP)["rows"][0]
+
+        self.assertEqual(row["Error State"], "Jammed")
+        self.assertEqual(row["Extended Status"], "Offline")
 
 
 class FixtureTests(unittest.TestCase):

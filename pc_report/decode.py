@@ -346,6 +346,17 @@ BATTERY_CHEMISTRY = {
 
 PRINTER_STATUS = {1: "Other", 2: "Unknown", 3: "Idle", 4: "Printing", 5: "Warming up",
                   6: "Stopped printing", 7: "Offline"}
+PRINTER_ERROR_STATE = {
+    0: "Unknown", 1: "Other", 2: "No Error", 3: "Low Paper", 4: "No Paper", 5: "Low Toner",
+    6: "No Toner", 7: "Door Open", 8: "Jammed", 9: "Offline", 10: "Service Requested",
+    11: "Output Bin Full",
+}
+PRINTER_EXTENDED_STATUS = {
+    1: "Other", 2: "Unknown", 3: "Idle", 4: "Printing", 5: "Warming Up", 6: "Stopped Printing",
+    7: "Offline", 8: "Paused", 9: "Error", 10: "Busy", 11: "Not Available", 12: "Waiting",
+    13: "Processing", 14: "Initialization", 15: "Power Save", 16: "Pending Deletion",
+    17: "I/O Active", 18: "Manual Feed",
+}
 
 NET_CONNECTION_STATUS = {0: "Disconnected", 1: "Connecting", 2: "Connected", 3: "Disconnecting",
                          4: "Hardware not present", 5: "Hardware disabled", 6: "Hardware malfunction",
