@@ -71,8 +71,10 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(dict(data["groups"][0]["rows"])["Shares"], 2)
 
     def test_server_requires_admin(self):
-        rows = mod.flatten(mod.build(SH, ACC, CLIENT, REQUIRES_ADMIN))
+        data = mod.build(SH, ACC, CLIENT, REQUIRES_ADMIN)
+        rows = mod.flatten(data)
         self.assertEqual(rows["Server Configuration"], REQUIRES_ADMIN)
+        self.assertIn("Requires administrator", mod.render(data, support.render_ctx()))
 
     def test_hidden_administrative_shares_are_flagged(self):
         rows = mod.build(
@@ -110,9 +112,12 @@ class BuildTests(unittest.TestCase):
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
-        _data, html, ctx = support.collect_and_render(mod.SECTION)
+        _data, html, ctx = support.collect_and_render(mod.SECTION, is_admin=False)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<h3>Share permissions</h3>", html)
+        self.assertIn("Requires administrator", html)
+        self.assertIn("SMB Server", html)
+        self.assertIn("Server Configuration", html)
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)

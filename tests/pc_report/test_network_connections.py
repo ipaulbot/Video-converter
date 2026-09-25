@@ -119,6 +119,12 @@ class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
         _data, html, ctx = support.collect_and_render(mod.SECTION)
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
+        self.assertTrue(
+            any(
+                "Mapped drives (WMI) unavailable or timed out" in note
+                for note in ctx.notes
+            )
+        )
         self.assertIn("<h3>Listening TCP ports</h3>", html)
 
     def test_renders_empty(self):

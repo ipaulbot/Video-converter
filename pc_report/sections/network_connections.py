@@ -246,8 +246,13 @@ def build(mapped, smb, vpn, tcp, udp, procs) -> dict:
 
 
 def collect(ctx):
+    mapped = ctx.query("mapped", MAPPED_SCRIPT, timeout=10)
+    if mapped is None:
+        ctx.note(
+            "Mapped drives (WMI) unavailable or timed out; SMB mappings shown instead."
+        )
     return build(
-        ctx.query("mapped", MAPPED_SCRIPT),
+        mapped,
         ctx.query("smb_mappings", SMB_SCRIPT),
         ctx.query("vpn", VPN_SCRIPT),
         ctx.query("tcp", TCP_SCRIPT, timeout=30),
