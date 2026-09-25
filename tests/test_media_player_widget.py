@@ -1,3 +1,6 @@
+import os
+import tempfile
+import time
 import unittest
 
 from PyQt5.QtWidgets import QApplication
@@ -144,6 +147,102 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertEqual(widget.volume(), 100)
         widget.adjust_volume(-200)
         self.assertEqual(widget.volume(), 0)
+
+    def _loaded_widget_with_fake_player(self, duration_ms=10_000, fps=25.0, nb_frames=250):
+        """A widget whose first panel reports media without touching the Windows backend."""
+        widget = self._widget()
+        widget.probe_runner = lambda path: {"ok": True, "fps": fps, "nb_frames": nb_frames,
+                                            "duration_ms": duration_ms, "container": "mp4",
+                                            "vcodec": "h264", "acodec": "aac"}
+        panel = widget.panels[0]
+
+        class FakePlayer:
+            def __init__(self):
+                self._position = 0
+                self.paused = False
+                self.playing = False
+
+            def duration(self):
+                return duration_ms
+
+            def position(self):
+                return self._position
+
+            def setPosition(self, value):
+                self._position = int(value)
+
+            def pause(self):
+                self.paused = True
+
+            def play(self):
+                self.playing = True
+
+            def stop(self):
+                pass
+
+            def setPlaybackRate(self, _rate):
+                pass
+
+            def setVolume(self, _v):
+                pass
+
+            def setMuted(self, _m):
+                pass
+
+        panel.player = FakePlayer()
+        panel._media_path = "C:\\Videos\\clip.mp4"
+        panel.set_probe_info(widget.probe_runner(panel._media_path))
+        widget._on_any_duration_changed(duration_ms)
+        return widget, panel
+
+    def test_step_frames_pauses_and_moves_by_one_frame(self):
+        widget, panel = self._loaded_widget_with_fake_player(fps=25.0)
+        widget.seek_all(1_000)
+        widget.step_frames(1)
+        self.assertTrue(panel.player.paused)
+        self.assertEqual(panel.player.position(), 1_040)
+        widget.step_frames(-2)
+        self.assertEqual(panel.player.position(), 960)
+
+    def test_step_frames_clamps_to_timeline(self):
+        widget, panel = self._loaded_widget_with_fake_player(duration_ms=100, fps=25.0)
+        widget.seek_all(90)
+        widget.step_frames(1)
+        self.assertEqual(panel.player.position(), 100)
+        widget.seek_all(10)
+        widget.step_frames(-1)
+        self.assertEqual(panel.player.position(), 0)
+
+    def test_step_uses_default_fps_before_probe_arrives(self):
+        widget, panel = self._loaded_widget_with_fake_player(fps=0.0, nb_frames=0)
+        widget.seek_all(0)
+        widget.step_frames(1)
+        self.assertEqual(panel.player.position(), 40)
+        self.assertNotIn("frame", widget.time_label.text())
+
+    def test_readout_shows_millis_and_frame_numbers(self):
+        widget, _panel = self._loaded_widget_with_fake_player(duration_ms=2_000, fps=25.0, nb_frames=50)
+        widget.seek_all(1_000)
+        self.assertEqual(widget.time_label.text(), "0:00:01.000 / 0:00:02.000 · frame 25 / 50")
+
+    def test_load_media_probes_in_background_and_updates_panel(self):
+        widget = self._widget()
+        widget.probe_runner = lambda path: {"ok": True, "fps": 29.97, "nb_frames": 10, "duration_ms": 333,
+                                            "container": "mov", "vcodec": "h264", "acodec": "aac"}
+        panel = widget.panels[0]
+        panel._ensure_player = lambda: panel.player or type("P", (), {
+            "setMedia": lambda self, *_: None, "setVolume": lambda self, *_: None,
+            "setMuted": lambda self, *_: None, "duration": lambda self: 0})()
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as handle:
+            path = handle.name
+        self.addCleanup(lambda: os.path.exists(path) and os.remove(path))
+        self.assertTrue(panel.load_media(path))
+        deadline = time.monotonic() + 5
+        while not panel.probe_info and time.monotonic() < deadline:
+            self.app.processEvents()
+            time.sleep(0.01)
+        self.assertAlmostEqual(panel.fps(), 29.97, places=2)
+        self.assertEqual(panel.nb_frames(), 10)
 
 
 if __name__ == "__main__":

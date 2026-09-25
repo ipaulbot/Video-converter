@@ -1,6 +1,7 @@
 import os
+import threading
 
-from PyQt5.QtCore import QCoreApplication, Qt, QTimer, QUrl
+from PyQt5.QtCore import QCoreApplication, Qt, QTimer, QUrl, pyqtSignal
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (
@@ -19,7 +20,12 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
-from ui.media_player_support import MEDIA_PLAYER_DEFAULTS
+from ui.media_player_support import (
+    MEDIA_PLAYER_DEFAULTS,
+    format_readout,
+    frame_step_ms,
+    probe_media_info,
+)
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
 
@@ -91,10 +97,12 @@ class PlayerPanel(QWidget):
         self.setAcceptDrops(True)
         self._media_path = ""
         self.player = None
+        self.probe_info = {}
         # The host wires these so the player can drive the shared timeline once created.
         self.on_duration_changed = None
         self.on_media_status_changed = None
         self.on_player_created = None
+        self.on_probe_finished = None
         self._build_ui()
 
     def _build_ui(self):
@@ -197,6 +205,17 @@ class PlayerPanel(QWidget):
             self.player.setVolume(int(volume))
             self.player.setMuted(bool(muted))
 
+    def fps(self):
+        return float(self.probe_info.get("fps") or 0.0)
+
+    def nb_frames(self):
+        return int(self.probe_info.get("nb_frames") or 0)
+
+    def set_probe_info(self, info):
+        self.probe_info = dict(info or {})
+        if callable(self.on_probe_finished):
+            self.on_probe_finished(self, self.probe_info)
+
     def has_media(self):
         return bool(self._media_path)
 
@@ -224,6 +243,9 @@ class PlayerPanel(QWidget):
             % {"number": self.index + 1, "name": os.path.basename(path)})
         self.name_label.setToolTip(path)
         self.placeholder.hide()
+        self.probe_info = {}
+        if self.host is not None and hasattr(self.host, "start_probe"):
+            self.host.start_probe(self)
         return True
 
     def clear_media(self):
@@ -231,6 +253,7 @@ class PlayerPanel(QWidget):
             self.player.stop()
             self.player.setMedia(QMediaContent())
         self._media_path = ""
+        self.probe_info = {}
         self.name_label.setText(_tr("Panel %(number)s: empty")
                                 % {"number": self.index + 1})
         self.name_label.setToolTip("")
@@ -252,6 +275,8 @@ class PlayerPanel(QWidget):
 class MediaPlayerWidget(QWidget):
     """Observer-style synchronized multi-panel player (up to four clips at once)."""
 
+    probe_finished = pyqtSignal(int, dict)
+
     def __init__(self, parent=None, button_style=None, settings=None, save_settings=None, threadpool=None):
         super().__init__(parent)
         self.button_style = button_style
@@ -265,6 +290,8 @@ class MediaPlayerWidget(QWidget):
         self._suppress_seek = False
         self._timers = []
         self._restoring = False
+        self.probe_runner = probe_media_info
+        self.probe_finished.connect(self._on_probe_finished)
         self._build_ui()
 
         self.sync_timer = QTimer(self)
@@ -330,9 +357,9 @@ class MediaPlayerWidget(QWidget):
         self.position_slider.sliderMoved.connect(self.seek_all)
         self.position_slider.sliderPressed.connect(self._on_slider_pressed)
         self.position_slider.sliderReleased.connect(self._on_slider_released)
-        self.time_label = QLabel(_tr("0:00 / 0:00"))
+        self.time_label = QLabel(_tr("0:00:00.000 / 0:00:00.000"))
         self.time_label.setStyleSheet(theme.video_label_style())
-        self.time_label.setMinimumWidth(96)
+        self.time_label.setMinimumWidth(260)
         self.time_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         seek_row.addWidget(self.position_slider, 1)
         seek_row.addWidget(self.time_label)
@@ -494,6 +521,29 @@ class MediaPlayerWidget(QWidget):
             return 0
         return max(panel.duration_ms() for panel in panels)
 
+    # --- probing -----------------------------------------------------------
+    def start_probe(self, panel):
+        path = panel._media_path
+        index = panel.index
+
+        def run():
+            info = self.probe_runner(path)
+            try:
+                self.probe_finished.emit(index, info)
+            except RuntimeError:
+                logger.debug("Media player closed before probe finished", exc_info=True)
+
+        threading.Thread(target=run, daemon=True).start()
+
+    def _on_probe_finished(self, index, info):
+        if not (0 <= index < len(self.panels)):
+            return
+        panel = self.panels[index]
+        if not panel.has_media():
+            return
+        panel.set_probe_info(info)
+        self._update_time_label(self.position_slider.value())
+
     # --- transport --------------------------------------------------------
     def toggle_play_all(self):
         if self._is_playing:
@@ -537,11 +587,28 @@ class MediaPlayerWidget(QWidget):
         self.play_all()
 
     def seek_all(self, master_ms):
+        self._set_slider_value(master_ms)
         for panel in self.active_panels():
             panel.player.setPosition(
                 panel_seek_position_ms(master_ms, panel.offset_ms(), panel.duration_ms())
             )
         self._update_time_label(master_ms)
+
+    def _clamp_master(self, master_ms):
+        return max(0, min(int(master_ms), self.timeline_duration_ms() or int(master_ms)))
+
+    def seek_relative_ms(self, delta_ms):
+        target = self._clamp_master(self.position_slider.value() + int(delta_ms))
+        self._set_slider_value(target)
+        self.seek_all(target)
+
+    def step_frames(self, delta):
+        reference = self._reference_panel()
+        if reference is None:
+            return
+        # Stepping always pauses (spec §2): a paused, frame-exact position is the point.
+        self.pause_all()
+        self.seek_relative_ms(int(delta) * frame_step_ms(reference.fps()))
 
     def _on_slider_pressed(self):
         self._suppress_seek = True
@@ -592,9 +659,10 @@ class MediaPlayerWidget(QWidget):
         self.position_slider.blockSignals(False)
 
     def _update_time_label(self, master_ms):
-        self.time_label.setText(
-            f"{format_timecode(master_ms)} / {format_timecode(self.timeline_duration_ms())}"
-        )
+        reference = self._reference_panel()
+        fps = reference.fps() if reference is not None else 0.0
+        nb_frames = reference.nb_frames() if reference is not None else 0
+        self.time_label.setText(format_readout(master_ms, self.timeline_duration_ms(), fps, nb_frames))
 
     def shutdown(self):
         for timer in self._timers:
