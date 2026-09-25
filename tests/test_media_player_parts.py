@@ -2,7 +2,7 @@ import unittest
 
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtWidgets import QApplication, QLabel, QToolButton
 
 from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import PlaylistModel
@@ -46,6 +46,19 @@ class PlaylistDockTests(unittest.TestCase):
         model = PlaylistModel()
         dock.set_model(model, "Panel 1")
         return dock, model
+
+    def test_dock_actions_are_icon_buttons_that_fit(self):
+        dock = PlaylistDock()
+        self.addCleanup(dock.close)
+        for button, tip in (
+            (dock.add_files_btn, "Add files..."),
+            (dock.add_folder_btn, "Add folder..."),
+            (dock.remove_btn, "Remove selected"),
+            (dock.clear_btn, "Clear playlist"),
+        ):
+            self.assertIsInstance(button, QToolButton, tip)
+            self.assertEqual(button.toolTip(), tip)
+        self.assertLessEqual(dock.sizeHint().width(), 320)
 
     def test_refresh_lists_model_items_and_title(self):
         dock, model = self._dock()

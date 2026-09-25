@@ -98,7 +98,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Cameras"], ["Basler ace acA1920"])
         self.assertEqual(rows["HASP / Sentinel Dongles"], "SafeNet Inc. Sentinel HASP Key")
         self.assertEqual(rows["GigE Adapters"], "Ethernet")
-        self.assertEqual(rows["Elapsed Total"], "15.8 s")
+        self.assertEqual(rows["Collection"], "16 s summed across sections")
         self.assertEqual(rows["Slowest Sections"], "processes (12.3 s), cpu (2.0 s), memory (1.0 s)")
         self.assertEqual(rows["Sections Timed"], 4)
         self.assertEqual([row["Name"] for row in self.data["software"]], ["EthoVision XT 19"])
@@ -106,6 +106,14 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(self.data["drivers"][0]["Device"], "Basler pylon GigE Filter")
         self.assertEqual(self.data["codecs"][0]["Name"], "Noldus Resizer Filter")
         self.assertEqual(self.data["environment"][0]["Name"], "GENICAM_GENTL64_PATH")
+
+    def test_collection_rows_separate_wall_clock_from_summed_time(self):
+        section = mod.build({}, False, {"a": 60.0, "b": 310.0}, total_seconds=91.3)
+        rows = dict(section["groups"][1]["rows"])
+        self.assertEqual(
+            rows["Collection"],
+            "91 s wall clock; 370 s summed across sections",
+        )
 
     def test_all_clear_when_nothing_is_wrong(self):
         data = mod.build({}, is_admin=True, elapsed={})

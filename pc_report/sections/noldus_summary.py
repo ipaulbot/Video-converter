@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import time
 
 from ..noldus_terms import RUNTIME_TERMS, filter_nvc_related_items
 from ..section import Section, esc, flatten_groups, kv_groups, list_table, rows_of, sub_heading
@@ -161,7 +162,12 @@ def _attention(results: dict, is_admin: bool) -> list[dict]:
     return items
 
 
-def build(results: dict, is_admin: bool, elapsed: dict) -> dict:
+def build(
+    results: dict,
+    is_admin: bool,
+    elapsed: dict,
+    total_seconds=None,
+) -> dict:
     results = results or {}
     summary_rows = system_summary.flatten(results.get("system_summary"))
     os_rows = operating_system.flatten(results.get("operating_system"))
@@ -235,7 +241,12 @@ def build(results: dict, is_admin: bool, elapsed: dict) -> dict:
     elapsed = elapsed or {}
     slowest = sorted(elapsed.items(), key=lambda item: item[1], reverse=True)[:3]
     collection = {
-        "Elapsed Total": f"{sum(elapsed.values()):.1f} s",
+        "Collection": (
+            f"{total_seconds:.0f} s wall clock; "
+            f"{sum(elapsed.values()):.0f} s summed across sections"
+            if total_seconds is not None
+            else f"{sum(elapsed.values()):.0f} s summed across sections"
+        ),
         "Slowest Sections": ", ".join(f"{key} ({seconds:.1f} s)" for key, seconds in slowest),
         "Elevated": "Yes" if is_admin else "No",
         "Sections Timed": len(elapsed),
@@ -260,7 +271,9 @@ def flatten(data) -> dict:
 
 def collect(ctx):
     results = {key: ctx.result(key) for key in SECTION.after}
-    return build(results, ctx.is_admin, ctx.run.elapsed)
+    started_at = getattr(ctx.run, "started_at", None)
+    total_seconds = time.monotonic() - started_at if started_at is not None else None
+    return build(results, ctx.is_admin, ctx.run.elapsed, total_seconds)
 
 
 def _attention_table(items) -> str:

@@ -134,28 +134,10 @@ class ConvertedFilesWidget(QWidget):
         # Create clear button
         self.clear_button = QPushButton(_tr("Clear"))
         clear_button = self.clear_button
-        clear_button.setFixedSize(60, 24)
         clear_button.setCursor(Qt.PointingHandCursor)
-
-        # Use provided button style or default transparent style
-        if self.button_style:
-            clear_button.setStyleSheet(self.button_style)
-        else:
-            clear_button.setStyleSheet(theme.qss("""
-                QPushButton {
-                    background: transparent;
-                    border: 1px solid $panel_border;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    padding: 4px 8px;
-                }
-                QPushButton:hover {
-                    background: $grey_050;
-                }
-            """))
+        clear_button.setStyleSheet(theme.compact_button_style())
         clear_button.clicked.connect(self.clear_table)
-        clear_button.setProperty('skipGlobalStyle', True)
-        clear_button.hide()
+        theme.opt_out_of_button_style(clear_button)
 
         self.table_widget = QTableWidget(0, 3)
         self.table_widget.setHorizontalHeaderLabels(["File Name", "Destination Folder", "Date Modified"])
@@ -231,14 +213,14 @@ class ConvertedFilesWidget(QWidget):
         actions_row = QHBoxLayout()
         actions_row.setContentsMargins(0, 6, 0, 0)
         actions_row.addStretch(1)
+        actions_row.addWidget(clear_button)
         self.play_button = QPushButton(_tr("Play"))
-        self.play_button.setFixedSize(60, 24)
         self.play_button.setCursor(Qt.PointingHandCursor)
         self.play_button.setToolTip(
             _tr("Open the selected file in the Media Player tab")
         )
-        self.play_button.setStyleSheet(clear_button.styleSheet())
-        self.play_button.setProperty('skipGlobalStyle', True)
+        self.play_button.setStyleSheet(theme.compact_button_style())
+        theme.opt_out_of_button_style(self.play_button)
         self.play_button.clicked.connect(self.request_play_selected)
         self.play_button.hide()
         actions_row.addWidget(self.play_button)
@@ -249,6 +231,7 @@ class ConvertedFilesWidget(QWidget):
         self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_widget.customContextMenuRequested.connect(self.show_context_menu)
         self.table_widget.selectionModel().selectionChanged.connect(self._handle_selection_changed)
+        self._refresh_clear_button()
 
     # Basic drag-and-drop support; parent handles the actual conversion logic.
     def dragEnterEvent(self, event):
@@ -294,6 +277,7 @@ class ConvertedFilesWidget(QWidget):
         self.table_widget.setItem(row, 1, dest_item)
         self.table_widget.setItem(row, 2, QTableWidgetItem("-"))
         self.table_widget.item(row, 0).setData(Qt.UserRole, os.path.join(destination_folder, file_name_only))
+        self._refresh_clear_button()
 
     def update_file_status(self, file_name, status, date_str=None):
         """Update the status icon for a file in the table. Status: 'queued', 'processing', 'success', 'failure'.
@@ -437,6 +421,7 @@ class ConvertedFilesWidget(QWidget):
                 self.table_widget.item(row, 0).setData(Qt.UserRole, output_file_path)
                 # Force table refresh
                 self.table_widget.viewport().update()
+            self._refresh_clear_button()
             # Write per-file log
             if not os.path.exists(self.log_folder):
                 os.makedirs(self.log_folder, exist_ok=True)
@@ -564,13 +549,21 @@ class ConvertedFilesWidget(QWidget):
     def clear_table(self):
         """Clear the converted files table."""
         self.table_widget.setRowCount(0)
+        self._refresh_clear_button()
         self.preview_requested.emit("")  # Clear preview on table clear
 
-    def update_button_style(self, new_style):
-        """Update the clear button style"""
-        if hasattr(self, 'table_widget') and self.table_widget.cornerWidget():
-            self.table_widget.cornerWidget().setStyleSheet(new_style)
-        self.play_button.setStyleSheet(new_style)
+    def _refresh_clear_button(self):
+        self.clear_button.setVisible(self.table_widget.rowCount() > 0)
+
+    def update_button_style(self, new_style=None):
+        """Skin changed: Clear and Play stay on the compact tier, in the new accent."""
+        self.button_style = new_style or self.button_style
+        self.reskin()
+
+    def reskin(self):
+        compact = theme.compact_button_style()
+        for button in (self.clear_button, self.play_button):
+            button.setStyleSheet(compact)
 
     def clear_logs(self):
         # Delete all .txt logs in the log folder

@@ -66,6 +66,7 @@ from conversion.recording_sources import (
     parse_rtsp_url_settings,
 )
 from ui import theme
+from ui.glyph_icons import make_icon_button, reskin_icon_buttons
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -424,6 +425,9 @@ class VideoSettingsDialog(QDialog):
             _tr("Separate videos"),
             _tr("Combined grid"),
         ])
+        quality_control = self.output_controls.get("quality")
+        if quality_control:
+            self.output_quality_combo.setCurrentText(quality_control)
         output_mode_control = self.output_controls.get("output_mode")
         if output_mode_control:
             self.output_mode_combo.setCurrentText(output_mode_control.currentText())
@@ -434,15 +438,15 @@ class VideoSettingsDialog(QDialog):
 
         timer_group = QGroupBox(_tr("Timer settings"))
         timer_form = QFormLayout()
-        self.time_format_combo = QComboBox()
-        self.time_format_combo.addItems(["HH:mm:ss", "Seconds"])
-        self.decimals_combo = QComboBox()
-        self.decimals_combo.addItems(["0", "1", "2", "3"])
         self.maximum_time_check = QCheckBox(_tr("Use maximum recording time"))
         self.maximum_time_edit = QLineEdit()
         self.maximum_time_edit.setPlaceholderText(_tr("01:00:00"))
-        timer_form.addRow("Time format:", self.time_format_combo)
-        timer_form.addRow("Decimals:", self.decimals_combo)
+        current_timer = self.output_controls.get("duration")
+        current_text = current_timer.text().strip() if current_timer is not None else ""
+        self.maximum_time_check.setChecked(bool(current_text))
+        self.maximum_time_edit.setText(current_text)
+        self.maximum_time_edit.setEnabled(bool(current_text))
+        self.maximum_time_check.toggled.connect(self.maximum_time_edit.setEnabled)
         timer_form.addRow(self.maximum_time_check, self.maximum_time_edit)
         timer_group.setLayout(timer_form)
         lower_row.addWidget(timer_group, 1)
@@ -844,6 +848,15 @@ class VideoSettingsDialog(QDialog):
         if output_mode_control:
             output_mode_control.setCurrentText(self.output_mode_combo.currentText())
         parent = self.parent()
+        if parent is not None:
+            if hasattr(parent, "output_quality"):
+                parent.output_quality = self.output_quality_combo.currentText()
+            if hasattr(parent, "duration_edit"):
+                parent.duration_edit.setText(
+                    self.maximum_time_edit.text().strip()
+                    if self.maximum_time_check.isChecked()
+                    else ""
+                )
         if parent and hasattr(parent, "update_preview_panel_visibility"):
             parent.update_preview_panel_visibility()
 
@@ -972,7 +985,11 @@ class MultiSourceRecorderWidget(QWidget):
         self.source_config_buttons = []
         self.video_name_edits = []
         self.source_type_map = {item["id"]: item for item in CAMERA_SOURCE_TYPES}
+        self.output_quality = "Default"
         self._init_ui()
+        # Take all spare height in the tab card; otherwise the tab's footer row
+        # shares the surplus and its icons float mid-page in Full window mode.
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.preview_render_timer = QTimer(self)
         self.preview_render_timer.setInterval(100)
         self.preview_render_timer.timeout.connect(self._render_pending_preview_frames)
@@ -1031,9 +1048,8 @@ class MultiSourceRecorderWidget(QWidget):
             self.ptz_overlay_buttons.append(ptz_button)
         layout.addLayout(preview_grid)
 
-        middle_row = QHBoxLayout()
-        middle_row.setSpacing(8)
-        middle_row.setAlignment(Qt.AlignTop)
+        self.groups_host = QWidget()
+        self.groups_layout = None
         source_group = QGroupBox(_tr("Recording properties"))
         source_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         source_grid = QGridLayout()
@@ -1100,7 +1116,9 @@ class MultiSourceRecorderWidget(QWidget):
             ))
             self.video_name_edits.append(label)
         self.update_preview_panel_visibility()
-        source_grid.setColumnStretch(3, 1)
+        # Every control column is capped in width, so give the spare room to an
+        # empty trailing column instead of letting Qt pad the Nr/Use columns.
+        source_grid.setColumnStretch(6, 1)
         source_group_layout = QVBoxLayout()
         source_group_layout.setContentsMargins(6, 6, 6, 6)
         source_group_layout.setSpacing(2)
@@ -1109,22 +1127,12 @@ class MultiSourceRecorderWidget(QWidget):
         self.video_settings_link = QPushButton(_tr("Video Settings"))
         self.video_settings_link.setMaximumWidth(110)
         self.video_settings_link.setProperty("skipGlobalStyle", True)
-        self.video_settings_link.setStyleSheet(theme.qss("""
-            QPushButton {
-                background: transparent;
-                color: $accent_dark;
-                border: none;
-                text-decoration: underline;
-                padding: 0px;
-                text-align: left;
-            }
-            QPushButton:hover { color: $accent_deep; }
-        """))
+        self.video_settings_link.setStyleSheet(theme.link_button_style())
         self.video_settings_link.clicked.connect(lambda: self.open_video_settings())
         self.recording_log_link = QPushButton(_tr("Show recording log"))
         self.recording_log_link.setMaximumWidth(130)
         self.recording_log_link.setProperty("skipGlobalStyle", True)
-        self.recording_log_link.setStyleSheet(self.video_settings_link.styleSheet())
+        self.recording_log_link.setStyleSheet(theme.link_button_style())
         self.recording_log_link.clicked.connect(self.show_recording_log)
         link_row = QHBoxLayout()
         link_row.setContentsMargins(0, 0, 0, 0)
@@ -1136,7 +1144,6 @@ class MultiSourceRecorderWidget(QWidget):
         source_group.setLayout(source_group_layout)
         self.source_group = source_group
         self.source_grid = source_grid
-        middle_row.addWidget(source_group, 2)
 
         output_group = QGroupBox(_tr("Output settings"))
         output_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -1147,7 +1154,11 @@ class MultiSourceRecorderWidget(QWidget):
         output_form.setVerticalSpacing(3)
         self.output_folder_edit = QLineEdit(os.path.join(os.path.expanduser("~"), "Videos"))
         self.output_folder_edit.setMinimumWidth(120)
-        self.output_folder_edit.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        self.output_folder_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        # Keep the folder *name* (the tail) visible when the path is set
+        # programmatically; leave the caret alone while the user is typing.
+        self.output_folder_edit.textChanged.connect(self._show_output_path_tail)
+        self._show_output_path_tail()
         self.output_folder_edit.setToolTip(_tr("Double-click to choose the recording folder"))
         self.output_folder_edit.mouseDoubleClickEvent = lambda event: self.browse_output_folder()
         browse_btn = QPushButton(_tr("..."))
@@ -1169,16 +1180,17 @@ class MultiSourceRecorderWidget(QWidget):
         browse_btn.clicked.connect(self.browse_output_folder)
         browse_btn.hide()
         self.browse_output_button = browse_btn
-        self.open_output_folder_link = QPushButton(_tr("Open"))
-        self.open_output_folder_link.setMaximumWidth(44)
-        self.open_output_folder_link.setProperty("skipGlobalStyle", True)
-        self.open_output_folder_link.setStyleSheet(self.video_settings_link.styleSheet())
-        self.open_output_folder_link.setCursor(Qt.PointingHandCursor)
-        self.open_output_folder_link.setToolTip(_tr("Open the recording folder in your file browser"))
-        self.open_output_folder_link.clicked.connect(self.open_output_folder)
+        self.open_output_folder_button = make_icon_button(
+            "folder_open",
+            _tr("Open the recording folder in your file browser"),
+            theme.skin().accent,
+            size=24,
+        )
+        self.open_output_folder_button.clicked.connect(self.open_output_folder)
+        self.open_output_folder_link = self.open_output_folder_button
         folder_line = QHBoxLayout()
-        folder_line.addWidget(self.output_folder_edit)
-        folder_line.addWidget(self.open_output_folder_link, 0, Qt.AlignLeft)
+        folder_line.addWidget(self.output_folder_edit, 1)
+        folder_line.addWidget(self.open_output_folder_button, 0)
         self.base_name_edit = QLineEdit(_tr("Video"))
         self.base_name_edit.setMaximumWidth(140)
         self.codec_combo = QComboBox()
@@ -1199,11 +1211,29 @@ class MultiSourceRecorderWidget(QWidget):
         self.duration_edit.setMaximumWidth(140)
         self.duration_edit.setPlaceholderText(_tr("blank = until stopped"))
         output_form.addRow("Timer:", self.duration_edit)
+        self.copy_mode_note = QLabel(
+            _tr(
+                "USB cameras are always re-encoded to H.264; copy applies to RTSP and file sources."
+            )
+        )
+        self.copy_mode_note.setWordWrap(True)
+        self.copy_mode_note.setStyleSheet(
+            theme.qss("color: $grey_650; font-size: 9pt;")
+        )
+        self.copy_mode_note.hide()
+        output_form.addRow(self.copy_mode_note)
+        self.codec_combo.currentTextChanged.connect(
+            lambda _text: self.update_copy_mode_note()
+        )
+        for enabled, _label, type_combo, *_rest in self.source_rows:
+            enabled.toggled.connect(lambda _checked: self.update_copy_mode_note())
+            type_combo.currentIndexChanged.connect(
+                lambda _index: self.update_copy_mode_note()
+            )
         output_group.setLayout(output_form)
         self.output_group = output_group
         self.output_form = output_form
-        middle_row.addWidget(output_group, 1)
-        layout.addLayout(middle_row)
+        layout.addWidget(self.groups_host)
 
         self.start_btn = QPushButton("")
         self.start_btn.setToolTip(_tr("Start recording"))
@@ -1228,6 +1258,50 @@ class MultiSourceRecorderWidget(QWidget):
         self.stop_btn.hide()
 
         self.update_button_style(self.button_style)
+        self.apply_layout_mode(theme.metrics())
+        self.update_copy_mode_note()
+
+    def _show_output_path_tail(self, _text=None):
+        edit = self.output_folder_edit
+        if not edit.hasFocus():
+            edit.setCursorPosition(len(edit.text()))
+
+    def groups_stacked(self):
+        return isinstance(self.groups_layout, QVBoxLayout)
+
+    def apply_layout_mode(self, metrics):
+        """Stack recorder groups in compact mode and place them side by side in full mode."""
+        for preview in self.preview_boxes:
+            preview.setMaximumHeight(metrics.recorder_tile_max_h)
+        old = self.groups_layout
+        if old is not None:
+            old.removeWidget(self.source_group)
+            old.removeWidget(self.output_group)
+            QWidget().setLayout(old)
+        if metrics.recorder_stacked:
+            new = QVBoxLayout(self.groups_host)
+            new.addWidget(self.source_group)
+            new.addWidget(self.output_group)
+        else:
+            new = QHBoxLayout(self.groups_host)
+            new.setAlignment(Qt.AlignTop)
+            new.addWidget(self.source_group, 2)
+            new.addWidget(self.output_group, 1)
+        new.setContentsMargins(0, 0, 0, 0)
+        new.setSpacing(metrics.spacing * 2)
+        self.groups_layout = new
+        self.source_group.show()
+        self.output_group.show()
+
+    def update_copy_mode_note(self):
+        usb_enabled = any(
+            enabled.isChecked()
+            and self._source_type_id(type_combo) == "directshow"
+            for enabled, _label, type_combo, *_rest in self.source_rows
+        )
+        self.copy_mode_note.setVisible(
+            self.codec_combo.currentText() == "copy" and usb_enabled
+        )
 
     def sizeHint(self):
         return QSize(640, 440)
@@ -1278,6 +1352,14 @@ class MultiSourceRecorderWidget(QWidget):
             if button.property("skipGlobalStyle"):
                 continue
             button.setStyleSheet(button_style)
+        self.reskin()
+
+    def reskin(self):
+        """Links and glyph buttons follow the lock / converting skin like the bubbles do."""
+        link = theme.link_button_style()
+        for widget in (self.video_settings_link, self.recording_log_link):
+            widget.setStyleSheet(link)
+        reskin_icon_buttons(self, theme.skin().accent)
 
     def _source_type_id(self, combo):
         return combo.currentData() or "stream_url"
@@ -1940,6 +2022,7 @@ class MultiSourceRecorderWidget(QWidget):
             "codec": self.codec_combo,
             "output_mode": self.output_mode_combo,
             "duration": self.duration_edit,
+            "quality": self.output_quality,
         }
 
     def capture_recorder_settings(self):
@@ -1968,6 +2051,7 @@ class MultiSourceRecorderWidget(QWidget):
                 "base_name": self.base_name_edit.text(),
                 "encoding": self.codec_combo.currentText(),
                 "mode": self.output_mode_combo.currentText(),
+                "quality": self.output_quality,
             },
             "timer": {
                 "duration": self.duration_edit.text(),
@@ -1990,6 +2074,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.base_name_edit.setText(output.get("base_name", self.base_name_edit.text()))
         self.codec_combo.setCurrentText(output.get("encoding", self.codec_combo.currentText()))
         self.output_mode_combo.setCurrentText(output.get("mode", self.output_mode_combo.currentText()))
+        self.output_quality = output.get("quality", self.output_quality)
         self.duration_edit.setText(timer.get("duration", self.duration_edit.text()))
         for index, channel in enumerate(normalized.get("channels", [])):
             if index >= len(self.source_rows):
@@ -2252,6 +2337,7 @@ class MultiSourceRecorderWidget(QWidget):
                 audio_device=audio_device,
                 mute=mute,
                 volume=volume,
+                quality=self.output_quality,
             )
         source = apply_axis_rtsp_recording_options(source, frame_rate=frame_rate, resolution=resolution)
         return build_record_command(
@@ -2266,6 +2352,7 @@ class MultiSourceRecorderWidget(QWidget):
             audio_device=audio_device,
             mute=mute,
             volume=volume,
+            quality=self.output_quality,
         )
 
     def recording_fallback_commands(
@@ -2618,6 +2705,7 @@ class MultiSourceRecorderWidget(QWidget):
             audio_device=audio_device,
             mute=not bool(audio_device),
             volume=audio_volume,
+            quality=self.output_quality,
         )
         audio_fallback_command = None
         if audio_device:
@@ -2631,6 +2719,7 @@ class MultiSourceRecorderWidget(QWidget):
                 audio_device="",
                 mute=True,
                 volume="0",
+                quality=self.output_quality,
             )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error

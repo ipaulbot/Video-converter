@@ -52,6 +52,7 @@ default_settings = {
     "gif_loop": True,
     "gif_quick": False,
     "close_on_x": True,
+    "window_mode": "compact",
     "startup_common": False,
     # Custom presets (initially None/empty)
     "custom_preset_1": None,
@@ -122,6 +123,9 @@ def normalize_settings(settings):
         for key, default_value in default_tabs.items()
     }
     normalized["media_player"] = normalize_media_player_settings(normalized.get("media_player"))
+    mode = normalized.get("window_mode")
+    mode = mode.strip().lower() if isinstance(mode, str) else ""
+    normalized["window_mode"] = mode if mode in ("compact", "full") else "compact"
     return normalized
 
 def load_settings():

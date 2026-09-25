@@ -1,9 +1,14 @@
+import ctypes
 import datetime
 import os
+import subprocess
+import sys
 import threading
 
 from PyQt5.QtCore import (
     QCoreApplication,
+    QEasingCurve,
+    QPropertyAnimation,
     Qt,
     QThread,
     QUrl,
@@ -11,6 +16,8 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import (
+    QGraphicsOpacityEffect,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QPlainTextEdit,
@@ -38,6 +45,7 @@ def _tr(source: str) -> str:
     a variable. See utils/localization.py for why.
     """
     return QCoreApplication.translate("PcReport", source)
+
 
 class _PCReportWorker(QThread):
     progress = pyqtSignal(str)
@@ -98,85 +106,93 @@ class PCReportWidget(QWidget):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(10)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(8)
 
         header = QHBoxLayout()
         header.setSpacing(14)
+        # The heart sits under the monitor logo's transparent cut-out and pulses
+        # while a report runs (restored from the pre-343d9c1 dialog).
+        logo_stack = QGridLayout()
+        logo_stack.setContentsMargins(0, 0, 0, 0)
+        self.heart_label = QLabel()
+        self.heart_label.setStyleSheet("QLabel { background: transparent; border: none; }")
+        self.heart_label.setAlignment(Qt.AlignCenter)
+        self.heart_effect = QGraphicsOpacityEffect(self.heart_label)
+        self.heart_effect.setOpacity(0.0)
+        self.heart_label.setGraphicsEffect(self.heart_effect)
+        self.heart_label.hide()
+        self.heart_anim = None
         self.logo_label = QLabel()
-        self.logo_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.logo_label.setAlignment(Qt.AlignCenter)
         self.logo_label.setStyleSheet("QLabel { background: transparent; border: none; }")
+        logo_stack.addWidget(self.heart_label, 0, 0, Qt.AlignCenter)
+        logo_stack.addWidget(self.logo_label, 0, 0, Qt.AlignCenter)
+        self.logo_width = theme.metrics().pc_report_logo_w
         self._set_logo()
-        header.addWidget(self.logo_label, 0)
+        header.addLayout(logo_stack, 0)
 
         intro = QVBoxLayout()
+        intro.setSpacing(2)
         title = QLabel(_tr("PC Report"))
-        title.setStyleSheet(theme.qss("font-size: 18px; font-weight: bold; color: $accent;"))
+        title.setStyleSheet(theme.tab_title_style())
         intro.addWidget(title)
-        description = QLabel(
-            _tr("Generate a detailed support report without leaving this tab. "
-            "The report is saved automatically, with redaction enabled for sensitive values.")
-        )
-        description.setWordWrap(True)
-        description.setStyleSheet(theme.qss("color: $text_body; font-size: 10pt;"))
+        description = QLabel(_tr("Collects system details for support. Redaction is always on."))
+        description.setStyleSheet(theme.qss("color: $text_body; font-size: 9pt;"))
         intro.addWidget(description)
+
+        actions = QHBoxLayout()
+        actions.setSpacing(14)
+        self.btn_run = QPushButton(_tr("Generate PC Report"))
+        self.btn_open = QPushButton(_tr("Open report"))
+        self.btn_folder = QPushButton(_tr("Open folder"))
+        self.btn_admin = QPushButton(_tr("Run as administrator"))
+        self.btn_admin.setToolTip(
+            _tr(
+                "Restart NVC with administrator rights so the report can read TPM, BitLocker, "
+                "disk reliability and SMB server details."
+            )
+        )
+        for button in (self.btn_run, self.btn_open, self.btn_folder, self.btn_admin):
+            button.setCursor(Qt.PointingHandCursor)
+            theme.opt_out_of_button_style(button)
+        self.btn_open.setEnabled(False)
+        self.btn_folder.setEnabled(False)
+        self.btn_admin.setVisible(not self.is_elevated())
+        actions.addWidget(self.btn_run)
+        actions.addWidget(self.btn_open)
+        actions.addWidget(self.btn_folder)
+        actions.addStretch(1)
+        actions.addWidget(self.btn_admin)
+        intro.addLayout(actions)
         header.addLayout(intro, 1)
         layout.addLayout(header)
 
-        controls = QHBoxLayout()
-        controls.setSpacing(10)
-        self.btn_run = QPushButton(_tr("Generate PC Report"))
-        self.btn_open = QPushButton(_tr("Open Report"))
-        self.btn_folder = QPushButton(_tr("Open Folder"))
-        for button in (self.btn_run, self.btn_open, self.btn_folder):
-            button.setCursor(Qt.PointingHandCursor)
-            button.setMinimumWidth(120)
-            button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-            if button_style:
-                button.setStyleSheet(button_style)
-        self.btn_open.setEnabled(False)
-        self.btn_folder.setEnabled(False)
-        controls.addWidget(self.btn_run)
-        controls.addWidget(self.btn_open)
-        controls.addWidget(self.btn_folder)
-        controls.addStretch(1)
-        layout.addLayout(controls)
-
         self.progress = QProgressBar()
         self.progress.setRange(0, 0)
+        self.progress.setTextVisible(False)
+        self.progress.setFixedHeight(6)
         self.progress.hide()
-        self._set_progress_color(
-            theme.skin_for_state(locked=locked, active=converting).accent)
+        self._set_progress_color(theme.skin_for_state(locked=locked, active=converting).accent)
         layout.addWidget(self.progress)
 
         self.status_label = QLabel(_tr("Ready. Reports are saved to your Desktop by default."))
         self.status_label.setWordWrap(True)
-        self.status_label.setStyleSheet(theme.qss("color: $grey_700;"))
+        self.status_label.setStyleSheet(theme.qss("color: $grey_700; font-size: 9pt;"))
         layout.addWidget(self.status_label)
 
         self.output = QPlainTextEdit()
         self.output.setReadOnly(True)
         self.output.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        try:
-            self.output.setLineWrapMode(QPlainTextEdit.WidgetWidth)
-        except Exception:
-            logger.debug("PCReportWidget.__init__: suppressed error", exc_info=True)
-        self.output.setPlainText(
-            "Press Generate PC Report to collect OS, hardware, driver, codec, NVC dependency, "
-            "network, service, process, and security details. The app stays usable while the report runs."
-        )
+        self.output.setLineWrapMode(QPlainTextEdit.WidgetWidth)
+        self.output.setPlaceholderText(_tr("Report progress appears here."))
         layout.addWidget(self.output, 1)
 
-        note = QLabel(
-            _tr("Tip: the generated HTML is self-contained, so it can be attached to support tickets or opened later.")
-        )
-        note.setWordWrap(True)
-        note.setStyleSheet(theme.qss("color: $grey_650; font-size: 9pt;"))
-        layout.addWidget(note)
-
+        self._apply_tier_styles()
         self.btn_run.clicked.connect(self.on_run)
         self.btn_open.clicked.connect(self.open_report)
         self.btn_folder.clicked.connect(self.open_report_folder)
+        self.btn_admin.clicked.connect(self.relaunch_elevated)
 
     def _set_logo(self):
         try:
@@ -184,15 +200,90 @@ class PCReportWidget(QWidget):
 
             from utils.resources import resource_path
             if self.locked:
-                logo_path = resource_path('graphics/GRAYSCALEPCREPORT.png')
+                logo, heart = "graphics/GRAYSCALEPCREPORT.png", "graphics/PCREPORTHEART.png"
             elif self.converting:
-                logo_path = resource_path('graphics/GREENPCREPORT.png')
+                logo, heart = "graphics/GREENPCREPORT.png", "graphics/GREENPCREPORTHEART.png"
             else:
-                logo_path = resource_path('graphics/PCREPORT.png')
-            if os.path.exists(logo_path):
-                self.logo_label.setPixmap(QPixmap(logo_path).scaledToWidth(120, Qt.SmoothTransformation))
+                logo, heart = "graphics/PCREPORT.png", "graphics/PCREPORTHEART.png"
+            for label, rel in ((self.logo_label, logo), (self.heart_label, heart)):
+                path = resource_path(rel)
+                if os.path.exists(path):
+                    label.setPixmap(
+                        QPixmap(path).scaledToWidth(self.logo_width, Qt.SmoothTransformation)
+                    )
         except Exception:
             logger.debug("PCReportWidget._set_logo: suppressed error", exc_info=True)
+
+    def _apply_tier_styles(self):
+        self.btn_run.setStyleSheet(theme.compact_button_style())
+        for link in (self.btn_open, self.btn_folder, self.btn_admin):
+            link.setStyleSheet(theme.link_button_style())
+
+    def apply_layout_mode(self, metrics):
+        self.logo_width = metrics.pc_report_logo_w
+        self._set_logo()
+
+    @staticmethod
+    def is_elevated():
+        try:
+            return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        except Exception:
+            return False
+
+    @staticmethod
+    def _relaunch_command():
+        """(exe, params) that start this same NVC again, frozen or from source."""
+        if getattr(sys, "frozen", False):
+            return sys.executable, subprocess.list2cmdline(sys.argv[1:])
+        return sys.executable, subprocess.list2cmdline(sys.argv)
+
+    def _window_is_busy(self):
+        window = self.window()
+        if getattr(window, "running", False) or getattr(window, "is_converting", False):
+            return True
+        recording = getattr(window, "is_recorder_recording", None)
+        return bool(callable(recording) and recording())
+
+    def relaunch_elevated(self):
+        """Ask UAC to start a second NVC as administrator, then quit this one.
+
+        main.py keeps a QSharedMemory segment as the single-instance guard; it is
+        released before the child starts so the elevated copy is not turned away
+        with "NVC is already running", and re-created if UAC is refused.
+        """
+        if self._window_is_busy():
+            self.status_label.setText(
+                _tr("Stop the current conversion or recording before restarting as administrator.")
+            )
+            return
+        app = QCoreApplication.instance()
+        guard = getattr(app, "single_instance_memory", None)
+        try:
+            exe, params = self._relaunch_command()
+            if guard is not None:
+                guard.detach()
+            result = ctypes.windll.shell32.ShellExecuteW(
+                None, "runas", exe, params, None, 1
+            )
+        except Exception:
+            logger.debug(
+                "PCReportWidget.relaunch_elevated: suppressed error", exc_info=True
+            )
+            result = 0
+        if result > 32:
+            window = self.window()
+            quit_fn = getattr(window, "quit_application", None)
+            if callable(quit_fn):
+                quit_fn()
+        else:
+            if guard is not None:
+                guard.create(1)
+            self.status_label.setText(
+                _tr(
+                    "Elevation was cancelled or refused; the report will run without "
+                    "administrator rights."
+                )
+            )
 
     def _set_progress_color(self, hex_color: str):
         self.progress.setStyleSheet(
@@ -200,14 +291,14 @@ class PCReportWidget(QWidget):
             QProgressBar {{
                 border: 1px solid #E0E0E0;
                 background: #F5F5F5;
-                border-radius: 4px;
+                border-radius: 3px;
                 text-align: center;
-                height: 16px;
+                height: 6px;
             }}
             QProgressBar::chunk {{
                 background-color: {hex_color};
-                border-radius: 3px;
-                margin: 1px;
+                border-radius: 2px;
+                margin: 0px;
             }}
             """
         )
@@ -243,16 +334,42 @@ class PCReportWidget(QWidget):
         self.btn_open.setEnabled(False)
         self.btn_folder.setEnabled(False)
         self.progress.show()
+        self._start_heart()
         self.status_label.setText(_tr("Generating PC report inside this tab..."))
         self.output.clear()
         self.output.appendPlainText(f"Report will be saved to: {self.report_path}")
         self.worker = _PCReportWorker(self._options(), self)
         self.worker.progress.connect(self.output.appendPlainText)
-        self.worker.finished.connect(self.on_finished)
+        self.worker.finished.connect(self._on_worker_finished)
         self.worker.start()
 
-    def on_finished(self, html, json_text):
+    def _start_heart(self):
+        self.heart_label.show()
+        if self.heart_anim is not None:
+            self.heart_anim.stop()
+        anim = QPropertyAnimation(self.heart_effect, b"opacity", self)
+        anim.setDuration(2400)
+        anim.setKeyValueAt(0.0, 0.2)
+        anim.setKeyValueAt(0.5, 1.0)
+        anim.setKeyValueAt(1.0, 0.2)
+        anim.setEasingCurve(QEasingCurve.InOutSine)
+        anim.setLoopCount(-1)
+        anim.start()
+        self.heart_anim = anim
+
+    def _settle_heart(self, success):
+        if self.heart_anim is not None:
+            self.heart_anim.stop()
+        if success:
+            self.heart_effect.setOpacity(1.0)
+        else:
+            self.heart_effect.setOpacity(0.0)
+            self.heart_label.hide()
+
+    def _on_worker_finished(self, html, json_text):
         self.progress.hide()
+        # The worker reports failure as a stub page with empty JSON.
+        self._settle_heart(success=bool(json_text))
         self.btn_run.setEnabled(True)
         self.html = html
         self.json_text = json_text
@@ -287,12 +404,9 @@ class PCReportWidget(QWidget):
         self.button_style = button_style or self.button_style
         self.converting = converting
         self.locked = locked
-        if self.button_style:
-            for button in (self.btn_run, self.btn_open, self.btn_folder):
-                button.setStyleSheet(self.button_style)
-        self._set_progress_color(
-            theme.skin_for_state(locked=locked, active=converting).accent)
         self._set_logo()
+        self._apply_tier_styles()
+        self._set_progress_color(theme.skin_for_state(locked=locked, active=converting).accent)
 
     def shutdown(self):
         worker = self.worker

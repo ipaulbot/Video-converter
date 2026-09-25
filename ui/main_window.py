@@ -32,6 +32,7 @@ from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.media_files import collect_supported_media_paths
+from utils.paths import log_dir
 from ui import theme
 from conversion.queue_state import Admission, ConversionQueueState
 from utils.subprocess_helpers import (
@@ -42,6 +43,7 @@ from utils.subprocess_helpers import (
 from conversion.worker import ConversionWorker, WorkerSignals
 from conversion.ffmpeg_utils import is_within_allowed_time
 from ui.log_bus import LogBus
+from ui.leaf_frame import LeafFrame
 from ui.lossless_editor_widget import LosslessEditorWidget
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget
 from ui.media_player_widget import MediaPlayerWidget
@@ -122,9 +124,7 @@ class VideoConverterApp(QMainWindow):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent, stop:1 $accent_pressed);
                 border: 1px solid $accent_dark;
                 border-radius: 6px;
-                padding: 8px 16px;
-                min-width: 100px;
-                min-height: 32px;
+                padding: 6px 14px;
                 font-weight: bold;
                 color: white;
             }
@@ -135,9 +135,8 @@ class VideoConverterApp(QMainWindow):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_pressed, stop:1 $accent_dark);
             }
             QTabWidget::pane {
-                border: 1px solid $separator;
-                background: white;
-                border-radius: 8px;
+                border: none;
+                background: transparent;
                 margin-top: 4px;
             }
             QTabBar::tab {
@@ -266,17 +265,22 @@ class VideoConverterApp(QMainWindow):
 
         # Store the full tab stylesheet as a template
         self.tab_stylesheet_template = (
-            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border-radius: 8px; }}")
+            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: {tab_min}px; padding: {tab_pad}; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: {tab_font}pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border: none; background: transparent; }}")
         )
         # Set initial tab stylesheet with teal underline
         self.tabs = QTabWidget()
+        self.tool_tab_cards = {}
         self.tabs.setCursor(Qt.PointingHandCursor)
-        self.tabs.setStyleSheet(self.tab_stylesheet_template.format(highlight="#43a296"))
+        # Shrink and elide tabs rather than growing scroll arrows when the
+        # bar is too narrow for every enabled tool tab.
+        self.tabs.setUsesScrollButtons(False)
+        self.tabs.setElideMode(Qt.ElideRight)
+        self.apply_tab_style("#43a296")
         # Conversion Log Tab
         self.log_tab = QWidget()
         log_tab_layout = QVBoxLayout(self.log_tab)
         # Set margins to match video inspection tool
-        log_tab_layout.setContentsMargins(11, 11, 11, 11)
+        log_tab_layout.setContentsMargins(0, 0, 0, 0)
         self.console_output = QPlainTextEdit()
         self.console_output.setReadOnly(True)
         self.console_output.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -338,14 +342,14 @@ class VideoConverterApp(QMainWindow):
             QWidget { 
                 background: white; 
                 border: 2px dashed $panel_border; 
-                border-radius: 8px; 
+                $leaf
                 margin: 10px;
             }
             QWidget:hover {
                 border-color: $accent;
                 background: rgba(67, 162, 150, 0.1);
             }
-        """))
+        """, leaf=theme.leaf_radii(18)))
         # Allow context menu on overlay to fall back to log actions
         self.drag_drop_overlay.setContextMenuPolicy(Qt.CustomContextMenu)
         self.drag_drop_overlay.customContextMenuRequested.connect(
@@ -515,7 +519,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.log_tab_scroll.setWidget(self.log_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.log_tab)
+        self.tool_tab_cards["conversion_log"] = card
+        self.log_tab_scroll.setWidget(card)
         # Forward wheel events from the scroll area to the log text for smooth scrolling
         self.log_tab_scroll.wheelEvent = lambda e: self._forward_log_wheel(e)
         self.log_tab_scroll.installEventFilter(self)
@@ -525,16 +532,11 @@ class VideoConverterApp(QMainWindow):
         self.converted_files_tab = QWidget()
         converted_layout = QVBoxLayout(self.converted_files_tab)
         # Set margins to match conversion log baseline
-        converted_layout.setContentsMargins(11, 11, 11, 11)
+        converted_layout.setContentsMargins(0, 0, 0, 0)
         self.converted_files_widget = ConvertedFilesWidget(button_style=getattr(self, 'current_button_style', None))
         # Forward drag/drop from the converted list to the main window handler
         self.converted_files_widget.drop_files_signal.connect(self._handle_converted_tab_drop)
-        # Ensure per-file logs go to unified logs directory
-        try:
-            from utils.paths import get_data_dir
-            self.converted_files_widget.set_log_folder(get_data_dir("logs"))
-        except Exception:
-            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
+        self.converted_files_widget.set_log_folder(log_dir(self.settings))
         # Preview on selection in converted list
         try:
             self.converted_files_widget.preview_requested.connect(
@@ -563,7 +565,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.converted_tab_scroll.setWidget(self.converted_files_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.converted_files_tab)
+        self.tool_tab_cards["converted_files"] = card
+        self.converted_tab_scroll.setWidget(card)
         # Accept drops anywhere in the Converted tab container and forward them to the table
         self.converted_tab_scroll.setAcceptDrops(True)
         self.converted_tab_scroll.dragEnterEvent = lambda e: self.converted_files_widget.dragEnterEvent(e)
@@ -574,7 +579,7 @@ class VideoConverterApp(QMainWindow):
         self.inspection_tab = QWidget()
         inspection_layout = QVBoxLayout(self.inspection_tab)
         # Set margins to match conversion log baseline
-        inspection_layout.setContentsMargins(11, 11, 11, 11)
+        inspection_layout.setContentsMargins(0, 0, 0, 0)
         self.inspection_widget = InspectionWidget()
         # Clean modern styling for inspection widget
         self.inspection_widget.setStyleSheet(theme.qss("QWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
@@ -632,7 +637,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.inspection_tab_scroll.setWidget(self.inspection_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.inspection_tab)
+        self.tool_tab_cards["video_inspection"] = card
+        self.inspection_tab_scroll.setWidget(card)
         self.tabs.addTab(self.inspection_tab_scroll, _tr("Video Inspection Tool"))
 
         # PC Report Tab
@@ -645,7 +653,7 @@ class VideoConverterApp(QMainWindow):
         )
         self.pc_report_tab = QWidget()
         pc_report_layout = QVBoxLayout(self.pc_report_tab)
-        pc_report_layout.setContentsMargins(11, 11, 11, 11)
+        pc_report_layout.setContentsMargins(0, 0, 0, 0)
         pc_report_layout.addWidget(self.pc_report_widget)
         self.lock_icon_label_pc_report_tab = QLabel()
         self.status_label_pc_report_tab = QLabel()
@@ -656,7 +664,10 @@ class VideoConverterApp(QMainWindow):
         self.pc_report_tab_scroll = QScrollArea()
         self.pc_report_tab_scroll.setWidgetResizable(True)
         self.pc_report_tab_scroll.setFrameStyle(0)
-        self.pc_report_tab_scroll.setWidget(self.pc_report_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.pc_report_tab)
+        self.tool_tab_cards["pc_report"] = card
+        self.pc_report_tab_scroll.setWidget(card)
         self.tabs.addTab(self.pc_report_tab_scroll, _tr("PC Report"))
 
         # Lossless Editor Tab
@@ -667,7 +678,7 @@ class VideoConverterApp(QMainWindow):
         )
         self.lossless_editor_tab = QWidget()
         lossless_editor_layout = QVBoxLayout(self.lossless_editor_tab)
-        lossless_editor_layout.setContentsMargins(11, 11, 11, 11)
+        lossless_editor_layout.setContentsMargins(0, 0, 0, 0)
         lossless_editor_layout.addWidget(self.lossless_editor_widget)
         self.lock_icon_label_lossless_editor_tab = QLabel()
         self.status_label_lossless_editor_tab = QLabel()
@@ -677,7 +688,10 @@ class VideoConverterApp(QMainWindow):
         self.lossless_editor_tab_scroll = QScrollArea()
         self.lossless_editor_tab_scroll.setWidgetResizable(True)
         self.lossless_editor_tab_scroll.setFrameStyle(0)
-        self.lossless_editor_tab_scroll.setWidget(self.lossless_editor_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.lossless_editor_tab)
+        self.tool_tab_cards["lossless_editor"] = card
+        self.lossless_editor_tab_scroll.setWidget(card)
         self.tabs.addTab(self.lossless_editor_tab_scroll, _tr("Lossless Editor"))
 
         # Multi-Source Recorder Tab
@@ -692,7 +706,7 @@ class VideoConverterApp(QMainWindow):
         self.multi_source_recorder_widget.stop_btn.clicked.connect(self.toggle_process)
         self.multi_source_recorder_tab = QWidget()
         multi_source_recorder_layout = QVBoxLayout(self.multi_source_recorder_tab)
-        multi_source_recorder_layout.setContentsMargins(11, 11, 11, 11)
+        multi_source_recorder_layout.setContentsMargins(0, 0, 0, 0)
         multi_source_recorder_layout.addWidget(self.multi_source_recorder_widget)
         self.lock_icon_label_multi_source_recorder_tab = QLabel()
         self.status_label_multi_source_recorder_tab = QLabel()
@@ -702,7 +716,10 @@ class VideoConverterApp(QMainWindow):
         self.multi_source_recorder_tab_scroll = QScrollArea()
         self.multi_source_recorder_tab_scroll.setWidgetResizable(True)
         self.multi_source_recorder_tab_scroll.setFrameStyle(0)
-        self.multi_source_recorder_tab_scroll.setWidget(self.multi_source_recorder_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.multi_source_recorder_tab)
+        self.tool_tab_cards["multi_source_recorder"] = card
+        self.multi_source_recorder_tab_scroll.setWidget(card)
         self.tabs.addTab(self.multi_source_recorder_tab_scroll, _tr("Multi-Source Recorder"))
 
         # Media Player Tab. The player tree (4 video panels) is heavy and the tab is
@@ -712,7 +729,7 @@ class VideoConverterApp(QMainWindow):
         self.media_player_widget = None
         self.media_player_tab = QWidget()
         media_player_layout = QVBoxLayout(self.media_player_tab)
-        media_player_layout.setContentsMargins(11, 11, 11, 11)
+        media_player_layout.setContentsMargins(0, 0, 0, 0)
         self.media_player_layout = media_player_layout
         self.media_player_placeholder = QLabel(_tr("Loading media player…"))
         self.media_player_placeholder.setAlignment(Qt.AlignCenter)
@@ -725,7 +742,10 @@ class VideoConverterApp(QMainWindow):
         self.media_player_tab_scroll = QScrollArea()
         self.media_player_tab_scroll.setWidgetResizable(True)
         self.media_player_tab_scroll.setFrameStyle(0)
-        self.media_player_tab_scroll.setWidget(self.media_player_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.media_player_tab)
+        self.tool_tab_cards["media_player"] = card
+        self.media_player_tab_scroll.setWidget(card)
         self.tabs.addTab(self.media_player_tab_scroll, _tr("Media Player"))
 
         self.tool_tab_widgets = {
@@ -828,6 +848,18 @@ class VideoConverterApp(QMainWindow):
         burger_menu.addAction(_tr("Open Backup Folder"), self.open_backup_folder_in_explorer)
         burger_menu.addSeparator()
         burger_menu.addAction(_tr("Settings"), self.show_settings)
+        window_menu = burger_menu.addMenu(_tr("Window"))
+        from PyQt5.QtWidgets import QActionGroup
+        mode_group = QActionGroup(self)
+        mode_group.setExclusive(True)
+        self.window_mode_actions = {}
+        for mode, label in (("compact", _tr("Compact mode")), ("full", _tr("Full window mode"))):
+            action = window_menu.addAction(label)
+            action.setCheckable(True)
+            action.setData(mode)
+            mode_group.addAction(action)
+            action.triggered.connect(lambda _checked, m=mode: self.set_window_mode(m))
+            self.window_mode_actions[mode] = action
         self._add_language_menu(burger_menu)
         burger_menu.addAction(_tr("Check for Updates"), self.check_for_updates)
         burger_menu.addSeparator()
@@ -864,129 +896,7 @@ class VideoConverterApp(QMainWindow):
             self.tabs.currentChanged.connect(self.on_tab_changed)
         except Exception:
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
-        # Add Compact Mode toggle to burger menu
-        # self.compact_mode_action = burger_menu.addAction("Compact Mode")
-        # self.compact_mode_action.setCheckable(True)
-        # self.compact_mode_action.toggled.connect(self.toggle_compact_mode)
-        # Remove old File menu
-
-        # --- Compact mode widgets ---
-        # self.compact_widget = QWidget()
-        # compact_layout = QVBoxLayout(self.compact_widget)
-        # compact_layout.setContentsMargins(10, 10, 10, 10)
-        # compact_layout.setSpacing(8)
-        # # Logo
-        # self.compact_logo = QLabel()
-        # self.compact_logo.setPixmap(self.logo_label.pixmap())
-        # self.compact_logo.setAlignment(Qt.AlignCenter)
-        # compact_layout.addWidget(self.compact_logo)
-        # # Row: burger, lock, broom
-        # row = QHBoxLayout()
-        # row.setSpacing(12)
-        # row.setContentsMargins(0, 0, 0, 0)
-        # row.setAlignment(Qt.AlignHCenter)
-        # # Helper for framed icon
-        # def make_framed_icon(widget, icon_widget, size=40):
-        #     frame = QWidget()
-        #     frame_layout = QHBoxLayout(frame)
-        #     frame_layout.setContentsMargins(0, 0, 0, 0)
-        #     frame_layout.setSpacing(0)
-        #     icon_widget.setParent(frame)
-        #     icon_widget.setFixedSize(size, size)
-        #     # Only set alignment if QLabel
-        #     from PyQt5.QtWidgets import QLabel
-        #     if isinstance(icon_widget, QLabel):
-        #         icon_widget.setAlignment(Qt.AlignCenter)
-        #     frame.setFixedSize(size + 8, size + 8)
-        #     # Use thin black border to match normal mode
-        #     frame.setStyleSheet("QWidget { border: 1px solid #000; background: #E0E0E0; border-radius: 4px; }")
-        #     frame_layout.addStretch()
-        #     frame_layout.addWidget(icon_widget, alignment=Qt.AlignCenter)
-        #     frame_layout.addStretch()
-        #     return frame
-        # # Burger
-        # self.compact_burger = QToolButton()
-        # self.compact_burger.setIcon(self.burger_button.icon())
-        # self.compact_burger.setIconSize(QSize(36, 36))
-        # self.compact_burger.setMenu(self.burger_button.menu())
-        # self.compact_burger.setPopupMode(QToolButton.InstantPopup)
-        # self.compact_burger.setCursor(Qt.PointingHandCursor)
-        # self.compact_burger.setStyleSheet("""
-        #     QToolButton {
-        #         border: none;
-        #         background: transparent;
-        #         padding: 4px;
-        #     }
-        #     QToolButton:hover {
-        #         background: #e9ecef;
-        #         border-radius: 18px;
-        #     }
-        #     QToolButton::menu-indicator {
-        #         image: none;
-        #     }
-        # """)
-        # self.compact_burger.setFixedSize(36, 36)
-        # burger_frame = make_framed_icon(self, self.compact_burger)
-        # row.addWidget(burger_frame)
-        # # Lock
-        # self.compact_lock = QLabel()
-        # self.compact_lock.setPixmap(self.get_lock_icon_pixmap())
-        # self.compact_lock.setFixedSize(36, 36)
-        # self.compact_lock.setAlignment(Qt.AlignCenter)
-        # self.compact_lock.setCursor(Qt.PointingHandCursor)
-        # self.compact_lock.setToolTip("Lock/Unlock settings")
-        # self.compact_lock.mousePressEvent = self.lock_icon_clicked
-        # self.compact_lock.setStyleSheet("background: transparent; border: none;")
-        # lock_frame = make_framed_icon(self, self.compact_lock)
-        # row.addWidget(lock_frame)
-        # # File (new, dynamic)
-        # self.compact_file = QLabel()
-        # file_icon_path = self.get_icon_path('FILE')
-        # if os.path.exists(file_icon_path):
-        #     file_pixmap = QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        #     self.compact_file.setPixmap(file_pixmap)
-        # self.compact_file.setFixedSize(36, 36)
-        # self.compact_file.setAlignment(Qt.AlignCenter)
-        # self.compact_file.setCursor(Qt.PointingHandCursor)
-        # self.compact_file.setToolTip("Select media files to convert")
-        # self.compact_file.mousePressEvent = lambda event: self.open_file_dialog()
-        # self.compact_file.setStyleSheet("background: transparent; border: none;")
-        # file_frame = make_framed_icon(self, self.compact_file)
-        # row.addWidget(file_frame)
-        # # Broom
-        # self.compact_broom = QLabel()
-        # broom_icon_path = resource_path('graphics/GRAYSCALEBROOM.ico') if self.locked else resource_path('graphics/BROOM.ico')
-        # if os.path.exists(broom_icon_path):
-        #     broom_pixmap = QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        #     self.compact_broom.setPixmap(broom_pixmap)
-        # self.compact_broom.setFixedSize(36, 36)
-        # self.compact_broom.setAlignment(Qt.AlignCenter)
-        # self.compact_broom.setCursor(Qt.PointingHandCursor)
-        # self.compact_broom.setToolTip("Clear log")
-        # self.compact_broom.mousePressEvent = self.clear_log_tab
-        # self.compact_broom.setStyleSheet("background: transparent; border: none;")
-        # broom_frame = make_framed_icon(self, self.compact_broom)
-        # row.addWidget(broom_frame)
-        # row.addStretch()
-        # compact_layout.addLayout(row)
-        # # Start/Stop button
-        # self.compact_start_button = QPushButton()
-        # self.compact_start_button.setText(self.start_button.text())
-        # self.compact_start_button.setStyleSheet(self.start_button.styleSheet())
-        # # Sync enabled/disabled state
-        # self.compact_start_button.setEnabled(self.start_button.isEnabled())
-        # # Add status to compact mode
-        # self.compact_status_label = QLabel("Status: Not monitoring")
-        # self.compact_status_label.setAlignment(Qt.AlignCenter)
-        # self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
-        # compact_layout.addWidget(self.compact_status_label)
-
-        # compact_layout.addWidget(self.compact_start_button)
-        # self.compact_widget.hide()
-        # main_layout.addWidget(self.compact_widget)
-        # --- End compact mode widgets ---
         self.setStyleSheet(self.styleSheet() + '\nQMainWindow { border-radius: 8px; background: #F5F5F5; }')
-        self.is_compact = False
         # At the very end of init_ui, call update_icons to ensure all icons are set for the initial state
         self.update_icons()
 
@@ -1002,6 +912,7 @@ class VideoConverterApp(QMainWindow):
 
         # Center the main window on screen on first show
         self.center_on_screen()
+        self.set_window_mode(self.settings.get("window_mode", "compact"), persist=False)
 
         # Enable mouse tracking on the main window for proper hover detection
         self.setMouseTracking(True)
@@ -1015,6 +926,52 @@ class VideoConverterApp(QMainWindow):
 
         self.log_tab_layout = log_tab_layout
         self.log_container_index = self.log_tab_layout.indexOf(self.log_container)
+
+    def layout_mode_widgets(self):
+        """Tool widgets that adapt to the window mode."""
+        candidates = (
+            getattr(self, "multi_source_recorder_widget", None),
+            getattr(self, "media_player_widget", None),
+            getattr(self, "pc_report_widget", None),
+            getattr(self, "lossless_editor_widget", None),
+        )
+        return [w for w in candidates if w is not None and hasattr(w, "apply_layout_mode")]
+
+    def set_window_mode(self, name, persist=True):
+        """Switch between Compact (theme.COMPACT.window_size, normal) and Full window (maximised).
+
+        Raises ValueError for unknown names so a typo in settings cannot leave
+        the window half-applied.
+        """
+        metrics = theme.set_layout_mode(name)
+        self.settings["window_mode"] = metrics.name
+        for mode, action in getattr(self, "window_mode_actions", {}).items():
+            action.setChecked(mode == metrics.name)
+        central = self.centralWidget()
+        if central is not None and central.layout() is not None:
+            m = metrics.margin
+            central.layout().setContentsMargins(m, m, m, m)
+        for widget in self.layout_mode_widgets():
+            widget.apply_layout_mode(metrics)
+        if hasattr(self, "tabs"):
+            self.apply_tab_style(theme.highlight_color())
+        # Before the first show() (i.e. from __init__) only record the window
+        # state; main.py's show() honours it. Showing here would pop the window
+        # up mid-construction, and in every test that builds the main window.
+        if metrics.name == "full":
+            if self.isVisible():
+                self.showMaximized()
+            else:
+                self.setWindowState(self.windowState() | Qt.WindowMaximized)
+        else:
+            if self.isVisible():
+                self.showNormal()
+            else:
+                self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
+            self.resize(*metrics.window_size)
+            self.center_on_screen()
+        if persist:
+            save_settings(self.settings)
 
     def open_pc_report_dialog(self):
         try:
@@ -1083,28 +1040,28 @@ class VideoConverterApp(QMainWindow):
                         QWidget { 
                             background: rgba(255, 255, 255, 0.5); 
                             border: 2px dashed $panel_border; 
-                            border-radius: 8px; 
+                            $leaf
                             margin: 10px;
                         }
                         QWidget:hover {
                             border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                 else:
                     # Fully opaque overlay when idle and no log content
                     self.drag_drop_overlay.setStyleSheet(theme.qss("""
                         QWidget { 
                             background: white; 
                             border: 2px dashed $panel_border; 
-                            border-radius: 8px; 
+                            $leaf
                             margin: 10px;
                         }
                         QWidget:hover {
                             border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                 # Hide the overlay text ONLY if conversion is running or after a drop
                 if self.is_converting:
                     self.drag_drop_text.hide()
@@ -1256,12 +1213,6 @@ class VideoConverterApp(QMainWindow):
             else:
                 self.start_button.setToolTip(_tr("Start monitoring the source folder for files to convert."))
         self.update_icons()
-        # After updating main start_button, also update compact
-        if hasattr(self, 'compact_start_button'):
-            self.update_compact_start_button()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
         # Update all button styles based on monitoring state
         self.update_all_button_styles()
         # Update converted files widget button style
@@ -1381,13 +1332,15 @@ class VideoConverterApp(QMainWindow):
             save_settings=lambda: save_settings(self.settings),
             threadpool=self.threadpool,
         )
+        if hasattr(widget, "apply_layout_mode"):
+            widget.apply_layout_mode(theme.metrics())
         self.media_player_widget = widget
         placeholder = getattr(self, 'media_player_placeholder', None)
         if placeholder is not None:
             self.media_player_layout.removeWidget(placeholder)
             placeholder.deleteLater()
             self.media_player_placeholder = None
-        self.media_player_layout.insertWidget(0, widget)
+        self.tool_tab_cards["media_player"].body.insertWidget(0, widget)
         return widget
 
     def play_in_media_player(self, path):
@@ -1504,20 +1457,6 @@ class VideoConverterApp(QMainWindow):
         self.set_status_label(self.status_label_log_tab, self.status_running)
         self.set_status_label(self.status_label_converted_tab, self.status_running)
         self.set_status_label(self.status_label_inspection_tab, self.status_running)
-        # Update compact mode status
-        if hasattr(self, 'compact_status_label'):
-            if self.locked:
-                self.compact_status_label.setText(_tr("Status: Locked"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $text_muted; font-size: 10px; background: transparent; border: none; }"))
-            elif self.queue.active_count > 0:
-                self.compact_status_label.setText(_tr("Status: Converting"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $success; font-size: 10px; background: transparent; border: none; }"))
-            elif self.running:
-                self.compact_status_label.setText(_tr("Status: Monitoring"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $warning; font-size: 10px; background: transparent; border: none; }"))
-            else:
-                self.compact_status_label.setText(_tr("Status: Not monitoring"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $danger; font-size: 10px; background: transparent; border: none; }"))
 
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
@@ -1593,6 +1532,7 @@ class VideoConverterApp(QMainWindow):
     def shutdown(self):
         self.running = False
         self.status_running = False
+        self.hide()
         try:
             # Stops the ffmpeg process, the UI tick timer and the star field.
             self.preview.shutdown()
@@ -1869,9 +1809,6 @@ class VideoConverterApp(QMainWindow):
             logger.info("toggle_process branch=start_conversion")
             self.start_conversion()
             self.set_start_button_state(is_running=True)
-        # Sync compact start button after toggling
-        if hasattr(self, 'compact_start_button'):
-            self.update_compact_start_button()
 
     def start_conversion(self):
         if self.is_recorder_recording():
@@ -1905,9 +1842,6 @@ class VideoConverterApp(QMainWindow):
         self._process_manual_queue()
         self.update_icons()  # Ensure logo switches to color
         self.update_highlight_colors()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
 
     def stop_conversion(self):
         self.running = False
@@ -1922,9 +1856,6 @@ class VideoConverterApp(QMainWindow):
         self.append_log("Conversion stopped.")
         self.update_icons()  # Ensure logo switches to greyscale
         self.update_highlight_colors()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
 
     def scan_existing_files(self):
         for filename in os.listdir(self.source_folder):
@@ -1973,10 +1904,10 @@ class VideoConverterApp(QMainWindow):
                         QWidget {
                             background: rgba(255, 255, 255, 0.5);
                             border: 2px dashed $panel_border;
-                            border-radius: 8px;
+                            $leaf
                             margin: 10px;
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                     self.drag_drop_overlay.show()
         except Exception:
             logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
@@ -2121,9 +2052,6 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'burger_button') and os.path.exists(burger_icon_path):
             burger_icon = QIcon(QPixmap(burger_icon_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             self.burger_button.setIcon(burger_icon)
-            # Also update compact burger icon
-            if hasattr(self, 'compact_burger'):
-                self.compact_burger.setIcon(burger_icon)
         elif hasattr(self, 'burger_button'):
             # Debug: log when burger icon path doesn't exist
             logger.info(f"Burger icon path not found: {burger_icon_path}")
@@ -2132,9 +2060,6 @@ class VideoConverterApp(QMainWindow):
             if os.path.exists(fallback_path):
                 fallback_icon = QIcon(QPixmap(fallback_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 self.burger_button.setIcon(fallback_icon)
-                # Also update compact burger icon
-                if hasattr(self, 'compact_burger'):
-                    self.compact_burger.setIcon(fallback_icon)
         # Broom (log tab)
         broom_icon_path = self.get_icon_path('BROOM')
         if os.path.exists(broom_icon_path):
@@ -2162,15 +2087,6 @@ class VideoConverterApp(QMainWindow):
             self.lock_icon_label_inspection_tab.setPixmap(self.get_lock_icon_pixmap())
         # Update game controller icons
         self.update_game_icons()
-        # Compact mode icons
-        if hasattr(self, 'compact_broom') and os.path.exists(broom_icon_path):
-            self.compact_broom.setPixmap(QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        if hasattr(self, 'compact_lock'):
-            self.compact_lock.setPixmap(self.get_lock_icon_pixmap())
-        if hasattr(self, 'compact_file'):
-            file_icon_path = self.get_icon_path('FILE')
-            if os.path.exists(file_icon_path):
-                self.compact_file.setPixmap(QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
         # File icon (normal mode footers)
         for file_label in getattr(self, 'footer_file_labels', []):
             file_icon_path = self.get_icon_path('FILE')
@@ -2439,13 +2355,7 @@ class VideoConverterApp(QMainWindow):
         self.converted_files_widget.file_converted_signal.emit(output_file_name, deletion_info, self.destination_folder, success)
         # Write the per-file log, if this conversion produced any lines.
         if log_lines:
-            try:
-                from utils.paths import get_data_dir
-                default_logs = get_data_dir("logs")
-            except Exception:
-                logger.debug("No data dir for per-file logs", exc_info=True)
-                default_logs = os.path.expanduser("~")
-            log_folder = getattr(self.converted_files_widget, 'log_folder', default_logs)
+            log_folder = log_dir(self.settings)
             try:
                 os.makedirs(log_folder, exist_ok=True)
                 log_path = os.path.join(log_folder, output_file_name + '.txt')
@@ -2523,7 +2433,8 @@ class VideoConverterApp(QMainWindow):
         # utils/help_resolution.py) and falls back to the legacy hand-written
         # help_document.pdf/.html when no generated one has been shipped.
         from utils.help_resolution import resolve_help_document
-        help_path = resolve_help_document()
+        from utils.localization import saved_locale
+        help_path = resolve_help_document(saved_locale())
         if help_path is not None:
             from PyQt5.QtCore import QUrl
             from PyQt5.QtGui import QDesktopServices
@@ -2611,6 +2522,7 @@ class VideoConverterApp(QMainWindow):
         self.destination_folder = os.path.abspath(self.settings.get('destination_folder', ''))
         self.backup_folder = os.path.abspath(self.settings.get('backup_folder', ''))
         self.locked = self.settings.get('locked', False)
+        self.converted_files_widget.set_log_folder(log_dir(self.settings))
         # Re-apply window flags if "close_on_x" changed
         self.apply_window_flags_based_on_settings()
         logger.info("Settings updated.")
@@ -2702,10 +2614,10 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(67, 162, 150, 0.1); 
                     border: 2px solid $accent; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
             self.drag_drop_overlay.show()
             # Keep instruction consistent while hovering
             self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
@@ -2720,27 +2632,27 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         else:
             self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         # Always reset to default instruction after drag leave
         self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         # Always show the overlay
@@ -2754,27 +2666,27 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         else:
             self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         # After drop, hide only the text, keep the overlay visible
         self.drag_drop_text.hide()
         self.drag_drop_overlay.show()
@@ -2995,6 +2907,20 @@ class VideoConverterApp(QMainWindow):
                 converting=bool(self.running or getattr(self, 'is_converting', False)),
                 locked=bool(getattr(self, 'locked', False))
             )
+        # Compact / link / icon tiers opt out of the gradient traversal above,
+        # so they re-derive their own colours from the skin here.
+        for widget in self.reskin_widgets():
+            widget.reskin()
+
+    def reskin_widgets(self):
+        """Tool widgets and tab cards that carry skin-derived styles of their own."""
+        candidates = [
+            getattr(self, "lossless_editor_widget", None),
+            getattr(self, "media_player_widget", None),
+            getattr(self, "multi_source_recorder_widget", None),
+            getattr(self, "converted_files_widget", None),
+        ] + list(getattr(self, "tool_tab_cards", {}).values())
+        return [w for w in candidates if w is not None and hasattr(w, "reskin")]
 
     def apply_button_style_to_all_widgets(self, widget):
         """Apply the current button style beneath `widget`.
@@ -3002,8 +2928,7 @@ class VideoConverterApp(QMainWindow):
         The traversal lives in theme.apply_to_buttons now, shared with
         SettingsDialog. Buttons keep their own look by setting the
         skipGlobalStyle property rather than by this method knowing their
-        names -- it used to exclude `compact_start_button`, which has been
-        commented out of the UI for some time.
+        names.
         """
         return theme.apply_to_buttons(widget, self.current_button_style)
 
@@ -3017,10 +2942,10 @@ class VideoConverterApp(QMainWindow):
                     QWidget { 
                         background: rgba(67, 162, 150, 0.1); 
                         border: 2px dashed $accent; 
-                        border-radius: 8px; 
+                        $leaf
                         margin: 10px;
                     }
-                """))
+                """, leaf=theme.leaf_radii(18)))
                 return False  # Let the event continue
             elif event.type() == QEvent.Leave:
                 # Mouse left the overlay - restore normal styling
@@ -3171,9 +3096,15 @@ class VideoConverterApp(QMainWindow):
         highlight = theme.highlight_color()
 
         if hasattr(self, 'tabs'):
-            tab_style = self.tab_stylesheet_template.format(highlight=highlight)
-            self.tabs.setStyleSheet(tab_style)
+            self.apply_tab_style(highlight)
         self.update_preview_controls_style()
+
+    def apply_tab_style(self, highlight):
+        """Tab bar QSS for the current window mode with the given underline colour."""
+        m = theme.metrics()
+        self.tabs.setStyleSheet(self.tab_stylesheet_template.format(
+            highlight=highlight, tab_min=m.tab_min_w, tab_pad=m.tab_padding,
+            tab_font=m.tab_font_pt))
 
     def update_settings_display(self):
         """Update the current video settings display in the main area."""

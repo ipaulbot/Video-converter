@@ -22,10 +22,8 @@ Use this file as the shared parking lot for bugs, refactors, and new features.
   `pc_report` package and its tests are clean; fix the rest in a dedicated
   lint pass.
 
-- Converted Files has a Clear button (`ui/converted_files_widget.py:135`) that
-  is hidden at construction and never shown, so the table cannot be cleared
-  from the UI. Show it alongside Play, or remove it. The manual does not list
-  it.
+- ~~Converted Files has a Clear button that is hidden at construction and never
+  shown.~~ Fixed 2026-09-25: shown next to Play whenever the table has rows.
 
 ## PC report follow-ups
 
@@ -74,15 +72,15 @@ Deferred from the final code review (all Minor):
   grandchildren behind. `dxdiag_xml` should write into a private temp directory.
 - `redact_text` (fixture recorder only) matches the English `Proxy Server(s)`
   label; capture on a localised machine would need the host-based rule.
-- The elevated (administrator) live run has not been done yet: start NVC as
-  administrator once and confirm TPM, BitLocker, SMART reliability counters and
-  the SMB server rows fill in.
+- The elevated (administrator) live run has not been done yet: use the PC
+  Report tab's "Run as administrator" link (added 2026-09-25) and confirm TPM,
+  BitLocker, SMART reliability counters and the SMB server rows fill in.
 
 Out of scope in the current design, kept for later:
 
-- UAC-elevated collection (relaunch elevated, or an elevated helper) so that
-  TPM, BitLocker, SMART and SMB server fields fill in without running NVC as
-  administrator.
+- ~~UAC-elevated collection (relaunch elevated).~~ The tab now offers a
+  relaunch link; an elevated *helper* that fills the admin-only fields without
+  restarting NVC is still open.
 - Quick/Full profiles (skip the slow DirectShow, dxdiag and process-owner
   sections for a 15-second report).
 - PDF export of the report.
@@ -91,16 +89,14 @@ Out of scope in the current design, kept for later:
 
 ## Recorder follow-ups
 
-- Timer-dialog fields: time format, decimals, maximum time. Found while
-  documenting (2026-09-25): the Video Settings "Timer settings" group (Time
-  format, Decimals, Use maximum recording time) is not read anywhere — wire it
-  or remove it, then document it.
-- Video Settings "Output quality" combo is not wired to the encoder; every
-  recording uses the same encoder settings regardless of the choice. Wire it or
-  remove it, then document it.
-- DirectShow (USB) cameras are always re-encoded, even in copy mode
-  (`conversion/recording_commands.py`); the manual states this. Decide whether
-  copy mode should refuse USB sources or the label should say so.
+- ~~Timer-dialog fields: time format, decimals, maximum time not read
+  anywhere.~~ Fixed 2026-09-25: Time format / Decimals removed; "Use maximum
+  recording time" is bound to the tab's Timer field. Document it.
+- ~~Video Settings "Output quality" combo is not wired to the encoder.~~ Fixed
+  2026-09-25: drives the x264 preset/CRF and is saved with presets. Document it.
+- ~~DirectShow (USB) cameras are always re-encoded, even in copy mode; decide
+  whether the label should say so.~~ Fixed 2026-09-25: a note under Output
+  settings appears when "copy" is selected with a USB source enabled.
 - Screen capture through FFmpeg gdigrab.
 - Picture-in-picture recording.
 - Source type and address columns in the main grid.
@@ -118,8 +114,8 @@ Out of scope in the current design, kept for later:
 - Per-panel independent transport (today every panel shares one timeline).
 - Persist playlists between sessions.
 - Turning the Media Player tab on by default.
-- Playlist dock buttons (Add file / Add folder / Remove / Clear) overflow the dock
-  width and are clipped at the right edge, visible in the manual's FIG-08.
+- ~~Playlist dock buttons overflow the dock width and are clipped.~~ Fixed
+  2026-09-25: the dock uses four 24 px glyph buttons.
 
 ## Help documentation follow-ups
 
@@ -129,16 +125,32 @@ Out of scope in the current design, kept for later:
   `locales/nl` and `locales/zh_CN`. The PDF builder uses Helvetica, which has
   no CJK glyphs; a CJK-capable font must be registered before a zh-CN PDF can
   render.
-- `ui/main_window.py` `open_help_document` does not pass the active locale to
-  `resolve_help_document`, so a localized manual would never be opened even if
-  it existed.
+- ~~`open_help_document` does not pass the active locale to
+  `resolve_help_document`.~~ Fixed 2026-09-25.
 - A Developer Guide (architecture, module map, test layout, how the manuals are
   built).
-- Settings → Folders "Log Folder" is saved (`ui/settings_dialog.py`) but never
-  read: `ui/main_window.py` hard-codes `get_data_dir("logs")`. The manual says
-  logs are always under `%APPDATA%\NVC\logs`. Wire the setting or remove it.
-- `pyproject.toml` says version 2.2.0 while `utils/version.py` says 2.3.0; pick
-  one source of truth.
+- ~~Settings → Folders "Log Folder" is saved but never read.~~ Fixed
+  2026-09-25 (`utils.paths.log_dir`); the manual still says logs are always
+  under `%APPDATA%\NVC\logs` — update it with the next manual regeneration.
+- ~~`pyproject.toml` says 2.2.0 while `utils/version.py` says 2.3.0.~~ Fixed
+  2026-09-25; `tests/test_version.py` keeps them equal.
+
+## UI follow-ups
+
+Deferred from UI iteration 2 (2026-09-25) until the feature set settles:
+
+- Regenerate the Help manual and its screenshots: window modes, leaf cards, the
+  new PC Report / Media Player / Lossless Editor / Recorder controls, Output
+  quality, Timer binding, Log Folder.
+- Translate the new UI strings (Window menu, tooltips, copy-mode note, PC Report
+  copy) in `translations/`.
+- Compact mode always resizes to 1024x640; consider remembering a user-resized
+  compact geometry.
+- Full window mode leaves the recorder and PC Report with a lot of empty space;
+  a Full-only two-column arrangement (e.g. recording log beside the previews)
+  would use it.
+- The Recording properties grid still hides source type/address behind the
+  per-row Video Settings dialog; a Full-mode variant could show them inline.
 
 ## Done
 

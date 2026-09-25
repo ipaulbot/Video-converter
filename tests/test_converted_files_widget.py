@@ -48,3 +48,19 @@ class ConvertedFilesPlayTests(unittest.TestCase):
             [widget.table_widget.item(0, 0).data(Qt.UserRole)],
         )
         self.assertTrue(received[0].endswith("clip.mp4"))
+
+
+class ClearButtonTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_clear_button_tracks_row_count(self):
+        widget = ConvertedFilesWidget()
+        self.addCleanup(widget.close)
+
+        self.assertTrue(widget.clear_button.isHidden())
+        widget.add_queued_file("Session 1.mp4", r"C:\Videos")
+        self.assertFalse(widget.clear_button.isHidden())
+        widget.clear_table()
+        self.assertTrue(widget.clear_button.isHidden())

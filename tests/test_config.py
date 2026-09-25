@@ -1,6 +1,6 @@
 import unittest
 
-from utils.config import coerce_retention_days, normalize_settings
+from utils.config import coerce_retention_days, default_settings, normalize_settings
 
 
 class ConfigTests(unittest.TestCase):
@@ -72,6 +72,16 @@ class ConfigTests(unittest.TestCase):
     def test_media_player_group_survives_non_dict(self):
         normalized = normalize_settings({"media_player": "garbage"})
         self.assertEqual(normalized["media_player"]["panel_count"], 2)
+
+    def test_window_mode_defaults_to_compact(self):
+        self.assertEqual(default_settings["window_mode"], "compact")
+        self.assertEqual(normalize_settings({})["window_mode"], "compact")
+
+    def test_window_mode_normalises_unknown_values(self):
+        self.assertEqual(normalize_settings({"window_mode": "full"})["window_mode"], "full")
+        self.assertEqual(normalize_settings({"window_mode": "FULL"})["window_mode"], "full")
+        self.assertEqual(normalize_settings({"window_mode": "giant"})["window_mode"], "compact")
+        self.assertEqual(normalize_settings({"window_mode": 3})["window_mode"], "compact")
 
 
 if __name__ == "__main__":

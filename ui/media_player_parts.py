@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.glyph_icons import make_icon_button
 
 
 def _tr(source: str) -> str:
@@ -95,17 +96,26 @@ class PlaylistDock(QWidget):
         layout.addWidget(self.list, 1)
         buttons = QHBoxLayout()
         buttons.setSpacing(4)
-        self.add_files_btn = QPushButton(_tr("Add files..."))
-        self.add_folder_btn = QPushButton(_tr("Add folder..."))
-        self.remove_btn = QPushButton(_tr("Remove"))
-        self.clear_btn = QPushButton(_tr("Clear"))
+        accent = theme.skin().accent
+        self.add_files_btn = make_icon_button(
+            "add_file", _tr("Add files..."), accent, size=24
+        )
+        self.add_folder_btn = make_icon_button(
+            "add_folder", _tr("Add folder..."), accent, size=24
+        )
+        self.remove_btn = make_icon_button(
+            "remove", _tr("Remove selected"), accent, size=24
+        )
+        self.clear_btn = make_icon_button(
+            "clear", _tr("Clear playlist"), accent, size=24
+        )
+        buttons.addStretch(1)
         for button in (
             self.add_files_btn,
             self.add_folder_btn,
             self.remove_btn,
             self.clear_btn,
         ):
-            button.setCursor(Qt.PointingHandCursor)
             buttons.addWidget(button)
         layout.addLayout(buttons)
         self.add_files_btn.clicked.connect(self.files_requested.emit)

@@ -3,6 +3,19 @@ PREVIEW_WIDTH = 480
 RTSP_PREVIEW_FPS = 12
 RTSP_PREVIEW_WIDTH = 360
 
+H264_QUALITY: dict[str, tuple[str, str]] = {
+    "Default": ("veryfast", "18"),
+    "High": ("medium", "16"),
+    "Balanced": ("veryfast", "20"),
+    "Compact": ("faster", "24"),
+}
+
+
+def h264_encode_args(quality: str = "Default") -> list[str]:
+    preset, crf = H264_QUALITY.get(quality, H264_QUALITY["Default"])
+    return ["-c:v", "libx264", "-preset", preset, "-crf", crf]
+
+
 # NOTE: We deliberately do NOT add fragmented MP4 movflags here. Adding
 # "-movflags +frag_keyframe+empty_moov+default_base_moof" was tried as a way to keep
 # the file playable when stop has to escalate to a forced kill, but on real-world
@@ -177,6 +190,7 @@ def build_record_command(
     audio_device="",
     mute=False,
     volume="100",
+    quality="Default",
 ):
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
@@ -223,7 +237,7 @@ def build_record_command(
             command.extend(["-map", "0:a?"])
         else:
             command.append("-an")
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        command.extend(h264_encode_args(quality))
         if has_audio:
             _append_audio_encoding_options(command, volume)
         elif keep_embedded_audio:
@@ -253,7 +267,7 @@ def build_record_command(
     if copy_video:
         command.extend(["-c:v", "copy"])
     else:
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        command.extend(h264_encode_args(quality))
     if has_audio:
         _append_audio_encoding_options(command, volume)
     elif keep_embedded_audio:
@@ -278,6 +292,7 @@ def build_combined_grid_record_command(
     audio_device="",
     mute=False,
     volume="100",
+    quality="Default",
 ):
     source_texts = [(source or "").strip() for source in sources if (source or "").strip()]
     offsets = list(offsets_per_source or [])
@@ -305,7 +320,7 @@ def build_combined_grid_record_command(
             command.append("-an")
         else:
             command.extend(["-map", f"{audio_input_index}:a", "-shortest"])
-        command.extend(["-r", str(output_fps), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        command.extend(["-r", str(output_fps), *h264_encode_args(quality)])
         if audio_input_index is not None:
             _append_audio_encoding_options(command, volume)
         if duration_seconds:
@@ -367,9 +382,7 @@ def build_combined_grid_record_command(
         "-filter_complex", ";".join(filters),
         "-map", "[v]",
         "-r", str(output_fps),
-        "-c:v", "libx264",
-        "-preset", "veryfast",
-        "-crf", "18",
+        *h264_encode_args(quality),
     ])
     if audio_input_index is None:
         command.append("-an")
@@ -468,6 +481,7 @@ def build_multi_source_record_command(
     preview_fps=PREVIEW_FPS,
     preview_width=PREVIEW_WIDTH,
     audio_source="",
+    quality="Default",
 ):
     """Build one FFmpeg command that records every source in a single process.
 
@@ -538,7 +552,7 @@ def build_multi_source_record_command(
         attach_audio = audio_input_index is not None and index == 0
         if attach_audio:
             command.extend(["-map", f"{audio_input_index}:a"])
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        command.extend(h264_encode_args(quality))
         if attach_audio:
             command.extend(["-c:a", "aac"])
         if duration:
@@ -682,6 +696,7 @@ def build_directshow_record_with_preview_command(
     audio_device="",
     mute=False,
     volume="100",
+    quality="Default",
 ):
     source_text = (source or "").strip()
     if not source_text.lower().startswith("video="):
@@ -703,7 +718,7 @@ def build_directshow_record_with_preview_command(
             command.extend(["-map", "0:a"])
         else:
             command.append("-an")
-        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        command.extend(h264_encode_args(quality))
         if has_audio:
             _append_audio_encoding_options(command, volume)
         command.extend([
@@ -720,7 +735,7 @@ def build_directshow_record_with_preview_command(
         command.extend(["-map", "0:a"])
     else:
         command.append("-an")
-    command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+    command.extend(h264_encode_args(quality))
     if has_audio:
         _append_audio_encoding_options(command, volume)
     command.append(output_file)
