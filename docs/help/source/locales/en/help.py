@@ -449,8 +449,9 @@ CHAPTERS: list[dict] = [
                 ("Audio name", "Sets the audio label for the row."),
                 ("Mute", "Records the row without sound."),
                 ("Volume", "Sets the audio level to 100, 75, 50, 25 or 0 %."),
-                ("Encoding", "copy keeps the camera or stream's own compressed video; h264 "
-                 "re-encodes it."),
+                ("Encoding", "copy keeps the source's own compressed video only for RTSP, "
+                 "stream and file sources. USB (DirectShow) cameras are always re-encoded "
+                 "with H.264 regardless of the Encoding choice."),
                 ("Output mode", "Separate videos writes one file per row; Combined grid writes "
                  "one file with all sources tiled."),
                 ("File location", "Sets the recording folder. The default is your Videos folder."),
@@ -471,8 +472,12 @@ CHAPTERS: list[dict] = [
                 "and click the camera button to enter Address / URL, Username, Password, Port "
                 "and Stream path, or type an rtsp://, http:// or https:// URL, a file path, or "
                 "a Basler / GenICam source string directly. Refresh USB devices... rescans.",
-                "For a USB camera NVC reads the frame rates and resolutions the driver reports "
-                "and offers those; if detection fails, leave both at Auto.",
+                "The default Frame rate list is 30.00, 25.00 and 15.00; the default Resolution "
+                "list is 1920 x 1080, 1280 x 720, 640 x 480 and Auto. When a USB camera is "
+                "selected, NVC replaces both lists with the modes the driver reports and adds "
+                "Auto to each. If detection fails, the lists are left as they were: leave "
+                "Resolution at Auto and choose a frame rate the camera supports. Auto is only "
+                "offered for Frame rate after successful detection.",
                 "Choose an Audio device per row, or No Audio. Refresh devices rescans "
                 "microphones. Mute or Volume 0 on the tab records that row without sound.",
                 "Sync offset shifts a source earlier or later in a Combined grid recording so "
