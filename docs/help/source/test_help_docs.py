@@ -160,6 +160,30 @@ class ContentTests(unittest.TestCase):
                            "lossless-editor", "multi-source-recorder", "media-player"):
             self.assertIn(chapter_id, ids)
 
+    def test_help_has_language_and_updates_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        self.assertIn("language", ids)
+        self.assertIn("updates-and-logs", ids)
+        text = self._chapter_text("help", "language")
+        for name in ("English", "Nederlands", "Simplified Chinese"):
+            self.assertIn(name, text, name)
+
+    def test_troubleshooting_covers_recorder_and_player(self):
+        text = self._chapter_text("help", "troubleshooting")
+        for needle in ("Could not find video device", "(not found)",
+                       "Windows cannot play this file", "Settings", "NVC_LOG_LEVEL"):
+            self.assertIn(needle, text, needle)
+
+    def test_glossary_defines_the_new_terms(self):
+        import importlib
+
+        package = cl.locale_package("en")
+        glossary = importlib.import_module(f"locales.{package}.glossary")
+        terms = {row[0] for row in glossary.GLOSSARY_ROWS}
+        for term in ("Media Foundation", "GenICam", "Preset", "Sync offset",
+                     "Frame step", "Playlist", "Administrator (elevation)", "Tool tab"):
+            self.assertIn(term, terms, term)
+
     def test_recorder_chapter_covers_video_settings_and_presets(self):
         text = self._chapter_text("help", "multi-source-recorder")
         for needle in (

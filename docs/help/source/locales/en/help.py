@@ -572,6 +572,40 @@ CHAPTERS: list[dict] = [
         ],
     },
     {
+        "id": "language",
+        "title": "Language",
+        "blocks": [
+            {"type": "para", "text": (
+                "Menu -- Language lists English, Nederlands and Simplified Chinese; the last "
+                "entry appears in the menu in Chinese characters. NVC saves the choice and "
+                "says \"NVC will show <language> the next time it starts.\" The manuals are "
+                "in English.")},
+        ],
+    },
+    {
+        "id": "updates-and-logs",
+        "title": "Updates and Logs",
+        "blocks": [
+            {"type": "table", "headers": ("Item", "Where / what"), "rows": [
+                ("Check for Updates",
+                 "Open it from the menu. A build without an update address answers "
+                 "\"Updates Not Configured\". When an address is configured and a newer "
+                 "version exists, \"Update v<version> Available!\" appears in the sidebar."),
+                ("Log file",
+                 r"The rotating central log is %APPDATA%\NVC\logs\conversion_log.txt."),
+                ("NVC_LOG_LEVEL",
+                 "Set this environment variable to DEBUG to record full tracebacks."),
+                ("Settings file", r"%APPDATA%\NVC\config.json."),
+                ("Default media folders",
+                 r"Public\Documents\Noldus\NVC\Source, "
+                 r"Public\Documents\Noldus\NVC\Destination and "
+                 r"Public\Documents\Noldus\NVC\Backup."),
+                ("Recorder presets",
+                 r"Public\Documents\Noldus\NVC\MediaRecorder\Presets."),
+            ]},
+        ],
+    },
+    {
         "id": "troubleshooting",
         "title": "Troubleshooting",
         "blocks": [
@@ -591,7 +625,27 @@ CHAPTERS: list[dict] = [
                  "Confirm the app is unlocked, monitoring is started, and the file extension is "
                  "supported."),
                 ("PC report is slow",
-                 "Some Windows collectors take time on large systems. Let it finish."),
+                 "Drivers, devices, network connections and processes are the slow collectors "
+                 "on large systems. Let them finish."),
+                ("Camera: Could not find video device",
+                 "FFmpeg needs the exact Windows camera name. Pick it from the Video device "
+                 "list rather than typing it, and close other applications that may hold the "
+                 "camera."),
+                ("Microphone shows (not found)",
+                 "The saved microphone is not connected. Plug it in and click Refresh devices, "
+                 "or choose another device or No Audio."),
+                ("Recording has no sound",
+                 "Check Mute and Volume on the tab and the Audio device in Video Settings. If "
+                 "the audio device failed at start, NVC recorded video only and says so in the "
+                 "recording log."),
+                ("Media Player says Windows cannot play this file",
+                 "The codec or container is not supported by Windows Media Foundation. Click "
+                 "Convert to MP4 (H.264) and play."),
+                ("A tool tab is missing",
+                 "Open Settings, Tools tab, and tick it."),
+                ("Help menu says the document was not found",
+                 "The generated manual must sit in docs/help, a help folder, or next to the "
+                 "executable. Rebuild it with python docs/help/source/build_help_docs.py."),
                 ("Something failed with no message",
                  "Set the NVC_LOG_LEVEL environment variable to DEBUG and reproduce the "
                  "problem. NVC then records the full traceback for errors it would otherwise "
@@ -613,6 +667,9 @@ CHAPTERS: list[dict] = [
                 "Use HEVC only when smaller files matter and the target players support it.",
                 "Review PC reports before sharing them.",
                 "Keep custom FFmpeg flags simple, and test them on a small file first.",
+                "Save a recorder preset for each camera setup so a session starts with one Load.",
+                "Review recordings with Panels set to 1 when you want the playlist to advance "
+                "automatically.",
             ]},
         ],
     },
@@ -635,6 +692,19 @@ CHAPTERS: list[dict] = [
                 ("Can I run two copies of NVC at once?",
                  "No. NVC allows a single instance, so two copies cannot process the same "
                  "source folder."),
+                ("Where do recordings go?",
+                 "The File location on the recorder tab, your Videos folder by default, named "
+                 "<base>_<Video name>_<timestamp>.mp4 or "
+                 "<base>_Combined_<timestamp>.mp4."),
+                ("Why does my MKV not play in the Media Player?",
+                 "Windows Media Foundation does not decode every codec. Use Convert to MP4 "
+                 "(H.264) and play; the copy goes to your Destination Folder."),
+                ("Can I record without a microphone?",
+                 "Yes. Choose No Audio, or Mute the row. A file or RTSP source in h264 mode "
+                 "keeps its own sound track."),
+                ("Why does the PC report say Requires administrator?",
+                 "Some Windows data is only readable elevated. Run NVC as administrator for a "
+                 "complete report; redaction still applies."),
             ]},
         ],
     },
