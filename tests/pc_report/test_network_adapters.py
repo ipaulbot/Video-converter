@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import network_adapters as mod
 from tests.pc_report import support
 
@@ -94,6 +95,47 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["IPv4 Metric"], "")
         self.assertEqual(data["adapters"][0]["advanced"], [])
         self.assertEqual(data["gige"], [])
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, advanced):
+        data = mod.build(ADAPTERS, advanced, IPIF, WMI)
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_an_overridden_mac_is_masked_in_both_the_value_and_the_raw_cell(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "Locally Administered Address",
+                     "DisplayValue": "02-1A-2B-3C-4D-5E", "RegistryKeyword": "NetworkAddress",
+                     "RegistryValue": ["021A2B3C4D5E"]}]
+
+        html = self._html(advanced)
+
+        for sensitive in ("02-1A-2B-3C-4D-5E", "021A2B3C4D5E", "3C-4D-5E", "3C4D5E"):
+            self.assertNotIn(sensitive, html)
+        self.assertIn("02:1A:2B:**:**:**", html)
+        self.assertIn("Locally Administered Address", html)
+
+    def test_address_related_properties_lose_hosts_and_addresses(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "iSCSI Boot DNS Server",
+                     "DisplayValue": "dns-01.corp.example", "RegistryKeyword": "*DnsServerAddress",
+                     "RegistryValue": ["203.0.113.9"]}]
+
+        html = self._html(advanced)
+
+        self.assertNotIn("dns-01.corp.example", html)
+        self.assertNotIn("203.0.113.9", html)
+        self.assertIn("iSCSI Boot DNS Server", html)
+
+    def test_placeholder_values_of_mac_properties_stay_readable(self):
+        advanced = [{"Name": "Ethernet", "DisplayName": "Network Address", "DisplayValue": "Not Present",
+                     "RegistryKeyword": "NetworkAddress", "RegistryValue": []}]
+
+        self.assertIn("Not Present", self._html(advanced))
+
+    def test_ordinary_properties_are_untouched(self):
+        html = self._html(ADVANCED)
+
+        self.assertIn("9014 Bytes", html)
+        self.assertIn("Interrupt Moderation", html)
 
 
 class FixtureTests(unittest.TestCase):

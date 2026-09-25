@@ -2,6 +2,7 @@ import json
 import subprocess
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import autorun as mod
 from tests.pc_report import support
 
@@ -89,6 +90,28 @@ function Test-Path { return $false }
                 )
                 with self.subTest(path=path):
                     self.assertIn(path, mod.RUN_SCRIPT)
+
+
+class PrivacyTests(unittest.TestCase):
+    def test_startup_commands_and_task_actions_lose_credential_options(self):
+        forms = ["--password hunter2", "--token=hunter2", "/key:hunter2"]
+        entries = [{**RUN[0], "Command": f"agent.exe {form}"} for form in forms]
+        tasks = [{**TASKS[0], "Action": f"agent.exe {form}"} for form in forms]
+
+        data = mod.build(entries, tasks)
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("hunter2", html)
+        self.assertEqual(html.count("agent.exe"), len(forms) * 2)
+
+    def test_task_actions_lose_remote_hosts(self):
+        tasks = [{**TASKS[0], "Action": "sync.exe --endpoint https://api.corp.example/v1 --to ops@corp.example"}]
+
+        html = mod.render(redact_payload(mod.build([], tasks), {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("api.corp.example", html)
+        self.assertNotIn("ops@corp.example", html)
+        self.assertIn("sync.exe", html)
 
 
 class FixtureTests(unittest.TestCase):

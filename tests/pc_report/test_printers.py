@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import printers as mod
 from tests.pc_report import support
 
@@ -56,6 +57,47 @@ class BuildTests(unittest.TestCase):
 
         self.assertEqual(row["Error State"], "Jammed")
         self.assertEqual(row["Extended Status"], "Offline")
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, printers, spooler=SP):
+        data = mod.build(printers, spooler)
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_every_port_family_loses_its_host_address_or_identifier(self):
+        guid = "b8136383-1826-454b-810e-0c4a05d5a2e0"
+        ports = {
+            "IP_203.0.113.20": "203.0.113.20",
+            "203.0.113.21": "203.0.113.21",
+            "queue.corp.example": "queue.corp.example",
+            r"\\PRINTSRV\HP": "PRINTSRV",
+            f"WSD-{guid}": guid,
+            "OneNote_S-1-5-21-2734529186-23328706-2630127308-5137": "2734529186",
+        }
+        for port, sensitive in ports.items():
+            with self.subTest(port=port):
+                html = self._html([{**PR[0], "PortName": port, "Name": "Lab Printer"}])
+                self.assertNotIn(sensitive, html)
+                self.assertIn("Lab Printer", html)
+
+    def test_local_ports_stay_readable(self):
+        for port in ("USB001", "LPT1", "PORTPROMPT:", "nul:"):
+            with self.subTest(port=port):
+                self.assertIn(port, self._html([{**PR[0], "PortName": port}]))
+
+    def test_default_and_offline_summaries_mask_network_queue_names(self):
+        printers = [
+            {**PR[0], "Name": r"\\PRINTSRV\HP LaserJet", "Default": True, "WorkOffline": False},
+            {**PR[0], "Name": "queue.corp.example", "Default": False, "WorkOffline": True},
+        ]
+
+        html = self._html(printers)
+
+        for sensitive in ("PRINTSRV", "queue.corp.example"):
+            self.assertNotIn(sensitive, html)
+        self.assertIn("HP LaserJet", html)
+        self.assertIn("<th>Default Printer</th>", html)
+        self.assertIn("<th>Offline</th>", html)
 
 
 class FixtureTests(unittest.TestCase):

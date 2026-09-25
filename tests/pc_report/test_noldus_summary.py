@@ -2,6 +2,7 @@ import copy
 import unittest
 
 from pc_report import registry
+from pc_report.privacy import redact_payload
 from pc_report.sections import noldus_summary as mod
 from tests.pc_report import support
 
@@ -259,6 +260,35 @@ class BuildTests(unittest.TestCase):
         ]))
         self.assertIn("<h3>Needs attention</h3>", html)
         self.assertIn("<h3>Noldus software</h3>", html)
+
+
+class PrivacyTests(unittest.TestCase):
+    def test_a_personal_device_name_is_masked_in_the_specifications_and_in_attention_detail(self):
+        results = copy.deepcopy(RESULTS)
+        results["cameras"]["pnp"] = [{"Name": "Jan's iPhone", "Class": "Camera", "Status": "OK", "Problem": ""}]
+        results["devices"]["problems"] = [{"Name": "Jan's iPhone", "Problem": "28: Drivers not installed"}]
+
+        data = mod.build(results, is_admin=False, elapsed={})
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertIn("Jan", str(data))  # the leak exists before redaction, not after
+        self.assertNotIn("Jan", html)
+        # The summary is still useful: the item and the problem code survive.
+        self.assertIn("iPhone", html)
+        self.assertIn("Drivers not installed", html)
+
+    def test_several_camera_names_stay_separately_readable(self):
+        results = copy.deepcopy(RESULTS)
+        results["cameras"]["pnp"] = [
+            {"Name": "Jan's iPhone", "Class": "Camera", "Status": "OK", "Problem": ""},
+            {"Name": "Basler ace acA1920", "Class": "Camera", "Status": "OK", "Problem": ""},
+        ]
+
+        data = mod.build(results, is_admin=False, elapsed={})
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("Jan", html)
+        self.assertIn("Basler ace acA1920", html)
 
 
 class FixtureTests(unittest.TestCase):

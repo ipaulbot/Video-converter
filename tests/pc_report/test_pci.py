@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import pci as mod
 from tests.pc_report import support
 
@@ -26,6 +27,26 @@ class BuildTests(unittest.TestCase):
     def test_parse_ids(self):
         self.assertEqual(mod.parse_ids("PCI\\VEN_10DE&DEV_2204&SUBSYS_38971462&REV_A1\\4&x"), ("10DE", "2204", "38971462", "A1"))
         self.assertEqual(mod.parse_ids("PCI\\VEN_10DE&DEV_2204\\x"), ("10DE", "2204", "", ""))
+
+
+class PrivacyTests(unittest.TestCase):
+    def test_rendered_instance_ids_lose_their_distinctive_tail(self):
+        instance = "PCI\\VEN_8086&DEV_15BB&SUBSYS_08B21028&REV_10\\LABSERIALTAIL"
+        pnp = [{**PNP[0], "DeviceID": instance, "PNPDeviceID": instance}]
+
+        data = mod.build(pnp, [])
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("LABSERIALTAIL", html)
+        # The vendor, device and class context a support engineer needs must survive.
+        self.assertIn("VEN_8086", html)
+        self.assertIn("Intel Corporation", html)
+
+    def test_bus_topology_segments_stay_readable(self):
+        html = mod.render(redact_payload(mod.build(PNP, PROPS), {"redact": True}, env={}),
+                          support.render_ctx())
+
+        self.assertIn("3&amp;11583659&amp;0&amp;FE", html)
 
 
 class FixtureTests(unittest.TestCase):

@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.section import REQUIRES_ADMIN
 from pc_report.sections import logical_disks as mod
 from tests.pc_report import support
@@ -40,6 +41,37 @@ class BuildTests(unittest.TestCase):
         rows = dict(mod.build(LD, VOL, PARTS, BL)["groups"][0]["rows"])
         self.assertEqual(rows["Volumes"], 2)
         self.assertEqual(rows["Low Space (<10 %)"], "C:")
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, logical, volumes=()):
+        data = mod.build(logical, volumes, PARTS, BL)
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_a_personal_volume_label_is_masked_wherever_it_comes_from(self):
+        logical = [{**LD[0], "DeviceID": "E:", "VolumeName": "Jan's iPhone", "DriveType": 2}]
+        volumes = [{"DriveLetter": "E", "FileSystemLabel": "Jan's iPhone"}]
+
+        for html in (self._html(logical), self._html([{**logical[0], "VolumeName": None}], volumes)):
+            self.assertNotIn("Jan", html)
+            self.assertIn("E:", html)
+
+    def test_ordinary_volume_labels_stay_readable(self):
+        logical = [{**LD[0], "VolumeName": "OSDisk"}, {**LD[0], "DeviceID": "D:", "VolumeName": "Data"}]
+
+        html = self._html(logical)
+
+        self.assertIn("OSDisk", html)
+        self.assertIn("Data", html)
+
+    def test_system_summary_consumes_the_same_redacted_label(self):
+        from pc_report.sections import system_summary
+
+        disks = mod.build([{**LD[0], "VolumeName": "Jan's iPhone"}], VOL, PARTS, BL)
+        data = system_summary.build({}, {}, {}, {}, {}, {}, "", {"logical_disks": disks})
+        html = system_summary.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("Jan", html)
 
 
 class FixtureTests(unittest.TestCase):

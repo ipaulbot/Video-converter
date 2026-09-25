@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import cameras as mod
 from tests.pc_report import support
 
@@ -119,6 +120,29 @@ class BuildTests(unittest.TestCase):
     def test_filetime(self):
         self.assertEqual(mod.filetime(0), "")
         self.assertRegex(mod.filetime(133700000000000000), r"^\d{4}-")
+
+
+class PrivacyTests(unittest.TestCase):
+    def test_a_directshow_device_path_loses_its_instance_segment(self):
+        device_path = r"\\?\usb#vid_2676&pid_ba02#CAMSERIAL9#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+        ds = [{**DS[0], "DevicePath": device_path}]
+
+        data = mod.build(PNP, ds, DX, FS, CONSENT, ENV, PROGRAMS)
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("CAMSERIAL9", html)
+        self.assertNotIn("65e8773d-8f56-11d0", html)
+        # The vendor and product IDs identify the camera model, not the unit.
+        self.assertIn("vid_2676", html)
+
+    def test_a_personal_camera_name_is_masked_in_every_table(self):
+        pnp = [{**PNP[0], "Name": "Jan's iPhone"}]
+        ds = [{**DS[0], "Name": "Jan's iPhone"}]
+
+        data = mod.build(pnp, ds, DX, FS, CONSENT, ENV, PROGRAMS)
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("Jan", html)
 
 
 class FixtureTests(unittest.TestCase):

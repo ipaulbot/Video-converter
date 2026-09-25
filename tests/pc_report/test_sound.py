@@ -52,6 +52,26 @@ class BuildTests(unittest.TestCase):
         self.assertNotEqual(redacted["endpoints"][0]["InstanceId"], endpoint_id)
 
 
+class PrivacyTests(unittest.TestCase):
+    def test_default_endpoint_summaries_mask_a_personal_device_name(self):
+        dx = {"SoundDevices": {"SoundDevice": {"Description": "Jan's AirPods", "DefaultSoundPlayback": "1"}},
+              "SoundCaptureDevices": {"SoundCaptureDevice": {"Description": "Jan's AirPods", "DefaultSoundRecording": "1"}}}
+        endpoints = [{"FriendlyName": "Jan's AirPods", "InstanceId": r"SWD\MMDEVAPI\{0.0.0.00000000}.{a}"}]
+
+        data = mod.build(DEV, endpoints, DRIVERS, dx)
+        html = mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+        self.assertNotIn("Jan", html)
+        self.assertIn("AirPods", html)
+        self.assertIn("<th>Default Playback</th>", html)
+
+    def test_ordinary_endpoint_names_stay_readable(self):
+        html = mod.render(redact_payload(mod.build(DEV, ENDPOINTS, DRIVERS, DX), {"redact": True}, env={}),
+                          support.render_ctx())
+
+        self.assertIn("Speakers (Realtek(R) Audio)", html)
+
+
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):
         _data, html, ctx = support.collect_and_render(mod.SECTION)

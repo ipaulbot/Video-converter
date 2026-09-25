@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import processes as mod
 from tests.pc_report import support
 
@@ -34,6 +35,31 @@ class BuildTests(unittest.TestCase):
     def test_owner_is_masked_in_render(self):
         _data, html, _ctx = support.collect_and_render(mod.SECTION)
         self.assertNotIn("\\user<", html)
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, command):
+        data = mod.build([{**RAW[1], "CommandLine": command}])
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_command_lines_lose_credentials_in_every_option_form(self):
+        for form in ("--password hunter2", "--token=hunter2", "/key:hunter2"):
+            with self.subTest(form=form):
+                html = self._html(f"collector.exe {form}")
+                self.assertNotIn("hunter2", html)
+                self.assertIn("collector.exe", html)
+
+    def test_command_lines_lose_remote_hosts_addresses_and_identities(self):
+        html = self._html(
+            "collector.exe --db postgres://svc:pw@db.corp.example:5432/x --peer 203.0.113.44 "
+            r"--share \\FILESRV\data --alert ops@corp.example"
+        )
+
+        for sensitive in ("db.corp.example", "svc:pw", "203.0.113.44", "FILESRV", "ops@corp.example"):
+            self.assertNotIn(sensitive, html)
+        self.assertIn("collector.exe", html)
+        self.assertIn("postgres://", html)
+        self.assertIn(":5432", html)
 
 
 class FixtureTests(unittest.TestCase):

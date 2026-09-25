@@ -118,6 +118,17 @@ class HtmlHelperTests(unittest.TestCase):
         self.assertIn("<th>A</th><td></td>", html)
         self.assertIn("<th>B</th><td>2</td>", html)
 
+    def test_kv_groups_skips_malformed_rows_instead_of_losing_the_section(self):
+        groups = [{"title": "Mixed", "rows": ["abc", ("a", "b", "c"), 7, ["Good", "value"], ("Pair", 2)]},
+                  {"title": "String rows", "rows": "abc"}]
+
+        html = S.kv_groups(groups)
+
+        self.assertIn("<th>Good</th><td>value</td>", html)
+        self.assertIn("<th>Pair</th><td>2</td>", html)
+        self.assertNotIn("abc", html)
+        self.assertNotIn("String rows", html)
+
     def test_requires_admin_renders_warning(self):
         html = S.kv_table([("TPM", S.REQUIRES_ADMIN)])
         self.assertIn('<span class="warn">Requires administrator</span>', html)

@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import environment as mod
 from tests.pc_report import support
 
@@ -19,6 +20,40 @@ class BuildTests(unittest.TestCase):
         html = mod.render(redact_payload(data, {"redact": True}), support.render_ctx())
         self.assertIn("<h3>Process</h3>", html)
         self.assertNotIn("patrick", html)
+
+
+class PrivacyTests(unittest.TestCase):
+    def _html(self, variables):
+        data = mod.build(variables)
+        return mod.render(redact_payload(data, {"redact": True}, env={}), support.render_ctx())
+
+    def test_values_are_masked_by_content_when_the_name_says_nothing(self):
+        variables = [
+            {"Scope": "Machine", "Name": "NVC_SERVER", "Value": "cam-srv-01.corp.example"},
+            {"Scope": "Machine", "Name": "DATABASE_URL", "Value": "postgres://u:p@db.corp.example:5432/x"},
+            {"Scope": "User", "Name": "SUPPORT_EMAIL", "Value": "ops@corp.example"},
+        ]
+
+        html = self._html(variables)
+
+        for sensitive in ("cam-srv-01.corp.example", "db.corp.example", "u:p@", "ops@corp.example"):
+            self.assertNotIn(sensitive, html)
+        # The variable names stay, so the reader still knows what is configured.
+        self.assertIn("DATABASE_URL", html)
+        self.assertIn("postgres://", html)
+
+    def test_ordinary_values_are_left_alone(self):
+        variables = [
+            {"Scope": "Machine", "Name": "Path", "Value": r"C:\Windows\system32;C:\Program Files\dotnet"},
+            {"Scope": "Machine", "Name": "PSModulePath", "Value": r"C:\Program Files\WindowsPowerShell\Modules"},
+            {"Scope": "Machine", "Name": "NUMBER_OF_PROCESSORS", "Value": "8"},
+            {"Scope": "Machine", "Name": "OS", "Value": "Windows_NT"},
+        ]
+
+        html = self._html(variables)
+
+        for value in (r"C:\Windows\system32", "WindowsPowerShell", ">8<", "Windows_NT"):
+            self.assertIn(value, html)
 
 
 class FixtureTests(unittest.TestCase):

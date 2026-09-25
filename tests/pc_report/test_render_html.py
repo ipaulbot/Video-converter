@@ -126,3 +126,31 @@ class PageShellTests(unittest.TestCase):
         self.assertIn("NVC 2.3.0", html)
         self.assertIn("2026-09-24T10:00:00", html)
         self.assertIn("<title>NVC PC Report", html)
+
+    def test_the_machine_name_is_masked_completely_in_header_and_title(self):
+        html = _render(_data(cpu={}))
+
+        self.assertNotIn("BH0020", html)
+        self.assertEqual(html.count("*" * len("WDGS-BH0020")), 2)
+
+    def test_sections_see_the_redacted_meta(self):
+        seen = {}
+
+        def capture(_data, ctx):
+            seen["machine"] = ctx.meta.get("machine")
+            return NO_DATA
+
+        with patch.object(registry, "SECTIONS", (_fake("cpu", "Hardware", render=capture),)):
+            render_html.render(META, _data(cpu={}), {"redact": True})
+
+        self.assertEqual(seen["machine"], "*" * len("WDGS-BH0020"))
+
+    def test_non_numeric_elapsed_values_do_not_sink_the_page(self):
+        meta = {**META, "elapsed_by_section": {"cpu": "slow", "shares": 0.4}, "total_seconds": "n/a"}
+
+        html = _render(_data(cpu={}), meta=meta)
+
+        self.assertIn('id="s-report_health"', html)
+        self.assertIn("shares (0.4 s)", html)
+        self.assertNotIn("slow", html)
+        self.assertIn("<th>Total collection time</th><td>Unknown</td>", html)

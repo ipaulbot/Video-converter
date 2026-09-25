@@ -69,6 +69,39 @@ class PCReportWidgetTests(unittest.TestCase):
         )
         self.assertEqual(progress, ["Operating System (1/40)", "Rendering HTML..."])
 
+    def test_worker_failure_page_is_escaped_redacted_and_logged(self):
+        worker = _PCReportWorker({"redact": True})
+        pages = []
+        worker.finished.connect(lambda html, _json: pages.append(html))
+        message = r"<b>boom</b> & C:\Users\jane\AppData\report.html missing"
+
+        with (
+            patch.object(_PCReportWorker, "_generate", side_effect=RuntimeError(message)),
+            patch("ui.pc_report_dialog.logger") as logger,
+        ):
+            worker.run()
+
+        page = pages[0]
+        self.assertNotIn("jane", page)
+        self.assertNotIn("<b>boom</b>", page)
+        self.assertIn("&lt;b&gt;boom&lt;/b&gt;", page)
+        self.assertIn("&amp;", page)
+        self.assertIn("<h1>PC Report Failed</h1>", page)
+        logger.exception.assert_called_once()
+
+    def test_worker_failure_page_keeps_paths_when_redaction_is_off(self):
+        worker = _PCReportWorker({"redact": False})
+        pages = []
+        worker.finished.connect(lambda html, _json: pages.append(html))
+
+        with (
+            patch.object(_PCReportWorker, "_generate", side_effect=RuntimeError(r"C:\Users\jane\x")),
+            patch("ui.pc_report_dialog.logger"),
+        ):
+            worker.run()
+
+        self.assertIn("jane", pages[0])
+
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)
 

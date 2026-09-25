@@ -1,5 +1,6 @@
 import unittest
 
+from pc_report.privacy import redact_payload
 from pc_report.sections import installed_programs as mod
 from tests.pc_report import support
 
@@ -53,6 +54,25 @@ class BuildTests(unittest.TestCase):
         data = mod.build(reg, pkg, [])
         qt = next(r for r in data["rows"] if r["Name"] == "QuickTime")
         self.assertEqual(qt["Install Date"], "2025-01-07")
+
+
+class PrivacyTests(unittest.TestCase):
+    def test_uninstall_strings_lose_credential_options(self):
+        for form in ("--password hunter2", "--token=hunter2", "/key:hunter2"):
+            with self.subTest(form=form):
+                reg = [{"Name": "Lab Agent", "Uninstall": f"un.exe {form}"}]
+                html = mod.render(redact_payload(mod.build(reg, [], []), {"redact": True}, env={}),
+                                  support.render_ctx())
+                self.assertNotIn("hunter2", html)
+                self.assertIn("un.exe", html)
+
+    def test_uninstall_strings_keep_readable_paths_and_switches(self):
+        reg = [{"Name": "EthoVision XT 19", "Uninstall": r'"C:\Program Files\Noldus\un.exe" /S --mode=quiet'}]
+
+        html = mod.render(redact_payload(mod.build(reg, [], []), {"redact": True}, env={}), support.render_ctx())
+
+        self.assertIn("--mode=quiet", html)
+        self.assertIn("Noldus", html)
 
 
 class FixtureTests(unittest.TestCase):
