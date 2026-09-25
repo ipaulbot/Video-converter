@@ -117,6 +117,43 @@ class FigureTests(unittest.TestCase):
 
 
 class ContentTests(unittest.TestCase):
+    TOOL_TAB_LABELS = (
+        "Conversion Log", "Converted Files", "Video Inspection Tool", "PC Report",
+        "Lossless Editor", "Multi-Source Recorder", "Media Player",
+    )
+
+    def _chapter(self, manual_key, chapter_id):
+        for chapter in cl.load_manual(manual_key, "en"):
+            if chapter["id"] == chapter_id:
+                return chapter
+        self.fail(f"{manual_key} has no chapter {chapter_id!r}")
+
+    def _chapter_text(self, manual_key, chapter_id):
+        parts = []
+        for block in self._chapter(manual_key, chapter_id)["blocks"]:
+            if block["type"] == "para":
+                parts.append(block["text"])
+            elif block["type"] in ("steps", "note", "code"):
+                parts.extend(block.get("items", block.get("lines", [])))
+            elif block["type"] == "table":
+                parts.extend(cell for row in block["rows"] for cell in row)
+        return "\n".join(parts)
+
+    def test_help_covers_every_tool_tab(self):
+        text = self._chapter_text("help", "main-window")
+        for label in self.TOOL_TAB_LABELS:
+            self.assertIn(label, text, label)
+
+    def test_help_settings_chapter_names_every_settings_tab(self):
+        text = self._chapter_text("help", "conversion-settings")
+        for tab in ("General", "Folders", "Deletion", "Format", "Time", "Tools"):
+            self.assertIn(tab, text, tab)
+
+    def test_help_has_time_restrictions_and_converted_files_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        self.assertIn("time-restrictions", ids)
+        self.assertIn("converted-files", ids)
+
     def test_every_supported_locale_validates(self):
         cl.validate_all(registry.SUPPORTED_DOCUMENT_TAGS)
 
