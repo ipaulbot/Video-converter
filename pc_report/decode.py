@@ -313,6 +313,17 @@ AVAILABILITY = {1: "Other", 2: "Unknown", 3: "Running / Full power", 4: "Warning
                 17: "Power save - warning", 18: "Paused", 19: "Not ready", 20: "Not configured",
                 21: "Quiesced"}
 
+BATTERY_STATUS = {
+    1: "Discharging", 2: "Unknown / AC power", 3: "Fully charged", 4: "Low", 5: "Critical",
+    6: "Charging", 7: "Charging and high", 8: "Charging and low", 9: "Charging and critical",
+    10: "Undefined", 11: "Partially charged",
+}
+
+BATTERY_CHEMISTRY = {
+    1: "Other", 2: "Unknown", 3: "Lead acid", 4: "Nickel cadmium",
+    5: "Nickel metal hydride", 6: "Lithium-ion", 7: "Zinc air", 8: "Lithium polymer",
+}
+
 PRINTER_STATUS = {1: "Other", 2: "Unknown", 3: "Idle", 4: "Printing", 5: "Warming up",
                   6: "Stopped printing", 7: "Offline"}
 
