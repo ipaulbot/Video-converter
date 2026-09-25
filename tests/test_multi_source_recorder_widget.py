@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from PyQt5.QtCore import QEvent, QProcess, Qt
@@ -3487,20 +3488,29 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(widget.preview_processes, {})
         self.assertEqual(widget.processes, [])
 
-    def test_compact_mode_stacks_the_groups_and_full_mode_places_them_side_by_side(self):
+    def test_output_settings_sit_left_of_recording_properties_in_both_modes(self):
         widget = self._widget()
+        for metrics in (theme.COMPACT, theme.FULL):
+            widget.apply_layout_mode(metrics)
+            self.assertFalse(widget.groups_stacked(), metrics.name)
+            self.assertIs(widget.groups_layout.itemAt(0).widget(), widget.output_group)
+            self.assertIs(widget.groups_layout.itemAt(1).widget(), widget.source_group)
+            # The properties table takes the spare width; the output form
+            # keeps its natural size so the file-location field stays short.
+            self.assertEqual(widget.groups_layout.stretch(0), 0)
+            self.assertEqual(widget.groups_layout.stretch(1), 1)
+            self.assertEqual(
+                widget.preview_boxes[0].maximumHeight(),
+                metrics.recorder_tile_max_h,
+            )
         widget.apply_layout_mode(theme.COMPACT)
+
+    def test_stacked_layout_is_still_available_for_narrow_metrics(self):
+        widget = self._widget()
+        narrow = replace(theme.COMPACT, recorder_stacked=True)
+        widget.apply_layout_mode(narrow)
         self.assertTrue(widget.groups_stacked())
-        self.assertEqual(
-            widget.preview_boxes[0].maximumHeight(),
-            theme.COMPACT.recorder_tile_max_h,
-        )
-        widget.apply_layout_mode(theme.FULL)
-        self.assertFalse(widget.groups_stacked())
-        self.assertEqual(
-            widget.preview_boxes[0].maximumHeight(),
-            theme.FULL.recorder_tile_max_h,
-        )
+        self.assertIs(widget.groups_layout.itemAt(0).widget(), widget.output_group)
         widget.apply_layout_mode(theme.COMPACT)
 
     def test_file_location_shows_the_tail_of_a_long_path(self):
@@ -3516,6 +3526,8 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
             widget.output_folder_edit.sizePolicy().horizontalPolicy(),
             QSizePolicy.Expanding,
         )
+        # Capped so the field never spans the whole window.
+        self.assertLessEqual(widget.output_folder_edit.maximumWidth(), 360)
 
     def test_copy_mode_note_only_for_usb_rows_in_copy_mode(self):
         widget = self._widget()

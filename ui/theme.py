@@ -644,10 +644,10 @@ class LayoutMetrics:
 
 
 COMPACT: Final[LayoutMetrics] = LayoutMetrics(
-    "compact", 6, 4, 98, True, 160, 96,
+    "compact", 6, 4, 230, False, 160, 96,
     tab_min_w=0, tab_padding="7px 6px", tab_font_pt=8, window_size=(1024, 640),
 )
-FULL: Final[LayoutMetrics] = LayoutMetrics("full", 12, 8, 260, False, 240, 140)
+FULL: Final[LayoutMetrics] = LayoutMetrics("full", 12, 8, 420, False, 240, 140)
 LAYOUT_MODES: Final[tuple[str, ...]] = (COMPACT.name, FULL.name)
 _layout_by_name: Final[dict[str, LayoutMetrics]] = {
     COMPACT.name: COMPACT,
