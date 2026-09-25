@@ -1,7 +1,5 @@
 import unittest
 
-from PyQt5.QtGui import QColor
-
 from ui import glyph_icons
 
 
@@ -11,7 +9,7 @@ def _opaque_pixels(pixmap):
         1
         for x in range(image.width())
         for y in range(image.height())
-        if QColor(image.pixel(x, y)).alpha() > 0 and image.pixelColor(x, y).alpha() > 0
+        if image.pixelColor(x, y).alpha() > 0
     )
 
 

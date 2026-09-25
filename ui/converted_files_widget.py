@@ -555,11 +555,15 @@ class ConvertedFilesWidget(QWidget):
     def _refresh_clear_button(self):
         self.clear_button.setVisible(self.table_widget.rowCount() > 0)
 
-    def update_button_style(self, new_style):
-        """Update the clear button style"""
-        if hasattr(self, 'table_widget') and self.table_widget.cornerWidget():
-            self.table_widget.cornerWidget().setStyleSheet(new_style)
-        self.play_button.setStyleSheet(new_style)
+    def update_button_style(self, new_style=None):
+        """Skin changed: Clear and Play stay on the compact tier, in the new accent."""
+        self.button_style = new_style or self.button_style
+        self.reskin()
+
+    def reskin(self):
+        compact = theme.compact_button_style()
+        for button in (self.clear_button, self.play_button):
+            button.setStyleSheet(compact)
 
     def clear_logs(self):
         # Delete all .txt logs in the log folder

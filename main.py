@@ -46,6 +46,8 @@ def main():
     else:
         shared.create(1)
     semaphore.release()
+    # The PC Report tab releases this before relaunching NVC as administrator.
+    app.single_instance_memory = shared
     if already_running:
         # Themed single-instance dialog using INFO icon and app icon
         try:

@@ -230,13 +230,38 @@ class PCReportWidget(QWidget):
         except Exception:
             return False
 
+    @staticmethod
+    def _relaunch_command():
+        """(exe, params) that start this same NVC again, frozen or from source."""
+        if getattr(sys, "frozen", False):
+            return sys.executable, subprocess.list2cmdline(sys.argv[1:])
+        return sys.executable, subprocess.list2cmdline(sys.argv)
+
+    def _window_is_busy(self):
+        window = self.window()
+        if getattr(window, "running", False) or getattr(window, "is_converting", False):
+            return True
+        recording = getattr(window, "is_recorder_recording", None)
+        return bool(callable(recording) and recording())
+
     def relaunch_elevated(self):
-        """Ask UAC to start a second NVC as administrator, then quit this one."""
+        """Ask UAC to start a second NVC as administrator, then quit this one.
+
+        main.py keeps a QSharedMemory segment as the single-instance guard; it is
+        released before the child starts so the elevated copy is not turned away
+        with "NVC is already running", and re-created if UAC is refused.
+        """
+        if self._window_is_busy():
+            self.status_label.setText(
+                _tr("Stop the current conversion or recording before restarting as administrator.")
+            )
+            return
+        app = QCoreApplication.instance()
+        guard = getattr(app, "single_instance_memory", None)
         try:
-            if getattr(sys, "frozen", False):
-                exe, params = sys.executable, ""
-            else:
-                exe, params = sys.executable, subprocess.list2cmdline(sys.argv)
+            exe, params = self._relaunch_command()
+            if guard is not None:
+                guard.detach()
             result = ctypes.windll.shell32.ShellExecuteW(
                 None, "runas", exe, params, None, 1
             )
@@ -251,6 +276,8 @@ class PCReportWidget(QWidget):
             if callable(quit_fn):
                 quit_fn()
         else:
+            if guard is not None:
+                guard.create(1)
             self.status_label.setText(
                 _tr(
                     "Elevation was cancelled or refused; the report will run without "
@@ -341,7 +368,8 @@ class PCReportWidget(QWidget):
 
     def _on_worker_finished(self, html, json_text):
         self.progress.hide()
-        self._settle_heart(success=True)
+        # The worker reports failure as a stub page with empty JSON.
+        self._settle_heart(success=bool(json_text))
         self.btn_run.setEnabled(True)
         self.html = html
         self.json_text = json_text

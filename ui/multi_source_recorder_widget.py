@@ -66,7 +66,7 @@ from conversion.recording_sources import (
     parse_rtsp_url_settings,
 )
 from ui import theme
-from ui.glyph_icons import make_icon_button
+from ui.glyph_icons import make_icon_button, reskin_icon_buttons
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -849,7 +849,8 @@ class VideoSettingsDialog(QDialog):
             output_mode_control.setCurrentText(self.output_mode_combo.currentText())
         parent = self.parent()
         if parent is not None:
-            parent.output_quality = self.output_quality_combo.currentText()
+            if hasattr(parent, "output_quality"):
+                parent.output_quality = self.output_quality_combo.currentText()
             if hasattr(parent, "duration_edit"):
                 parent.duration_edit.setText(
                     self.maximum_time_edit.text().strip()
@@ -1351,6 +1352,14 @@ class MultiSourceRecorderWidget(QWidget):
             if button.property("skipGlobalStyle"):
                 continue
             button.setStyleSheet(button_style)
+        self.reskin()
+
+    def reskin(self):
+        """Links and glyph buttons follow the lock / converting skin like the bubbles do."""
+        link = theme.link_button_style()
+        for widget in (self.video_settings_link, self.recording_log_link):
+            widget.setStyleSheet(link)
+        reskin_icon_buttons(self, theme.skin().accent)
 
     def _source_type_id(self, combo):
         return combo.currentData() or "stream_url"

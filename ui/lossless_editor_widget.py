@@ -27,7 +27,7 @@ from conversion.lossless_commands import (
     format_concat_file_line,
 )
 from ui import theme
-from ui.glyph_icons import glyph_icon, make_icon_button
+from ui.glyph_icons import make_icon_button, reskin_icon_buttons
 from utils.file_naming import get_unique_path
 from utils.resources import resource_path
 from utils.subprocess_helpers import get_subprocess_startupinfo
@@ -189,13 +189,15 @@ class LosslessEditorWidget(QWidget):
             theme.opt_out_of_button_style(button)
             button.setCursor(Qt.PointingHandCursor)
             button.setStyleSheet(compact)
-        for tool in (self.add_merge_btn, self.clear_merge_btn):
-            tool.setIcon(glyph_icon(tool.property("glyph") or "add_file", accent, 16))
+        reskin_icon_buttons(self, accent)
+
+    def reskin(self):
+        """Called by the main window on skin change; re-derive tiers from the skin."""
+        self._apply_tier_styles()
 
     def update_button_style(self, button_style):
-        """Called by the main window on skin change; re-derive tiers from the skin."""
         self.button_style = button_style
-        self._apply_tier_styles()
+        self.reskin()
 
     def browse_input(self):
         path, _ = QFileDialog.getOpenFileName(self, "Select Media File", "", "Media Files (*.*)")

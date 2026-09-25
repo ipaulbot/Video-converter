@@ -29,7 +29,12 @@ from PyQt5.QtWidgets import (
 
 from conversion.worker import ConversionWorker, WorkerSignals
 from ui import theme
-from ui.glyph_icons import glyph_icon, make_icon_button
+from ui.glyph_icons import (
+    glyph_icon,
+    make_icon_button,
+    reskin_icon_buttons,
+    set_button_glyph,
+)
 from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
@@ -569,6 +574,15 @@ class MediaPlayerWidget(QWidget):
     def apply_layout_mode(self, metrics):
         for panel in self.panels:
             panel.video_container.setMinimumHeight(metrics.player_panel_min_h)
+
+    def reskin(self):
+        """Repaint every glyph (transport, panels, playlist dock) in the current skin."""
+        self._icon_color = theme.skin().accent
+        reskin_icon_buttons(self, self._icon_color)
+        self._set_play_glyph(self._is_playing)
+        set_button_glyph(
+            self.mute_btn, "muted" if self.mute_btn.isChecked() else "volume", self._icon_color
+        )
 
     # --- shortcuts -------------------------------------------------------
     def _shortcut_table(self):

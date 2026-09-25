@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from PyQt5.QtWidgets import QApplication
 
@@ -81,3 +82,35 @@ class TabCardTests(unittest.TestCase):
     def test_set_window_mode_rejects_unknown(self):
         with self.assertRaises(ValueError):
             self.window.set_window_mode("giant", persist=False)
+
+    def test_set_window_mode_persists_only_when_asked(self):
+        with patch("ui.main_window.save_settings") as save:
+            self.window.set_window_mode("compact", persist=False)
+            save.assert_not_called()
+            self.window.set_window_mode("compact", persist=True)
+        save.assert_called_once()
+        self.assertEqual(save.call_args[0][0]["window_mode"], "compact")
+
+    def test_construction_does_not_show_the_window(self):
+        # main.py decides when to show; __init__ only records the mode.
+        self.assertFalse(self.window.isVisible())
+        self.window.set_window_mode("full", persist=False)
+        try:
+            self.assertFalse(self.window.isVisible())
+            self.assertTrue(self.window.isMaximized())
+        finally:
+            self.window.set_window_mode("compact", persist=False)
+        self.assertFalse(self.window.isMaximized())
+        self.assertEqual(self.window.size().width(), theme.COMPACT.window_size[0])
+
+    def test_reskin_reaches_opted_out_tiers(self):
+        window = self.window
+        widgets = window.reskin_widgets()
+        self.assertIn(window.lossless_editor_widget, widgets)
+        self.assertIn(window.multi_source_recorder_widget, widgets)
+        self.assertIn(window.converted_files_widget, widgets)
+        for card in window.tool_tab_cards.values():
+            self.assertIn(card, widgets)
+        with patch.object(window.lossless_editor_widget, "reskin") as reskin:
+            window.update_all_button_styles()
+        reskin.assert_called_once()

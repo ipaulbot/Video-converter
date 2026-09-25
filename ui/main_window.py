@@ -938,7 +938,7 @@ class VideoConverterApp(QMainWindow):
         return [w for w in candidates if w is not None and hasattr(w, "apply_layout_mode")]
 
     def set_window_mode(self, name, persist=True):
-        """Switch between Compact (960x600, normal) and Full window (maximised).
+        """Switch between Compact (theme.COMPACT.window_size, normal) and Full window (maximised).
 
         Raises ValueError for unknown names so a typo in settings cannot leave
         the window half-applied.
@@ -955,10 +955,19 @@ class VideoConverterApp(QMainWindow):
             widget.apply_layout_mode(metrics)
         if hasattr(self, "tabs"):
             self.apply_tab_style(theme.highlight_color())
+        # Before the first show() (i.e. from __init__) only record the window
+        # state; main.py's show() honours it. Showing here would pop the window
+        # up mid-construction, and in every test that builds the main window.
         if metrics.name == "full":
-            self.showMaximized()
+            if self.isVisible():
+                self.showMaximized()
+            else:
+                self.setWindowState(self.windowState() | Qt.WindowMaximized)
         else:
-            self.showNormal()
+            if self.isVisible():
+                self.showNormal()
+            else:
+                self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
             self.resize(*metrics.window_size)
             self.center_on_screen()
         if persist:
@@ -2898,6 +2907,20 @@ class VideoConverterApp(QMainWindow):
                 converting=bool(self.running or getattr(self, 'is_converting', False)),
                 locked=bool(getattr(self, 'locked', False))
             )
+        # Compact / link / icon tiers opt out of the gradient traversal above,
+        # so they re-derive their own colours from the skin here.
+        for widget in self.reskin_widgets():
+            widget.reskin()
+
+    def reskin_widgets(self):
+        """Tool widgets and tab cards that carry skin-derived styles of their own."""
+        candidates = [
+            getattr(self, "lossless_editor_widget", None),
+            getattr(self, "media_player_widget", None),
+            getattr(self, "multi_source_recorder_widget", None),
+            getattr(self, "converted_files_widget", None),
+        ] + list(getattr(self, "tool_tab_cards", {}).values())
+        return [w for w in candidates if w is not None and hasattr(w, "reskin")]
 
     def apply_button_style_to_all_widgets(self, widget):
         """Apply the current button style beneath `widget`.

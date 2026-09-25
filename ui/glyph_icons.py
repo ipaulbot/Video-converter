@@ -192,4 +192,30 @@ def make_icon_button(
     button.setToolTip(tooltip)
     button.setCursor(Qt.PointingHandCursor)
     button.setStyleSheet(theme.icon_button_style(size))
+    button.setProperty("glyph_size", size)
     return button
+
+
+def set_button_glyph(button: QToolButton, name: str, color: str) -> None:
+    """Swap the glyph on a button made by `make_icon_button` (play/pause, mute)."""
+    size = int(button.property("glyph_size") or 28)
+    button.setProperty("glyph", name)
+    button.setIcon(glyph_icon(name, color, size - 8))
+
+
+def reskin_icon_buttons(root, color: str) -> list[QToolButton]:
+    """Repaint every glyph button under `root` in `color` (lock / converting skins).
+
+    Returns the buttons touched so callers can restore state-dependent glyphs
+    (a playing transport shows pause, a muted one shows the muted speaker).
+    """
+    touched = []
+    for button in root.findChildren(QToolButton):
+        name = button.property("glyph")
+        if not name:
+            continue
+        size = int(button.property("glyph_size") or 28)
+        button.setIcon(glyph_icon(name, color, size - 8))
+        button.setStyleSheet(theme.icon_button_style(size))
+        touched.append(button)
+    return touched

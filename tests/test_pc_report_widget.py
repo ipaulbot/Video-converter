@@ -162,11 +162,70 @@ class PCReportWidgetTests(unittest.TestCase):
             self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Running)
             self.assertEqual(widget.heart_anim.loopCount(), -1)
             self.assertFalse(widget.heart_label.isHidden())
-        widget._on_worker_finished("<html></html>", "")
+        widget._on_worker_finished("<html></html>", "{}")
         self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Stopped)
         self.assertEqual(widget.heart_effect.opacity(), 1.0)
         widget._settle_heart(success=False)
         self.assertTrue(widget.heart_label.isHidden())
+
+    def test_heart_goes_dark_when_the_worker_reports_failure(self):
+        widget = PCReportWidget()
+        widget._start_heart()
+        widget._on_worker_finished("<html><h1>PC Report Failed</h1></html>", "")
+        self.assertTrue(widget.heart_label.isHidden())
+
+    def test_relaunch_elevated_releases_guard_and_quits_on_success(self):
+        widget = PCReportWidget()
+        guard = Mock()
+        app = QApplication.instance()
+        app.single_instance_memory = guard
+        quit_fn = Mock()
+        try:
+            with patch.object(PCReportWidget, "window", return_value=Mock(
+                    running=False, is_converting=False,
+                    is_recorder_recording=lambda: False,
+                    quit_application=quit_fn)), \
+                    patch("ui.pc_report_dialog.ctypes") as fake_ctypes:
+                fake_ctypes.windll.shell32.ShellExecuteW.return_value = 42
+                widget.relaunch_elevated()
+            verb = fake_ctypes.windll.shell32.ShellExecuteW.call_args[0][1]
+            self.assertEqual(verb, "runas")
+            guard.detach.assert_called_once()
+            guard.create.assert_not_called()
+            quit_fn.assert_called_once()
+        finally:
+            del app.single_instance_memory
+
+    def test_relaunch_elevated_restores_guard_when_uac_is_refused(self):
+        widget = PCReportWidget()
+        guard = Mock()
+        app = QApplication.instance()
+        app.single_instance_memory = guard
+        quit_fn = Mock()
+        try:
+            with patch.object(PCReportWidget, "window", return_value=Mock(
+                    running=False, is_converting=False,
+                    is_recorder_recording=lambda: False,
+                    quit_application=quit_fn)), \
+                    patch("ui.pc_report_dialog.ctypes") as fake_ctypes:
+                fake_ctypes.windll.shell32.ShellExecuteW.return_value = 5  # ERROR_ACCESS_DENIED
+                widget.relaunch_elevated()
+            guard.detach.assert_called_once()
+            guard.create.assert_called_once_with(1)
+            quit_fn.assert_not_called()
+            self.assertIn("cancelled or refused", widget.status_label.text())
+        finally:
+            del app.single_instance_memory
+
+    def test_relaunch_elevated_refuses_while_recording_or_converting(self):
+        widget = PCReportWidget()
+        with patch.object(PCReportWidget, "window", return_value=Mock(
+                running=True, is_converting=False,
+                is_recorder_recording=lambda: False)), \
+                patch("ui.pc_report_dialog.ctypes") as fake_ctypes:
+            widget.relaunch_elevated()
+        fake_ctypes.windll.shell32.ShellExecuteW.assert_not_called()
+        self.assertIn("Stop the current conversion or recording", widget.status_label.text())
 
     def test_layout_mode_resizes_logo(self):
         widget = PCReportWidget()
