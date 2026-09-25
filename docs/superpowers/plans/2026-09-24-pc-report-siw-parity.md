@@ -9344,7 +9344,7 @@ Run it once: `set NVC_PC_REPORT_LIVE=1 && python -m pytest tests/pc_report/test_
 
 - [ ] **Step 3: Section-by-section comparison against SIW**
 
-With the live report and `c:\Users\paham\Desktop\SIW_WDGS-BH0020_20260922_103917.html` open side by side, walk every SIW section and note any field SIW shows that the NVC report does not. For each gap decide: (a) add it to the section (small builder change plus a test line), or (b) record it in `docs/BACKLOG.md` under "PC report follow-ups" with the source it would need. Expected known gaps to record, not fix: per-core temperatures, SPD timings, vendor-specific fan speeds, SIW's own benchmark scores.
+With the live report and `the SIW reference report on the Desktop` open side by side, walk every SIW section and note any field SIW shows that the NVC report does not. For each gap decide: (a) add it to the section (small builder change plus a test line), or (b) record it in `docs/BACKLOG.md` under "PC report follow-ups" with the source it would need. Expected known gaps to record, not fix: per-core temperatures, SPD timings, vendor-specific fan speeds, SIW's own benchmark scores.
 
 Also check in the live HTML, with redaction on:
 - No machine name, user name, serial, key, MAC or full IP appears anywhere (`Ctrl+F` for the machine name, your user name, and the first octets of the LAN).

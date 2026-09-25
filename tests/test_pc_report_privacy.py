@@ -319,7 +319,7 @@ class PcReportPrivacyTests(unittest.TestCase):
         rows = [
             {"InstanceId": r"BTHENUM\DEV_001122334455\7&PRIVATE&0&001122334455", "FriendlyName": "Jane's iPhone", "Name": "Jane's iPhone"},
             {"DeviceID": r"BTHLE\DEV_001122334455\8&PRIVATE&0&001122334455", "FriendlyName": "Pat Galaxy S24", "Name": "Pat Galaxy S24"},
-            {"DeviceID": r"USB\VID_1234&PID_5678\7&1A2B3C4D&0&2", "Name": "USB - Clark Kent\u2019s Headphones"},
+            {"DeviceID": r"USB\VID_1234&PID_5678\7&1A2B3C4D&0&2", "Name": "USB - Diana Prince\u2019s Headphones"},
             {"DeviceID": r"SWD\MMDEVAPI\{endpoint}", "FriendlyName": "Jane's iPhone Microphone"},
             {"InstanceId": r"PCI\VEN_8086&DEV_15BB\3&11583659&0&FE", "Name": "Intel Ethernet"},
         ]
@@ -335,18 +335,18 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(redacted[4]["Name"], rows[4]["Name"])
 
     def test_possessive_owner_is_masked_in_device_description(self):
-        payload = {"Description": "Clark Kent\u2019s Beats Studio P"}
+        payload = {"Description": "Diana Prince\u2019s Headset"}
 
         redacted = redact_payload(payload, {"redact": True}, env={})
 
-        self.assertEqual(redacted["Description"], "***\u2019s Beats Studio P")
+        self.assertEqual(redacted["Description"], "***\u2019s Headset")
 
     def test_possessive_owner_is_masked_in_wrapped_device_description(self):
-        payload = {"Description": "Speakers (USB - Clark Kent\u2019s Beats Studio P)"}
+        payload = {"Description": "Speakers (USB - Diana Prince\u2019s Headset)"}
 
         redacted = redact_payload(payload, {"redact": True}, env={})
 
-        self.assertEqual(redacted["Description"], "Speakers (USB - ***\u2019s Beats Studio P)")
+        self.assertEqual(redacted["Description"], "Speakers (USB - ***\u2019s Headset)")
 
     def test_owner_prefix_is_masked_for_personal_device_family(self):
         payload = {"FriendlyName": "Pat Galaxy S24"}

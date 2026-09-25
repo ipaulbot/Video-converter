@@ -17,7 +17,7 @@
 - **Describe only what the code does.** Before writing a chapter, open the files/lines cited for it in the spec's inventory and quote UI strings exactly (`"Video Inspection Tool"`, not "Inspection"). Do not describe the recorder's "Output quality" combo or "Timer settings" group: they are inert.
 - Block grammar is fixed: `para` (`text`), `steps` (`items`), `note` (`items`), `figure` (`fig_id`), `code` (`lines`), `table` (`headers`, `rows` of equal width). Both builders reject anything else.
 - Plain ASCII in content; the PDF body font is Helvetica, which has no CJK glyphs, so the Chinese menu entry is written as "Simplified Chinese" (the menu itself shows it in Chinese). The Unicode middle dot in the player readout is fine. Use `--` for dashes as the existing content does. Write `%APPDATA%` style paths, never a real user's path.
-- **Privacy:** no real user names, machine names, serials or personal device names anywhere — content, tests, screenshots. Stand-ins are "Camera A", "Camera B", "Microphone A", "Microphone B". After Task 8: `rg -i -c "PBH-80|80JDBS3|paham|NITINC|DC03|NOLDUSINC" docs/help/source docs/help/screenshots/SHOTLIST.md tests/` must print nothing (exit 1).
+- **Privacy:** no real user names, machine names, serials or personal device names anywhere — content, tests, screenshots. Stand-ins are "Camera A", "Camera B", "Microphone A", "Microphone B". After Task 8: `rg -i -c -f %TEMP%\nvc_leak_patterns.txt docs/help/source docs/help/screenshots/SHOTLIST.md tests/` must print nothing (exit 1).
 - Tests: `python -m pytest -q -p no:cacheprovider <paths>`; exit code 0 is the pass signal. Docs tests live in `docs/help/source/test_help_docs.py` and run as part of the normal suite.
 - Lint: `python -m ruff check <touched files>` clean on files you touched.
 - No `QTimer.singleShot` anywhere (repo guard). The capture script uses `_pump()`.
@@ -808,7 +808,7 @@ Expected: four files written under `docs/help/` with the 2.3.0 names. Open the H
 python -m pytest -q -p no:cacheprovider
 python -m ruff check docs/help/source docs/help/source/locales tests/test_media_player_widget.py
 git diff --check
-rg -i -c "PBH-80|80JDBS3|paham|NITINC|DC03|NOLDUSINC" docs/help/source docs/help/screenshots/SHOTLIST.md tests/
+rg -i -c -f %TEMP%\nvc_leak_patterns.txt docs/help/source docs/help/screenshots/SHOTLIST.md tests/
 ```
 
 Expected: suite exit 0; ruff clean; diff --check exit 0; rg exit 1 (no matches).
