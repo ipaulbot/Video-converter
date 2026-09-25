@@ -22,6 +22,11 @@ Use this file as the shared parking lot for bugs, refactors, and new features.
   `pc_report` package and its tests are clean; fix the rest in a dedicated
   lint pass.
 
+- Converted Files has a Clear button (`ui/converted_files_widget.py:135`) that
+  is hidden at construction and never shown, so the table cannot be cleared
+  from the UI. Show it alongside Play, or remove it. The manual does not list
+  it.
+
 ## PC report follow-ups
 
 Remaining gaps against the SIW export, found by a section-by-section
@@ -86,7 +91,16 @@ Out of scope in the current design, kept for later:
 
 ## Recorder follow-ups
 
-- Timer-dialog fields: time format, decimals, maximum time.
+- Timer-dialog fields: time format, decimals, maximum time. Found while
+  documenting (2026-09-25): the Video Settings "Timer settings" group (Time
+  format, Decimals, Use maximum recording time) is not read anywhere — wire it
+  or remove it, then document it.
+- Video Settings "Output quality" combo is not wired to the encoder; every
+  recording uses the same encoder settings regardless of the choice. Wire it or
+  remove it, then document it.
+- DirectShow (USB) cameras are always re-encoded, even in copy mode
+  (`conversion/recording_commands.py`); the manual states this. Decide whether
+  copy mode should refuse USB sources or the label should say so.
 - Screen capture through FFmpeg gdigrab.
 - Picture-in-picture recording.
 - Source type and address columns in the main grid.
@@ -104,6 +118,27 @@ Out of scope in the current design, kept for later:
 - Per-panel independent transport (today every panel shares one timeline).
 - Persist playlists between sessions.
 - Turning the Media Player tab on by default.
+- Playlist dock buttons (Add file / Add folder / Remove / Clear) overflow the dock
+  width and are clipped at the right edge, visible in the manual's FIG-08.
+
+## Help documentation follow-ups
+
+- Dutch and Simplified Chinese manuals. The pipeline supports it: add the tags
+  to `SUPPORTED_DOCUMENT_TAGS` / `_LOCALE_PACKAGES` in
+  `docs/help/source/document_registry.py` and translate `locales/en` into
+  `locales/nl` and `locales/zh_CN`. The PDF builder uses Helvetica, which has
+  no CJK glyphs; a CJK-capable font must be registered before a zh-CN PDF can
+  render.
+- `ui/main_window.py` `open_help_document` does not pass the active locale to
+  `resolve_help_document`, so a localized manual would never be opened even if
+  it existed.
+- A Developer Guide (architecture, module map, test layout, how the manuals are
+  built).
+- Settings → Folders "Log Folder" is saved (`ui/settings_dialog.py`) but never
+  read: `ui/main_window.py` hard-codes `get_data_dir("logs")`. The manual says
+  logs are always under `%APPDATA%\NVC\logs`. Wire the setting or remove it.
+- `pyproject.toml` says version 2.2.0 while `utils/version.py` says 2.3.0; pick
+  one source of truth.
 
 ## Done
 

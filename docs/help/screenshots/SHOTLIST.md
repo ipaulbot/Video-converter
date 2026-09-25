@@ -26,13 +26,15 @@ Save each file into this folder using exactly the filename in the table.
 | ID | Filename | Caption | How to frame it |
 |---|---|---|---|
 | FIG-00 | `fig-00-main-window.png` | The NVC main window, with the conversion log and preview panel. | Launch NVC with no job running. Full window, default size. |
-| FIG-01 | `fig-01-settings-general.png` | Settings, General tab: source and destination folders. | Menu → Settings, General tab. Both folder fields populated. |
-| FIG-02 | `fig-02-settings-video.png` | Settings, Video tab: format, codec, bitrate and size. | Menu → Settings, Video tab, output format `mp4`. |
-| FIG-03 | `fig-03-converted-files.png` | The Converted Files tab tracking queued and finished jobs. | Convert two short clips first so the list has rows. |
-| FIG-04 | `fig-04-inspection.png` | The Inspection tab showing an FFprobe summary. | Drop a short MP4 on the Inspection tab; capture the Summary sub-tab. |
-| FIG-05 | `fig-05-pc-report.png` | The PC Report tab after generating a report. | PC Report tab, generate with redaction enabled, then capture. |
-| FIG-06 | `fig-06-lossless-editor.png` | The Lossless Editor tab with a trim range set. | Load a clip, set start and end timestamps. Do not run it. |
+| FIG-01 | `fig-01-settings-general.png` | Settings, General tab: startup, Copy Only, tray and GPU options. | Menu → Settings, General tab as shipped. The Folders tab is not captured: it shows the operator's own paths. |
+| FIG-02 | `fig-02-settings-video.png` | Settings, Format tab: output format, codecs and presets. | Menu → Settings, Format tab, output format `mp4`. |
+| FIG-03 | `fig-03-converted-files.png` | The Converted Files tab tracking queued and finished jobs. | The capture script adds three stand-in rows (`Session 1.mp4` success, `Session 2.mp4` processing, `Session 3.mp4` queued) so the status icons show without listing real files. |
+| FIG-04 | `fig-04-inspection.png` | The Video Inspection Tool tab, ready for a file to be dropped. | Video Inspection Tool tab, Summary sub-tab, no file loaded. |
+| FIG-05 | `fig-05-pc-report.png` | The PC Report tab before a report is generated. | PC Report tab as opened. Do not generate: a real report shows this machine's name and hardware. |
+| FIG-06 | `fig-06-lossless-editor.png` | The Lossless Editor tab with its trim, remux and merge tools. | Lossless Editor tab as opened, no clip loaded. |
 | FIG-07 | `fig-07-multi-source-recorder.png` | The Multi-Source Recorder tab with two sources enabled. | Fill rows 1–2, enable both. Do not start recording. |
+| FIG-08 | `fig-08-media-player.png` | The Media Player tab with a clip loaded in a single panel. | Media Player tab, Panels = 1, a short generated test clip loaded and paused at ~1 s. Real display only: the video surface is native, so the script grabs the screen region under the window (1600 px wide, so the transport row is not clipped). Keep the display unobstructed while the script runs. |
+| FIG-09 | `fig-09-recorder-video-settings.png` | The recorder's Video Settings dialog with two camera rows configured. | Recorder tab → Video Settings. Rows 1–2 as USB cameras with stand-in names. Run the capture script with `NVC_SHOTS_STUB_DEVICES=1`. |
 
 ## Automated capture
 
@@ -45,6 +47,11 @@ everything — anything behind a burger menu, or a view that needs real media or
 real hardware, still wants a manual capture on a real display. The script
 reports which ids it produced and which it skipped.
 
-Redaction note: FIG-05 shows a PC report, which can contain machine details.
-Generate it with redaction enabled and check the visible fields before
-committing the PNG.
+Device names: set `NVC_SHOTS_STUB_DEVICES=1` so DirectShow discovery returns
+`Camera A` / `Camera B` and `Microphone A` / `Microphone B` instead of the
+devices attached to your PC. Personal device names must never be committed.
+
+Privacy note: FIG-05 is captured before a report is generated. A generated
+report shows the machine name, hardware and user account (redaction is always
+on, but it masks values, not the fact that they exist), so never capture the
+tab with a report in it.

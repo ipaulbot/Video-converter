@@ -14,8 +14,8 @@ That writes every manual, in every supported locale, as both PDF and DOCX:
 
 | Manual | Filename |
 |---|---|
-| Help | `NVC 2.2.0 - Help - en.pdf` / `.docx` |
-| Quick Start Guide | `NVC 2.2.0 - Quick Start Guide - en.pdf` / `.docx` |
+| Help | `NVC 2.3.0 - Help - en.pdf` / `.docx` |
+| Quick Start Guide | `NVC 2.3.0 - Quick Start Guide - en.pdf` / `.docx` |
 
 Narrower builds:
 

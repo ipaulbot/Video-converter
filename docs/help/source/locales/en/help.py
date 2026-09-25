@@ -21,10 +21,10 @@ CHAPTERS: list[dict] = [
         "title": "Introduction",
         "blocks": [
             {"type": "para", "text": (
-                "NVC is a Windows video conversion utility built around FFmpeg. It can watch a "
-                "source folder, convert supported media into your chosen output format, inspect "
-                "media metadata, keep logs, generate PC support reports, and optionally clean up "
-                "original files after conversion.")},
+                "NVC is a Windows video converter built around FFmpeg. It watches a source "
+                "folder, converts supported media, inspects media information, records up to "
+                "four sources, plays media side by side, generates a PC report, and can clean "
+                "up original files after conversion.")},
             {"type": "figure", "fig_id": "FIG-00"},
             {"type": "note", "items": [
                 "Overwrite policy: NVC never overwrites an already converted video. If the "
@@ -40,12 +40,12 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": "Six steps from a fresh install to a converted file."},
             {"type": "steps", "items": [
                 "Open Settings from the menu.",
-                "Choose a Source Folder. This is where new videos will be watched or scanned.",
-                "Choose a Destination Folder. Converted videos are written here.",
-                "Select the desired output format, codec, bitrate, size, and optional GIF settings.",
-                "Click Start to begin monitoring the source folder.",
-                "Add or drop supported videos into the source folder. NVC queues and converts "
-                "them automatically.",
+                "On the Folders tab, choose the Source Folder.",
+                "On the Folders tab, choose the Destination Folder.",
+                "On the Format tab, choose the Output Format, Video Codec and Audio Codec. The "
+                "defaults suit most cases.",
+                "Click OK, and then click Start.",
+                "Drop videos into the source folder.",
             ]},
             {"type": "figure", "fig_id": "FIG-01"},
         ],
@@ -59,25 +59,39 @@ CHAPTERS: list[dict] = [
                 "status footer.")},
             {"type": "table", "headers": ("Area", "What it does"), "rows": [
                 ("Conversion Log",
-                 "Shows FFmpeg output, progress messages, warnings, and completion results."),
+                 "Shows conversion messages, progress, warnings and results."),
                 ("Converted Files",
-                 "Tracks queued, processing, successful, and failed conversions, and links "
-                 "converted-file logs."),
-                ("Inspection",
-                 "Drag a media file here to view the FFprobe summary and raw JSON metadata."),
+                 "Lists queued, processing, successful and failed conversions."),
+                ("Video Inspection Tool",
+                 "Shows a summary and detailed media information for a selected file."),
                 ("PC Report",
-                 "Generates a detailed system report covering software, drivers, devices, "
-                 "codecs, networking, and NVC-related components."),
+                 "Generates a PC report for support and troubleshooting."),
                 ("Lossless Editor",
-                 "Trim, remux, merge, extract audio, or remove audio using FFmpeg stream-copy "
-                 "operations that avoid re-encoding where the source and container allow it."),
+                 "Provides trim, remux, merge and audio stream-copy tools."),
                 ("Multi-Source Recorder",
-                 "Records up to four FFmpeg sources, including RTSP and HTTP streams or Windows "
-                 "DirectShow inputs such as video=Camera Name."),
+                 "Records up to four video sources."),
+                ("Media Player",
+                 "Plays media in one, two or four panels."),
                 ("Preview Panel",
-                 "Shows a thumbnail or video preview when a file is selected or dropped."),
+                 "Shows a preview of the current file or recorder layout."),
                 ("Menu",
-                 "Access to settings, help, info, PC reports, and extra tools."),
+                 "Opens Info, Help, folders, Settings, Language, updates and Quit."),
+            ]},
+            {"type": "note", "items": [
+                "PC Report, Lossless Editor and Media Player are hidden by default. Turn them "
+                "on in Settings -- Tools. Play in Media Player shows the Media Player tab for "
+                "the current session even when it is switched off.",
+                "The Menu contains Info, Help, Open Source Folder, Open Destination Folder, "
+                "Open Backup Folder, Settings, Language, Check for Updates and Quit.",
+                "The footer has the Start/Stop button, a lock icon, a file picker, a broom and "
+                "a status label. On the recorder tab the button reads Start Recording or Stop "
+                "Recording. The lock icon locks settings, and the Start button then reads "
+                "Locked. The file picker selects media files to convert, and the broom clears "
+                "the log.",
+                "Clicking X closes NVC by default. Clear "
+                "\"Close on X (don't minimize to tray)\" in Settings -- General to minimise "
+                "to the system tray instead. The tray menu has Show and Quit. Only one copy "
+                "of NVC can run at a time.",
             ]},
         ],
     },
@@ -87,8 +101,11 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "When monitoring is active, NVC watches the source folder for new supported "
-                "videos. Existing files in the source folder are scanned when monitoring starts. "
-                "Files can also be dragged directly into the app.")},
+                "videos. It also scans existing files in that folder when monitoring starts.")},
+            {"type": "para", "text": (
+                "You can drag files onto Conversion Log, Converted Files or Video Inspection "
+                "Tool. You can also use the file picker in the footer to select media files "
+                "to convert.")},
             {"type": "para", "text": (
                 "NVC protects existing converted files. If a converted output name already "
                 "exists, NVC chooses the next available browser-style filename:")},
@@ -107,34 +124,84 @@ CHAPTERS: list[dict] = [
         "id": "conversion-settings",
         "title": "Conversion Settings",
         "blocks": [
+            {"type": "para", "text": (
+                "Settings has six tabs: General, Folders, Deletion, Format, Time and Tools. "
+                "Default restores every value, OK saves, and Cancel discards changes.")},
             {"type": "figure", "fig_id": "FIG-02"},
+            {"type": "para", "text": "The General tab controls application behaviour and GPU encoding."},
+            {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
+                ("Auto Run on Startup",
+                 "Starts monitoring automatically with the previous settings."),
+                ("Copy Only",
+                 "Remuxes the source streams into the selected Output Format without "
+                 "re-encoding (FFmpeg -c copy), which is fast but fails when the container "
+                 "cannot hold the source streams. The Lossless Editor's Remux does the same "
+                 "for single files."),
+                ("Close on X (don't minimize to tray)",
+                 "Ticked by default. Clear it to minimise NVC to the system tray when you "
+                 "click X."),
+                ("Launch at Windows startup (All Users)",
+                 "Launches NVC when Windows starts for all users and requires permission."),
+                ("Use GPU Acceleration",
+                 "Enables GPU acceleration when supported."),
+                ("GPU Encoder",
+                 "Choose Auto, nvidia, intel or amd."),
+            ]},
+            {"type": "para", "text": "The Folders tab selects the folders used by NVC."},
+            {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
+                ("Source Folder", "Click Change to select the folder NVC watches and scans."),
+                ("Destination Folder", "Click Change to select where converted files are written."),
+                ("Backup Folder", "Click Change to select where backed-up originals are moved."),
+                ("Log Folder",
+                 r"Shows the log location. NVC currently always writes logs to "
+                 r"%APPDATA%\NVC\logs; changing this field has no effect in this version."),
+            ]},
+            {"type": "para", "text": (
+                "The Deletion tab controls original files. See the Original File Handling "
+                "chapter.")},
+            {"type": "para", "text": "The Format tab controls the conversion output."},
             {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
                 ("Output Format",
-                 "The container to write, such as MP4 or GIF. MP4 is usually the safest "
-                 "general-purpose choice."),
+                 "Choose mp4, mov, avi, mkv, flv, webm, mpeg, mpg, 3gp, ogg, wmv, m4v, mp3 "
+                 "or gif."),
                 ("Video Codec",
-                 "libx264 is widely compatible. HEVC/H.265 can create smaller files but may not "
-                 "play everywhere. NVC maps HEVC to the correct FFmpeg encoder."),
+                 "Choose libx264, mpeg4, libvpx, hevc, flv, libtheora or wmv2."),
                 ("Audio Codec",
-                 "AAC is the most compatible default for MP4 output."),
-                ("Video Bitrate",
-                 "Use Auto unless you need a specific file size or quality target. Higher "
-                 "bitrate means larger files and usually better quality."),
+                 "Choose aac, mp3, ac3, opus or vorbis."),
+                ("GIF options",
+                 "FPS, Max Width, Loop and Quick GIF (no palette) appear when Output Format "
+                 "is gif."),
+                ("Show Advanced Options",
+                 "Shows Video Size, Bitrate, Frame Rate, Keyframe Interval (GOP), Volume, Text "
+                 "Overlay and Console Integration."),
                 ("Video Size",
-                 "Use Auto to preserve the original size. Choose a smaller size to reduce file "
-                 "size."),
+                 "Choose Auto, 640x480, 1280x720, 1920x1080 or 3840x2160."),
+                ("Bitrate",
+                 "Choose Auto or a listed value from 512k to 3000k."),
                 ("Frame Rate",
-                 "Use Auto to preserve the source frame rate. Set this only when you need a "
-                 "specific playback rate."),
-                ("Keyframe Interval",
-                 "Advanced. Useful for streaming, scrubbing, or compatibility workflows. Leave "
-                 "at 0 unless you know the GOP interval you need."),
-                ("Copy Only",
-                 "Remuxes streams without re-encoding. Fast, but it can fail if the selected "
-                 "container does not support the source streams."),
-                ("Custom FFmpeg Flags",
-                 "Advanced users can append FFmpeg arguments. Use carefully, because invalid "
-                 "flags can break conversion."),
+                 "Choose Auto or a listed rate from 8 to 60."),
+                ("Keyframe Interval (GOP)",
+                 "Choose 0 for Auto or a value up to 300."),
+                ("Volume",
+                 "Set output audio volume from 0 to 500 %."),
+                ("Text Overlay",
+                 "Adds text to the output. See the Text Overlays chapter."),
+                ("Console Integration",
+                 "Appends custom FFmpeg flags to the command."),
+                ("Presets",
+                 "Use Ethovision, Custom 1, Custom 2, Save to 1 or Save to 2."),
+            ]},
+            {"type": "para", "text": "The Time tab limits when conversion may start."},
+            {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
+                ("No Time Restrictions", "Allows conversion at any time."),
+                ("Start Time", "Sets the start of the allowed conversion window."),
+                ("End Time", "Sets the end of the allowed conversion window. See Time Restrictions."),
+            ]},
+            {"type": "para", "text": "The Tools tab controls which tool tabs appear in the main window."},
+            {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
+                ("Tool checkboxes",
+                 "There is one checkbox for each tool tab. Unticked tabs are hidden from the "
+                 "main window."),
             ]},
         ],
     },
@@ -164,8 +231,8 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "GIF output can use a two-pass palette workflow for better colour quality. You "
-                "can adjust frame rate, maximum width, looping, and quick mode. A lower frame "
-                "rate and a smaller width both reduce file size.")},
+                "can adjust FPS, Max Width and Loop, or select Quick GIF (no palette). A lower "
+                "FPS and a smaller Max Width both reduce file size.")},
             {"type": "note", "items": [
                 "GIF files grow quickly. For long clips, convert to MP4 instead.",
             ]},
@@ -176,9 +243,22 @@ CHAPTERS: list[dict] = [
         "title": "Text Overlays",
         "blocks": [
             {"type": "para", "text": (
-                "NVC can add overlays such as elapsed time, recorded time, recorded date and "
-                "time, remaining time, or CRTV-style recording labels. Overlays require video "
-                "filtering, so they may reduce GPU compatibility and conversion speed.")},
+                "Text Overlay burns the selected text into the output video.")},
+            {"type": "table", "headers": ("Overlay", "Shows"), "rows": [
+                ("None", "No overlay."),
+                ("Elapsed Time", "The elapsed playback time."),
+                ("Recorded Time", "The recorded time of day."),
+                ("Recorded Date/Time", "The recorded date and time."),
+                ("Recorded Date/Time + Remaining",
+                 "The recorded date and time on one line and remaining seconds on another."),
+                ("CRTV Cam", "A blinking REC label and the recorded time."),
+            ]},
+            {"type": "note", "items": [
+                "Overlays require video filtering and may reduce GPU compatibility and "
+                "conversion speed.",
+                "Recorded overlays use the file's recorded time when present and otherwise use "
+                "the file modified time.",
+            ]},
         ],
     },
     {
@@ -186,19 +266,52 @@ CHAPTERS: list[dict] = [
         "title": "Original File Handling",
         "blocks": [
             {"type": "table", "headers": ("Option", "Behaviour"), "rows": [
-                ("Keep Originals",
-                 "The original file remains in place after conversion."),
-                ("Delete After Conversion",
-                 "NVC deletes the original immediately, or schedules deletion after the "
-                 "retention period."),
-                ("Retention Days",
-                 "0 to 30 days. NVC stores pending deletions on disk, so overdue files are "
-                 "processed after a restart."),
-                ("Backup Folder",
-                 "Moves originals to a backup folder instead of deleting them."),
+                ("Delete files after conversion",
+                 "Deletes the original after a successful conversion, immediately when "
+                 "retention is 0 or after the retention period."),
+                ("Retention time (days)",
+                 "Choose 0 to 30 days. Pending deletions are stored on disk and processed after "
+                 "a restart."),
+                ("Use Backup Folder",
+                 "Moves originals to the Backup Folder instead of deleting them."),
             ]},
             {"type": "note", "items": [
                 "Keep originals until you have confirmed the converted files play correctly.",
+            ]},
+        ],
+    },
+    {
+        "id": "time-restrictions",
+        "title": "Time Restrictions",
+        "blocks": [
+            {"type": "para", "text": (
+                "Settings -- Time lets you select No Time Restrictions or set a Start Time and "
+                "End Time for conversion.")},
+            {"type": "note", "items": [
+                "A file detected outside the window is skipped with \"Current time outside "
+                "allowed range\" in the Conversion Log. It is not queued for later. Drop the "
+                "file again, or let monitoring re-detect it, inside the permitted window.",
+                "An End Time earlier than the Start Time means an overnight window.",
+                "The default is No Time Restrictions.",
+            ]},
+        ],
+    },
+    {
+        "id": "converted-files",
+        "title": "Converted Files",
+        "blocks": [
+            {"type": "para", "text": (
+                "Converted Files has File Name, Destination Folder and Date Modified columns. "
+                "Status icons identify queued, processing, successful and failed conversions. "
+                "Play is a button below the table; it appears once a row is selected. The "
+                "remaining actions are on the row's right-click menu.")},
+            {"type": "table", "headers": ("Control", "What it does"), "rows": [
+                ("Play", "Opens the selected file in the Media Player tab."),
+                ("Play in Media Player", "Opens the selected file in the Media Player tab."),
+                ("Open Containing Folder", "Opens the selected file's destination folder."),
+                ("Open Log File", "Opens a dialog containing the per-file conversion log."),
+                ("Copy File Path", "Copies the selected file path."),
+                ("Settings", "Opens Settings."),
             ]},
         ],
     },
@@ -207,9 +320,12 @@ CHAPTERS: list[dict] = [
         "title": "Media Inspection",
         "blocks": [
             {"type": "para", "text": (
-                "The Inspection tab uses FFprobe to show a readable summary and the detailed "
-                "JSON metadata. The summary includes duration, file size, bitrate, streams, "
-                "codecs, dimensions, frame rate, audio details, and keyframe estimates.")},
+                "The Video Inspection Tool tab has Summary and Detailed JSON sub-tabs. Drop a "
+                "file on either sub-tab to populate both. Summary lists File, Container, "
+                "Duration, Size, Bitrate and Number of Streams. It then lists each video, "
+                "audio and subtitle stream, including its codec and the applicable resolution, "
+                "frame rate or channels. A Keyframe Analysis (First 30s) block follows the "
+                "stream details. Detailed JSON shows the raw ffprobe -print_format json output.")},
             {"type": "figure", "fig_id": "FIG-04"},
         ],
     },
@@ -218,18 +334,72 @@ CHAPTERS: list[dict] = [
         "title": "PC Report Tool",
         "blocks": [
             {"type": "para", "text": (
-                "The PC Report tool gathers system information to help with support and "
-                "troubleshooting. It covers the operating system, updates, installed programs, "
-                "security status, hardware, network, services, processes, environment details, "
-                "printers, drivers, codecs, and NVC-specific information.")},
+                "The PC Report tool gathers system information for support and troubleshooting.")},
+            {"type": "steps", "items": [
+                "Click Generate PC Report.",
+                "Wait for collection to finish. Some collectors can take a while.",
+                "Click Open Report to open the generated HTML. Open Folder opens whichever folder "
+                "the report was written to.",
+                "Reports are saved to your Desktop by default, with the path pattern "
+                "Desktop\\PC_Report_YYYYMMDD_HHMMSS.html. If there is no Desktop folder, NVC "
+                "uses your user profile folder instead. If that file name already exists, NVC "
+                "chooses a unique name and never overwrites the existing file.",
+            ]},
             {"type": "figure", "fig_id": "FIG-05"},
+            {"type": "para", "text": (
+                "The report opens with Report Health (timing, empty sections and warnings) and "
+                "then these sections:")},
+            {"type": "code", "lines": [
+                "Noldus Summary",
+                "Operating System",
+                "Installed Updates",
+                "Licenses",
+                "System Directories",
+                "System Files",
+                "Installed Programs",
+                "Security",
+                "Accessibility",
+                "Environment",
+                "Regional Settings",
+                "Processes",
+                "Services",
+                "Drivers",
+                "Autorun",
+                "Codecs",
+                "MMC Snap-ins",
+                "System Summary",
+                "Motherboard",
+                "BIOS",
+                "CPU",
+                "Memory",
+                "Sensors",
+                "Devices",
+                "PCI",
+                "System Slots",
+                "Network Adapters",
+                "Video",
+                "Monitors",
+                "Sound",
+                "Storage Devices",
+                "Logical Disks",
+                "Ports",
+                "USB",
+                "Printers",
+                "Virtual Machine",
+                "Cameras",
+                "Network Information",
+                "Shares",
+                "Network Connections",
+            ]},
             {"type": "note", "items": [
-                "Privacy: PC reports can include sensitive machine details. With redaction "
-                "enabled, NVC masks common sensitive values such as licence keys, serial "
-                "numbers, MAC addresses and user profile paths. Review any report before "
-                "sharing it outside your organisation.",
-                "Some Windows collectors -- drivers, devices, network connections and "
-                "processes -- can take a while on large systems.",
+                "Redaction is always on. NVC masks serial numbers, licence keys, passwords and "
+                "tokens, user and machine names, hostnames, IP and MAC addresses, proxy settings, "
+                "UNC paths and user profile paths. Review a report before sharing it anyway.",
+                "Some values need administrator rights and show \"Requires administrator\" when "
+                "NVC runs normally. Right-click NVC and choose Run as administrator for a "
+                "complete report.",
+                "Drivers, devices, network connections and processes are the slow collectors on "
+                "large systems.",
             ]},
         ],
     },
@@ -239,19 +409,24 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "The Lossless Editor tab provides FFmpeg stream-copy tools. These operations are "
-                "fast because they avoid re-encoding wherever possible.")},
+                "fast because they avoid re-encoding wherever possible. Output container choices "
+                "are mp4, mkv, mov, avi and m4a; Extract Audio always uses m4a.")},
             {"type": "figure", "fig_id": "FIG-06"},
             {"type": "table", "headers": ("Operation", "What it does"), "rows": [
                 ("Trim Losslessly",
                  "Cuts a section between start and end timestamps using stream copy."),
                 ("Remux",
-                 "Rewraps media into another container such as MP4, MKV, MOV or AVI."),
+                 "Rewraps media into mp4, mkv, mov or avi without re-encoding."),
                 ("Extract Audio",
-                 "Writes the first audio stream to an audio-only file."),
+                 "Writes the first audio stream to an audio-only m4a file."),
                 ("Remove Audio",
                  "Writes a silent, video-only copy."),
                 ("Merge Losslessly",
                  "Joins compatible clips using the FFmpeg concat demuxer."),
+                ("Add Files",
+                 "Adds source clips to the merge list."),
+                ("Clear",
+                 "Removes every source clip from the merge list."),
             ]},
             {"type": "note", "items": [
                 "Lossless operations need compatible codecs and containers. If FFmpeg fails, the "
@@ -266,31 +441,171 @@ CHAPTERS: list[dict] = [
         "title": "Multi-Source Recorder",
         "blocks": [
             {"type": "para", "text": (
-                "The Multi-Source Recorder tab is a lightweight recorder for up to four FFmpeg "
-                "inputs. Enter one source per row and enable the rows you want to record.")},
+                "The Multi-Source Recorder records up to four sources at once with FFmpeg. "
+                "The tab shows one row per source; configure the sources in the Video Settings "
+                "dialog.")},
             {"type": "figure", "fig_id": "FIG-07"},
+            {"type": "para", "text": "The recorder tab"},
+            {"type": "table", "headers": ("Control", "What it does"), "rows": [
+                ("Use", "Records this row."),
+                ("Video name", "Sets the label used in the file name."),
+                ("Audio name", "Sets the audio label for the row."),
+                ("Mute", "Records the row without sound."),
+                ("Volume", "Sets the audio level to 100, 75, 50, 25 or 0 %."),
+                ("Encoding", "copy keeps the source's own compressed video only for RTSP, "
+                 "stream and file sources. USB (DirectShow) cameras are always re-encoded "
+                 "with H.264 regardless of the Encoding choice."),
+                ("Output mode", "Separate videos writes one file per row; Combined grid writes "
+                 "one file with all sources tiled."),
+                ("File location", "Sets the recording folder. The default is your Videos folder."),
+                ("File base name", "The default is Video. Separate videos, and Combined grid "
+                 "with one enabled source, use <base>_<Video name>_<timestamp>.mp4. Combined "
+                 "grid with more than one enabled source uses "
+                 "<base>_Combined_<timestamp>.mp4."),
+                ("Timer", 'The field shows "blank = until stopped"; leave it blank to record '
+                 "until you press Stop Recording."),
+                ("Show recording log", "Opens the recording log."),
+                ("Start Recording / Stop Recording", "The footer button starts or stops recording."),
+            ]},
+            {"type": "para", "text": "Video Settings"},
+            {"type": "figure", "fig_id": "FIG-09"},
             {"type": "steps", "items": [
-                "Use RTSP, HTTP or file URLs directly, for example rtsp://192.168.1.10/stream.",
-                "Use Windows DirectShow input strings for local capture devices, for example "
-                "video=Camera Name.",
-                "Choose copy mode for compatible streams, or h264 mode when the source needs "
-                "encoding.",
-                "Open Video Settings to choose a DirectShow microphone for each source. Mute "
-                "or Volume 0 records that source without audio; lower volume values reduce "
-                "the recorded audio gain. Without a microphone, a file or RTSP source in "
-                "h264 mode keeps its own sound track.",
-                "Choose Separate videos to write one file per source, or Combined grid to "
-                "write one file whose audio comes from the first enabled, unmuted row with "
-                "a selected microphone.",
-                "Use Load to apply a preset, Set to overwrite the selected preset, Save as... "
-                "to create one, and Delete to remove one. An asterisk marks settings changed "
-                "since the selected preset was loaded or saved.",
-                "Leave duration blank to record until you press Stop.",
+                "Open Video Settings. Each row has Use, Video name, Video device, a camera "
+                "settings button, Frame rate, Resolution, Audio name, Audio device and Sync "
+                "offset.",
+                "In Video device choose a USB camera by its Windows name, choose RTSP/IP Camera "
+                "and click the camera button to enter Address / URL, Username, Password, Port "
+                "and Stream path, or type an rtsp://, http:// or https:// URL, a file path, or "
+                "a Basler / GenICam source string directly. Refresh USB devices... rescans.",
+                "The default Frame rate list is 30.00, 25.00 and 15.00; the default Resolution "
+                "list is 1920 x 1080, 1280 x 720, 640 x 480 and Auto. When a USB camera is "
+                "selected, NVC replaces both lists with the modes the driver reports and adds "
+                "Auto to each. If detection fails, the lists are left as they were: leave "
+                "Resolution at Auto and choose a frame rate the camera supports. Auto is only "
+                "offered for Frame rate after successful detection.",
+                "Choose an Audio device per row, or No Audio. Refresh devices rescans "
+                "microphones. Mute or Volume 0 on the tab records that row without sound.",
+                "Sync offset shifts a source earlier or later in a Combined grid recording so "
+                "clips that started at slightly different times line up.",
+                "Apply keeps the dialog open; OK applies and closes.",
+            ]},
+            {"type": "para", "text": "Presets"},
+            {"type": "steps", "items": [
+                "Load applies the selected preset; Set overwrites it with the current settings; "
+                "Save as... creates a new one; Delete removes it. An asterisk after the name "
+                "marks unsaved changes.",
+                "Presets are JSON files under "
+                r"Public\Documents\Noldus\NVC\MediaRecorder\Presets.",
             ]},
             {"type": "note", "items": [
-                "If a saved microphone is not connected, it appears as (not found). NVC keeps "
-                "the saved name and retries an early audio-device failure as video-only so the "
-                "camera recording is not lost.",
+                "Without a microphone, a file or RTSP source in h264 mode keeps its own sound "
+                "track; in copy mode an RTSP source is recorded without audio; a USB camera "
+                "without a microphone is silent. Combined grid takes its audio from the first "
+                "enabled, unmuted row with a microphone.",
+                "A saved microphone that is not connected shows as (not found). If the audio "
+                "device fails as recording starts, NVC restarts that row as video only and says "
+                "so in the recording log, so the camera recording is not lost.",
+                "FFmpeg needs the exact Windows camera name; close other applications that may "
+                "be using the camera.",
+            ]},
+        ],
+    },
+    {
+        "id": "media-player",
+        "title": "Media Player",
+        "blocks": [
+            {"type": "para", "text": (
+                "The Media Player loads up to four clips for synchronized review. The tab is "
+                "hidden by default; enable it under Settings -> Tools. Play in Media Player "
+                "from Converted Files shows the tab for the current session, loads the selected "
+                "file and starts playback.")},
+            {"type": "figure", "fig_id": "FIG-08"},
+            {"type": "table", "headers": ("Control", "What it does"), "rows": [
+                ("Load", "Loads a clip into that panel."),
+                ("Clear", "Removes the clip from that panel."),
+                ("offset", "Shifts that panel in seconds relative to the shared seek position."),
+                ("Play all", "Plays every visible loaded panel and reads Pause all while playing."),
+                ("Stop all", "Stops every loaded panel and returns the shared position to zero."),
+                ("Restart", "Returns to the beginning and plays every visible loaded panel."),
+                ("Seek slider", "Moves every visible loaded panel on the shared timeline."),
+                ("Speed", "Sets every panel to 0.25x, 0.5x, 1x, 1.5x or 2x playback."),
+                ("Panels", "Shows 1, 2 or 4 panels."),
+                ("Volume", "Sets the volume for every panel from 0 to 100."),
+                ("Mute", "Mutes every panel and reads Unmute while muted."),
+                ("Fullscreen", "Shows the panels and transport bar fullscreen."),
+                ("Playlist", "Shows or hides the playlist for the selected panel."),
+            ]},
+            {"type": "para", "text": (
+                "The readout shows H:MM:SS.mmm / H:MM:SS.mmm · frame N / M. "
+                "NVC reads the clip's real frame rate with FFprobe, so Left and Right step "
+                "exactly one frame. Frame stepping pauses playback.")},
+            {"type": "table", "headers": ("Keys", "Action"), "rows": [
+                ("Space", "Play or pause"),
+                ("Home", "Restart from the beginning"),
+                ("Left", "Step back one frame"),
+                ("Right", "Step forward one frame"),
+                ("Shift+Left", "Seek back 5 seconds"),
+                ("Shift+Right", "Seek forward 5 seconds"),
+                ("Up", "Volume up 5"),
+                ("Down", "Volume down 5"),
+                ("M", "Mute or unmute"),
+                ("F", "Toggle fullscreen"),
+                ("Escape", "Leave fullscreen"),
+                ("N", "Next playlist item"),
+                ("P", "Previous playlist item"),
+            ]},
+            {"type": "para", "text": (
+                "Shortcuts work while the Media Player tab has focus. Press F, click "
+                "Fullscreen, or double-click a panel to enter fullscreen. The transport bar "
+                "hides three seconds after the mouse stops moving and returns when the mouse "
+                "moves. Press Escape or F, or double-click, to leave fullscreen.")},
+            {"type": "para", "text": (
+                "Playlist opens a dock for the selected panel with Add files..., Add folder..., "
+                "Remove and Clear. Drag entries to reorder them, or drop files from Explorer "
+                "into the dock. N and P move through the playlist. With Panels set to 1, the "
+                "next item starts automatically when a clip ends.")},
+            {"type": "note", "items": [
+                'A file Windows cannot decode shows "Windows cannot play this file." or names '
+                'the codec and container, with "Convert to MP4 (H.264) and play". The converted '
+                "copy is written to your Destination Folder with a unique name and then loaded.",
+                "NVC remembers the last folder, panel count, volume and mute between sessions.",
+                "Playback uses Windows Media Foundation. MP4, MOV, MKV, AVI and WMV files with "
+                "common codecs play directly; use the convert offer for anything else.",
+            ]},
+        ],
+    },
+    {
+        "id": "language",
+        "title": "Language",
+        "blocks": [
+            {"type": "para", "text": (
+                "Menu -- Language lists English, Nederlands and Simplified Chinese; the last "
+                "entry appears in the menu in Chinese characters. NVC saves the choice and "
+                "says \"NVC will show <language> the next time it starts.\" The manuals are "
+                "in English.")},
+        ],
+    },
+    {
+        "id": "updates-and-logs",
+        "title": "Updates and Logs",
+        "blocks": [
+            {"type": "table", "headers": ("Item", "Where / what"), "rows": [
+                ("Check for Updates",
+                 "Open it from the menu. A build without an update address answers "
+                 "\"Updates Not Configured\". When an address is configured and a newer "
+                 "version exists, \"Update v<version> Available!\" appears in the sidebar."),
+                ("Log file",
+                 r"All logs are under %APPDATA%\NVC\logs. The rotating application log is "
+                 r"conversion_log.txt, and each conversion has an <output file name>.txt log."),
+                ("NVC_LOG_LEVEL",
+                 "Set this environment variable to DEBUG to record full tracebacks."),
+                ("Settings file", r"%APPDATA%\NVC\config.json."),
+                ("Default media folders",
+                 r"Public\Documents\Noldus\NVC\Source, "
+                 r"Public\Documents\Noldus\NVC\Destination and "
+                 r"Public\Documents\Noldus\NVC\Backup."),
+                ("Recorder presets",
+                 r"Public\Documents\Noldus\NVC\MediaRecorder\Presets."),
             ]},
         ],
     },
@@ -314,15 +629,36 @@ CHAPTERS: list[dict] = [
                  "Confirm the app is unlocked, monitoring is started, and the file extension is "
                  "supported."),
                 ("PC report is slow",
-                 "Some Windows collectors take time on large systems. Let it finish."),
+                 "Drivers, devices, network connections and processes are the slow collectors "
+                 "on large systems. Let them finish."),
+                ("Camera: Could not find video device",
+                 "FFmpeg needs the exact Windows camera name. Pick it from the Video device "
+                 "list rather than typing it, and close other applications that may hold the "
+                 "camera."),
+                ("Microphone shows (not found)",
+                 "The saved microphone is not connected. Plug it in and click Refresh devices, "
+                 "or choose another device or No Audio."),
+                ("Recording has no sound",
+                 "Check Mute and Volume on the tab and the Audio device in Video Settings. If "
+                 "the audio device failed at start, NVC recorded video only and says so in the "
+                 "recording log."),
+                ("Media Player says Windows cannot play this file",
+                 "The codec or container is not supported by Windows Media Foundation. Click "
+                 "Convert to MP4 (H.264) and play."),
+                ("A tool tab is missing",
+                 "Open Settings, Tools tab, and tick it."),
+                ("Help menu says the document was not found",
+                 "The generated manual must sit in docs/help, a help folder, or next to the "
+                 "executable. Rebuild it with python docs/help/source/build_help_docs.py."),
                 ("Something failed with no message",
                  "Set the NVC_LOG_LEVEL environment variable to DEBUG and reproduce the "
                  "problem. NVC then records the full traceback for errors it would otherwise "
                  "handle quietly."),
             ]},
             {"type": "para", "text": (
-                "NVC stores logs in its configured log folder, under the application data "
-                "location unless the app configuration changes it.")},
+                r"NVC stores logs under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                "application log, and each conversion has an <output file name>.txt log that "
+                "Converted Files -- Open Log File opens.")},
         ],
     },
     {
@@ -336,6 +672,9 @@ CHAPTERS: list[dict] = [
                 "Use HEVC only when smaller files matter and the target players support it.",
                 "Review PC reports before sharing them.",
                 "Keep custom FFmpeg flags simple, and test them on a small file first.",
+                "Save a recorder preset for each camera setup so a session starts with one Load.",
+                "Review recordings with Panels set to 1 when you want the playlist to advance "
+                "automatically.",
             ]},
         ],
     },
@@ -354,10 +693,24 @@ CHAPTERS: list[dict] = [
                  "HEVC is efficient but less universally supported than H.264. If compatibility "
                  "matters, use H.264."),
                 ("Where are logs stored?",
-                 "In the configured log folder, typically under the application data location."),
+                 r"Every log is under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                 "application log, with one <output file name>.txt log per conversion."),
                 ("Can I run two copies of NVC at once?",
                  "No. NVC allows a single instance, so two copies cannot process the same "
                  "source folder."),
+                ("Where do recordings go?",
+                 "The File location on the recorder tab, your Videos folder by default, named "
+                 "<base>_<Video name>_<timestamp>.mp4 or "
+                 "<base>_Combined_<timestamp>.mp4."),
+                ("Why does my MKV not play in the Media Player?",
+                 "Windows Media Foundation does not decode every codec. Use Convert to MP4 "
+                 "(H.264) and play; the copy goes to your Destination Folder."),
+                ("Can I record without a microphone?",
+                 "Yes. Choose No Audio, or Mute the row. A file or RTSP source in h264 mode "
+                 "keeps its own sound track."),
+                ("Why does the PC report say Requires administrator?",
+                 "Some Windows data is only readable elevated. Run NVC as administrator for a "
+                 "complete report; redaction still applies."),
             ]},
         ],
     },

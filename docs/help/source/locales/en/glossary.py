@@ -54,13 +54,35 @@ GLOSSARY_ROWS: list[tuple[str, str]] = [
     ("DirectShow",
      "The Windows capture interface NVC uses to record from local devices. "
      "Sources are written as video=Device Name."),
+    ("Media Foundation",
+     "The Windows playback framework the Media Player uses to decode and play "
+     "supported media."),
     ("RTSP",
      "A streaming protocol used by most IP and network cameras. Sources are "
      "written as a URL, such as rtsp://192.168.1.10/stream."),
+    ("GenICam",
+     "The generic camera interface used by Basler and other industrial cameras. "
+     "Configure these cameras in Basler pylon Viewer."),
+    ("Preset",
+     "A saved recorder configuration stored as JSON under "
+     r"Public\Documents\Noldus\NVC\MediaRecorder\Presets."),
+    ("Sync offset",
+     "A time adjustment that shifts one source earlier or later in a Combined "
+     "grid recording so sources line up."),
+    ("Frame step",
+     "Moving exactly one frame forward or backward using the clip's frame rate."),
+    ("Playlist",
+     "An ordered list of media files for one Media Player panel. With one panel, "
+     "the next item starts automatically."),
+    ("Administrator (elevation)",
+     "Running NVC with administrator rights so the PC report can read protected "
+     "Windows data."),
+    ("Tool tab",
+     "A main-window tab that can be hidden or shown in Settings -- Tools."),
     ("Retention period",
      "How long NVC keeps an original file after a successful conversion before "
      "deleting it. Pending deletions survive a restart."),
     ("Redaction",
-     "Masking sensitive values such as licence keys, serial numbers, MAC "
-     "addresses and user paths in a PC report before it is shared."),
+     "Always-on masking of sensitive values such as licence keys, serial numbers, "
+     "MAC addresses and user paths in a PC report before it is shared."),
 ]

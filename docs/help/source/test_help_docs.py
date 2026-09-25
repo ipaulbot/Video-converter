@@ -78,9 +78,16 @@ class FigureTests(unittest.TestCase):
 
     def test_number_is_derived_from_id(self):
         self.assertEqual(figures.figure_number("FIG-00"), 0)
-        self.assertEqual(figures.figure_number("FIG-07"), 7)
+        self.assertEqual(figures.figure_number("FIG-09"), 9)
         with self.assertRaises(ValueError):
             figures.figure_number("FIG-7")
+
+    def test_catalog_has_the_media_player_and_video_settings_figures(self):
+        by_id = {f["id"]: f for f in figures.FIGURES}
+        self.assertEqual(by_id["FIG-08"]["filename"], "fig-08-media-player.png")
+        self.assertEqual(by_id["FIG-09"]["filename"], "fig-09-recorder-video-settings.png")
+        self.assertIn("Media Player", by_id["FIG-08"]["caption"])
+        self.assertIn("Video Settings", by_id["FIG-09"]["caption"])
 
     def test_filenames_are_unique(self):
         names = [f["filename"] for f in figures.FIGURES]
@@ -110,6 +117,117 @@ class FigureTests(unittest.TestCase):
 
 
 class ContentTests(unittest.TestCase):
+    TOOL_TAB_LABELS = (
+        "Conversion Log", "Converted Files", "Video Inspection Tool", "PC Report",
+        "Lossless Editor", "Multi-Source Recorder", "Media Player",
+    )
+
+    def _chapter(self, manual_key, chapter_id):
+        for chapter in cl.load_manual(manual_key, "en"):
+            if chapter["id"] == chapter_id:
+                return chapter
+        self.fail(f"{manual_key} has no chapter {chapter_id!r}")
+
+    def _chapter_text(self, manual_key, chapter_id):
+        parts = []
+        for block in self._chapter(manual_key, chapter_id)["blocks"]:
+            if block["type"] == "para":
+                parts.append(block["text"])
+            elif block["type"] in ("steps", "note", "code"):
+                parts.extend(block.get("items", block.get("lines", [])))
+            elif block["type"] == "table":
+                parts.extend(cell for row in block["rows"] for cell in row)
+        return "\n".join(parts)
+
+    def test_help_covers_every_tool_tab(self):
+        text = self._chapter_text("help", "main-window")
+        for label in self.TOOL_TAB_LABELS:
+            self.assertIn(label, text, label)
+
+    def test_help_settings_chapter_names_every_settings_tab(self):
+        text = self._chapter_text("help", "conversion-settings")
+        for tab in ("General", "Folders", "Deletion", "Format", "Time", "Tools"):
+            self.assertIn(tab, text, tab)
+
+    def test_help_has_time_restrictions_and_converted_files_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        self.assertIn("time-restrictions", ids)
+        self.assertIn("converted-files", ids)
+
+    def test_help_has_a_chapter_per_tool_tab(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        for chapter_id in ("converted-files", "media-inspection", "pc-report",
+                           "lossless-editor", "multi-source-recorder", "media-player"):
+            self.assertIn(chapter_id, ids)
+
+    def test_help_has_language_and_updates_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("help", "en")]
+        self.assertIn("language", ids)
+        self.assertIn("updates-and-logs", ids)
+        text = self._chapter_text("help", "language")
+        for name in ("English", "Nederlands", "Simplified Chinese"):
+            self.assertIn(name, text, name)
+
+    def test_quickstart_has_record_and_review_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("quickstart", "en")]
+        self.assertEqual(ids[:4], ["before-you-start", "first-conversion",
+                                   "record-a-webcam", "review-a-recording"])
+        record = self._chapter_text("quickstart", "record-a-webcam")
+        for needle in ("Video Settings", "Start Recording", "Stop Recording"):
+            self.assertIn(needle, record, needle)
+        review = self._chapter_text("quickstart", "review-a-recording")
+        for needle in ("Play in Media Player", "Space", "F"):
+            self.assertIn(needle, review, needle)
+
+    def test_troubleshooting_covers_recorder_and_player(self):
+        text = self._chapter_text("help", "troubleshooting")
+        for needle in ("Could not find video device", "(not found)",
+                       "Windows cannot play this file", "Settings", "NVC_LOG_LEVEL"):
+            self.assertIn(needle, text, needle)
+
+    def test_glossary_defines_the_new_terms(self):
+        import importlib
+
+        package = cl.locale_package("en")
+        glossary = importlib.import_module(f"locales.{package}.glossary")
+        terms = {row[0] for row in glossary.GLOSSARY_ROWS}
+        for term in ("Media Foundation", "GenICam", "Preset", "Sync offset",
+                     "Frame step", "Playlist", "Administrator (elevation)", "Tool tab"):
+            self.assertIn(term, terms, term)
+
+    def test_recorder_chapter_covers_video_settings_and_presets(self):
+        text = self._chapter_text("help", "multi-source-recorder")
+        for needle in (
+            "Video Settings",
+            "RTSP/IP Camera",
+            "Refresh USB devices",
+            "Separate videos",
+            "Combined grid",
+            "Save as",
+            "(not found)",
+            "Sync offset",
+            "Start Recording",
+        ):
+            self.assertIn(needle, text, needle)
+        fig_ids = [
+            block["fig_id"]
+            for block in self._chapter("help", "multi-source-recorder")["blocks"]
+            if block["type"] == "figure"
+        ]
+        self.assertEqual(fig_ids, ["FIG-07", "FIG-09"])
+        for forbidden in ("Output quality", "Timer settings", "Time format"):
+            self.assertNotIn(forbidden, text, forbidden)
+
+    def test_pc_report_chapter_lists_every_section_in_registry_order(self):
+        import importlib
+
+        pc_registry = importlib.import_module("pc_report.registry")
+        titles = [pc_registry.by_key(key).title for key in pc_registry.ORDER]
+        text = self._chapter_text("help", "pc-report")
+        for title in titles:
+            self.assertIn(title, text, title)
+        self.assertNotIn("redaction enabled", text.lower())
+
     def test_every_supported_locale_validates(self):
         cl.validate_all(registry.SUPPORTED_DOCUMENT_TAGS)
 
@@ -359,6 +477,12 @@ class ShippedOutputTests(unittest.TestCase):
         for name in shipped:
             self.assertIsNotNone(registry.parse_manual_filename(name),
                                  f"{name} does not match the filename grammar")
+
+    def test_readme_names_the_current_doc_version(self):
+        """The README's filename table must follow DOC_VERSION, not lag behind it."""
+        readme = (SOURCE_DIR.parent / "README.md").read_text(encoding="utf-8")
+        self.assertIn(registry.manual_filename("help", "en", "pdf"), readme)
+        self.assertIn(registry.manual_filename("quickstart", "en", "pdf"), readme)
 
 
 if __name__ == "__main__":
