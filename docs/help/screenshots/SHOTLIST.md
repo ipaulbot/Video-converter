@@ -27,7 +27,7 @@ Save each file into this folder using exactly the filename in the table.
 |---|---|---|---|
 | FIG-00 | `fig-00-main-window.png` | The NVC main window, with the conversion log and preview panel. | Launch NVC with no job running. Full window, default size. |
 | FIG-01 | `fig-01-settings-general.png` | Settings, General tab: startup, Copy Only, tray and GPU options. | Menu → Settings, General tab as shipped. The Folders tab is not captured: it shows the operator's own paths. |
-| FIG-02 | `fig-02-settings-video.png` | Settings, Format tab: output format, codec and bitrate. | Menu → Settings, Format tab, output format `mp4`. |
+| FIG-02 | `fig-02-settings-video.png` | Settings, Format tab: output format, codecs and presets. | Menu → Settings, Format tab, output format `mp4`. |
 | FIG-03 | `fig-03-converted-files.png` | The Converted Files tab tracking queued and finished jobs. | The capture script adds three stand-in rows (`Session 1.mp4` success, `Session 2.mp4` processing, `Session 3.mp4` queued) so the status icons show without listing real files. |
 | FIG-04 | `fig-04-inspection.png` | The Video Inspection Tool tab, ready for a file to be dropped. | Video Inspection Tool tab, Summary sub-tab, no file loaded. |
 | FIG-05 | `fig-05-pc-report.png` | The PC Report tab before a report is generated. | PC Report tab as opened. Do not generate: a real report shows this machine's name and hardware. |
@@ -51,6 +51,7 @@ Device names: set `NVC_SHOTS_STUB_DEVICES=1` so DirectShow discovery returns
 `Camera A` / `Camera B` and `Microphone A` / `Microphone B` instead of the
 devices attached to your PC. Personal device names must never be committed.
 
-Redaction note: FIG-05 shows a PC report, which can contain machine details.
-Generate it with redaction enabled and check the visible fields before
-committing the PNG.
+Privacy note: FIG-05 is captured before a report is generated. A generated
+report shows the machine name, hardware and user account (redaction is always
+on, but it masks values, not the fact that they exist), so never capture the
+tab with a report in it.

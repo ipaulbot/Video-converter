@@ -22,6 +22,11 @@ Use this file as the shared parking lot for bugs, refactors, and new features.
   `pc_report` package and its tests are clean; fix the rest in a dedicated
   lint pass.
 
+- Converted Files has a Clear button (`ui/converted_files_widget.py:135`) that
+  is hidden at construction and never shown, so the table cannot be cleared
+  from the UI. Show it alongside Play, or remove it. The manual does not list
+  it.
+
 ## PC report follow-ups
 
 Remaining gaps against the SIW export, found by a section-by-section

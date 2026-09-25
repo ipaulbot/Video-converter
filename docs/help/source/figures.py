@@ -32,7 +32,7 @@ FIGURES: Final[list[dict[str, str]]] = [
     {
         "id": "FIG-02",
         "filename": "fig-02-settings-video.png",
-        "caption": "Settings, Format tab: output format, codec and bitrate.",
+        "caption": "Settings, Format tab: output format, codecs and presets.",
         "capture_steps": "Menu -> Settings. Format tab, output format set to mp4.",
     },
     {

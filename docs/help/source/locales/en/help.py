@@ -302,10 +302,11 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "Converted Files has File Name, Destination Folder and Date Modified columns. "
-                "Status icons identify queued, processing, successful and failed conversions.")},
+                "Status icons identify queued, processing, successful and failed conversions. "
+                "Play is a button below the table; it appears once a row is selected. The "
+                "remaining actions are on the row's right-click menu.")},
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Play", "Opens the selected file in the Media Player tab."),
-                ("Clear", "Clears the Converted Files table."),
                 ("Play in Media Player", "Opens the selected file in the Media Player tab."),
                 ("Open Containing Folder", "Opens the selected file's destination folder."),
                 ("Open Log File", "Opens a dialog containing the per-file conversion log."),
