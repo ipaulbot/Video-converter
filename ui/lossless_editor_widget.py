@@ -95,7 +95,9 @@ class LosslessEditorWidget(QWidget):
         file_row.setSpacing(6)
         self.input_edit = QLineEdit()
         self.input_edit.setPlaceholderText(_tr("Select a source media file"))
-        self.browse_btn = QPushButton(_tr("Browse..."))
+        self.browse_btn = make_icon_button(
+            "folder_open", _tr("Choose a source media file"), theme.skin().accent
+        )
         self.browse_btn.clicked.connect(self.browse_input)
         file_row.addWidget(QLabel(_tr("Input:")))
         file_row.addWidget(self.input_edit, 1)
@@ -179,7 +181,6 @@ class LosslessEditorWidget(QWidget):
         compact = theme.compact_button_style()
         accent = theme.skin().accent
         for button in (
-            self.browse_btn,
             self.trim_btn,
             self.remux_btn,
             self.extract_audio_btn,

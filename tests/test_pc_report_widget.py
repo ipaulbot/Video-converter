@@ -144,6 +144,18 @@ class PCReportWidgetTests(unittest.TestCase):
         self.assertEqual(widget.btn_folder.text(), "Open folder")
         self.assertEqual(widget.btn_admin.text(), "Run as administrator")
 
+    def test_secondary_actions_carry_glyphs_that_follow_the_skin(self):
+        widget = PCReportWidget()
+        expected = {"report": widget.btn_open, "folder_open": widget.btn_folder, "shield": widget.btn_admin}
+        for glyph, button in expected.items():
+            self.assertEqual(button.property("glyph"), glyph, button.text())
+            self.assertFalse(button.icon().isNull(), button.text())
+        self.assertTrue(widget.btn_run.icon().isNull())
+        before = widget.btn_open.icon().pixmap(16).toImage()
+        widget.update_button_style(locked=True)
+        after = widget.btn_open.icon().pixmap(16).toImage()
+        self.assertNotEqual(before, after)
+
     def test_admin_link_hidden_when_already_elevated(self):
         with patch.object(PCReportWidget, "is_elevated", staticmethod(lambda: True)):
             widget = PCReportWidget()

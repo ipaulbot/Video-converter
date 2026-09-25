@@ -9,6 +9,7 @@ from PyQt5.QtCore import (
     QCoreApplication,
     QEasingCurve,
     QPropertyAnimation,
+    QSize,
     Qt,
     QThread,
     QUrl,
@@ -34,6 +35,7 @@ from pc_report.render_html import render as render_html
 from pc_report.render_json import render as render_json
 from pc_report.section import esc
 from ui import theme
+from ui.glyph_icons import glyph_icon
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 
@@ -214,10 +216,17 @@ class PCReportWidget(QWidget):
         except Exception:
             logger.debug("PCReportWidget._set_logo: suppressed error", exc_info=True)
 
+    _LINK_GLYPHS = {"btn_open": "report", "btn_folder": "folder_open", "btn_admin": "shield"}
+
     def _apply_tier_styles(self):
         self.btn_run.setStyleSheet(theme.compact_button_style())
-        for link in (self.btn_open, self.btn_folder, self.btn_admin):
+        accent = theme.skin_for_state(locked=self.locked, active=self.converting).accent
+        for attr, glyph in self._LINK_GLYPHS.items():
+            link = getattr(self, attr)
             link.setStyleSheet(theme.link_button_style())
+            link.setProperty("glyph", glyph)
+            link.setIcon(glyph_icon(glyph, accent, 16))
+            link.setIconSize(QSize(16, 16))
 
     def apply_layout_mode(self, metrics):
         self.logo_width = metrics.pc_report_logo_w
