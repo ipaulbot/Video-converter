@@ -455,10 +455,12 @@ CHAPTERS: list[dict] = [
                 ("Output mode", "Separate videos writes one file per row; Combined grid writes "
                  "one file with all sources tiled."),
                 ("File location", "Sets the recording folder. The default is your Videos folder."),
-                ("File base name", "The default is Video. Files are named "
-                 "<base>_<Video name>_<timestamp>.mp4, or "
+                ("File base name", "The default is Video. Separate videos, and Combined grid "
+                 "with one enabled source, use <base>_<Video name>_<timestamp>.mp4. Combined "
+                 "grid with more than one enabled source uses "
                  "<base>_Combined_<timestamp>.mp4."),
-                ("Timer", "Leave blank to record until you press Stop Recording."),
+                ("Timer", 'The field shows "blank = until stopped"; leave it blank to record '
+                 "until you press Stop Recording."),
                 ("Show recording log", "Opens the recording log."),
                 ("Start Recording / Stop Recording", "The footer button starts or stops recording."),
             ]},
