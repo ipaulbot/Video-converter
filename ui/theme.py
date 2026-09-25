@@ -574,24 +574,24 @@ def panel_style(radius: int = RADIUS_LG) -> str:
             f"border-radius: {radius}px;")
 
 
-def drop_zone_style(radius: int = RADIUS_LG) -> str:
+def drop_zone_style(radius: int = 18) -> str:
     """The dashed drag-and-drop target, which highlights on hover."""
     s = skin()
     return (
         f"QWidget {{ background: {s.panel_bg}; "
-        f"border: 2px dashed {s.panel_border}; border-radius: {radius}px; "
+        f"border: 2px dashed {s.panel_border}; {leaf_radii(radius)} "
         f"margin: 10px; }} "
         f"QWidget:hover {{ border-color: {s.accent}; "
         f"background: {rgba(s.accent, 0.1)}; }}"
     )
 
 
-def preview_box_style(radius: int = RADIUS_LG) -> str:
+def preview_box_style(radius: int = 18) -> str:
     """The sidebar preview frame: a dashed drop target that accents on hover."""
     s = skin()
     return (
         f"QFrame {{ background: {s.panel_bg}; "
-        f"border: 2px dashed {s.panel_border}; border-radius: {radius}px; }} "
+        f"border: 2px dashed {s.panel_border}; {leaf_radii(radius)} }} "
         f"QFrame:hover {{ border: 2px dashed {s.accent}; "
         f"background: {rgba(s.accent, 0.05)}; }}"
     )

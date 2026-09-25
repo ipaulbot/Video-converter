@@ -42,6 +42,7 @@ from utils.subprocess_helpers import (
 from conversion.worker import ConversionWorker, WorkerSignals
 from conversion.ffmpeg_utils import is_within_allowed_time
 from ui.log_bus import LogBus
+from ui.leaf_frame import LeafFrame
 from ui.lossless_editor_widget import LosslessEditorWidget
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget
 from ui.media_player_widget import MediaPlayerWidget
@@ -122,9 +123,7 @@ class VideoConverterApp(QMainWindow):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent, stop:1 $accent_pressed);
                 border: 1px solid $accent_dark;
                 border-radius: 6px;
-                padding: 8px 16px;
-                min-width: 100px;
-                min-height: 32px;
+                padding: 6px 14px;
                 font-weight: bold;
                 color: white;
             }
@@ -135,9 +134,8 @@ class VideoConverterApp(QMainWindow):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent_pressed, stop:1 $accent_dark);
             }
             QTabWidget::pane {
-                border: 1px solid $separator;
-                background: white;
-                border-radius: 8px;
+                border: none;
+                background: transparent;
                 margin-top: 4px;
             }
             QTabBar::tab {
@@ -266,17 +264,18 @@ class VideoConverterApp(QMainWindow):
 
         # Store the full tab stylesheet as a template
         self.tab_stylesheet_template = (
-            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border-radius: 8px; }}")
+            theme.qss("QTabBar {{ color: $text_body; }} QTabBar::tab {{ min-width: 140px; padding: 10px 16px; font-family: 'Segoe UI', 'Arial', sans-serif; font-size: 9pt; border-top-left-radius: 6px; border-top-right-radius: 6px; background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; margin-right: 2px; font-weight: normal; color: $text_body; }} QTabBar::tab:selected {{ background: white; border-bottom: 2px solid {highlight}; color: $text_body; }} QTabBar::tab:selected:focus {{ color: $text_body; }} QTabBar::tab:selected:!focus {{ color: $text_body; }} QTabBar::tab:selected:active {{ color: $text_body; }} QTabBar::tab:!selected {{ background: $panel_alt_bg; border: 1px solid $separator; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; color: $text_body; }} QTabBar::tab:!selected:focus {{ color: $text_body; }} QTabBar::tab:!selected:active {{ color: $text_body; }} QTabWidget::pane {{ margin: 4px; border: none; background: transparent; }}")
         )
         # Set initial tab stylesheet with teal underline
         self.tabs = QTabWidget()
+        self.tool_tab_cards = {}
         self.tabs.setCursor(Qt.PointingHandCursor)
         self.tabs.setStyleSheet(self.tab_stylesheet_template.format(highlight="#43a296"))
         # Conversion Log Tab
         self.log_tab = QWidget()
         log_tab_layout = QVBoxLayout(self.log_tab)
         # Set margins to match video inspection tool
-        log_tab_layout.setContentsMargins(11, 11, 11, 11)
+        log_tab_layout.setContentsMargins(0, 0, 0, 0)
         self.console_output = QPlainTextEdit()
         self.console_output.setReadOnly(True)
         self.console_output.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -338,14 +337,14 @@ class VideoConverterApp(QMainWindow):
             QWidget { 
                 background: white; 
                 border: 2px dashed $panel_border; 
-                border-radius: 8px; 
+                $leaf
                 margin: 10px;
             }
             QWidget:hover {
                 border-color: $accent;
                 background: rgba(67, 162, 150, 0.1);
             }
-        """))
+        """, leaf=theme.leaf_radii(18)))
         # Allow context menu on overlay to fall back to log actions
         self.drag_drop_overlay.setContextMenuPolicy(Qt.CustomContextMenu)
         self.drag_drop_overlay.customContextMenuRequested.connect(
@@ -515,7 +514,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.log_tab_scroll.setWidget(self.log_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.log_tab)
+        self.tool_tab_cards["conversion_log"] = card
+        self.log_tab_scroll.setWidget(card)
         # Forward wheel events from the scroll area to the log text for smooth scrolling
         self.log_tab_scroll.wheelEvent = lambda e: self._forward_log_wheel(e)
         self.log_tab_scroll.installEventFilter(self)
@@ -525,7 +527,7 @@ class VideoConverterApp(QMainWindow):
         self.converted_files_tab = QWidget()
         converted_layout = QVBoxLayout(self.converted_files_tab)
         # Set margins to match conversion log baseline
-        converted_layout.setContentsMargins(11, 11, 11, 11)
+        converted_layout.setContentsMargins(0, 0, 0, 0)
         self.converted_files_widget = ConvertedFilesWidget(button_style=getattr(self, 'current_button_style', None))
         # Forward drag/drop from the converted list to the main window handler
         self.converted_files_widget.drop_files_signal.connect(self._handle_converted_tab_drop)
@@ -563,7 +565,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.converted_tab_scroll.setWidget(self.converted_files_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.converted_files_tab)
+        self.tool_tab_cards["converted_files"] = card
+        self.converted_tab_scroll.setWidget(card)
         # Accept drops anywhere in the Converted tab container and forward them to the table
         self.converted_tab_scroll.setAcceptDrops(True)
         self.converted_tab_scroll.dragEnterEvent = lambda e: self.converted_files_widget.dragEnterEvent(e)
@@ -574,7 +579,7 @@ class VideoConverterApp(QMainWindow):
         self.inspection_tab = QWidget()
         inspection_layout = QVBoxLayout(self.inspection_tab)
         # Set margins to match conversion log baseline
-        inspection_layout.setContentsMargins(11, 11, 11, 11)
+        inspection_layout.setContentsMargins(0, 0, 0, 0)
         self.inspection_widget = InspectionWidget()
         # Clean modern styling for inspection widget
         self.inspection_widget.setStyleSheet(theme.qss("QWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
@@ -632,7 +637,10 @@ class VideoConverterApp(QMainWindow):
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
-        self.inspection_tab_scroll.setWidget(self.inspection_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.inspection_tab)
+        self.tool_tab_cards["video_inspection"] = card
+        self.inspection_tab_scroll.setWidget(card)
         self.tabs.addTab(self.inspection_tab_scroll, _tr("Video Inspection Tool"))
 
         # PC Report Tab
@@ -645,7 +653,7 @@ class VideoConverterApp(QMainWindow):
         )
         self.pc_report_tab = QWidget()
         pc_report_layout = QVBoxLayout(self.pc_report_tab)
-        pc_report_layout.setContentsMargins(11, 11, 11, 11)
+        pc_report_layout.setContentsMargins(0, 0, 0, 0)
         pc_report_layout.addWidget(self.pc_report_widget)
         self.lock_icon_label_pc_report_tab = QLabel()
         self.status_label_pc_report_tab = QLabel()
@@ -656,7 +664,10 @@ class VideoConverterApp(QMainWindow):
         self.pc_report_tab_scroll = QScrollArea()
         self.pc_report_tab_scroll.setWidgetResizable(True)
         self.pc_report_tab_scroll.setFrameStyle(0)
-        self.pc_report_tab_scroll.setWidget(self.pc_report_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.pc_report_tab)
+        self.tool_tab_cards["pc_report"] = card
+        self.pc_report_tab_scroll.setWidget(card)
         self.tabs.addTab(self.pc_report_tab_scroll, _tr("PC Report"))
 
         # Lossless Editor Tab
@@ -667,7 +678,7 @@ class VideoConverterApp(QMainWindow):
         )
         self.lossless_editor_tab = QWidget()
         lossless_editor_layout = QVBoxLayout(self.lossless_editor_tab)
-        lossless_editor_layout.setContentsMargins(11, 11, 11, 11)
+        lossless_editor_layout.setContentsMargins(0, 0, 0, 0)
         lossless_editor_layout.addWidget(self.lossless_editor_widget)
         self.lock_icon_label_lossless_editor_tab = QLabel()
         self.status_label_lossless_editor_tab = QLabel()
@@ -677,7 +688,10 @@ class VideoConverterApp(QMainWindow):
         self.lossless_editor_tab_scroll = QScrollArea()
         self.lossless_editor_tab_scroll.setWidgetResizable(True)
         self.lossless_editor_tab_scroll.setFrameStyle(0)
-        self.lossless_editor_tab_scroll.setWidget(self.lossless_editor_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.lossless_editor_tab)
+        self.tool_tab_cards["lossless_editor"] = card
+        self.lossless_editor_tab_scroll.setWidget(card)
         self.tabs.addTab(self.lossless_editor_tab_scroll, _tr("Lossless Editor"))
 
         # Multi-Source Recorder Tab
@@ -692,7 +706,7 @@ class VideoConverterApp(QMainWindow):
         self.multi_source_recorder_widget.stop_btn.clicked.connect(self.toggle_process)
         self.multi_source_recorder_tab = QWidget()
         multi_source_recorder_layout = QVBoxLayout(self.multi_source_recorder_tab)
-        multi_source_recorder_layout.setContentsMargins(11, 11, 11, 11)
+        multi_source_recorder_layout.setContentsMargins(0, 0, 0, 0)
         multi_source_recorder_layout.addWidget(self.multi_source_recorder_widget)
         self.lock_icon_label_multi_source_recorder_tab = QLabel()
         self.status_label_multi_source_recorder_tab = QLabel()
@@ -702,7 +716,10 @@ class VideoConverterApp(QMainWindow):
         self.multi_source_recorder_tab_scroll = QScrollArea()
         self.multi_source_recorder_tab_scroll.setWidgetResizable(True)
         self.multi_source_recorder_tab_scroll.setFrameStyle(0)
-        self.multi_source_recorder_tab_scroll.setWidget(self.multi_source_recorder_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.multi_source_recorder_tab)
+        self.tool_tab_cards["multi_source_recorder"] = card
+        self.multi_source_recorder_tab_scroll.setWidget(card)
         self.tabs.addTab(self.multi_source_recorder_tab_scroll, _tr("Multi-Source Recorder"))
 
         # Media Player Tab. The player tree (4 video panels) is heavy and the tab is
@@ -712,7 +729,7 @@ class VideoConverterApp(QMainWindow):
         self.media_player_widget = None
         self.media_player_tab = QWidget()
         media_player_layout = QVBoxLayout(self.media_player_tab)
-        media_player_layout.setContentsMargins(11, 11, 11, 11)
+        media_player_layout.setContentsMargins(0, 0, 0, 0)
         self.media_player_layout = media_player_layout
         self.media_player_placeholder = QLabel(_tr("Loading media player…"))
         self.media_player_placeholder.setAlignment(Qt.AlignCenter)
@@ -725,7 +742,10 @@ class VideoConverterApp(QMainWindow):
         self.media_player_tab_scroll = QScrollArea()
         self.media_player_tab_scroll.setWidgetResizable(True)
         self.media_player_tab_scroll.setFrameStyle(0)
-        self.media_player_tab_scroll.setWidget(self.media_player_tab)
+        card = LeafFrame(radius=28)
+        card.body.addWidget(self.media_player_tab)
+        self.tool_tab_cards["media_player"] = card
+        self.media_player_tab_scroll.setWidget(card)
         self.tabs.addTab(self.media_player_tab_scroll, _tr("Media Player"))
 
         self.tool_tab_widgets = {
@@ -1083,28 +1103,28 @@ class VideoConverterApp(QMainWindow):
                         QWidget { 
                             background: rgba(255, 255, 255, 0.5); 
                             border: 2px dashed $panel_border; 
-                            border-radius: 8px; 
+                            $leaf
                             margin: 10px;
                         }
                         QWidget:hover {
                             border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                 else:
                     # Fully opaque overlay when idle and no log content
                     self.drag_drop_overlay.setStyleSheet(theme.qss("""
                         QWidget { 
                             background: white; 
                             border: 2px dashed $panel_border; 
-                            border-radius: 8px; 
+                            $leaf
                             margin: 10px;
                         }
                         QWidget:hover {
                             border-color: $accent;
                             background: rgba(67, 162, 150, 0.1);
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                 # Hide the overlay text ONLY if conversion is running or after a drop
                 if self.is_converting:
                     self.drag_drop_text.hide()
@@ -1387,7 +1407,7 @@ class VideoConverterApp(QMainWindow):
             self.media_player_layout.removeWidget(placeholder)
             placeholder.deleteLater()
             self.media_player_placeholder = None
-        self.media_player_layout.insertWidget(0, widget)
+        self.tool_tab_cards["media_player"].body.insertWidget(0, widget)
         return widget
 
     def play_in_media_player(self, path):
@@ -1973,10 +1993,10 @@ class VideoConverterApp(QMainWindow):
                         QWidget {
                             background: rgba(255, 255, 255, 0.5);
                             border: 2px dashed $panel_border;
-                            border-radius: 8px;
+                            $leaf
                             margin: 10px;
                         }
-                    """))
+                    """, leaf=theme.leaf_radii(18)))
                     self.drag_drop_overlay.show()
         except Exception:
             logger.debug("VideoConverterApp._play_ballbuster_intro: suppressed error", exc_info=True)
@@ -2702,10 +2722,10 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(67, 162, 150, 0.1); 
                     border: 2px solid $accent; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
             self.drag_drop_overlay.show()
             # Keep instruction consistent while hovering
             self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
@@ -2720,27 +2740,27 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         else:
             self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         # Always reset to default instruction after drag leave
         self.drag_drop_text.setText(_tr("Drag and drop media files here\nor select source folder to start monitoring and converting"))
         # Always show the overlay
@@ -2754,27 +2774,27 @@ class VideoConverterApp(QMainWindow):
                 QWidget { 
                     background: rgba(255, 255, 255, 0.5); 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         else:
             self.drag_drop_overlay.setStyleSheet(theme.qss("""
                 QWidget { 
                     background: white; 
                     border: 2px dashed $panel_border; 
-                    border-radius: 8px; 
+                    $leaf
                     margin: 10px;
                 }
                 QWidget:hover {
                     border-color: $accent;
                     background: rgba(67, 162, 150, 0.1);
                 }
-            """))
+            """, leaf=theme.leaf_radii(18)))
         # After drop, hide only the text, keep the overlay visible
         self.drag_drop_text.hide()
         self.drag_drop_overlay.show()
@@ -3017,10 +3037,10 @@ class VideoConverterApp(QMainWindow):
                     QWidget { 
                         background: rgba(67, 162, 150, 0.1); 
                         border: 2px dashed $accent; 
-                        border-radius: 8px; 
+                        $leaf
                         margin: 10px;
                     }
-                """))
+                """, leaf=theme.leaf_radii(18)))
                 return False  # Let the event continue
             elif event.type() == QEvent.Leave:
                 # Mouse left the overlay - restore normal styling
