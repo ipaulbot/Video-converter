@@ -88,9 +88,10 @@ CHAPTERS: list[dict] = [
                 "Recording. The lock icon locks settings, and the Start button then reads "
                 "Locked. The file picker selects media files to convert, and the broom clears "
                 "the log.",
-                "Closing the window minimises NVC to the system tray unless "
-                "\"Close on X (don't minimize to tray)\" is set in Settings -- General. The "
-                "tray menu has Show and Quit. Only one copy of NVC can run at a time.",
+                "Clicking X closes NVC by default. Clear "
+                "\"Close on X (don't minimize to tray)\" in Settings -- General to minimise "
+                "to the system tray instead. The tray menu has Show and Quit. Only one copy "
+                "of NVC can run at a time.",
             ]},
         ],
     },
@@ -134,7 +135,8 @@ CHAPTERS: list[dict] = [
                 ("Copy Only",
                  "Copies files without converting them."),
                 ("Close on X (don't minimize to tray)",
-                 "Closes NVC when you click X instead of minimising it to the system tray."),
+                 "Ticked by default. Clear it to minimise NVC to the system tray when you "
+                 "click X."),
                 ("Launch at Windows startup (All Users)",
                  "Launches NVC when Windows starts for all users and requires permission."),
                 ("Use GPU Acceleration",
@@ -282,7 +284,8 @@ CHAPTERS: list[dict] = [
                 "End Time for conversion.")},
             {"type": "note", "items": [
                 "A file detected outside the window is skipped with \"Current time outside "
-                "allowed range\" in the Conversion Log. It is not queued for later.",
+                "allowed range\" in the Conversion Log. It is not queued for later. Drop the "
+                "file again, or let monitoring re-detect it, inside the permitted window.",
                 "An End Time earlier than the Start Time means an overnight window.",
                 "The default is No Time Restrictions.",
             ]},
