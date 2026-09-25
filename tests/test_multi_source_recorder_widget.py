@@ -87,6 +87,44 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertTrue(callable(widget.video_name_edits[0].mouseDoubleClickEvent))
 
+    def test_audio_discovery_populates_all_row_combos(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+
+        widget._apply_audio_devices(["Microphone A", "Microphone B"])
+
+        for row in widget.source_rows:
+            self.assertEqual(
+                [row[7].itemText(index) for index in range(row[7].count())],
+                ["No Audio", "Microphone A", "Microphone B"],
+            )
+
+    def test_stored_missing_audio_device_is_displayed_and_preserved(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        settings = widget.capture_recorder_settings()
+        settings["channels"][0]["audio_device"] = "Lab Microphone"
+
+        widget.apply_recorder_settings(settings, refresh_previews=False)
+        widget._apply_audio_devices(["Microphone A"])
+
+        combo = widget.source_rows[0][7]
+        self.assertEqual(combo.currentText(), "Lab Microphone (not found)")
+        self.assertEqual(combo.currentData(), "Lab Microphone")
+        self.assertEqual(
+            widget.capture_recorder_settings()["channels"][0]["audio_device"],
+            "Lab Microphone",
+        )
+
+    def test_widget_starts_audio_discovery_on_creation(self):
+        started = []
+        with patch.object(
+            MultiSourceRecorderWidget,
+            "start_audio_device_discovery",
+            lambda self, force=False: started.append(force),
+        ):
+            MultiSourceRecorderWidget(auto_preview=False)
+
+        self.assertEqual(started, [False])
+
     def test_selecting_usb_directshow_updates_preview_guidance(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         row = widget.source_rows[0]
