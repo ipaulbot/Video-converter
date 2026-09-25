@@ -16,7 +16,7 @@
 - **Never change an existing chapter `id`.** New chapters get new ids. Titles may be reworded.
 - **Describe only what the code does.** Before writing a chapter, open the files/lines cited for it in the spec's inventory and quote UI strings exactly (`"Video Inspection Tool"`, not "Inspection"). Do not describe the recorder's "Output quality" combo or "Timer settings" group: they are inert.
 - Block grammar is fixed: `para` (`text`), `steps` (`items`), `note` (`items`), `figure` (`fig_id`), `code` (`lines`), `table` (`headers`, `rows` of equal width). Both builders reject anything else.
-- Plain ASCII in content except where the UI string itself is not (`简体中文`). Use `--` for dashes as the existing content does. Write `%APPDATA%` style paths, never a real user's path.
+- Plain ASCII in content; the PDF body font is Helvetica, which has no CJK glyphs, so the Chinese menu entry is written as "Simplified Chinese" (the menu itself shows it in Chinese). The Unicode middle dot in the player readout is fine. Use `--` for dashes as the existing content does. Write `%APPDATA%` style paths, never a real user's path.
 - **Privacy:** no real user names, machine names, serials or personal device names anywhere — content, tests, screenshots. Stand-ins are "Camera A", "Camera B", "Microphone A", "Microphone B". After Task 8: `rg -i -c "PBH-80|80JDBS3|paham|NITINC|DC03|NOLDUSINC" docs/help/source docs/help/screenshots/SHOTLIST.md tests/` must print nothing (exit 1).
 - Tests: `python -m pytest -q -p no:cacheprovider <paths>`; exit code 0 is the pass signal. Docs tests live in `docs/help/source/test_help_docs.py` and run as part of the normal suite.
 - Lint: `python -m ruff check <touched files>` clean on files you touched.
@@ -602,7 +602,7 @@ git commit -m "docs(help): add the Media Player chapter; pin every shortcut to t
         self.assertIn("language", ids)
         self.assertIn("updates-and-logs", ids)
         text = self._chapter_text("help", "language")
-        for name in ("English", "Nederlands", "\u7b80\u4f53\u4e2d\u6587"):
+        for name in ("English", "Nederlands", "Simplified Chinese"):
             self.assertIn(name, text, name)
 
     def test_troubleshooting_covers_recorder_and_player(self):
@@ -629,7 +629,7 @@ Expected: 3 FAIL.
 
 - [ ] **Step 3: Write and revise the chapters**
 
-`language` (new) — `para`: Menu → Language lists English, Nederlands and 简体中文; the choice is saved and NVC asks you to restart so every window is retranslated; the manuals are in English.
+`language` (new) — `para`: Menu → Language lists English, Nederlands and Simplified Chinese (the last entry appears in the menu in Chinese characters); the choice is saved and NVC asks you to restart so every window is retranslated; the manuals are in English.
 
 `updates-and-logs` (new) — `table` ("Item", "Where / what"): "Check for Updates" (menu; a build without an update address answers "Updates Not Configured"; when one is configured and a newer version exists, "Update Available!" appears in the sidebar), "Log file" (`%APPDATA%\NVC\logs\conversion_log.txt` unless Settings → Folders → Log Folder points elsewhere; rotates), "NVC_LOG_LEVEL" (environment variable; set to DEBUG to record full tracebacks), "Settings file" (`%APPDATA%\NVC\config.json`), "Default media folders" (`Public\Documents\Noldus\NVC\Source`, `Destination`, `Backup`), "Recorder presets" (`Public\Documents\Noldus\NVC\MediaRecorder\Presets`).
 
