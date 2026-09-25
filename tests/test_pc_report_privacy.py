@@ -133,6 +133,57 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         self.assertNotEqual(redacted["ProcessorId"], "BFEBFBFF000906A2")
 
+    def test_device_instance_ids_mask_trailing_serial_segments(self):
+        ids = [
+            r"USB\VID_1234&PID_5678\PHONE-SERIAL",
+            r"USBSTOR\DISK&VEN_TEST&PROD_DRIVE\DISK-SERIAL",
+            r"SCSI\DISK&VEN_TEST&PROD_DRIVE\4&PRIVATE&0&000000",
+            r"SWD\WPDBUSENUM\{PRIVATE-PHONE-ID}",
+            r"BTHENUM\DEV_001122334455\7&PRIVATE&0&BLUETOOTHDEVICE_001122334455",
+            r"BTHLE\DEV_001122334455\8&PRIVATE&0&001122334455",
+            r"DISPLAY\DEL1234\MONITOR-SERIAL",
+        ]
+        for key in ("InstanceId", "DeviceID", "PNPDeviceID"):
+            for value in ids:
+                with self.subTest(key=key, value=value):
+                    redacted = redact_payload({key: value}, {"redact": True}, env={})[key]
+                    self.assertEqual(redacted.rsplit("\\", 1)[0], value.rsplit("\\", 1)[0])
+                    self.assertNotEqual(redacted.rsplit("\\", 1)[1], value.rsplit("\\", 1)[1])
+
+    def test_device_instance_ids_preserve_generic_and_nonportable_paths(self):
+        ids = [
+            r"USB\VID_1234&PID_5678\7&1A2B3C4D&0&2",
+            r"PCI\VEN_8086&DEV_15BB\3&11583659&0&FE",
+            r"ACPI\PNP0A0A\0",
+            r"ROOT\SYSTEM\0000",
+            r"HID\VID_1234&PID_5678\7&1A2B3C4D&0&0000",
+        ]
+        for value in ids:
+            with self.subTest(value=value):
+                self.assertEqual(
+                    redact_payload({"InstanceId": value}, {"redact": True}, env={})["InstanceId"],
+                    value,
+                )
+
+    def test_bluetooth_personal_friendly_names_are_masked(self):
+        rows = [
+            {"InstanceId": r"BTHENUM\DEV_001122334455\7&PRIVATE&0&001122334455", "FriendlyName": "Jane's iPhone", "Name": "Jane's iPhone"},
+            {"DeviceID": r"BTHLE\DEV_001122334455\8&PRIVATE&0&001122334455", "FriendlyName": "Pat Galaxy S24", "Name": "Pat Galaxy S24"},
+            {"DeviceID": r"USB\VID_1234&PID_5678\7&1A2B3C4D&0&2", "Name": "USB - Clark Kent\u2019s Headphones"},
+            {"DeviceID": r"SWD\MMDEVAPI\{endpoint}", "FriendlyName": "Jane's iPhone Microphone"},
+            {"InstanceId": r"PCI\VEN_8086&DEV_15BB\3&11583659&0&FE", "Name": "Intel Ethernet"},
+        ]
+
+        redacted = redact_payload(rows, {"redact": True}, env={})
+
+        self.assertNotEqual(redacted[0]["FriendlyName"], rows[0]["FriendlyName"])
+        self.assertNotEqual(redacted[0]["Name"], rows[0]["Name"])
+        self.assertNotEqual(redacted[1]["FriendlyName"], rows[1]["FriendlyName"])
+        self.assertNotEqual(redacted[1]["Name"], rows[1]["Name"])
+        self.assertNotEqual(redacted[2]["Name"], rows[2]["Name"])
+        self.assertNotEqual(redacted[3]["FriendlyName"], rows[3]["FriendlyName"])
+        self.assertEqual(redacted[4]["Name"], rows[4]["Name"])
+
     def test_start_name_leaves_well_known_accounts_readable(self):
         payload = [
             {"StartName": "LocalSystem"},

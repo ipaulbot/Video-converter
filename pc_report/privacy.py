@@ -90,6 +90,12 @@ def _mask_command_secret_arg(match: re.Match[str]) -> str:
         gap = ""
     return prefix + gap + "***"
 _PIPE_NAME = re.compile(r"(\\\\\.\\pipe\\)[^\s\"<>]+", re.IGNORECASE)
+_PORTABLE_INSTANCE_PREFIXES = (
+    "USB\\", "USBSTOR\\", "SCSI\\", "SWD\\WPDBUSENUM\\",
+    "BTHENUM\\", "BTHLE\\", "DISPLAY\\",
+)
+_GENERIC_INSTANCE_SEGMENT = re.compile(r"^\d+&[0-9A-F]+&0&", re.IGNORECASE)
+_PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u2019)s\b)", re.IGNORECASE)
 
 
 def norm_key(key) -> str:
@@ -107,6 +113,19 @@ def mask_string(value, keep: int = 4):
     if len(s) < 2 * (keep + 2):
         return "*" * len(s)
     return s[:2] + "*" * max(1, len(s) - keep - 2) + s[-keep:]
+
+
+def redact_instance_id(value):
+    """Mask a portable device ID's trailing serial/instance segment."""
+    if not isinstance(value, str):
+        return value
+    upper = value.upper()
+    if not upper.startswith(_PORTABLE_INSTANCE_PREFIXES) or "\\" not in value:
+        return value
+    stem, segment = value.rsplit("\\", 1)
+    if not segment or _GENERIC_INSTANCE_SEGMENT.match(segment):
+        return value
+    return f"{stem}\\{mask_string(segment)}"
 
 
 def _is_well_known_account(value) -> bool:
@@ -231,6 +250,21 @@ def redact_payload(data, options=None, *, env=None):
     def redact_value(key, value):
         if isinstance(value, dict):
             out = {k: redact_value(k, v) for k, v in value.items()}
+            instance_id = next(
+                (
+                    item for item_key, item in value.items()
+                    if norm_key(item_key) in {"instanceid", "deviceid", "pnpdeviceid"}
+                    and isinstance(item, str)
+                ),
+                "",
+            )
+            if instance_id.upper().startswith(("BTHENUM\\", "BTHLE\\")):
+                for name_key in ("FriendlyName", "Name"):
+                    if name_key in out:
+                        out[name_key] = mask_string(out[name_key])
+            for name_key in ("FriendlyName", "Name"):
+                if isinstance(out.get(name_key), str) and _PERSONAL_DEVICE_NAME.search(out[name_key]):
+                    out[name_key] = mask_string(out[name_key])
             # Name/Value rows (environment variables, registry dumps): the name says what is sensitive.
             if isinstance(out.get("Name"), str) and "Value" in out and _name_is_sensitive(out["Name"]):
                 out["Value"] = mask_string(out["Value"])
@@ -240,6 +274,8 @@ def redact_payload(data, options=None, *, env=None):
         if value is None or value == REQUIRES_ADMIN or isinstance(value, (bool, int, float)):
             return value
         key_l = norm_key(key)
+        if key_l in {"instanceid", "deviceid", "pnpdeviceid"}:
+            return redact_instance_id(value)
         if any(t in key_l for t in MAC_TOKENS):
             return mask_mac(value)
         if any(t in key_l for t in IP_TOKENS):
