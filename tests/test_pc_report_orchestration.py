@@ -7,8 +7,8 @@ and the PowerShell runner's subprocess is patched.
 import unittest
 from unittest.mock import patch
 
-from pc_report import orchestrator, registry
 from pc_report import format as pcformat
+from pc_report import orchestrator, registry
 from pc_report import ps as pcps
 from pc_report.section import Section
 
