@@ -18,9 +18,10 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from utils.logger import logger
 from ui import theme
-
+from ui.media_player_support import MEDIA_PLAYER_DEFAULTS
+from utils.config import normalize_media_player_settings
+from utils.logger import logger
 
 
 def _tr(source: str) -> str:
@@ -86,12 +87,14 @@ class PlayerPanel(QWidget):
     def __init__(self, index, parent=None):
         super().__init__(parent)
         self.index = index
+        self.host = parent
         self.setAcceptDrops(True)
         self._media_path = ""
         self.player = None
         # The host wires these so the player can drive the shared timeline once created.
         self.on_duration_changed = None
         self.on_media_status_changed = None
+        self.on_player_created = None
         self._build_ui()
 
     def _build_ui(self):
@@ -181,11 +184,18 @@ class PlayerPanel(QWidget):
         self.player = QMediaPlayer(self, QMediaPlayer.VideoSurface)
         self.player.setVideoOutput(self._ensure_video_widget())
         self.player.setNotifyInterval(50)
+        if callable(self.on_player_created):
+            self.on_player_created(self)
         if callable(self.on_duration_changed):
             self.player.durationChanged.connect(self.on_duration_changed)
         if callable(self.on_media_status_changed):
             self.player.mediaStatusChanged.connect(self.on_media_status_changed)
         return self.player
+
+    def apply_audio(self, volume, muted):
+        if self.player is not None:
+            self.player.setVolume(int(volume))
+            self.player.setMuted(bool(muted))
 
     def has_media(self):
         return bool(self._media_path)
@@ -197,8 +207,11 @@ class PlayerPanel(QWidget):
         return self.player.duration() if self.player is not None else 0
 
     def browse_for_media(self):
-        path, _ = QFileDialog.getOpenFileName(self, "Open video", "", VIDEO_NAME_FILTER)
+        start_dir = self.host.last_folder() if self.host is not None and hasattr(self.host, "last_folder") else ""
+        path, _ = QFileDialog.getOpenFileName(self, _tr("Open video"), start_dir, VIDEO_NAME_FILTER)
         if path:
+            if self.host is not None and hasattr(self.host, "set_last_folder"):
+                self.host.set_last_folder(path)
             self.load_media(path)
 
     def load_media(self, path):
@@ -239,13 +252,19 @@ class PlayerPanel(QWidget):
 class MediaPlayerWidget(QWidget):
     """Observer-style synchronized multi-panel player (up to four clips at once)."""
 
-    def __init__(self, parent=None, button_style=None):
+    def __init__(self, parent=None, button_style=None, settings=None, save_settings=None, threadpool=None):
         super().__init__(parent)
         self.button_style = button_style
+        self.settings = settings if settings is not None else {}
+        self._save_settings = save_settings if callable(save_settings) else (lambda: None)
+        self.threadpool = threadpool
+        self.settings["media_player"] = normalize_media_player_settings(self.settings.get("media_player"))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.panels = []
         self._is_playing = False
         self._suppress_seek = False
+        self._timers = []
+        self._restoring = False
         self._build_ui()
 
         self.sync_timer = QTimer(self)
@@ -253,7 +272,18 @@ class MediaPlayerWidget(QWidget):
         self.sync_timer.timeout.connect(self._on_tick)
         self.sync_timer.start()
 
-        self.set_visible_panel_count(2)
+        # Restoring saved values fires the same change slots as user input; do not
+        # write the settings file back while doing so.
+        self._restoring = True
+        try:
+            group = self.settings_group
+            self.volume_slider.setValue(group["volume"])
+            self.mute_btn.setChecked(group["muted"])
+            self.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(group["panel_count"]))
+            self.set_visible_panel_count(group["panel_count"])
+            self._apply_audio_to_panels()
+        finally:
+            self._restoring = False
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
@@ -279,10 +309,11 @@ class MediaPlayerWidget(QWidget):
             panel = PlayerPanel(index, self)
             panel.on_duration_changed = self._on_any_duration_changed
             panel.on_media_status_changed = self._on_media_status_changed
+            panel.on_player_created = self._on_player_created
             self.panels.append(panel)
         # 2x2 grid layout positions.
         positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        for panel, (row, col) in zip(self.panels, positions):
+        for panel, (row, col) in zip(self.panels, positions, strict=True):
             self.grid.addWidget(panel, row, col)
         layout.addLayout(self.grid, 1)
 
@@ -330,6 +361,19 @@ class MediaPlayerWidget(QWidget):
         self.speed_combo.setCurrentIndex(PLAYBACK_SPEEDS.index(1.0))
         self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
 
+        volume_label = QLabel(_tr("Volume"))
+        volume_label.setStyleSheet(theme.video_label_style())
+        self.volume_slider = QSlider(Qt.Horizontal)
+        self.volume_slider.setRange(0, 100)
+        self.volume_slider.setValue(MEDIA_PLAYER_DEFAULTS["volume"])
+        self.volume_slider.setFixedWidth(110)
+        self.volume_slider.setToolTip(_tr("Volume for every panel"))
+        self.volume_slider.valueChanged.connect(self._on_volume_slider_changed)
+        self.mute_btn = QPushButton(_tr("Mute"))
+        self.mute_btn.setCheckable(True)
+        self.mute_btn.setCursor(Qt.PointingHandCursor)
+        self.mute_btn.toggled.connect(self._on_mute_toggled)
+
         panels_label = QLabel(_tr("Panels"))
         panels_label.setStyleSheet(theme.video_label_style())
         self.panels_combo = QComboBox()
@@ -346,11 +390,78 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.panels_combo)
         button_row.addWidget(speed_label)
         button_row.addWidget(self.speed_combo)
+        button_row.addWidget(volume_label)
+        button_row.addWidget(self.volume_slider)
+        button_row.addWidget(self.mute_btn)
         bar.addLayout(button_row)
         if self.button_style:
-            for button in (self.play_btn, self.stop_btn, self.restart_btn):
+            for button in (self.play_btn, self.stop_btn, self.restart_btn, self.mute_btn):
                 button.setStyleSheet(self.button_style)
         return bar
+
+    # --- audio & persistence ---------------------------------------------
+    @property
+    def settings_group(self):
+        return self.settings["media_player"]
+
+    def _persist(self, **changes):
+        self.settings_group.update(changes)
+        if not self._restoring:
+            self._save_settings()
+
+    def last_folder(self):
+        return self.settings_group.get("last_folder", "")
+
+    def set_last_folder(self, path):
+        folder = path if os.path.isdir(path or "") else os.path.dirname(path or "")
+        if folder and folder != self.last_folder():
+            self._persist(last_folder=folder)
+
+    def _schedule(self, msec, callback):
+        """Run `callback` after `msec` while this widget lives (no QTimer.singleShot)."""
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        self._timers.append(timer)
+
+        def fire():
+            if timer in self._timers:
+                self._timers.remove(timer)
+            callback()
+
+        timer.timeout.connect(fire)
+        timer.start(max(0, int(msec)))
+        return timer
+
+    def volume(self):
+        return self.volume_slider.value()
+
+    def is_muted(self):
+        return self.mute_btn.isChecked()
+
+    def set_volume(self, value):
+        self.volume_slider.setValue(max(0, min(100, int(value))))
+
+    def set_muted(self, muted):
+        self.mute_btn.setChecked(bool(muted))
+
+    def adjust_volume(self, delta):
+        self.set_volume(self.volume() + int(delta))
+
+    def _apply_audio_to_panels(self):
+        for panel in self.panels:
+            panel.apply_audio(self.volume(), self.is_muted())
+
+    def _on_volume_slider_changed(self, value):
+        self._apply_audio_to_panels()
+        self._persist(volume=int(value))
+
+    def _on_mute_toggled(self, checked):
+        self.mute_btn.setText(_tr("Unmute") if checked else _tr("Mute"))
+        self._apply_audio_to_panels()
+        self._persist(muted=bool(checked))
+
+    def _on_player_created(self, panel):
+        panel.apply_audio(self.volume(), self.is_muted())
 
     # --- panel visibility -------------------------------------------------
     def set_visible_panel_count(self, count):
@@ -361,7 +472,9 @@ class MediaPlayerWidget(QWidget):
         return sum(1 for panel in self.panels if not panel.isHidden())
 
     def _on_panel_count_changed(self, _index):
-        self.set_visible_panel_count(self.panels_combo.currentData())
+        count = self.panels_combo.currentData()
+        self.set_visible_panel_count(count)
+        self._persist(panel_count=int(count))
 
     # --- active players ---------------------------------------------------
     def active_panels(self):
@@ -484,6 +597,8 @@ class MediaPlayerWidget(QWidget):
         )
 
     def shutdown(self):
+        for timer in self._timers:
+            timer.stop()
         try:
             self.sync_timer.stop()
         except Exception:

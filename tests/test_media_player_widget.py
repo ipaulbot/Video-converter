@@ -40,6 +40,14 @@ class MediaPlayerWidgetTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
+    def _widget(self, settings=None, saves=None):
+        widget = MediaPlayerWidget(
+            settings=settings if settings is not None else {},
+            save_settings=(lambda: saves.append(1)) if saves is not None else None,
+        )
+        self.addCleanup(widget.shutdown)
+        return widget
+
     # No tearDown: conftest's reap_hidden_top_level_widgets calls shutdown()
     # and destroys this test's windows. What used to be here paired
     # deleteLater() with processEvents(), which reads like a cleanup and
@@ -91,6 +99,51 @@ class MediaPlayerWidgetTests(unittest.TestCase):
                 self.assertEqual(panel.offset_ms(), 0)
         finally:
             widget.shutdown()
+
+    def test_volume_and_mute_reach_every_created_player(self):
+        widget = self._widget()
+        first = widget.panels[0]._ensure_player()
+        second = widget.panels[1]._ensure_player()
+        widget.set_volume(40)
+        widget.set_muted(True)
+        for player in (first, second):
+            self.assertEqual(player.volume(), 40)
+            self.assertTrue(player.isMuted())
+        # A panel whose player is created later inherits the current audio state.
+        third = widget.panels[2]._ensure_player()
+        self.assertEqual(third.volume(), 40)
+        self.assertTrue(third.isMuted())
+
+    def test_volume_controls_persist_to_settings_group(self):
+        saves = []
+        settings = {}
+        widget = self._widget(settings=settings, saves=saves)
+        widget.volume_slider.setValue(55)
+        widget.mute_btn.setChecked(True)
+        widget.panels_combo.setCurrentIndex(0)  # 1 panel
+        self.assertEqual(settings["media_player"]["volume"], 55)
+        self.assertTrue(settings["media_player"]["muted"])
+        self.assertEqual(settings["media_player"]["panel_count"], 1)
+        self.assertGreaterEqual(len(saves), 3)
+
+    def test_widget_restores_settings_group_on_creation(self):
+        settings = {"media_player": {"volume": 20, "muted": True, "panel_count": 4, "last_folder": "C:\\Videos"}}
+        saves = []
+        widget = self._widget(settings=settings, saves=saves)
+        self.assertEqual(widget.volume(), 20)
+        self.assertTrue(widget.is_muted())
+        self.assertEqual(widget.visible_panel_count(), 4)
+        self.assertEqual(widget.last_folder(), "C:\\Videos")
+        # Restoring saved values must not write the settings file back.
+        self.assertEqual(saves, [])
+
+    def test_adjust_volume_clamps_and_unmutes_on_increase(self):
+        widget = self._widget()
+        widget.set_volume(98)
+        widget.adjust_volume(+5)
+        self.assertEqual(widget.volume(), 100)
+        widget.adjust_volume(-200)
+        self.assertEqual(widget.volume(), 0)
 
 
 if __name__ == "__main__":
