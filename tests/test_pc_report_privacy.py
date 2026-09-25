@@ -157,10 +157,10 @@ class PcReportPrivacyTests(unittest.TestCase):
             r"BTHLEDEVICE\{0000FE78-0000-1000-8000-00805F9B34FB}_4A9EBDC39A33\8&1DFE3610&0&0012",
         ]
         expected_mac = [
-            "183F******FB",
-            "183F******FB",
-            "4A9E******33",
-            "4A9E******33",
+            "183F70******",
+            "183F70******",
+            "4A9EBD******",
+            "4A9EBD******",
         ]
         token = re.compile(r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])")
         braces = re.compile(r"\{[^{}]*\}")
@@ -250,6 +250,31 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotEqual(redacted[0]["Name"], rows[0]["Name"])
         self.assertNotEqual(redacted[1]["Name"], rows[1]["Name"])
 
+    def test_canonical_bluetooth_network_names_are_not_masked(self):
+        rows = [
+            {
+                "Name": "Bluetooth Network Connection",
+                "Description": "Bluetooth Device (Personal Area Network)",
+                "DeviceID": r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&183F708F38FB",
+            },
+            {
+                "Name": "bluetooth network connection 2",
+                "Description": "Bluetooth Device (Personal Area Network)",
+                "DeviceID": r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&183F708F38FB",
+            },
+            {
+                "Name": "Pat's Bluetooth Connection",
+                "Description": "Bluetooth Device (Personal Area Network)",
+                "DeviceID": r"BTHENUM\DEV_183F708F38FB\7&22FD4E5&0&183F708F38FB",
+            },
+        ]
+
+        redacted = redact_payload(rows, {"redact": True}, env={})
+
+        self.assertEqual(redacted[0]["Name"], rows[0]["Name"])
+        self.assertEqual(redacted[1]["Name"], rows[1]["Name"])
+        self.assertNotEqual(redacted[2]["Name"], rows[2]["Name"])
+
     def test_start_name_leaves_well_known_accounts_readable(self):
         payload = [
             {"StartName": "LocalSystem"},
@@ -285,7 +310,7 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotEqual(redacted["licenses"]["ProductKey"], "AAAAA-BBBBB-CCCCC-DDDDD")
         self.assertNotEqual(redacted["hardware"]["SerialNumber"], "SERIAL123456")
         self.assertNotEqual(redacted["environment"]["API_TOKEN"], "super-secret-token")
-        self.assertEqual(redacted["network"]["MACAddress"], "AA:BB:**:**:EE:FF")
+        self.assertEqual(redacted["network"]["MACAddress"], "AA:BB:CC:**:**:**")
         self.assertEqual(redacted["processes"][0]["Path"], r"C:\Users\<redacted>\Desktop\secret.exe")
 
     def test_network_adapter_identifiers_are_masked(self):
@@ -301,9 +326,9 @@ class PcReportPrivacyTests(unittest.TestCase):
 
         redacted = redact_payload(payload, {"redact": True}, env={})
 
-        self.assertEqual(redacted["MacAddress"], "AA:BB:**:**:EE:FF")
-        self.assertEqual(redacted["PermanentAddress"], "11:22:**:**:55:66")
-        self.assertEqual(redacted["PhysicalAddress"], "77:88:**:**:BB:CC")
+        self.assertEqual(redacted["MacAddress"], "AA:BB:CC:**:**:**")
+        self.assertEqual(redacted["PermanentAddress"], "11:22:33:**:**:**")
+        self.assertEqual(redacted["PhysicalAddress"], "77:88:99:**:**:**")
         self.assertNotEqual(redacted["InterfaceGuid"], guid)
         self.assertNotEqual(redacted["DeviceID"], guid)
         self.assertNotIn(guid, redacted["PnPDeviceID"])

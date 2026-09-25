@@ -38,7 +38,10 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Adapter Type"], "Ethernet 802.3")
 
     def test_advanced_and_gige(self):
-        self.assertEqual(self.data["adapters"][0]["advanced"][0]["Property"], "Jumbo Packet")
+        self.assertEqual(
+            [row["Property"] for row in self.data["adapters"][0]["advanced"]],
+            ["Interrupt Moderation", "Jumbo Packet", "Receive Buffers"],
+        )
         g = self.data["gige"][0]
         self.assertEqual(g["Jumbo Packet"], "9014 Bytes")
         self.assertEqual(g["Receive Buffers"], "2048")
@@ -49,19 +52,48 @@ class BuildTests(unittest.TestCase):
         rows = dict(self.data["groups"][0]["rows"])
         self.assertEqual(rows["Adapters"], 1)
         self.assertEqual(rows["Physical Adapters"], 1)
+        self.assertEqual(rows["Hidden Adapters"], 0)
         self.assertEqual(rows["Connected"], 1)
 
-    def test_single_rows_missing_joins_sorting_and_link_speed(self):
+    def test_hidden_adapters_are_collapsed_but_visible_adapters_keep_details(self):
         virtual = {
             "Name": "vEthernet (Default Switch)", "ifIndex": "bad", "Status": "Down",
+            "InterfaceDescription": "Hyper-V Virtual Ethernet Adapter", "MacAddress": "11-22-33-44-55-66",
             "LinkSpeed": 1000000000, "Virtual": True, "Hidden": True, "ConnectorPresent": False,
         }
         data = mod.build([virtual, ADAPTERS[0]], ADVANCED[0], IPIF[0], WMI[0])
 
-        self.assertEqual([row["name"] for row in data["adapters"]], ["Ethernet", "vEthernet (Default Switch)"])
-        self.assertEqual(data["adapters"][1]["groups"][1]["rows"]["Link Speed"], "1000.0 Mbps")
+        self.assertEqual([row["name"] for row in data["adapters"]], ["Ethernet"])
+        self.assertEqual(data["adapters"][0]["advanced"][0]["Property"], "Jumbo Packet")
+        self.assertEqual(data["hidden"], [{
+            "Name": "vEthernet (Default Switch)",
+            "Description": "Hyper-V Virtual Ethernet Adapter",
+            "Status": "Down",
+            "Virtual": "Yes",
+            "MAC": "11-22-33-44-55-66",
+        }])
+        self.assertEqual(dict(data["groups"][0]["rows"])["Hidden Adapters"], 1)
         self.assertEqual(len(data["gige"]), 1)
         self.assertEqual(data["gige"][0]["Adapter"], "Ethernet")
+
+    def test_missing_join_keys_never_match_each_other(self):
+        adapter = {
+            "Name": "", "InterfaceDescription": "", "ifIndex": None, "Status": "Down",
+            "Virtual": False, "Hidden": False, "ConnectorPresent": False,
+        }
+        advanced = [{"Name": None, "DisplayName": "Should not join", "RegistryKeyword": "*RSS"}]
+        ipif = [{"ifIndex": None, "AddressFamily": 2, "InterfaceMetric": 99}]
+        wmi = [{"InterfaceIndex": None, "Manufacturer": "Wrong", "PhysicalAdapter": True}]
+
+        data = mod.build([adapter], advanced, ipif, wmi)
+        rows = {}
+        for group in data["adapters"][0]["groups"]:
+            rows.update(group["rows"])
+
+        self.assertEqual(rows["Manufacturer"], "")
+        self.assertEqual(rows["IPv4 Metric"], "")
+        self.assertEqual(data["adapters"][0]["advanced"], [])
+        self.assertEqual(data["gige"], [])
 
 
 class FixtureTests(unittest.TestCase):
@@ -70,7 +102,10 @@ class FixtureTests(unittest.TestCase):
         self.assertEqual([n for n in ctx.notes if "no fixture" in n], [])
         self.assertIn("<th>Link Speed</th>", html)
         self.assertIn("<th>MAC Address</th>", html)
+        self.assertIn("Advanced properties", html)
+        self.assertIn("Hidden and virtual adapters", html)
         self.assertNotIn("AA-BB-CC-DD-EE-FF", html)
+        self.assertLess(html.count("<tr>"), 400)
 
     def test_renders_empty(self):
         support.assert_renders_empty(self, mod.SECTION)

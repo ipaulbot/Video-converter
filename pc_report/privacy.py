@@ -103,6 +103,10 @@ _BTH_MAC_OR_GUID = re.compile(
     r"\{[^{}]*\}|(?<![0-9A-Fa-f])[0-9A-Fa-f]{12}(?![0-9A-Fa-f])"
 )
 _PERSONAL_DEVICE_NAME = re.compile(r"(?:\b(?:iphone|galaxy)\b|\b[\w.-]+(?:'|\u2019)s\b)", re.IGNORECASE)
+_CANONICAL_BLUETOOTH_NETWORK_NAME = re.compile(
+    r"^Bluetooth Network Connection(?: \d+)?$",
+    re.IGNORECASE,
+)
 
 
 def norm_key(key) -> str:
@@ -132,7 +136,7 @@ def redact_instance_id(value):
             lambda match: (
                 match.group(0)
                 if match.group(0).startswith("{")
-                else f"{match.group(0)[:4]}******{match.group(0)[-2:]}"
+                else f"{match.group(0)[:6]}******"
             ),
             value,
         )
@@ -163,8 +167,8 @@ def mask_mac(mac):
         return [mask_mac(m) for m in mac]
     mc = str(mac).replace("-", ":")
     parts = mc.split(":")
-    if len(parts) >= 6:
-        return f"{parts[0]}:{parts[1]}:**:**:{parts[-2]}:{parts[-1]}"
+    if len(parts) == 6:
+        return f"{parts[0]}:{parts[1]}:{parts[2]}:**:**:**"
     return mask_string(mac)
 
 
@@ -292,6 +296,9 @@ def redact_payload(data, options=None, *, env=None):
                     if name_key in out and (
                         normalized_description is None
                         or normalized_name != normalized_description
+                    ) and not (
+                        normalized_name is not None
+                        and _CANONICAL_BLUETOOTH_NETWORK_NAME.fullmatch(normalized_name)
                     ):
                         out[name_key] = mask_string(out[name_key])
             for name_key in ("FriendlyName", "Name"):

@@ -27,6 +27,8 @@ ADV_COLUMNS = [("Property", "Property"), ("Value", "Value"), ("Keyword", "Regist
 GIGE_COLUMNS = [("Adapter", "Adapter"), ("Link Speed", "Link Speed")] + [
     (value, value) for value in GIGE_KEYWORDS.values()
 ]
+HIDDEN_COLUMNS = [("Name", "Name"), ("Description", "Description"), ("Status", "Status"),
+                  ("Virtual", "Virtual"), ("MAC", "MAC")]
 DHCP = {0: "", 1: "Enabled", 2: "Disabled"}
 CONNECTION = {0: "", 1: "Connected", 2: "Disconnected"}
 _NON_PHYSICAL_NAMES = ("wan miniport", "bluetooth", "vethernet", "npcap")
@@ -58,22 +60,43 @@ def _is_physical(adapter: dict, wmi: dict) -> bool:
 def build(adapters, advanced, ipif, wmi) -> dict:
     adv_by_name: dict[str, list] = {}
     for item in rows_of(advanced):
-        adv_by_name.setdefault(str(item.get("Name") or ""), []).append(item)
-    ip_by_index: dict[int | None, dict] = {}
+        name = str(item.get("Name") or "").strip()
+        if name:
+            adv_by_name.setdefault(name, []).append(item)
+    ip_by_index: dict[int, dict] = {}
     for item in rows_of(ipif):
+        idx = decode.to_int(item.get("ifIndex"))
+        if idx is None:
+            continue
         fam = "IPv6" if decode.to_int(item.get("AddressFamily")) == 23 else "IPv4"
-        ip_by_index.setdefault(decode.to_int(item.get("ifIndex")), {})[fam] = item
-    wmi_by_index = {decode.to_int(item.get("InterfaceIndex")): item for item in rows_of(wmi)}
+        ip_by_index.setdefault(idx, {})[fam] = item
+    wmi_by_index: dict[int, dict] = {}
+    for item in rows_of(wmi):
+        idx = decode.to_int(item.get("InterfaceIndex"))
+        if idx is not None:
+            wmi_by_index[idx] = item
 
     out = []
+    hidden = []
     connected = 0
+    total = 0
     for adapter in rows_of(adapters):
+        total += 1
         name = str(adapter.get("Name") or adapter.get("InterfaceDescription") or "")
         idx = decode.to_int(adapter.get("ifIndex"))
-        wmi_row = wmi_by_index.get(idx, {})
-        ips = ip_by_index.get(idx, {})
+        wmi_row = wmi_by_index.get(idx, {}) if idx is not None else {}
+        ips = ip_by_index.get(idx, {}) if idx is not None else {}
         physical = _is_physical(adapter, wmi_row)
         connected += str(adapter.get("Status")).casefold() == "up"
+        if adapter.get("Hidden") is True:
+            hidden.append({
+                "Name": name,
+                "Description": adapter.get("InterfaceDescription", ""),
+                "Status": adapter.get("Status", ""),
+                "Virtual": yes_no(adapter.get("Virtual")),
+                "MAC": adapter.get("MacAddress") or wmi_row.get("MACAddress", ""),
+            })
+            continue
         identity = {
             "Description": adapter.get("InterfaceDescription", ""),
             "Manufacturer": wmi_row.get("Manufacturer", ""),
@@ -121,6 +144,10 @@ def build(adapters, advanced, ipif, wmi) -> dict:
             }
             for prop in adv_by_name.get(name, [])
         ]
+        advanced_rows.sort(key=lambda row: (
+            str(row["Property"]).casefold(),
+            str(row["Keyword"]).casefold(),
+        ))
         out.append({
             "name": name,
             "groups": [
@@ -133,6 +160,7 @@ def build(adapters, advanced, ipif, wmi) -> dict:
         })
 
     out.sort(key=lambda item: (not item["_physical"], item["name"].casefold()))
+    hidden.sort(key=lambda item: str(item["Name"]).casefold())
     gige = []
     for item in out:
         if item["_physical"]:
@@ -149,11 +177,17 @@ def build(adapters, advanced, ipif, wmi) -> dict:
         del item["_physical"]
 
     summary = {
-        "Adapters": len(out),
+        "Adapters": total,
         "Physical Adapters": len(gige),
+        "Hidden Adapters": len(hidden),
         "Connected": connected,
     }
-    return {"groups": [{"title": "Summary", "rows": summary}], "adapters": out, "gige": gige}
+    return {
+        "groups": [{"title": "Summary", "rows": summary}],
+        "adapters": out,
+        "hidden": hidden,
+        "gige": gige,
+    }
 
 
 def collect(ctx):
@@ -179,8 +213,13 @@ def render(data, ctx):
         out.append(
             sub_heading(adapter.get("name", ""))
             + kv_groups(adapter.get("groups"))
+            + sub_heading("Advanced properties")
             + list_table(ADV_COLUMNS, adapter.get("advanced"))
         )
+    out.append(
+        sub_heading("Hidden and virtual adapters")
+        + list_table(HIDDEN_COLUMNS, data.get("hidden"))
+    )
     return "".join(out)
 
 
