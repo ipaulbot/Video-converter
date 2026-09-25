@@ -34,6 +34,7 @@ class BuildTests(unittest.TestCase):
     def test_requires_admin_bitlocker(self):
         data = mod.build(LD, VOL, PARTS, REQUIRES_ADMIN)
         self.assertEqual(data["rows"][0]["BitLocker"], REQUIRES_ADMIN)
+        self.assertIn("Requires administrator", mod.render(data, support.render_ctx()))
 
     def test_summary(self):
         rows = dict(mod.build(LD, VOL, PARTS, BL)["groups"][0]["rows"])

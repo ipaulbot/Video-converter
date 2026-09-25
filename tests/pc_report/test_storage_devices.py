@@ -21,6 +21,11 @@ OPT = [{"Name": "HL-DT-ST DVDRAM", "Drive": "E:", "MediaType": "DVD Writer", "Ma
 
 
 class BuildTests(unittest.TestCase):
+    def test_device_key_matches_disk_and_smart_paths(self):
+        disk_path = r"\\?\scsi#disk&ven_nvme&prod_kbg50zns512g_nvm#5&187f7995&0&000000#{53f56307-b6bf-11d0-94f2-00a0c91efb8b}"
+        smart_path = r"SCSI\Disk&Ven_NVMe&Prod_KBG50ZNS512G_NVM\5&187f7995&0&000000_0"
+        self.assertEqual(mod._device_key(disk_path), mod._device_key(smart_path))
+
     def test_disk_rows(self):
         data = mod.build(PHYS, DISKS, PARTS, SMART, REL, OPT)
         d = data["disks"][0]
@@ -49,10 +54,42 @@ class BuildTests(unittest.TestCase):
         for g in data["disks"][0]["groups"]:
             rows.update(g["rows"])
         self.assertEqual(rows["Reliability Counters"], REQUIRES_ADMIN)
+        self.assertIn("Requires administrator", mod.render(data, support.render_ctx()))
 
     def test_optical(self):
-        data = mod.build([], [], [], [], [], OPT)
+        optical = [
+            {"Name": "Zulu", "Drive": "F:", "MediaType": "DVD", "Manufacturer": "", "Status": "OK", "MediaLoaded": False},
+            *OPT,
+            {"Name": "Alpha", "Drive": "F:", "MediaType": "DVD", "Manufacturer": "", "Status": "OK", "MediaLoaded": False},
+        ]
+        data = mod.build([], [], [], [], [], optical)
         self.assertEqual(data["optical"][0]["Drive"], "E:")
+        self.assertEqual([row["Name"] for row in data["optical"][1:]], ["Alpha", "Zulu"])
+
+    def test_smart_status_joins_by_device_path(self):
+        physical = [
+            {**PHYS[0], "DeviceId": "0", "Model": "Contoso First"},
+            {**PHYS[0], "DeviceId": "1", "Model": "Contoso Second"},
+        ]
+        disks = [
+            {**DISKS[0], "Number": 0, "Path": r"\\?\scsi#disk&ven_contoso&prod_first#1&abc&0&000000#{53f56307-b6bf-11d0-94f2-00a0c91efb8b}"},
+            {**DISKS[0], "Number": 1, "Path": r"\\?\scsi#disk&ven_contoso&prod_second#2&def&0&000000#{53f56307-b6bf-11d0-94f2-00a0c91efb8b}"},
+        ]
+        smart = [
+            {"InstanceName": r"SCSI\Disk&Ven_Contoso&Prod_Second\2&def&0&000000_0", "PredictFailure": True},
+            {"InstanceName": r"SCSI\Disk&Ven_Contoso&Prod_First\1&abc&0&000000_0", "PredictFailure": False},
+        ]
+        data = mod.build(physical, disks, [], smart, [], [])
+        statuses = [disk["groups"][2]["rows"]["SMART Predict Failure"] for disk in data["disks"]]
+        self.assertEqual(statuses, ["No", "Yes"])
+
+    def test_smart_fallback_rejects_ambiguous_model_matches(self):
+        smart = [
+            {"InstanceName": r"SCSI\Disk&Ven_Samsung&Prod_One\1_0", "PredictFailure": False},
+            {"InstanceName": r"SCSI\Disk&Ven_Samsung&Prod_Two\2_0", "PredictFailure": True},
+        ]
+        data = mod.build(PHYS, DISKS, [], smart, [], [])
+        self.assertEqual(data["disks"][0]["groups"][2]["rows"]["SMART Predict Failure"], "Not reported")
 
 
 class FixtureTests(unittest.TestCase):

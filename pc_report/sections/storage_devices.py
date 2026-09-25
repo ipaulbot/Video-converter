@@ -1,6 +1,8 @@
 """Storage Devices: physical disks with partitions, SMART status, reliability counters (admin) and optical drives."""
 from __future__ import annotations
 
+import re
+
 from .. import decode
 from ..format import bytes_human, yes_no
 from ..ps import cim
@@ -10,7 +12,7 @@ PHYS_SCRIPT = ("Get-PhysicalDisk -ErrorAction SilentlyContinue | Select-Object D
                "MediaType,BusType,Size,HealthStatus,OperationalStatus,FirmwareVersion,SpindleSpeed,PhysicalSectorSize,"
                "LogicalSectorSize,Usage,UniqueId")
 DISKS_SCRIPT = ("Get-Disk -ErrorAction SilentlyContinue | Select-Object Number,FriendlyName,SerialNumber,PartitionStyle,IsBoot,IsSystem,"
-                "IsReadOnly,IsOffline,NumberOfPartitions,Size,AllocatedSize,Location,Guid,OperationalStatus")
+                "IsReadOnly,IsOffline,NumberOfPartitions,Size,AllocatedSize,Location,Guid,OperationalStatus,Path")
 PARTS_SCRIPT = ("Get-Partition -ErrorAction SilentlyContinue | Select-Object DiskNumber,PartitionNumber,DriveLetter,Size,Type,GptType,"
                 "IsActive,IsBoot,IsSystem,IsHidden,Offset")
 SMART_SCRIPT = cim("MSStorageDriver_FailurePredictStatus", ("InstanceName", "PredictFailure", "Reason"), namespace="root/wmi")
@@ -28,6 +30,15 @@ OPT_COLUMNS = [("Name", "Name"), ("Drive", "Drive"), ("Media Type", "Media Type"
 def _hours(h):
     n = decode.to_int(h)
     return f"{n} h ({n // 24} days)" if n is not None else ""
+
+
+def _device_key(value) -> str:
+    key = str(value or "").lower()
+    if key.startswith("\\\\?\\"):
+        key = key[4:]
+    key = key.replace("#", "\\")
+    key = re.sub(r"\\\{[0-9a-f-]+\}$", "", key)
+    return re.sub(r"_\d+$", "", key)
 
 
 def build(physical, disks, partitions, smart, reliability, optical) -> dict:
@@ -60,8 +71,14 @@ def build(physical, disks, partitions, smart, reliability, optical) -> dict:
     for ph in physical_rows:
         no = decode.to_int(ph.get("DeviceId"))
         d = disks_by_no.get(no, {}) if no is not None else {}
-        model_token = str(ph.get("Model") or ph.get("FriendlyName") or "").split(" ")[0].lower()
-        sm = next((s for s in smart_rows if model_token and model_token in str(s.get("InstanceName", "")).lower()), None)
+        disk_path = d.get("Path")
+        if disk_path:
+            disk_key = _device_key(disk_path)
+            sm = next((s for s in smart_rows if disk_key and disk_key == _device_key(s.get("InstanceName"))), None)
+        else:
+            model_token = str(ph.get("Model") or ph.get("FriendlyName") or "").split(" ")[0].lower()
+            matches = [s for s in smart_rows if model_token and model_token in str(s.get("InstanceName", "")).lower()]
+            sm = matches[0] if len(matches) == 1 else None
         identity = {"Model": ph.get("Model") or ph.get("FriendlyName", ""), "Friendly Name": ph.get("FriendlyName", ""),
                     "Manufacturer": ph.get("Manufacturer", ""), "Serial Number": ph.get("SerialNumber") or d.get("SerialNumber", ""),
                     "Firmware": ph.get("FirmwareVersion", ""), "Unique ID": ph.get("UniqueId", ""), "Location": d.get("Location", "")}
@@ -96,9 +113,12 @@ def build(physical, disks, partitions, smart, reliability, optical) -> dict:
                       "Hidden": yes_no(p.get("IsHidden")), "Offset": p.get("Offset", "")} for p in parts]
         out.append({"name": identity["Model"], "groups": [{"title": "Identity", "rows": identity}, {"title": "Geometry", "rows": geometry},
                                                           {"title": "Health", "rows": health}], "partitions": part_rows})
-    optical_rows = [{"Name": o.get("Name", ""), "Drive": o.get("Drive", ""), "Media Type": o.get("MediaType", ""),
-                     "Manufacturer": o.get("Manufacturer", ""), "Status": o.get("Status", ""), "Media Loaded": yes_no(o.get("MediaLoaded"))}
-                    for o in rows_of(optical)]
+    optical_rows = sorted(
+        [{"Name": o.get("Name", ""), "Drive": o.get("Drive", ""), "Media Type": o.get("MediaType", ""),
+          "Manufacturer": o.get("Manufacturer", ""), "Status": o.get("Status", ""), "Media Loaded": yes_no(o.get("MediaLoaded"))}
+         for o in rows_of(optical)],
+        key=lambda row: (str(row["Drive"]), str(row["Name"])),
+    )
     summary = {"Physical Disks": len(out),
                "Total Capacity": bytes_human(sum(decode.to_int(p.get("Size")) or 0 for p in physical_rows)) if physical_rows else "",
                "Unhealthy": ", ".join(d["name"] for d in out if any(g["rows"].get("Health") not in ("Healthy", "", None) for g in d["groups"])) or "None",
