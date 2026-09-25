@@ -622,6 +622,116 @@ def preview_overlay_button_style(highlight: str | None = None) -> str:
     )
 
 
+# ---------------------------------------------------------------------------
+# Layout modes. "compact" is the historical window; "full" is maximised with
+# roomier metrics. The main window owns switching; widgets read metrics().
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class LayoutMetrics:
+    name: str
+    margin: int
+    spacing: int
+    recorder_tile_max_h: int
+    recorder_stacked: bool
+    player_panel_min_h: int
+    pc_report_logo_w: int
+
+
+COMPACT: Final[LayoutMetrics] = LayoutMetrics("compact", 6, 4, 98, True, 160, 96)
+FULL: Final[LayoutMetrics] = LayoutMetrics("full", 12, 8, 260, False, 240, 140)
+LAYOUT_MODES: Final[tuple[str, ...]] = (COMPACT.name, FULL.name)
+_layout_by_name: Final[dict[str, LayoutMetrics]] = {
+    COMPACT.name: COMPACT,
+    FULL.name: FULL,
+}
+_current_layout: LayoutMetrics = COMPACT
+
+
+def metrics() -> LayoutMetrics:
+    """The layout metrics for the current window mode."""
+    return _current_layout
+
+
+def set_layout_mode(name: str) -> LayoutMetrics:
+    """Select the window mode by name. Raises ValueError for unknown names."""
+    global _current_layout
+    try:
+        _current_layout = _layout_by_name[name]
+    except KeyError:
+        raise ValueError(
+            f"unknown layout mode {name!r}; expected one of {LAYOUT_MODES}"
+        ) from None
+    return _current_layout
+
+
+# ---------------------------------------------------------------------------
+# Button tiers below the primary gradient bubble. Tool tabs opt out of
+# apply_to_buttons() and pick one of these.
+# ---------------------------------------------------------------------------
+def compact_button_style(radius: int = RADIUS_SM) -> str:
+    """A small filled action button for tool tabs."""
+    s = skin()
+    return (
+        f"QPushButton {{ background-color: {s.accent}; color: {s.text_on_accent}; "
+        f"border: 1px solid {s.accent_dark}; border-radius: {radius}px; "
+        f"padding: 3px 10px; min-height: 24px; font-family: {FONT_UI}; "
+        f"font-size: 9pt; font-weight: 600; }} "
+        f"QPushButton:hover {{ background-color: {s.accent_hover}; }} "
+        f"QPushButton:pressed {{ background-color: {s.accent_pressed}; }} "
+        f"QPushButton:disabled {{ background-color: {s.separator}; "
+        f"border-color: {s.separator}; color: {s.text_disabled}; }}"
+    )
+
+
+def link_button_style() -> str:
+    """A text link masquerading as a button."""
+    s = skin()
+    return (
+        f"QPushButton {{ background: transparent; color: {s.accent_dark}; border: none; "
+        f"text-decoration: underline; padding: 0px; min-width: 0px; min-height: 0px; "
+        f"font-family: {FONT_UI}; font-size: 9pt; text-align: left; }} "
+        f"QPushButton:hover {{ color: {ACCENT_DEEP}; }} "
+        f"QPushButton:disabled {{ color: {s.text_disabled}; text-decoration: none; }}"
+    )
+
+
+def icon_button_style(size: int = 28) -> str:
+    """A flat square QToolButton that tints on hover."""
+    s = skin()
+    return (
+        f"QToolButton {{ background: transparent; border: none; border-radius: {RADIUS_SM}px; "
+        f"min-width: {size}px; max-width: {size}px; min-height: {size}px; "
+        f"max-height: {size}px; padding: 0px; }} "
+        f"QToolButton:hover {{ background: {s.accent_tint}; }} "
+        f"QToolButton:pressed, QToolButton:checked {{ "
+        f"background: {rgba(s.accent, 0.25)}; }} "
+        f"QToolButton:disabled {{ background: transparent; }} "
+        f"QToolButton::menu-indicator {{ image: none; }}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# The leaf: VIO's silhouette with the top-left and bottom-right corners
+# rounded and the other two square.
+# ---------------------------------------------------------------------------
+def leaf_radii(radius: int) -> str:
+    return (
+        f"border-top-left-radius: {radius}px; "
+        f"border-bottom-right-radius: {radius}px; "
+        "border-top-right-radius: 0px; border-bottom-left-radius: 0px;"
+    )
+
+
+def leaf_style(radius: int = 28, dashed: bool = False) -> str:
+    """QSS for a LeafFrame (objectName 'leaf')."""
+    s = skin()
+    border = f"1px dashed {s.accent}" if dashed else f"1px solid {s.separator}"
+    return (
+        f"QFrame#leaf {{ background: {s.panel_bg}; border: {border}; "
+        f"{leaf_radii(radius)} }}"
+    )
+
+
 def preview_scrubber_style(highlight: str | None = None) -> str:
     """The thin timeline slider over the preview thumbnail."""
     accent = highlight or skin().accent

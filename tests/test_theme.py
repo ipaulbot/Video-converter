@@ -460,3 +460,58 @@ class ButtonSweepTests(unittest.TestCase):
                           f"{rel}:{method} should delegate, not walk the tree")
             self.assertNotIn("for child in widget.children()", body,
                              f"{rel}:{method} still has its own traversal")
+
+
+class LayoutMetricsTests(unittest.TestCase):
+    def tearDown(self):
+        theme.set_layout_mode("compact")
+
+    def test_default_mode_is_compact(self):
+        self.assertEqual(theme.metrics().name, "compact")
+
+    def test_set_layout_mode_round_trips_and_rejects_unknown(self):
+        self.assertEqual(theme.set_layout_mode("full").name, "full")
+        self.assertEqual(theme.metrics(), theme.FULL)
+        with self.assertRaises(ValueError):
+            theme.set_layout_mode("huge")
+        self.assertEqual(theme.metrics().name, "full")
+
+    def test_metrics_grow_in_full_mode(self):
+        self.assertGreater(theme.FULL.margin, theme.COMPACT.margin)
+        self.assertGreater(theme.FULL.recorder_tile_max_h, theme.COMPACT.recorder_tile_max_h)
+        self.assertTrue(theme.COMPACT.recorder_stacked)
+        self.assertFalse(theme.FULL.recorder_stacked)
+
+
+class ButtonTierTests(unittest.TestCase):
+    def test_compact_button_has_small_height_and_no_min_width(self):
+        style = theme.compact_button_style()
+        self.assertIn("min-height: 24px", style)
+        self.assertNotIn("min-width", style)
+        self.assertIn("QPushButton:disabled", style)
+
+    def test_link_button_is_underlined_and_transparent(self):
+        style = theme.link_button_style()
+        self.assertIn("text-decoration: underline", style)
+        self.assertIn("background: transparent", style)
+        self.assertIn("border: none", style)
+
+    def test_icon_button_targets_tool_buttons(self):
+        style = theme.icon_button_style(28)
+        self.assertIn("QToolButton", style)
+        self.assertIn("min-width: 28px", style)
+        self.assertIn("QToolButton:hover", style)
+
+
+class LeafStyleTests(unittest.TestCase):
+    def test_leaf_radii_round_only_top_left_and_bottom_right(self):
+        radii = theme.leaf_radii(28)
+        self.assertIn("border-top-left-radius: 28px", radii)
+        self.assertIn("border-bottom-right-radius: 28px", radii)
+        self.assertIn("border-top-right-radius: 0px", radii)
+        self.assertIn("border-bottom-left-radius: 0px", radii)
+
+    def test_leaf_style_solid_and_dashed(self):
+        self.assertIn("1px solid", theme.leaf_style(28))
+        self.assertIn("1px dashed", theme.leaf_style(18, dashed=True))
+        self.assertIn("QFrame#leaf", theme.leaf_style(28))
