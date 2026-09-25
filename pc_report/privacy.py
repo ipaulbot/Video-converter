@@ -43,11 +43,12 @@ WELL_KNOWN_ACCOUNTS = frozenset({
 _IPV4 = re.compile(r"\b(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}\b")
 _IPV6 = re.compile(r"\b([0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{0,4}:)+[0-9a-fA-F]{1,4}\b|\b([0-9a-fA-F]{1,4})::[0-9a-fA-F:]+")
 _UNC_PATH = re.compile(r"^(\\\\)([^\\]+)(\\.*)?$")
+_UNC_HOST_PREFIX = re.compile(r"(\\\\)([^\\\s]+)(\\)")
 _GUID_FULL = re.compile(
     r"\{?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
     r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}?"
 )
-_ACCOUNT_SID = re.compile(r"\b(S-1-(?:5-21|12-1)-)(?:\d+-){3}\d+\b", re.IGNORECASE)
+_ACCOUNT_SID = re.compile(r"(?<![A-Za-z0-9])(S-1-(?:5-21|12-1)-)(?:\d+-){3}\d+\b", re.IGNORECASE)
 _COMMAND_SECRET_ARG = re.compile(
     r"((?:--|-(?!-)|/)([A-Za-z0-9_.-]+)(?:=|:(\s*)|\s+))"
     r"(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\S+)",
@@ -237,6 +238,26 @@ def redact_unc_host(value):
     return f"{match.group(1)}{masked_host}{match.group(3) or ''}"
 
 
+def redact_network_locations(value):
+    """Mask IP addresses and UNC hosts in printer/network text fields."""
+    if isinstance(value, list):
+        return [redact_network_locations(item) for item in value]
+    if isinstance(value, dict):
+        return {key: redact_network_locations(item) for key, item in value.items()}
+    if not isinstance(value, str):
+        return mask_ip(value)
+
+    def replace_unc(match):
+        host = match.group(2)
+        masked_host = mask_ip(host)
+        if masked_host == host:
+            masked_host = "<redacted>"
+        return f"{match.group(1)}{masked_host}{match.group(3)}"
+
+    value = _GUID_FULL.sub(lambda match: mask_string(match.group(0)), value)
+    return mask_ip(_UNC_HOST_PREFIX.sub(replace_unc, value))
+
+
 def redact_user_paths(path):
     if not path:
         return path
@@ -360,6 +381,8 @@ def redact_payload(data, options=None, *, env=None):
             return mask_mac(value)
         if key_l in {"providername", "networkpathhostname", "networkpath"}:
             return redact_unc_host(value)
+        if key_l in {"portname", "sharename", "servername", "location", "comment"}:
+            return redact_network_locations(value)
         if any(t in key_l for t in IP_TOKENS):
             return mask_ip(value)
         if any(t in key_l for t in SENSITIVE_TOKENS):

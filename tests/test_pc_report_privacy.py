@@ -174,6 +174,32 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertEqual(redacted["ProviderName"], r"\\<redacted>\share")
         self.assertEqual(redacted["Network Path (host name)"], r"\\192.168.*.*\temp")
 
+    def test_printer_fields_mask_ip_addresses_and_unc_hosts(self):
+        guid = "b8136383-1826-454b-810e-0c4a05d5a2e0"
+        values = {
+            "PortName": [
+                "192.168.31.12",
+                f"WSD-{guid}",
+                "OneNote_S-1-5-21-2734529186-23328706-2630127308-5137",
+            ],
+            "ShareName": r"\\printserver\queue",
+            "ServerName": r"\\10.20.30.40\queue",
+            "Location": r"\\room-server\lab",
+            "Comment": r"Available via \\comment-host\printer at 10.20.30.40",
+        }
+
+        redacted = redact_payload(values, {"redact": True}, env={})
+
+        self.assertEqual(redacted["PortName"][0], "192.168.*.*")
+        self.assertNotIn(guid, redacted["PortName"][1])
+        self.assertNotIn("2734529186", redacted["PortName"][2])
+        self.assertNotIn("5137", redacted["PortName"][2])
+        self.assertEqual(redacted["ShareName"], r"\\<redacted>\queue")
+        self.assertEqual(redacted["ServerName"], r"\\10.20.*.*\queue")
+        self.assertEqual(redacted["Location"], r"\\<redacted>\lab")
+        self.assertNotIn("comment-host", redacted["Comment"])
+        self.assertNotIn("10.20.30.40", redacted["Comment"])
+
     def test_device_instance_ids_mask_trailing_serial_segments(self):
         ids = [
             r"USB\VID_1234&PID_5678\PHONE-SERIAL",
