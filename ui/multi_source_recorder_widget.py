@@ -1272,9 +1272,18 @@ class MultiSourceRecorderWidget(QWidget):
 
         def discover():
             devices = discover_directshow_audio_devices(resource_path("ffmpeg.exe"))
-            self.audio_devices_discovered.emit(devices)
+            self._deliver_audio_devices(devices)
 
         threading.Thread(target=discover, daemon=True).start()
+
+    def _deliver_audio_devices(self, devices):
+        try:
+            self.audio_devices_discovered.emit(devices)
+        except RuntimeError:
+            logger.debug(
+                "Recorder closed before audio device discovery completed",
+                exc_info=True,
+            )
 
     def _apply_audio_devices(self, devices):
         self.audio_discovery_running = False

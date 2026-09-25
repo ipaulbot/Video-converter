@@ -125,6 +125,18 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertEqual(started, [False])
 
+    def test_audio_discovery_result_is_ignored_after_widget_is_destroyed(self):
+        with patch.object(
+            MultiSourceRecorderWidget,
+            "start_audio_device_discovery",
+            lambda self, force=False: None,
+        ):
+            widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.deleteLater()
+        self.app.sendPostedEvents(None, QEvent.DeferredDelete)
+
+        widget._deliver_audio_devices(["Microphone A"])
+
     def test_selecting_usb_directshow_updates_preview_guidance(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         row = widget.source_rows[0]
