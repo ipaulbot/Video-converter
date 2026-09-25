@@ -112,13 +112,18 @@ class VideoConverterApp(QMainWindow):
         # Use modern clean stylesheet
         modern_stylesheet = theme.qss("""
             QWidget {
-                background: $window_bg;
                 color: $text_body;
                 font-family: 'Segoe UI', 'Arial', sans-serif;
                 font-size: 9pt;
             }
+            /* Only the window surfaces are grey. Children paint nothing of
+               their own, so labels and group boxes sitting on a white leaf
+               card stay white instead of showing grey blocks. */
             QMainWindow, QDialog {
                 background: $window_bg;
+            }
+            QScrollArea, QScrollArea > QWidget > QWidget {
+                background: transparent;
             }
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $accent, stop:1 $accent_pressed);
