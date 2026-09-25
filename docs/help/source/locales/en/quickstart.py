@@ -43,6 +43,50 @@ CHAPTERS: list[dict] = [
         ],
     },
     {
+        "id": "record-a-webcam",
+        "title": "Record From a Webcam",
+        "blocks": [
+            {"type": "para", "text": (
+                "The Multi-Source Recorder captures up to four cameras or streams. One USB "
+                "webcam is the simplest case.")},
+            {"type": "steps", "items": [
+                "Open the Multi-Source Recorder tab and click Video Settings.",
+                "In row 1, open the Video device list and pick your camera by its Windows "
+                "name. If it is missing, choose Refresh USB devices...",
+                "Pick a microphone in Audio device, or No Audio. Leave Frame rate and "
+                "Resolution at the detected values. If detection failed, leave Resolution "
+                "at Auto and choose a frame rate the camera supports.",
+                "Click OK. Back on the tab, choose Separate videos and a File location.",
+                "Leave Timer blank, then click Start Recording in the footer. Click Stop "
+                "Recording when you are done.",
+            ]},
+            {"type": "para", "text": (
+                "The file is written to the File location as "
+                "Video_<Video name>_<timestamp>.mp4. In Video Settings, use Save as... to save "
+                "the setup as a preset so the next session is one Load away.")},
+        ],
+    },
+    {
+        "id": "review-a-recording",
+        "title": "Review a Recording",
+        "blocks": [
+            {"type": "steps", "items": [
+                "In Converted Files, select a file and click Play, or right-click it and choose "
+                "Play in Media Player. You can also open the Media Player tab and click Load on "
+                "a panel.",
+                "Press Space to play or pause, Left and Right to step one frame, "
+                "Shift+Left and Shift+Right to jump 5 seconds.",
+                "Press F for fullscreen and Escape to come back.",
+                "Set Panels to 1, 2 or 4. Use 2 or 4 to compare recordings side by side; each "
+                "panel has its own offset to line up clips that started at different times.",
+            ]},
+            {"type": "note", "items": [
+                "The Media Player tab is hidden by default. Play in Media Player shows it "
+                "for this session; tick it in Settings, Tools tab, to keep it.",
+            ]},
+        ],
+    },
+    {
         "id": "safe-defaults",
         "title": "Settings Worth Knowing",
         "blocks": [

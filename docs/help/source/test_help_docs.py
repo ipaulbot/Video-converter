@@ -168,6 +168,17 @@ class ContentTests(unittest.TestCase):
         for name in ("English", "Nederlands", "Simplified Chinese"):
             self.assertIn(name, text, name)
 
+    def test_quickstart_has_record_and_review_chapters(self):
+        ids = [c["id"] for c in cl.load_manual("quickstart", "en")]
+        self.assertEqual(ids[:4], ["before-you-start", "first-conversion",
+                                   "record-a-webcam", "review-a-recording"])
+        record = self._chapter_text("quickstart", "record-a-webcam")
+        for needle in ("Video Settings", "Start Recording", "Stop Recording"):
+            self.assertIn(needle, record, needle)
+        review = self._chapter_text("quickstart", "review-a-recording")
+        for needle in ("Play in Media Player", "Space", "F"):
+            self.assertIn(needle, review, needle)
+
     def test_troubleshooting_covers_recorder_and_player(self):
         text = self._chapter_text("help", "troubleshooting")
         for needle in ("Could not find video device", "(not found)",
