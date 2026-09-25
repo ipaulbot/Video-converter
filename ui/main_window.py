@@ -958,6 +958,7 @@ class VideoConverterApp(QMainWindow):
         else:
             self.showNormal()
             self.resize(960, 600)
+            self.center_on_screen()
         if persist:
             save_settings(self.settings)
 
