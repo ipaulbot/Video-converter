@@ -33,7 +33,7 @@ class BuildTests(unittest.TestCase):
     def test_security_center_rows(self):
         av = self.data["security_center"][0]
         self.assertEqual(av["Kind"], "Antivirus")
-        self.assertEqual(av["State"], "Enabled")
+        self.assertEqual(av["State"], "Snoozed")
         self.assertEqual(av["Signatures"], "Up to date")
 
     def test_defender_and_firewall(self):
@@ -48,8 +48,39 @@ class BuildTests(unittest.TestCase):
     def test_device_guard_decoded(self):
         rows = mod.flatten(self.data)
         self.assertEqual(rows["Virtualization-based Security"], "Running")
-        self.assertEqual(rows["Security Services Running"], "Hypervisor Code Integrity (HVCI)")
+        self.assertEqual(rows["Security Services Running"], "Memory integrity (HVCI)")
         self.assertEqual(rows["Kernel-mode Code Integrity"], "Enforced")
+
+    def test_security_center_state_decodes_every_state_and_signature(self):
+        states = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "Snoozed", 0x22: "Unknown (0x22)"}
+        signatures = {0x00: "Up to date", 0x10: "Out of date", 0x20: "Unknown"}
+        for state_byte, state_label in states.items():
+            for signature_byte, signature_label in signatures.items():
+                with self.subTest(state=state_byte, signature=signature_byte):
+                    packed = (0x06 << 16) | (state_byte << 8) | signature_byte
+                    self.assertEqual(
+                        mod.decode.security_center_state(packed),
+                        (state_label, signature_label),
+                    )
+
+    def test_device_guard_tables_match_windows_values(self):
+        service_labels = [
+            "Credential Guard", "Memory integrity (HVCI)", "System Guard Secure Launch",
+            "SMM Firmware Measurement", "Kernel-mode Hardware-enforced Stack Protection",
+            "Kernel-mode Hardware-enforced Stack Protection (audit)",
+            "Hypervisor-Enforced Paging Translation",
+        ]
+        property_labels = [
+            "Hypervisor support", "Secure Boot", "DMA protection", "Secure Memory Overwrite",
+            "NX protections", "SMM mitigations", "Mode Based Execution Control", "APIC virtualization",
+        ]
+        for code, label in enumerate(service_labels, 1):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_SERVICES, code), label)
+        for code, label in enumerate(property_labels, 1):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_AVAILABLE, code), label)
+        self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_SERVICES, 99), "Other (99)")
+        for code, label in enumerate(("Off", "Enabled but not running", "Running")):
+            self.assertEqual(mod.decode.lookup(mod.decode.DEVICE_GUARD_VBS_STATUS, code), label)
 
     def test_tpm_bitlocker_and_accounts(self):
         rows = mod.flatten(self.data)

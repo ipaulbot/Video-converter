@@ -4,15 +4,17 @@ from __future__ import annotations
 import datetime
 import re
 
+from .decode import to_float, to_int
+
 _MSJSON = re.compile(r"/Date\((-?\d+)\)/")
 _ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 
 def bytes_human(n):
-    try:
-        n = int(n)
-    except (TypeError, ValueError):
+    parsed = to_int(n)
+    if parsed is None:
         return n
+    n = parsed
     units = ["B", "KB", "MB", "GB", "TB"]
     i = 0
     f = float(n)
@@ -23,16 +25,15 @@ def bytes_human(n):
 
 
 def kb_human(kilobytes):
-    try:
-        return bytes_human(int(float(kilobytes)) * 1024)
-    except (TypeError, ValueError):
+    parsed = to_int(kilobytes)
+    if parsed is None:
         return kilobytes
+    return bytes_human(parsed * 1024)
 
 
 def bitrate_to_mbps(n):
-    try:
-        n = int(n)
-    except (TypeError, ValueError):
+    n = to_int(n)
+    if n is None:
         return "Unknown"
     if n <= 0 or n >= 9_000_000_000_000_000_000:
         return "Unknown"
@@ -125,10 +126,9 @@ def uptime_human(since) -> str:
 
 
 def percent(part, whole, digits: int = 1) -> str:
-    try:
-        part = float(part)
-        whole = float(whole)
-    except (TypeError, ValueError):
+    part = to_float(part)
+    whole = to_float(whole)
+    if part is None or whole is None:
         return ""
     if whole <= 0:
         return ""
@@ -137,9 +137,8 @@ def percent(part, whole, digits: int = 1) -> str:
 
 def duration(seconds) -> str:
     """'1 h 02 m 03 s' style, for elapsed and CPU times."""
-    try:
-        total = int(float(seconds))
-    except (TypeError, ValueError):
+    total = to_int(seconds)
+    if total is None:
         return ""
     hours, rem = divmod(max(0, total), 3600)
     minutes, secs = divmod(rem, 60)
@@ -151,9 +150,8 @@ def duration(seconds) -> str:
 
 
 def mhz(value) -> str:
-    try:
-        v = int(float(value))
-    except (TypeError, ValueError):
+    v = to_int(value)
+    if v is None:
         return ""
     return f"{v} MHz" if v < 10_000 else f"{v / 1000:.2f} GHz"
 

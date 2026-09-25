@@ -11,6 +11,15 @@ def to_int(value, default=None):
         return default
 
 
+def to_float(value, default=None):
+    try:
+        if isinstance(value, bool):
+            return float(value)
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def lookup(table: dict, code, other: str = "Other") -> str:
     """Decode one code or a list of codes; unknown codes become 'Other (n)'."""
     if code is None or code == "":
@@ -111,21 +120,50 @@ def au_options(no_auto_update, au_option) -> str:
 # --- security -----------------------------------------------------------------
 
 def security_center_state(product_state) -> tuple[str, str]:
-    """Decode root\\SecurityCenter2 productState into (enabled, signature) words."""
+    """Decode root\\SecurityCenter2 productState into (state, signature) words."""
     n = to_int(product_state, 0)
-    enabled = "Enabled" if (n >> 12) & 0x1 else "Disabled"
-    signature = "Out of date" if (n >> 4) & 0x1 else "Up to date"
-    return enabled, signature
+    state_byte = (n >> 8) & 0xFF
+    signature_byte = n & 0xFF
+    state = {0x00: "Off", 0x01: "Expired", 0x10: "On", 0x11: "Snoozed"}.get(
+        state_byte, f"Unknown (0x{state_byte:02X})"
+    )
+    signature = {0x00: "Up to date", 0x10: "Out of date"}.get(signature_byte, "Unknown")
+    return state, signature
 
 
-DEVICE_GUARD_ONOFF = {0: "Off", 1: "On", 2: "Not applicable"}
-DEVICE_GUARD_SERVICES = {0: "None/Unknown", 1: "Credential Guard", 2: "Hypervisor Code Integrity (HVCI)",
-                         3: "Secure Boot", 4: "DMA Protection", 5: "Secure Launch",
-                         6: "SMM Firmware Measurement", 7: "Kernel-mode Hardware-enforced Stack Protection"}
-DEVICE_GUARD_AVAILABLE = {1: "Secure Boot", 2: "DMA Protection", 3: "UEFI Memory Attributes Table",
-                          4: "Secure Memory Overwrite", 5: "Kernel DMA Protection",
-                          6: "Virtualization-based Security", 7: "HVCI", 8: "Credential Guard",
-                          9: "Secure Launch", 10: "SMM Firmware Measurement"}
+DEVICE_GUARD_VBS_STATUS = {0: "Off", 1: "Enabled but not running", 2: "Running"}
+DEVICE_GUARD_SERVICES = {
+    1: "Credential Guard",
+    2: "Memory integrity (HVCI)",
+    3: "System Guard Secure Launch",
+    4: "SMM Firmware Measurement",
+    5: "Kernel-mode Hardware-enforced Stack Protection",
+    6: "Kernel-mode Hardware-enforced Stack Protection (audit)",
+    7: "Hypervisor-Enforced Paging Translation",
+}
+DEVICE_GUARD_AVAILABLE = {
+    1: "Hypervisor support",
+    2: "Secure Boot",
+    3: "DMA protection",
+    4: "Secure Memory Overwrite",
+    5: "NX protections",
+    6: "SMM mitigations",
+    7: "Mode Based Execution Control",
+    8: "APIC virtualization",
+}
+FIREWALL_ACTION = {0: "Not configured", 2: "Allow", 4: "Block"}
+CODE_INTEGRITY_STATUS = {0: "Off", 1: "Audit", 2: "Enforced"}
+BITLOCKER_ENCRYPTION_METHOD = {
+    0: "None",
+    1: "AES 128 with diffuser",
+    2: "AES 256 with diffuser",
+    3: "AES 128",
+    4: "AES 256",
+    5: "Hardware",
+    6: "XTS-AES 128",
+    7: "XTS-AES 256",
+}
+SAFE_MODE = {1: "Minimal", 2: "Network"}
 
 # --- accessibility ------------------------------------------------------------
 
@@ -445,10 +483,17 @@ PORT_TYPES = {0: "None", 1: "Parallel Port XT/AT Compatible", 2: "Parallel Port 
               35: "Thunderbolt", 160: "8251 Compatible", 161: "8251 FIFO Compatible", 255: "Other"}
 
 USB_PROTOCOLS = {
-    16: "USB",
-    17: "USB 1.1",
-    18: "USB 2.0",
-    19: "USB 3.0",
+    1: "Other", 2: "Unknown", 3: "EISA", 4: "ISA", 5: "PCI", 6: "ATA/ATAPI",
+    7: "Flexible Diskette", 8: "1496", 9: "SCSI Parallel", 10: "SCSI Fibre Channel",
+    11: "SCSI Serial Bus", 12: "SCSI Serial Bus (1394)", 13: "SCSI SSA", 14: "VESA",
+    15: "PCMCIA", 16: "Universal Serial Bus", 17: "Parallel Protocol", 18: "ESCON",
+    19: "Diagnostic", 20: "I2C", 21: "Power", 22: "HIPPI", 23: "MultiBus", 24: "VME",
+    25: "IPI", 26: "IEEE-488", 27: "RS232", 28: "IEEE 802.3 10BASE5",
+    29: "IEEE 802.3 10BASE2", 30: "IEEE 802.3 1BASE5", 31: "IEEE 802.3 10BROAD36",
+    32: "IEEE 802.3 100BASEVG", 33: "IEEE 802.5 Token-Ring", 34: "ANSI X3T9.5 FDDI",
+    35: "MCA", 36: "ESDI", 37: "IDE", 38: "CMD", 39: "ST506", 40: "DSSI", 41: "QIC2",
+    42: "Enhanced ATA/IDE", 43: "AGP", 44: "USB 1.1 (obsolete)",
+    45: "USB 2.0 (obsolete)", 46: "USB 3.0 (obsolete)",
 }
 
 # --- windows update ----------------------------------------------------------

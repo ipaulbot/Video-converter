@@ -44,7 +44,8 @@ _GUID = re.compile(
 )
 _SETTING_VALUE = re.compile(r"0x[0-9A-Fa-f]{8}")
 
-CTRL_COLUMNS = [("Name", "Name"), ("Manufacturer", "Manufacturer"), ("USB Version", "USB Version"),
+CTRL_COLUMNS = [("Name", "Name"), ("Manufacturer", "Manufacturer"), ("Protocol", "Protocol"),
+                ("USB Generation (from name)", "USB Generation (from name)"),
                 ("Status", "Status"), ("PNPDeviceID", "PnP Device ID")]
 HUB_COLUMNS = [("Name", "Name"), ("Status", "Status"), ("DeviceID", "Device ID")]
 DEV_COLUMNS = [("Name", "Name"), ("VID / PID", "VID / PID"), ("Class", "Class"),
@@ -116,10 +117,22 @@ def _device_sort_key(row: dict) -> tuple:
             str(row.get("InstanceId") or "").casefold())
 
 
+def _usb_generation_from_name(name) -> str:
+    text = str(name or "")
+    if re.search(r"\b3(?:\.(?:0|1|10|2|20))?\b", text, re.IGNORECASE) or re.search(r"\bxHCI\b", text, re.IGNORECASE):
+        return "USB 3.x"
+    if re.search(r"\b(?:EHCI|Enhanced)\b", text, re.IGNORECASE):
+        return "USB 2.0"
+    if re.search(r"\b(?:UHCI|OHCI)\b", text, re.IGNORECASE):
+        return "USB 1.x"
+    return ""
+
+
 def build(controllers, hubs, devices, suspend_text) -> dict:
     suspend = _suspend(suspend_text)
     ctrl = [{"Name": c.get("Name", ""), "Manufacturer": c.get("Manufacturer", ""),
-             "USB Version": decode.lookup(decode.USB_PROTOCOLS, c.get("ProtocolSupported")),
+             "Protocol": decode.lookup(decode.USB_PROTOCOLS, c.get("ProtocolSupported")),
+             "USB Generation (from name)": _usb_generation_from_name(c.get("Name")),
              "Status": c.get("Status", ""), "PNPDeviceID": c.get("PNPDeviceID", "")}
             for c in rows_of(controllers)]
     ctrl.sort(key=lambda row: (str(row["Name"]).casefold(), str(row["PNPDeviceID"]).casefold()))

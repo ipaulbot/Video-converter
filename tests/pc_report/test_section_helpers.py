@@ -30,6 +30,10 @@ class ResultShapeTests(unittest.TestCase):
         self.assertEqual(S.rows_of([{"a": 1}, "junk", None]), [{"a": 1}])
         self.assertEqual(S.first_dict(["x", {"b": 2}]), {"b": 2})
         self.assertEqual(S.first_dict(None), {})
+        self.assertEqual(
+            S.flatten_groups({"groups": [{"rows": {"a": 1}}, {"rows": [("b", 2), "bad"]}]}),
+            {"a": 1, "b": 2},
+        )
 
 
 class SectionContextTests(unittest.TestCase):
@@ -98,6 +102,18 @@ class SectionContextTests(unittest.TestCase):
         self.assertEqual(ctx.result("dep"), {"v": 7})
         self.assertIsNone(ctx.result("absent"))
         self.assertEqual(ctx.options, {"x": 1})
+
+    def test_cancelled_queries_do_not_spawn(self):
+        ctx = self._ctx(
+            is_admin=True,
+            runner=lambda *_args: self.fail("runner must not start"),
+            text_runner=lambda *_args: self.fail("text runner must not start"),
+        )
+        ctx.run.cancel.set()
+        self.assertIsNone(ctx.query("query", "x"))
+        self.assertEqual(ctx.text("text", ["x"]), "")
+        self.assertIsNone(ctx.admin_query("admin", "x"))
+        self.assertEqual(ctx.notes, ["query: cancelled", "text: cancelled", "admin: cancelled"])
 
 
 class HtmlHelperTests(unittest.TestCase):

@@ -6,7 +6,7 @@ import re
 from .. import decode
 from ..format import bytes_human, yes_no
 from ..ps import cim
-from ..section import Section, first_dict, kv_groups, list_table, rows_of, sub_heading
+from ..section import Section, first_dict, flatten_groups, kv_groups, list_table, rows_of, sub_heading
 from . import bios, cpu, memory, motherboard, operating_system, video
 
 CS_SCRIPT = cim(
@@ -118,6 +118,8 @@ def _winsat_value(winsat: dict) -> str:
 
 
 def _pagefile_management(settings) -> str:
+    if settings is None:
+        return "Not available"
     rows = rows_of(settings)
     if not rows:
         return "Automatic (system managed)"
@@ -360,11 +362,7 @@ def build(
 
 
 def flatten(data) -> dict:
-    values = {}
-    groups = data.get("groups") if isinstance(data, dict) else None
-    for group in rows_of(groups):
-        values.update(group.get("rows") or {})
-    return values
+    return flatten_groups(data)
 
 
 def collect(ctx):

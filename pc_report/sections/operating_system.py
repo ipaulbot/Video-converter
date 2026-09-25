@@ -4,7 +4,7 @@ from __future__ import annotations
 from .. import decode
 from ..format import fmt_datetime, uptime_human, yes_no
 from ..ps import cim, ps_quote
-from ..section import Section, as_list, first_dict, kv_groups
+from ..section import Section, as_list, first_dict, flatten_groups, kv_groups
 
 OS_PROPS = ("Caption", "Version", "BuildNumber", "OSArchitecture", "InstallDate", "LastBootUpTime",
             "WindowsDirectory", "SystemDirectory", "BootDevice", "SystemDevice", "SystemStartOptions",
@@ -109,7 +109,10 @@ def build(os_: dict, ver: dict, pol: dict, lic: dict) -> dict:
         "System Device": os_.get("SystemDevice", ""),
         "System Start Options": os_.get("SystemStartOptions", ""),
         "Firmware Type": pol.get("FirmwareType", ""),
-        "Safe Mode": pol.get("SafeMode") or "No",
+        "Safe Mode": (
+            "No" if pol.get("SafeMode") in (None, "")
+            else decode.lookup(decode.SAFE_MODE, pol.get("SafeMode"))
+        ),
         "Fast Startup": yes_no(pol.get("HiberbootEnabled")),
         "Hibernation": yes_no(pol.get("HibernateEnabled")),
         "Portable Operating System": yes_no(os_.get("PortableOperatingSystem")),
@@ -138,11 +141,7 @@ def build(os_: dict, ver: dict, pol: dict, lic: dict) -> dict:
 
 def flatten(data) -> dict:
     """All rows of a kv-groups payload in one dict (later groups win on duplicate labels)."""
-    out = {}
-    for group in as_list((data or {}).get("groups") if isinstance(data, dict) else None):
-        if isinstance(group, dict) and isinstance(group.get("rows"), dict):
-            out.update(group["rows"])
-    return out
+    return flatten_groups(data)
 
 
 def value_of(data, label: str):

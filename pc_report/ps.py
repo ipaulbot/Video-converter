@@ -4,7 +4,6 @@ Everything the sections need to reach Windows goes through here, so tests can
 replace two functions (``run_ps_json`` and ``run_text``) and never spawn a
 process.
 """
-# ruff: noqa: C408
 from __future__ import annotations
 
 import json
@@ -22,9 +21,10 @@ _PREAMBLE = (
 )
 
 
-def _run_kwargs(timeout):
-    kwargs = dict(capture_output=True, text=True, timeout=timeout,
-                  encoding="utf-8", errors="replace")
+def _run_kwargs(timeout, *, text=True):
+    kwargs = {"capture_output": True, "text": text, "timeout": timeout}
+    if text:
+        kwargs.update(encoding="utf-8", errors="replace")
     if os.name == "nt":
         kwargs["creationflags"] = CREATE_NO_WINDOW
         kwargs["shell"] = False
@@ -50,25 +50,47 @@ def run_ps_json(script: str, timeout: int = 15):
         return None, str(e)
     if cp.returncode != 0:
         return None, (cp.stderr or f"exit code {cp.returncode}").strip()[:500]
+    stderr = (cp.stderr or "").strip()
     if not cp.stdout or not cp.stdout.strip():
-        return None, None
+        return None, stderr[:500] or None
     try:
-        return json.loads(cp.stdout), None
+        return json.loads(cp.stdout), stderr[:500] or None
     except Exception as e:
         return None, f"JSON parse error: {e}"
 
 
 def run_text(args: list[str], timeout: int = 15) -> tuple[str, str | None]:
     """Run a command line (netsh, powercfg, ...) and return ``(stdout, error)``."""
+    eff_timeout = max(timeout, 5)
     try:
-        cp = subprocess.run(list(args), **_run_kwargs(max(timeout, 5)))
+        cp = subprocess.run(list(args), **_run_kwargs(eff_timeout, text=False))
     except subprocess.TimeoutExpired:
-        return "", f"timed out after {timeout} s"
+        return "", f"timed out after {eff_timeout} s"
     except Exception as e:
         return "", str(e)
-    if cp.returncode != 0 and not cp.stdout:
-        return "", (cp.stderr or f"exit code {cp.returncode}").strip()[:500]
-    return cp.stdout or "", None
+    encoding = _console_encoding()
+    stdout = _decode_output(cp.stdout, encoding)
+    stderr = _decode_output(cp.stderr, encoding)
+    if cp.returncode != 0 and not stdout:
+        return "", (stderr or f"exit code {cp.returncode}").strip()[:500]
+    return stdout, None
+
+
+def _console_encoding() -> str:
+    if os.name != "nt":
+        return "utf-8"
+    try:
+        import ctypes
+        code_page = ctypes.windll.kernel32.GetConsoleOutputCP()
+        return f"cp{code_page}" if code_page else "utf-8"
+    except (AttributeError, OSError):
+        return "utf-8"
+
+
+def _decode_output(value, encoding: str) -> str:
+    if isinstance(value, bytes):
+        return value.decode(encoding, errors="replace")
+    return value or ""
 
 
 def ps_quote(value) -> str:

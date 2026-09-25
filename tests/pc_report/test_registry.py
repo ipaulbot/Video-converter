@@ -8,6 +8,7 @@ class RegistryInvariantTests(unittest.TestCase):
     def test_every_section_is_in_order_and_unique(self):
         keys = [s.key for s in registry.SECTIONS]
         self.assertEqual(len(keys), len(set(keys)))
+        self.assertNotIn("report_health", keys)
         for key in keys:
             self.assertIn(key, registry.ORDER)
         self.assertEqual(keys, sorted(keys, key=registry.ORDER.index))

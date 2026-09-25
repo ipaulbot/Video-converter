@@ -6,15 +6,15 @@ orchestrator wraps that as ``{"data": ..., "notes": [...]}``. Its ``render``
 receives the unwrapped data and a ``RenderContext`` and returns an HTML
 fragment built from the table helpers below.
 """
-# ruff: noqa: UP035, UP037
 from __future__ import annotations
 
 import ctypes
 import html as _html
 import os
 import threading
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 REQUIRES_ADMIN = "__requires_admin__"
 GROUPS: tuple[str, ...] = ("NVC", "Software", "Hardware", "Network")
@@ -71,6 +71,7 @@ class RunContext:
     runner: Callable[[str, int], tuple[Any, str | None]]
     text_runner: Callable[[list[str], int], tuple[str, str | None]]
     elapsed: dict[str, float] = field(default_factory=dict)
+    cancel: threading.Event = field(default_factory=threading.Event)
 
 
 @dataclass(frozen=True)
@@ -78,8 +79,8 @@ class Section:
     key: str
     title: str
     group: str
-    collect: Callable[["SectionContext"], Any]
-    render: Callable[[Any, "RenderContext"], str]
+    collect: Callable[[SectionContext], Any]
+    render: Callable[[Any, RenderContext], str]
     timeout: int = 30
     default_on: bool = True
     after: tuple[str, ...] = ()
@@ -109,18 +110,27 @@ class SectionContext:
         self.notes.append(text)
 
     def query(self, name: str, script: str, timeout: int | None = None):
+        if self.run.cancel.is_set():
+            self.note(f"{name}: cancelled")
+            return None
         data, error = self.run.runner(script, timeout or self.section.timeout)
         if error:
             self.note(f"{name}: {error}")
         return data
 
     def text(self, name: str, args: list[str], timeout: int | None = None) -> str:
+        if self.run.cancel.is_set():
+            self.note(f"{name}: cancelled")
+            return ""
         out, error = self.run.text_runner(list(args), timeout or self.section.timeout)
         if error:
             self.note(f"{name}: {error}")
         return out or ""
 
     def admin_query(self, name: str, script: str, timeout: int | None = None):
+        if self.run.cancel.is_set():
+            self.note(f"{name}: cancelled")
+            return None
         if not self.is_admin:
             self.note(f"{name}: requires administrator")
             return REQUIRES_ADMIN
@@ -183,6 +193,19 @@ def first_dict(value) -> dict:
         if isinstance(item, dict):
             return item
     return {}
+
+
+def flatten_groups(data) -> dict:
+    """Flatten a ``{"groups": [{"rows": ...}]}`` payload into one mapping."""
+    out = {}
+    groups = data.get("groups") if isinstance(data, dict) else None
+    for group in rows_of(groups):
+        rows = group.get("rows")
+        if isinstance(rows, dict):
+            out.update(rows)
+        else:
+            out.update(_pairs_of(rows))
+    return out
 
 
 # --- HTML ------------------------------------------------------------------

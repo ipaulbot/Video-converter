@@ -11,6 +11,7 @@ from __future__ import annotations
 import concurrent.futures as cf
 import datetime
 import os
+import threading
 import time
 
 from utils.logger import logger
@@ -33,7 +34,7 @@ def _collect_one(run: RunContext, section):
 
 
 def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_runner=None,
-            shared_loaders=None, is_admin=None):
+            shared_loaders=None, is_admin=None, cancel=None):
     options = options or {}
     selected = registry.select(options, sections if sections is not None else registry.SECTIONS)
     selected_keys = {s.key for s in selected}
@@ -44,6 +45,7 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
         shared=SharedSources(shared_loaders if shared_loaders is not None else ps.SHARED_LOADERS),
         runner=runner or ps.run_ps_json,
         text_runner=text_runner or ps.run_text,
+        cancel=cancel if cancel is not None else threading.Event(),
     )
     results = run.results
     errors: dict[str, str] = {}
@@ -68,6 +70,12 @@ def run_all(options: dict, progress_cb=None, sections=None, runner=None, text_ru
     running: dict[cf.Future, object] = {}
     with cf.ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
         while pending or running:
+            if run.cancel.is_set():
+                for section in pending:
+                    results[section.key] = {"status": "partial", "error": "cancelled"}
+                    errors[section.key] = "cancelled"
+                    report(section)
+                pending.clear()
             for section in [s for s in pending if deps_done(s)]:
                 pending.remove(section)
                 running[ex.submit(_collect_one, run, section)] = section

@@ -240,6 +240,10 @@ class BuildTests(unittest.TestCase):
             rows["Page File Management"], "Automatic (system managed)"
         )
 
+    def test_pagefile_management_distinguishes_failure_from_empty_success(self):
+        self.assertEqual(mod._pagefile_management(None), "Not available")
+        self.assertEqual(mod._pagefile_management([]), "Automatic (system managed)")
+
 
 class FixtureTests(unittest.TestCase):
     def test_collect_and_render_from_fixtures(self):

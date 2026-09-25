@@ -4,6 +4,7 @@ The orchestrator fans sections across a thread pool, each of which can shell
 out to PowerShell. Nothing here runs PowerShell: sections use plain callables,
 and the PowerShell runner's subprocess is patched.
 """
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -37,7 +38,8 @@ class RunAllTests(unittest.TestCase):
             sections=self._sections() if sections is None else sections,
             runner=runner or (lambda script, timeout: (None, None)),
             text_runner=lambda args, timeout: ("", None),
-            shared_loaders=kw.pop("shared_loaders", {}), is_admin=kw.pop("is_admin", False))
+            shared_loaders=kw.pop("shared_loaders", {}), is_admin=kw.pop("is_admin", False),
+            **kw)
 
     def test_every_section_runs_by_default_and_is_wrapped(self):
         meta, results, errors = self._run()
@@ -93,6 +95,20 @@ class RunAllTests(unittest.TestCase):
                                            runner=lambda s, t: (None, "access denied"))
         self.assertEqual(errors, {})
         self.assertEqual(results["cpu"], {"data": {"value": None}, "notes": ["thing: access denied"]})
+
+    def test_preset_cancellation_marks_every_section_partial_without_spawning(self):
+        cancel = threading.Event()
+        cancel.set()
+        calls = []
+        _meta, results, errors = self._run(
+            cancel=cancel,
+            runner=lambda script, timeout: calls.append(script) or (None, None),
+        )
+        self.assertEqual(calls, [])
+        self.assertEqual(set(results), {s.key for s in self._sections()})
+        self.assertTrue(all(result == {"status": "partial", "error": "cancelled"}
+                            for result in results.values()))
+        self.assertEqual(set(errors), set(results))
 
     # -- progress -------------------------------------------------------
     def test_progress_is_reported_once_per_section_with_titles(self):

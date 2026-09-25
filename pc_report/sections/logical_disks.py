@@ -47,9 +47,10 @@ def build(logical, volumes, partitions, bitlocker) -> dict:
         letter = str(ld.get("DeviceID") or "").rstrip(":").upper()
         v, p = vol_by.get(letter, {}), part_by.get(letter, {})
         size, free = decode.to_int(ld.get("Size")), decode.to_int(ld.get("FreeSpace"))
-        used = size - free if size is not None and free is not None else None
-        pct = percent(free, size) if size else ""
-        if size and free is not None and free / size < 0.10:
+        valid_capacity = size is not None and free is not None and size > 0 and 0 <= free <= size
+        used = size - free if valid_capacity else None
+        pct = percent(free, size) if valid_capacity else ""
+        if valid_capacity and free / size < 0.10:
             pct = f"⚠ {pct}"
             low.append(f"{letter}:")
         if bitlocker == REQUIRES_ADMIN:

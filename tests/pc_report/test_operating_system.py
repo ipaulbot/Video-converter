@@ -59,6 +59,12 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Activation Status"], "Unknown")
         self.assertEqual(rows["Version"], "")
 
+    def test_safe_mode_values_are_decoded(self):
+        for value, expected in ((1, "Minimal"), (2, "Network"), (7, "Other (7)"), (None, "No")):
+            with self.subTest(value=value):
+                rows = mod.flatten(mod.build({}, {}, {"SafeMode": value}, {}))
+                self.assertEqual(rows["Safe Mode"], expected)
+
     def test_value_of(self):
         data = mod.build(OS, VER, POL, LIC)
         self.assertEqual(mod.value_of(data, "Name"), "Microsoft Windows 11 Enterprise LTSC")

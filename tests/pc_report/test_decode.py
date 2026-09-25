@@ -54,8 +54,8 @@ class DecodeTests(unittest.TestCase):
         self.assertEqual(D.au_options(None, None), "Default (managed by Windows)")
 
     def test_security_center_state(self):
-        # 0x061100 = enabled, up to date (Defender's usual value)
-        self.assertEqual(D.security_center_state(397568), ("Enabled", "Up to date"))
+        # 0x061100 = snoozed, up to date.
+        self.assertEqual(D.security_center_state(397568), ("Snoozed", "Up to date"))
         # 0x000000 = disabled
         self.assertEqual(D.security_center_state(0), ("Disabled", "Up to date"))
         self.assertEqual(D.security_center_state(0x1010), ("Enabled", "Out of date"))

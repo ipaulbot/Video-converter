@@ -42,6 +42,12 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Volumes"], 2)
         self.assertEqual(rows["Low Space (<10 %)"], "C:")
 
+    def test_inconsistent_capacity_leaves_used_and_free_percent_blank(self):
+        data = mod.build([{"DeviceID": "X:", "Size": 100, "FreeSpace": 150}], [], [], [])
+        row = data["rows"][0]
+        self.assertEqual(row["Used"], "")
+        self.assertEqual(row["Free %"], "")
+
 
 class PrivacyTests(unittest.TestCase):
     def _html(self, logical, volumes=()):

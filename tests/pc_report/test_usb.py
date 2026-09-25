@@ -42,10 +42,30 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["USB Devices Present"], 2)
         self.assertEqual(mod.hasp_devices(data), ["SafeNet Inc. Sentinel HASP Key"])
 
-    def test_controller_version(self):
+    def test_controller_protocol_and_name_derived_generation(self):
         data = mod.build(CTRL, HUBS, DEV, "")
-        self.assertEqual(data["controllers"][0]["USB Version"], "USB")
+        self.assertEqual(data["controllers"][0]["Protocol"], "Universal Serial Bus")
+        self.assertEqual(data["controllers"][0]["USB Generation (from name)"], "USB 3.x")
         self.assertEqual(dict(data["groups"][0]["rows"])["Selective Suspend (AC)"], "")
+
+    def test_controller_generation_name_patterns(self):
+        cases = {
+            "USB 3.0 xHCI controller": "USB 3.x",
+            "USB 3.10 controller": "USB 3.x",
+            "Enhanced EHCI controller": "USB 2.0",
+            "OHCI controller": "USB 1.x",
+            "Generic host controller": "",
+        }
+        for name, expected in cases.items():
+            with self.subTest(name=name):
+                row = mod.build([{"Name": name, "ProtocolSupported": 16}], [], [], "")["controllers"][0]
+                self.assertEqual(row["USB Generation (from name)"], expected)
+
+    def test_protocol_table_includes_cim_values_and_unknowns(self):
+        for value, expected in ((1, "Other"), (5, "PCI"), (16, "Universal Serial Bus"),
+                                (44, "USB 1.1 (obsolete)"), (46, "USB 3.0 (obsolete)")):
+            self.assertEqual(mod.decode.lookup(mod.decode.USB_PROTOCOLS, value), expected)
+        self.assertEqual(mod.decode.lookup(mod.decode.USB_PROTOCOLS, 99), "Other (99)")
 
     def test_localised_suspend_and_device_details(self):
         devices = [

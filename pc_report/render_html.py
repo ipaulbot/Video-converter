@@ -52,7 +52,7 @@ def _logo_tag() -> str:
 
 
 def _h2(title: str, anchor: str) -> str:
-    return f'<h2 id="{anchor}">{esc(title)}<a href="#top" class="top">Top ▲</a></h2>'
+    return f'<h2 id="{esc(anchor)}">{esc(title)}<a href="#top" class="top">Top ▲</a></h2>'
 
 
 def _banner(group: str) -> str:

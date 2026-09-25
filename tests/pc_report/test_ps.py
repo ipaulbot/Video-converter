@@ -37,6 +37,18 @@ class RunPsJsonTests(unittest.TestCase):
             _data, error = ps.run_ps_json("x")
         self.assertEqual(error, "exit code 1")
 
+    def test_empty_stdout_keeps_stderr(self):
+        with patch.object(ps.subprocess, "run", return_value=_Completed(stderr="provider failed")):
+            data, error = ps.run_ps_json("x")
+        self.assertIsNone(data)
+        self.assertEqual(error, "provider failed")
+
+    def test_json_data_keeps_stderr(self):
+        with patch.object(ps.subprocess, "run", return_value=_Completed(stdout='{"ok": true}', stderr="warning")):
+            data, error = ps.run_ps_json("x")
+        self.assertEqual(data, {"ok": True})
+        self.assertEqual(error, "warning")
+
 
 class RunTextTests(unittest.TestCase):
     def test_returns_stdout(self):
@@ -52,6 +64,22 @@ class RunTextTests(unittest.TestCase):
             out, error = ps.run_text(["nope"])
         self.assertEqual(out, "")
         self.assertIn("nope", error)
+
+    def test_decodes_console_output_code_page_bytes(self):
+        encoded = "café".encode("cp850")
+        with (
+            patch.object(ps, "_console_encoding", return_value="cp850"),
+            patch.object(ps.subprocess, "run", return_value=_Completed(stdout=encoded, stderr=b"")),
+        ):
+            out, error = ps.run_text(["cmd"])
+        self.assertEqual(out, "café")
+        self.assertIsNone(error)
+
+    def test_timeout_reports_effective_floor(self):
+        import subprocess as sp
+        with patch.object(ps.subprocess, "run", side_effect=sp.TimeoutExpired("cmd", 5)):
+            _out, error = ps.run_text(["cmd"], timeout=1)
+        self.assertEqual(error, "timed out after 5 s")
 
 
 class ScriptBuilderTests(unittest.TestCase):

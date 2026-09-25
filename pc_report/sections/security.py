@@ -4,7 +4,17 @@ from __future__ import annotations
 from .. import decode
 from ..format import fmt_datetime, yes_no
 from ..ps import cim
-from ..section import REQUIRES_ADMIN, Section, first_dict, kv_groups, kv_table, list_table, rows_of, sub_heading
+from ..section import (
+    REQUIRES_ADMIN,
+    Section,
+    first_dict,
+    flatten_groups,
+    kv_groups,
+    kv_table,
+    list_table,
+    rows_of,
+    sub_heading,
+)
 
 SC_SCRIPT = r"""
 foreach ($cls in 'AntiVirusProduct','AntiSpywareProduct','FirewallProduct') {
@@ -72,12 +82,6 @@ catch {
 """
 
 KINDS = {"AntiVirusProduct": "Antivirus", "AntiSpywareProduct": "Anti-spyware", "FirewallProduct": "Firewall"}
-FW_ACTION = {0: "Not configured", 2: "Allow", 4: "Block"}
-VBS_STATUS = {0: "Not enabled", 1: "Enabled, not running", 2: "Running"}
-CI_STATUS = {0: "Off", 1: "Audit", 2: "Enforced"}
-ENCRYPTION_METHOD = {0: "None", 1: "AES 128 with diffuser", 2: "AES 256 with diffuser", 3: "AES 128", 4: "AES 256",
-                     5: "Hardware", 6: "XTS-AES 128", 7: "XTS-AES 256"}
-PROTECTION = {0: "Off", 1: "On", 2: "Unknown"}
 
 SC_COLUMNS = [("Kind", "Kind"), ("Name", "Product"), ("State", "State"), ("Signatures", "Signatures"),
               ("Path", "Path"), ("Timestamp", "Timestamp")]
@@ -89,7 +93,7 @@ ADMIN_COLUMNS = [("Local Administrators", "Member"), ("Class", "Class"), ("Sourc
 
 
 def _fw_action(value):
-    return decode.lookup(FW_ACTION, value) if decode.to_int(value) is not None else str(value or "")
+    return decode.lookup(decode.FIREWALL_ACTION, value) if decode.to_int(value) is not None else str(value or "")
 
 
 def _scan_age(age):
@@ -149,20 +153,27 @@ def build(sc, defender, firewall, dg, tpm, bitlocker, admins, accounts_text) -> 
                 "Log Size": f"{f.get('LogMaxSizeKilobytes')} KB" if f.get("LogMaxSizeKilobytes") else ""}
                for f in rows_of(firewall)]
     vbs = {
-        "Virtualization-based Security": decode.lookup(VBS_STATUS, dg.get("VirtualizationBasedSecurityStatus")),
+        "Virtualization-based Security": decode.lookup(
+            decode.DEVICE_GUARD_VBS_STATUS, dg.get("VirtualizationBasedSecurityStatus")
+        ),
         "Security Services Configured": decode.lookup(decode.DEVICE_GUARD_SERVICES, dg.get("SecurityServicesConfigured")),
         "Security Services Running": decode.lookup(decode.DEVICE_GUARD_SERVICES, dg.get("SecurityServicesRunning")),
         "Available Security Properties": decode.lookup(decode.DEVICE_GUARD_AVAILABLE, dg.get("AvailableSecurityProperties")),
-        "Kernel-mode Code Integrity": decode.lookup(CI_STATUS, dg.get("CodeIntegrityPolicyEnforcementStatus")),
-        "User-mode Code Integrity": decode.lookup(CI_STATUS, dg.get("UsermodeCodeIntegrityPolicyEnforcementStatus")),
+        "Kernel-mode Code Integrity": decode.lookup(
+            decode.CODE_INTEGRITY_STATUS, dg.get("CodeIntegrityPolicyEnforcementStatus")
+        ),
+        "User-mode Code Integrity": decode.lookup(
+            decode.CODE_INTEGRITY_STATUS, dg.get("UsermodeCodeIntegrityPolicyEnforcementStatus")
+        ),
     } if dg else {"Virtualization-based Security": "Not reported"}
     tpm_rows = _kv_or_admin("TPM", tpm, _tpm_rows)
     if bitlocker == REQUIRES_ADMIN:
         bl_rows = REQUIRES_ADMIN
     else:
         bl_rows = [{"Volume": v.get("MountPoint", ""), "Type": str(v.get("VolumeType") or ""),
-                    "Protection": decode.lookup(PROTECTION, v.get("ProtectionStatus")),
-                    "Lock": str(v.get("LockStatus") or ""), "Method": decode.lookup(ENCRYPTION_METHOD, v.get("EncryptionMethod")),
+                    "Protection": decode.lookup(decode.BITLOCKER_PROTECTION, v.get("ProtectionStatus")),
+                    "Lock": str(v.get("LockStatus") or ""),
+                    "Method": decode.lookup(decode.BITLOCKER_ENCRYPTION_METHOD, v.get("EncryptionMethod")),
                     "Encrypted": f"{v.get('EncryptionPercentage')} %" if v.get("EncryptionPercentage") is not None else "",
                     "Key Protectors": v.get("KeyProtector", "")} for v in rows_of(bitlocker)]
     admin_result = first_dict(admins)
@@ -185,10 +196,7 @@ def build(sc, defender, firewall, dg, tpm, bitlocker, admins, accounts_text) -> 
 
 
 def flatten(data) -> dict:
-    out = {}
-    for group in (data or {}).get("groups", []) if isinstance(data, dict) else []:
-        out.update(group.get("rows") or {})
-    return out
+    return flatten_groups(data)
 
 
 def collect(ctx):

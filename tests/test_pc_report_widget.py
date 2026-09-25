@@ -1,6 +1,6 @@
 import inspect
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from PyQt5.QtWidgets import QApplication, QDialog, QSizePolicy
 
@@ -49,7 +49,7 @@ class PCReportWidgetTests(unittest.TestCase):
         progress = []
         worker.progress.connect(progress.append)
 
-        def fake_run_all(options, progress_cb):
+        def fake_run_all(options, progress_cb, cancel):
             progress_cb("Operating System", 1, 40)
             return {"total_seconds": 0.1}, {}, {}
 
@@ -62,12 +62,28 @@ class PCReportWidgetTests(unittest.TestCase):
         self.assertEqual(
             run_all.call_args.args[0],
             {
-                "installed_updates": False,
-                "installed_programs": True,
+                "updates": False,
+                "programs": True,
                 "security": False,
+                "redact": True,
             },
         )
         self.assertEqual(progress, ["Operating System (1/40)", "Rendering HTML..."])
+
+    def test_shutdown_is_a_noop_without_a_worker(self):
+        widget = PCReportWidget()
+        widget.shutdown()
+        self.assertIsNone(widget.worker)
+
+    def test_shutdown_cancels_and_waits_for_a_running_worker(self):
+        widget = PCReportWidget()
+        worker = Mock()
+        worker.isRunning.return_value = True
+        widget.worker = worker
+        widget.shutdown()
+        worker.cancel.assert_called_once_with()
+        worker.requestInterruption.assert_called_once_with()
+        worker.wait.assert_called_once_with(5000)
 
     def test_worker_failure_page_is_escaped_redacted_and_logged(self):
         worker = _PCReportWorker({"redact": True})
