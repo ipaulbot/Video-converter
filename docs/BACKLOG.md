@@ -96,6 +96,15 @@ Out of scope in the current design, kept for later:
 - Preview-pipeline changes.
 - Combined grid mixes only one microphone; per-source embedded audio is not mixed.
 
+## Media player follow-ups
+
+- FFmpeg-decoded playback (play anything without converting).
+- Snapshot current frame to PNG.
+- Subtitle tracks and audio track selection.
+- Per-panel independent transport (today every panel shares one timeline).
+- Persist playlists between sessions.
+- Turning the Media Player tab on by default.
+
 ## Done
 
 - Help documentation is now generated from `docs/help/source/` rather than
@@ -105,4 +114,4 @@ Out of scope in the current design, kept for later:
 ## Feature Ideas
 
 - Lossless split, audio replace, chapter/segment export, snapshot, and timeline UI.
-- Multi-source live preview tiles, device discovery, source health indicators, synchronized start/stop, and recording presets.
+- Multi-source live preview tiles, device discovery, source health indicators, synchronized start/stop~~, and recording presets~~ (presets done 2026-09-25).

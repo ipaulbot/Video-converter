@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tempfile
 import time
 import unittest
@@ -15,6 +16,7 @@ from ui.media_player_widget import (
     format_timecode,
     panel_seek_position_ms,
 )
+from utils.resources import resource_path
 
 
 class MediaPlayerHelperTests(unittest.TestCase):
@@ -438,6 +440,84 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         )
         self.assertIn("failed", panel.overlay.progress_label.text().lower())
         self.assertTrue(panel.overlay.convert_btn.isEnabled())
+
+
+class MediaPlayerRealFileSmokeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+        cls.clip = ""
+        ffmpeg = resource_path("ffmpeg.exe")
+        if not os.path.exists(ffmpeg):
+            return
+        handle = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+        handle.close()
+        command = [
+            ffmpeg,
+            "-hide_banner",
+            "-y",
+            "-f",
+            "lavfi",
+            "-i",
+            "testsrc=duration=2:size=160x120:rate=25",
+            "-f",
+            "lavfi",
+            "-i",
+            "sine=frequency=440:duration=2",
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-shortest",
+            handle.name,
+        ]
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if result.returncode == 0:
+            cls.clip = handle.name
+        else:
+            os.remove(handle.name)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.clip and os.path.exists(cls.clip):
+            os.remove(cls.clip)
+
+    def test_load_reports_duration_and_one_frame_step_moves_one_frame(self):
+        if not self.clip:
+            self.skipTest("ffmpeg.exe not available to synthesise a clip")
+        widget = MediaPlayerWidget(settings={})
+        self.addCleanup(widget.shutdown)
+        panel = widget.panels[0]
+        self.assertTrue(panel.load_media(self.clip))
+        deadline = time.monotonic() + 8
+        while (
+            panel.duration_ms() <= 0 or not panel.probe_info
+        ) and time.monotonic() < deadline:
+            self.app.processEvents()
+            time.sleep(0.02)
+        if panel.duration_ms() <= 0:
+            self.skipTest(
+                "QMediaPlayer backend reported no duration in the headless session"
+            )
+        self.assertGreater(panel.duration_ms(), 1_500)
+        self.assertAlmostEqual(panel.fps(), 25.0, places=1)
+        widget.seek_all(400)
+        widget.step_frames(1)
+        deadline = time.monotonic() + 3
+        while (
+            abs(panel.player.position() - 440) > 40
+            and time.monotonic() < deadline
+        ):
+            self.app.processEvents()
+            time.sleep(0.02)
+        self.assertLessEqual(abs(panel.player.position() - 440), 40)
 
 
 if __name__ == "__main__":
