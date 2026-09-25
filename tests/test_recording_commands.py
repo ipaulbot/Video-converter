@@ -75,6 +75,45 @@ class RecordingCommandTests(unittest.TestCase):
         self.assertEqual(command[command.index("-f") + 1], "dshow")
         self.assertIn("-t", command)
 
+    def test_directshow_record_uses_video_and_audio_in_one_input(self):
+        command = build_record_command(
+            "ffmpeg.exe",
+            "video=Camera A",
+            "out.mp4",
+            "h264",
+            "",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "ffmpeg.exe", "-hide_banner", "-y",
+                "-rtbufsize", "512M", "-f", "dshow",
+                "-i", 'video="Camera A":audio="Microphone A"',
+                "-map", "0:v", "-map", "0:a",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                "-c:a", "aac", "-b:a", "128k",
+                "out.mp4",
+            ],
+        )
+
+    def test_directshow_specialized_builder_uses_same_input_audio(self):
+        command = build_directshow_record_with_preview_command(
+            "ffmpeg.exe",
+            "video=Camera A",
+            "out.mp4",
+            audio_device="Microphone A",
+        )
+
+        self.assertEqual(command.count("-i"), 1)
+        self.assertEqual(command[command.index("-i") + 1], 'video="Camera A":audio="Microphone A"')
+        self.assertIn(
+            ["-map", "0:v", "-map", "0:a"],
+            [command[index:index + 4] for index in range(len(command) - 3)],
+        )
+        self.assertEqual(command[command.index("-b:a") + 1], "128k")
+
     def test_copy_mode_uses_stream_copy(self):
         command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "out.mkv", "copy", "")
 

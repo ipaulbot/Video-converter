@@ -120,6 +120,30 @@ def _add_input(command, source_text, network_profile="preview", frame_rate="", r
     command.extend(["-i", source_text])
 
 
+def _audio_enabled(audio_device, mute=False, volume="100"):
+    device = str(audio_device or "").strip()
+    try:
+        gain = int(str(volume or "100"))
+    except ValueError:
+        gain = 100
+    return bool(device and device != "No Audio" and not mute and gain > 0)
+
+
+def _directshow_av_source(video_source, audio_device):
+    video_name = str(video_source or "").strip()
+    if video_name.lower().startswith("video="):
+        video_name = video_name[6:]
+    video_name = video_name.strip('"')
+    audio_name = str(audio_device or "").strip().strip('"')
+    return f'video="{video_name}":audio="{audio_name}"'
+
+
+def _append_audio_encoding_options(command, volume="100"):
+    command.extend(["-c:a", "aac", "-b:a", "128k"])
+    if str(volume or "100") != "100":
+        command.extend(["-af", f"volume={int(str(volume)) / 100:g}"])
+
+
 def build_record_command(
     ffmpeg_path,
     source,
@@ -129,6 +153,9 @@ def build_record_command(
     preview_pipe=False,
     frame_rate="",
     resolution="",
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
@@ -136,6 +163,9 @@ def build_record_command(
 
     source_text = (source or "").strip()
     is_directshow = source_text.lower().startswith(("video=", "audio="))
+    has_audio = _audio_enabled(audio_device, mute=mute, volume=volume)
+    if has_audio and is_directshow:
+        source_text = _directshow_av_source(source_text, audio_device)
     _add_input(command, source_text, network_profile="recording", frame_rate=frame_rate, resolution=resolution)
 
     if preview_pipe:
@@ -163,6 +193,18 @@ def build_record_command(
             "-vcodec", "mjpeg",
             "pipe:1",
         ])
+        return command
+
+    if is_directshow:
+        command.extend(["-map", "0:v"])
+        if has_audio:
+            command.extend(["-map", "0:a"])
+        else:
+            command.append("-an")
+        command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+        if has_audio:
+            _append_audio_encoding_options(command, volume)
+        command.append(output_file)
         return command
 
     is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
@@ -572,10 +614,16 @@ def build_directshow_record_with_preview_command(
     preview_pipe=False,
     frame_rate="",
     resolution="",
+    audio_device="",
+    mute=False,
+    volume="100",
 ):
     source_text = (source or "").strip()
     if not source_text.lower().startswith("video="):
         source_text = f"video={source_text}"
+    has_audio = _audio_enabled(audio_device, mute=mute, volume=volume)
+    if has_audio:
+        source_text = _directshow_av_source(source_text, audio_device)
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
         command.extend(["-t", str(duration_seconds)])
@@ -598,8 +646,13 @@ def build_directshow_record_with_preview_command(
             "pipe:1",
         ])
         return command
-    command.extend([
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
-        output_file,
-    ])
+    command.extend(["-map", "0:v"])
+    if has_audio:
+        command.extend(["-map", "0:a"])
+    else:
+        command.append("-an")
+    command.extend(["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+    if has_audio:
+        _append_audio_encoding_options(command, volume)
+    command.append(output_file)
     return command
