@@ -97,6 +97,14 @@ class PageShellTests(unittest.TestCase):
         html = _render(_data(operating_system=None))
         self.assertIn("<th>Empty sections</th><td>1: Operating System</td>", html)
 
+    def test_section_with_only_an_empty_subsection_is_not_counted_as_empty(self):
+        partial_render = lambda d, c: kv_table([("Model", "X")]) + "<h3>Optical drives</h3>" + NO_DATA  # noqa: E731
+        fakes = FAKES[:1] + (_fake("operating_system", "Software", render=partial_render),) + FAKES[2:]
+        with patch.object(registry, "SECTIONS", fakes):
+            html = render_html.render(META, _data(operating_system={"v": 1}), {"redact": True})
+        self.assertIn("<th>Empty sections</th><td>0</td>", html)
+        self.assertIn("<h3>Optical drives</h3>", html)
+
     def test_a_render_that_raises_does_not_sink_the_page(self):
         def boom(d, c):
             raise ValueError("bad data")

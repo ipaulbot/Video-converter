@@ -3,7 +3,6 @@ import os
 import unittest
 
 from pc_report import orchestrator, registry, render_html
-from pc_report.section import NO_DATA
 
 
 @unittest.skipUnless(os.environ.get("NVC_PC_REPORT_LIVE") == "1", "set NVC_PC_REPORT_LIVE=1 to run the live report")
@@ -16,7 +15,7 @@ class LiveReportTests(unittest.TestCase):
         empty = []
         for section in registry.SECTIONS:
             body = html.split(f'id="s-{section.key}"', 1)[-1].split("<h2", 1)[0]
-            if NO_DATA in body and "<td" not in body:
+            if render_html.is_empty_body(body):
                 empty.append(section.title)
         # Sections that can legitimately be empty on a desktop without the hardware:
         allowed_empty = {"Printers", "Shares", "Sensors", "Ports", "Virtual Machine"}

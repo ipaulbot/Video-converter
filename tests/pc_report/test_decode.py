@@ -28,11 +28,15 @@ class DecodeTests(unittest.TestCase):
         self.assertEqual(D.lookup(D.PNP_ERROR_CODES, 22), "Disabled")
 
     def test_bios_characteristics(self):
-        text = D.bios_characteristics([7, 9, 32, 40])
+        text = D.bios_characteristics([7, 9, 32, 40, 43, 47, 50])
         self.assertIn("Supports PCI", text)
         self.assertIn("Supports Plug and Play", text)
         self.assertIn("Supports ACPI", text)
-        self.assertIn("Reserved (40)", text)
+        # SMBIOS extension byte 2 (bits 40-46) is decoded; 47 and 48-63 stay vendor-reserved.
+        self.assertIn("BIOS Boot Specification supported", text)
+        self.assertIn("UEFI Specification supported", text)
+        self.assertIn("Reserved (47)", text)
+        self.assertIn("Reserved (50)", text)
 
     def test_license_status_and_sku(self):
         self.assertEqual(D.lookup(D.LICENSE_STATUS, 1), "Licensed")

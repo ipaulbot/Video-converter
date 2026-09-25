@@ -70,11 +70,19 @@ def _section_body(section, result, ctx: RenderContext) -> str:
     return (body or NO_DATA) + notes_block(section_notes(result))
 
 
+def is_empty_body(body: str) -> bool:
+    """True when a rendered section shows no data at all (a 'No data' marker and no data cells).
+
+    Sections with an empty optional subsection (e.g. no optical drive) are not empty.
+    """
+    return NO_DATA in body and "<td" not in body
+
+
 def _report_health(meta: dict, data: dict, rendered, redact: bool) -> str:
     titles = {s.key: s.title for s, _a, _b in rendered}
     partial = [s.title for s, _a, _b in rendered if is_partial(data.get(s.key))]
     noted = [s.title for s, _a, _b in rendered if section_notes(data.get(s.key))]
-    empty = [s.title for s, _a, body in rendered if NO_DATA in body]
+    empty = [s.title for s, _a, body in rendered if is_empty_body(body)]
     elapsed = meta.get("elapsed_by_section") or {}
     slowest = sorted(elapsed.items(), key=lambda kv: kv[1], reverse=True)[:3]
 

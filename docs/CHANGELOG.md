@@ -92,3 +92,33 @@ Use this file to track user-visible fixes, improvements, and feature work.
   Qt shows the English source for the rest. A review pass is still worth
   doing, but it is no longer treated as a release blocker — an unreviewed
   Dutch or Chinese interface is better than an entirely English one.
+
+## 2026-09-24
+
+### PC Report
+
+- Rebuilt on a section registry: 40 sections in NVC / Software / Hardware /
+  Network groups, matching SIW's layout, each with a grouped Contents entry and
+  a Top link. Sections collect in parallel; a failure in one section marks it
+  partial instead of losing the report.
+- Depth parity with SIW: operating system (activation, boot, policies), update
+  history, licences, security (Defender, firewall, VBS, TPM, BitLocker),
+  processes with owners, services, drivers by class, autorun with
+  StartupApproved state, codecs across DirectShow/VCM/ACM/MFT, motherboard,
+  BIOS characteristics, CPU caches and features, memory modules, sensors,
+  devices, PCI, slots, adapters with advanced properties, video with corrected
+  memory, monitors, sound endpoints, storage with partitions and reliability
+  counters, logical disks, ports, USB, printers, VM detection, cameras (Frame
+  Server, consent store, GenICam), network information, shares, connections.
+- New Noldus Summary first: attention items (pending reboot, UAC, low disk,
+  problem devices, USB selective suspend, Frame Server, camera consent,
+  hasplms, jumbo frames), specs, Noldus software/drivers/filters/environment,
+  cameras, dongles, GigE settings.
+- Redaction extended: normalised label matching, IPs masked to two octets, MACs
+  to the vendor prefix, hardware instance IDs, account names, SSIDs, DNS
+  suffixes, proxy and UNC host names, personal device names; Name/Value rows.
+- Admin-only fields show "Requires administrator" instead of failing; no UAC
+  prompt.
+- Report Health block: partial/empty sections, notes, elapsed time per section.
+- The PC Report tab's progress text now names the section being collected and
+  the running count.

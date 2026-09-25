@@ -261,6 +261,14 @@ _BIOS_CHARACTERISTICS = {
     35: "Supports booting from I2O device", 36: "Supports booting from LS-120",
     37: "Supports booting from ATAPI ZIP drive", 38: "Supports booting from IEEE 1394 device",
     39: "Smart Battery supported",
+    # SMBIOS 3.x Type 0 "BIOS Characteristics Extension Byte 2" (WMI numbers these 40-47).
+    40: "BIOS Boot Specification supported",
+    41: "Function key-initiated network service boot supported",
+    42: "Enable targeted content distribution",
+    43: "UEFI Specification supported",
+    44: "SMBIOS table describes a virtual machine",
+    45: "Manufacturing mode supported",
+    46: "Manufacturing mode enabled",
 }
 
 
@@ -270,11 +278,8 @@ def bios_characteristics(codes) -> str:
         n = to_int(code)
         if n is None:
             continue
-        # SMBIOS reserves bits 40-47 for the vendor; report the number rather than a guessed name.
-        if n >= 40:
-            names.append(f"Reserved ({n})")
-        else:
-            names.append(_BIOS_CHARACTERISTICS.get(n, f"Reserved ({n})"))
+        # Bit 47 and 48-63 are reserved for the BIOS/system vendor; report the number rather than a guessed name.
+        names.append(_BIOS_CHARACTERISTICS.get(n, f"Reserved ({n})"))
     return ", ".join(names)
 
 

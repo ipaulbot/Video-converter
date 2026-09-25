@@ -23,7 +23,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(rows["Secure Boot"], "Yes")
         self.assertEqual(rows["ACPI Tables"], "DSDT, FACP, SSDT")
         self.assertIn("Supports PCI", rows["Characteristics"])
-        self.assertIn("Reserved (40)", rows["Characteristics"])
+        self.assertIn("BIOS Boot Specification supported", rows["Characteristics"])
 
 
 class FixtureTests(unittest.TestCase):
