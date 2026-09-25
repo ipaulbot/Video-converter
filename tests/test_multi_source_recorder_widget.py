@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ui import theme
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget, VideoSettingsDialog
 
 
@@ -28,6 +29,13 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         # Anything top-level that exists now belongs to an earlier module and
         # is not this test's to destroy.
         self._pre_existing = list(self.app.topLevelWidgets())
+
+    def _widget(self):
+        return MultiSourceRecorderWidget(
+            directshow_devices=["Camera A"],
+            auto_preview=False,
+            load_saved_settings=False,
+        )
 
     def tearDown(self):
         """Destroy the windows this test created, for real.
@@ -2355,10 +2363,14 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         # -itsoffset would be cancelled by the per-input PTS-STARTPTS rebase).
         self.assertIn("setpts=PTS-STARTPTS+(0.75)/TB", filter_complex)
 
-    def test_output_folder_has_open_link(self):
+    def test_output_folder_has_icon_button_and_legacy_alias(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
-        self.assertTrue(hasattr(widget, "open_output_folder_link"))
-        self.assertEqual(widget.open_output_folder_link.text(), "Open")
+        self.assertIsInstance(widget.open_output_folder_button, QToolButton)
+        self.assertEqual(widget.open_output_folder_button.property("glyph"), "folder_open")
+        self.assertIs(
+            widget.open_output_folder_link,
+            widget.open_output_folder_button,
+        )
         self.assertTrue(hasattr(widget, "open_output_folder"))
 
     def test_current_layout_preview_rects_follows_mode_and_enabled_sources(self):
@@ -3425,6 +3437,51 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertTrue(recording.killed)
         self.assertEqual(widget.preview_processes, {})
         self.assertEqual(widget.processes, [])
+
+    def test_compact_mode_stacks_the_groups_and_full_mode_places_them_side_by_side(self):
+        widget = self._widget()
+        widget.apply_layout_mode(theme.COMPACT)
+        self.assertTrue(widget.groups_stacked())
+        self.assertEqual(
+            widget.preview_boxes[0].maximumHeight(),
+            theme.COMPACT.recorder_tile_max_h,
+        )
+        widget.apply_layout_mode(theme.FULL)
+        self.assertFalse(widget.groups_stacked())
+        self.assertEqual(
+            widget.preview_boxes[0].maximumHeight(),
+            theme.FULL.recorder_tile_max_h,
+        )
+        widget.apply_layout_mode(theme.COMPACT)
+
+    def test_file_location_shows_the_tail_of_a_long_path(self):
+        widget = self._widget()
+        widget.output_folder_edit.setText(
+            r"C:\Videos\a\very\long\path\to\recordings"
+        )
+        self.assertEqual(
+            widget.output_folder_edit.cursorPosition(),
+            len(widget.output_folder_edit.text()),
+        )
+        self.assertEqual(
+            widget.output_folder_edit.sizePolicy().horizontalPolicy(),
+            QSizePolicy.Expanding,
+        )
+
+    def test_copy_mode_note_only_for_usb_rows_in_copy_mode(self):
+        widget = self._widget()
+        enabled, _label, type_combo = widget.source_rows[0][:3]
+        widget.codec_combo.setCurrentText("copy")
+        type_combo.setCurrentIndex(type_combo.findData("rtsp_ip"))
+        self.assertTrue(widget.copy_mode_note.isHidden())
+        type_combo.setCurrentIndex(type_combo.findData("directshow"))
+        self.assertFalse(widget.copy_mode_note.isHidden())
+        self.assertEqual(
+            widget.copy_mode_note.text(),
+            "USB cameras are always re-encoded to H.264; copy applies to RTSP and file sources.",
+        )
+        widget.codec_combo.setCurrentText("h264")
+        self.assertTrue(widget.copy_mode_note.isHidden())
 
 
 if __name__ == "__main__":
