@@ -848,6 +848,18 @@ class VideoConverterApp(QMainWindow):
         burger_menu.addAction(_tr("Open Backup Folder"), self.open_backup_folder_in_explorer)
         burger_menu.addSeparator()
         burger_menu.addAction(_tr("Settings"), self.show_settings)
+        window_menu = burger_menu.addMenu(_tr("Window"))
+        from PyQt5.QtWidgets import QActionGroup
+        mode_group = QActionGroup(self)
+        mode_group.setExclusive(True)
+        self.window_mode_actions = {}
+        for mode, label in (("compact", _tr("Compact mode")), ("full", _tr("Full window mode"))):
+            action = window_menu.addAction(label)
+            action.setCheckable(True)
+            action.setData(mode)
+            mode_group.addAction(action)
+            action.triggered.connect(lambda _checked, m=mode: self.set_window_mode(m))
+            self.window_mode_actions[mode] = action
         self._add_language_menu(burger_menu)
         burger_menu.addAction(_tr("Check for Updates"), self.check_for_updates)
         burger_menu.addSeparator()
@@ -884,129 +896,7 @@ class VideoConverterApp(QMainWindow):
             self.tabs.currentChanged.connect(self.on_tab_changed)
         except Exception:
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
-        # Add Compact Mode toggle to burger menu
-        # self.compact_mode_action = burger_menu.addAction("Compact Mode")
-        # self.compact_mode_action.setCheckable(True)
-        # self.compact_mode_action.toggled.connect(self.toggle_compact_mode)
-        # Remove old File menu
-
-        # --- Compact mode widgets ---
-        # self.compact_widget = QWidget()
-        # compact_layout = QVBoxLayout(self.compact_widget)
-        # compact_layout.setContentsMargins(10, 10, 10, 10)
-        # compact_layout.setSpacing(8)
-        # # Logo
-        # self.compact_logo = QLabel()
-        # self.compact_logo.setPixmap(self.logo_label.pixmap())
-        # self.compact_logo.setAlignment(Qt.AlignCenter)
-        # compact_layout.addWidget(self.compact_logo)
-        # # Row: burger, lock, broom
-        # row = QHBoxLayout()
-        # row.setSpacing(12)
-        # row.setContentsMargins(0, 0, 0, 0)
-        # row.setAlignment(Qt.AlignHCenter)
-        # # Helper for framed icon
-        # def make_framed_icon(widget, icon_widget, size=40):
-        #     frame = QWidget()
-        #     frame_layout = QHBoxLayout(frame)
-        #     frame_layout.setContentsMargins(0, 0, 0, 0)
-        #     frame_layout.setSpacing(0)
-        #     icon_widget.setParent(frame)
-        #     icon_widget.setFixedSize(size, size)
-        #     # Only set alignment if QLabel
-        #     from PyQt5.QtWidgets import QLabel
-        #     if isinstance(icon_widget, QLabel):
-        #         icon_widget.setAlignment(Qt.AlignCenter)
-        #     frame.setFixedSize(size + 8, size + 8)
-        #     # Use thin black border to match normal mode
-        #     frame.setStyleSheet("QWidget { border: 1px solid #000; background: #E0E0E0; border-radius: 4px; }")
-        #     frame_layout.addStretch()
-        #     frame_layout.addWidget(icon_widget, alignment=Qt.AlignCenter)
-        #     frame_layout.addStretch()
-        #     return frame
-        # # Burger
-        # self.compact_burger = QToolButton()
-        # self.compact_burger.setIcon(self.burger_button.icon())
-        # self.compact_burger.setIconSize(QSize(36, 36))
-        # self.compact_burger.setMenu(self.burger_button.menu())
-        # self.compact_burger.setPopupMode(QToolButton.InstantPopup)
-        # self.compact_burger.setCursor(Qt.PointingHandCursor)
-        # self.compact_burger.setStyleSheet("""
-        #     QToolButton {
-        #         border: none;
-        #         background: transparent;
-        #         padding: 4px;
-        #     }
-        #     QToolButton:hover {
-        #         background: #e9ecef;
-        #         border-radius: 18px;
-        #     }
-        #     QToolButton::menu-indicator {
-        #         image: none;
-        #     }
-        # """)
-        # self.compact_burger.setFixedSize(36, 36)
-        # burger_frame = make_framed_icon(self, self.compact_burger)
-        # row.addWidget(burger_frame)
-        # # Lock
-        # self.compact_lock = QLabel()
-        # self.compact_lock.setPixmap(self.get_lock_icon_pixmap())
-        # self.compact_lock.setFixedSize(36, 36)
-        # self.compact_lock.setAlignment(Qt.AlignCenter)
-        # self.compact_lock.setCursor(Qt.PointingHandCursor)
-        # self.compact_lock.setToolTip("Lock/Unlock settings")
-        # self.compact_lock.mousePressEvent = self.lock_icon_clicked
-        # self.compact_lock.setStyleSheet("background: transparent; border: none;")
-        # lock_frame = make_framed_icon(self, self.compact_lock)
-        # row.addWidget(lock_frame)
-        # # File (new, dynamic)
-        # self.compact_file = QLabel()
-        # file_icon_path = self.get_icon_path('FILE')
-        # if os.path.exists(file_icon_path):
-        #     file_pixmap = QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        #     self.compact_file.setPixmap(file_pixmap)
-        # self.compact_file.setFixedSize(36, 36)
-        # self.compact_file.setAlignment(Qt.AlignCenter)
-        # self.compact_file.setCursor(Qt.PointingHandCursor)
-        # self.compact_file.setToolTip("Select media files to convert")
-        # self.compact_file.mousePressEvent = lambda event: self.open_file_dialog()
-        # self.compact_file.setStyleSheet("background: transparent; border: none;")
-        # file_frame = make_framed_icon(self, self.compact_file)
-        # row.addWidget(file_frame)
-        # # Broom
-        # self.compact_broom = QLabel()
-        # broom_icon_path = resource_path('graphics/GRAYSCALEBROOM.ico') if self.locked else resource_path('graphics/BROOM.ico')
-        # if os.path.exists(broom_icon_path):
-        #     broom_pixmap = QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        #     self.compact_broom.setPixmap(broom_pixmap)
-        # self.compact_broom.setFixedSize(36, 36)
-        # self.compact_broom.setAlignment(Qt.AlignCenter)
-        # self.compact_broom.setCursor(Qt.PointingHandCursor)
-        # self.compact_broom.setToolTip("Clear log")
-        # self.compact_broom.mousePressEvent = self.clear_log_tab
-        # self.compact_broom.setStyleSheet("background: transparent; border: none;")
-        # broom_frame = make_framed_icon(self, self.compact_broom)
-        # row.addWidget(broom_frame)
-        # row.addStretch()
-        # compact_layout.addLayout(row)
-        # # Start/Stop button
-        # self.compact_start_button = QPushButton()
-        # self.compact_start_button.setText(self.start_button.text())
-        # self.compact_start_button.setStyleSheet(self.start_button.styleSheet())
-        # # Sync enabled/disabled state
-        # self.compact_start_button.setEnabled(self.start_button.isEnabled())
-        # # Add status to compact mode
-        # self.compact_status_label = QLabel("Status: Not monitoring")
-        # self.compact_status_label.setAlignment(Qt.AlignCenter)
-        # self.compact_status_label.setStyleSheet("QLabel { color: #6c757d; font-size: 10px; background: transparent; border: none; }")
-        # compact_layout.addWidget(self.compact_status_label)
-
-        # compact_layout.addWidget(self.compact_start_button)
-        # self.compact_widget.hide()
-        # main_layout.addWidget(self.compact_widget)
-        # --- End compact mode widgets ---
         self.setStyleSheet(self.styleSheet() + '\nQMainWindow { border-radius: 8px; background: #F5F5F5; }')
-        self.is_compact = False
         # At the very end of init_ui, call update_icons to ensure all icons are set for the initial state
         self.update_icons()
 
@@ -1022,6 +912,7 @@ class VideoConverterApp(QMainWindow):
 
         # Center the main window on screen on first show
         self.center_on_screen()
+        self.set_window_mode(self.settings.get("window_mode", "compact"), persist=False)
 
         # Enable mouse tracking on the main window for proper hover detection
         self.setMouseTracking(True)
@@ -1035,6 +926,40 @@ class VideoConverterApp(QMainWindow):
 
         self.log_tab_layout = log_tab_layout
         self.log_container_index = self.log_tab_layout.indexOf(self.log_container)
+
+    def layout_mode_widgets(self):
+        """Tool widgets that adapt to the window mode."""
+        candidates = (
+            getattr(self, "multi_source_recorder_widget", None),
+            getattr(self, "media_player_widget", None),
+            getattr(self, "pc_report_widget", None),
+            getattr(self, "lossless_editor_widget", None),
+        )
+        return [w for w in candidates if w is not None and hasattr(w, "apply_layout_mode")]
+
+    def set_window_mode(self, name, persist=True):
+        """Switch between Compact (960x600, normal) and Full window (maximised).
+
+        Raises ValueError for unknown names so a typo in settings cannot leave
+        the window half-applied.
+        """
+        metrics = theme.set_layout_mode(name)
+        self.settings["window_mode"] = metrics.name
+        for mode, action in getattr(self, "window_mode_actions", {}).items():
+            action.setChecked(mode == metrics.name)
+        central = self.centralWidget()
+        if central is not None and central.layout() is not None:
+            m = metrics.margin
+            central.layout().setContentsMargins(m, m, m, m)
+        for widget in self.layout_mode_widgets():
+            widget.apply_layout_mode(metrics)
+        if metrics.name == "full":
+            self.showMaximized()
+        else:
+            self.showNormal()
+            self.resize(960, 600)
+        if persist:
+            save_settings(self.settings)
 
     def open_pc_report_dialog(self):
         try:
@@ -1276,12 +1201,6 @@ class VideoConverterApp(QMainWindow):
             else:
                 self.start_button.setToolTip(_tr("Start monitoring the source folder for files to convert."))
         self.update_icons()
-        # After updating main start_button, also update compact
-        if hasattr(self, 'compact_start_button'):
-            self.update_compact_start_button()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
         # Update all button styles based on monitoring state
         self.update_all_button_styles()
         # Update converted files widget button style
@@ -1401,6 +1320,8 @@ class VideoConverterApp(QMainWindow):
             save_settings=lambda: save_settings(self.settings),
             threadpool=self.threadpool,
         )
+        if hasattr(widget, "apply_layout_mode"):
+            widget.apply_layout_mode(theme.metrics())
         self.media_player_widget = widget
         placeholder = getattr(self, 'media_player_placeholder', None)
         if placeholder is not None:
@@ -1524,20 +1445,6 @@ class VideoConverterApp(QMainWindow):
         self.set_status_label(self.status_label_log_tab, self.status_running)
         self.set_status_label(self.status_label_converted_tab, self.status_running)
         self.set_status_label(self.status_label_inspection_tab, self.status_running)
-        # Update compact mode status
-        if hasattr(self, 'compact_status_label'):
-            if self.locked:
-                self.compact_status_label.setText(_tr("Status: Locked"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $text_muted; font-size: 10px; background: transparent; border: none; }"))
-            elif self.queue.active_count > 0:
-                self.compact_status_label.setText(_tr("Status: Converting"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $success; font-size: 10px; background: transparent; border: none; }"))
-            elif self.running:
-                self.compact_status_label.setText(_tr("Status: Monitoring"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $warning; font-size: 10px; background: transparent; border: none; }"))
-            else:
-                self.compact_status_label.setText(_tr("Status: Not monitoring"))
-                self.compact_status_label.setStyleSheet(theme.qss("QLabel { color: $danger; font-size: 10px; background: transparent; border: none; }"))
 
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
@@ -1613,6 +1520,7 @@ class VideoConverterApp(QMainWindow):
     def shutdown(self):
         self.running = False
         self.status_running = False
+        self.hide()
         try:
             # Stops the ffmpeg process, the UI tick timer and the star field.
             self.preview.shutdown()
@@ -1889,9 +1797,6 @@ class VideoConverterApp(QMainWindow):
             logger.info("toggle_process branch=start_conversion")
             self.start_conversion()
             self.set_start_button_state(is_running=True)
-        # Sync compact start button after toggling
-        if hasattr(self, 'compact_start_button'):
-            self.update_compact_start_button()
 
     def start_conversion(self):
         if self.is_recorder_recording():
@@ -1925,9 +1830,6 @@ class VideoConverterApp(QMainWindow):
         self._process_manual_queue()
         self.update_icons()  # Ensure logo switches to color
         self.update_highlight_colors()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
 
     def stop_conversion(self):
         self.running = False
@@ -1942,9 +1844,6 @@ class VideoConverterApp(QMainWindow):
         self.append_log("Conversion stopped.")
         self.update_icons()  # Ensure logo switches to greyscale
         self.update_highlight_colors()
-        # Also update compact logo
-        if hasattr(self, 'compact_logo'):
-            self.update_compact_logo()
 
     def scan_existing_files(self):
         for filename in os.listdir(self.source_folder):
@@ -2141,9 +2040,6 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'burger_button') and os.path.exists(burger_icon_path):
             burger_icon = QIcon(QPixmap(burger_icon_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             self.burger_button.setIcon(burger_icon)
-            # Also update compact burger icon
-            if hasattr(self, 'compact_burger'):
-                self.compact_burger.setIcon(burger_icon)
         elif hasattr(self, 'burger_button'):
             # Debug: log when burger icon path doesn't exist
             logger.info(f"Burger icon path not found: {burger_icon_path}")
@@ -2152,9 +2048,6 @@ class VideoConverterApp(QMainWindow):
             if os.path.exists(fallback_path):
                 fallback_icon = QIcon(QPixmap(fallback_path).scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 self.burger_button.setIcon(fallback_icon)
-                # Also update compact burger icon
-                if hasattr(self, 'compact_burger'):
-                    self.compact_burger.setIcon(fallback_icon)
         # Broom (log tab)
         broom_icon_path = self.get_icon_path('BROOM')
         if os.path.exists(broom_icon_path):
@@ -2182,15 +2075,6 @@ class VideoConverterApp(QMainWindow):
             self.lock_icon_label_inspection_tab.setPixmap(self.get_lock_icon_pixmap())
         # Update game controller icons
         self.update_game_icons()
-        # Compact mode icons
-        if hasattr(self, 'compact_broom') and os.path.exists(broom_icon_path):
-            self.compact_broom.setPixmap(QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        if hasattr(self, 'compact_lock'):
-            self.compact_lock.setPixmap(self.get_lock_icon_pixmap())
-        if hasattr(self, 'compact_file'):
-            file_icon_path = self.get_icon_path('FILE')
-            if os.path.exists(file_icon_path):
-                self.compact_file.setPixmap(QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
         # File icon (normal mode footers)
         for file_label in getattr(self, 'footer_file_labels', []):
             file_icon_path = self.get_icon_path('FILE')
@@ -3022,8 +2906,7 @@ class VideoConverterApp(QMainWindow):
         The traversal lives in theme.apply_to_buttons now, shared with
         SettingsDialog. Buttons keep their own look by setting the
         skipGlobalStyle property rather than by this method knowing their
-        names -- it used to exclude `compact_start_button`, which has been
-        commented out of the UI for some time.
+        names.
         """
         return theme.apply_to_buttons(widget, self.current_button_style)
 

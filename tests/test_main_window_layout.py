@@ -2,6 +2,7 @@ import unittest
 
 from PyQt5.QtWidgets import QApplication
 
+from ui import theme
 from ui.leaf_frame import LeafFrame
 from ui.main_window import VideoConverterApp
 
@@ -57,3 +58,26 @@ class TabCardTests(unittest.TestCase):
         rule = self.window.styleSheet()
         self.assertNotIn("min-width: 100px", rule)
         self.assertNotIn("min-height: 32px", rule)
+
+    def test_burger_has_exclusive_window_mode_actions(self):
+        actions = self.window.window_mode_actions
+        self.assertEqual(set(actions), {"compact", "full"})
+        self.assertTrue(all(a.isCheckable() for a in actions.values()))
+        self.assertTrue(actions["compact"].isChecked())
+        self.assertEqual(actions["compact"].text(), "Compact mode")
+        self.assertEqual(actions["full"].text(), "Full window mode")
+
+    def test_set_window_mode_updates_theme_actions_and_settings(self):
+        try:
+            self.window.set_window_mode("full", persist=False)
+            self.assertEqual(theme.metrics().name, "full")
+            self.assertTrue(self.window.window_mode_actions["full"].isChecked())
+            self.assertFalse(self.window.window_mode_actions["compact"].isChecked())
+            self.assertEqual(self.window.settings["window_mode"], "full")
+        finally:
+            self.window.set_window_mode("compact", persist=False)
+        self.assertEqual(theme.metrics().name, "compact")
+
+    def test_set_window_mode_rejects_unknown(self):
+        with self.assertRaises(ValueError):
+            self.window.set_window_mode("giant", persist=False)
