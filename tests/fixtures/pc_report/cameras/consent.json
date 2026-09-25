@@ -1,0 +1,514 @@
+[
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "(global)",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Claude_pzs8sxrjxfjjc",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.Office.OneNote_8wekyb3d8bbwe",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.SkypeApp_kzf8qxf38zg5c",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.Win32WebViewHost_cw5n1h2txyewy",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.WindowsCamera_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": 134280899155715527,
+  "LastUsedStop": 134280899321871179
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "MSTeams_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": 134347465671368686,
+  "LastUsedStop": 134347487848278638
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "NonPackaged",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files (x86)#Logitech#LogiTune#LogiTune.exe",
+  "Value": "",
+  "LastUsedStart": 134311911948881063,
+  "LastUsedStop": 134311911998931110
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files (x86)#Microsoft#Edge#Application#msedge.exe",
+  "Value": "",
+  "LastUsedStart": 133294938533574811,
+  "LastUsedStop": 133294938594812883
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Google#Chrome#Application#chrome.exe",
+  "Value": "",
+  "LastUsedStart": 134242789720514816,
+  "LastUsedStop": 134242789844404157
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#EthoVision XT 17#EthoVision.exe",
+  "Value": "",
+  "LastUsedStart": 133874592481519993,
+  "LastUsedStop": 133874594653209500
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#EthoVision XT 18#EthoVision.exe",
+  "Value": "",
+  "LastUsedStart": 134282695551173805,
+  "LastUsedStop": 134282695795054761
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 10#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 134347371892282379,
+  "LastUsedStop": 134347371914704789
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 9#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 133505898474434705,
+  "LastUsedStop": 133505898713017037
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 9.1#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 133894656007456120,
+  "LastUsedStop": 133894656119095422
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#MediaRecorder 6#MediaRecorder.exe",
+  "Value": "",
+  "LastUsedStart": 134243984360585896,
+  "LastUsedStop": 134243984539201279
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#obs-studio#bin#64bit#obs64.exe",
+  "Value": "",
+  "LastUsedStart": 134315509644514760,
+  "LastUsedStop": 134315589295122693
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#SplitCam#10#splitcam.exe",
+  "Value": "",
+  "LastUsedStart": 133682189545498353,
+  "LastUsedStop": 133682190114705881
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
+  "Value": "",
+  "LastUsedStart": 133807467499381694,
+  "LastUsedStop": 133807482258202459
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#Microsoft#Teams#current#Teams.exe",
+  "Value": "",
+  "LastUsedStart": 133468697727284591,
+  "LastUsedStop": 133468697730032404
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Roaming#Zoom#bin#Zoom.exe",
+  "Value": "",
+  "LastUsedStart": 134335217999100139,
+  "LastUsedStop": 134335224902166059
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#Desktop#Python Projects#NVC 4#ffmpeg.exe",
+  "Value": "",
+  "LastUsedStart": 134303435735017920,
+  "LastUsedStop": 134303440906209224
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKCU",
+  "App": "D:#Python Projects#NVC 4#ffmpeg.exe",
+  "Value": "",
+  "LastUsedStart": 134329936887713830,
+  "LastUsedStop": 134329946361212953
+ },
+ {
+  "Capability": "webcam",
+  "Hive": "HKLM",
+  "App": "(global)",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "(global)",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Claude_pzs8sxrjxfjjc",
+  "Value": "Allow",
+  "LastUsedStart": 134327430987764288,
+  "LastUsedStop": 134327432191713633
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.Office.OneNote_8wekyb3d8bbwe",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.SkypeApp_kzf8qxf38zg5c",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.Win32WebViewHost_cw5n1h2txyewy",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.Windows.SecureAssessmentBrowser_cw5n1h2txyewy",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.WindowsCamera_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": 134280899266775621,
+  "LastUsedStop": 134280899276254829
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",
+  "Value": "Prompt",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "MSTeams_8wekyb3d8bbwe",
+  "Value": "Allow",
+  "LastUsedStart": 134347465606642246,
+  "LastUsedStop": 134347487834499685
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "NonPackaged",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files (x86)#Microsoft#Edge#Application#msedge.exe",
+  "Value": "",
+  "LastUsedStart": 133294938704669748,
+  "LastUsedStop": 133294989396157561
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files (x86)#Noldus#UltraVox XT 3.2#UltraVox3.exe",
+  "Value": "",
+  "LastUsedStart": 133874593711056046,
+  "LastUsedStop": 133874593711056046
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files (x86)#TeamViewer#TeamViewer.exe",
+  "Value": "",
+  "LastUsedStart": 134330095627829614,
+  "LastUsedStop": 134330102721949502
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Blackmagic Design#DaVinci Resolve#Resolve.exe",
+  "Value": "",
+  "LastUsedStart": 134302424543028507,
+  "LastUsedStop": 134302425875830115
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Google#Chrome#Application#chrome.exe",
+  "Value": "",
+  "LastUsedStart": 134322259879722214,
+  "LastUsedStop": 134322260184827317
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Microsoft Office#root#Office16#POWERPNT.EXE",
+  "Value": "",
+  "LastUsedStart": 134146030200399007,
+  "LastUsedStop": 134146030256437055
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Microsoft Office#root#Office16#WINWORD.EXE",
+  "Value": "",
+  "LastUsedStart": 134298134341847651,
+  "LastUsedStop": 134298134730789022
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 10#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 134347371898076077,
+  "LastUsedStop": 134347371914774777
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 9#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 133505898474484700,
+  "LastUsedStop": 133505898708035307
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#FaceReader 9.1#FaceReader.exe",
+  "Value": "",
+  "LastUsedStart": 133894611363776254,
+  "LastUsedStop": 133894611489981251
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#MediaRecorder 6#MediaRecorder.exe",
+  "Value": "",
+  "LastUsedStart": 133899825303634363,
+  "LastUsedStop": 133899825685972353
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#Noldus#Viso Recorder 12#VisoRecorder.exe",
+  "Value": "",
+  "LastUsedStart": 133771122825568371,
+  "LastUsedStop": 133771123125651427
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#obs-studio#bin#64bit#obs64.exe",
+  "Value": "",
+  "LastUsedStart": 134322382472619668,
+  "LastUsedStop": 134322382757762529
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#SplitCam#10#splitcam.exe",
+  "Value": "",
+  "LastUsedStart": 133682189530936478,
+  "LastUsedStop": 133682190088164605
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Program Files#TeamViewer#TeamViewer.exe",
+  "Value": "",
+  "LastUsedStart": 133365821257445558,
+  "LastUsedStop": 133365821266633041
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#CiscoSparkLauncher#CiscoCollabHost.exe",
+  "Value": "",
+  "LastUsedStart": 133807464556634569,
+  "LastUsedStop": 133807482258322474
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#Microsoft#Teams#current#Teams.exe",
+  "Value": "",
+  "LastUsedStart": 133468665733125882,
+  "LastUsedStop": 133468697704582990
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#Perplexity#Comet#Application#comet.exe",
+  "Value": "",
+  "LastUsedStart": 134177984619357435,
+  "LastUsedStop": 134177984787969536
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Local#Programs#cursor#Cursor.exe",
+  "Value": "",
+  "LastUsedStart": 134318006934691116,
+  "LastUsedStop": 134318007068438951
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "C:#Users#user#AppData#Roaming#Zoom#bin#Zoom.exe",
+  "Value": "",
+  "LastUsedStart": 134339721297662811,
+  "LastUsedStop": 134339721297681980
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKCU",
+  "App": "windows.immersivecontrolpanel_cw5n1h2txyewy",
+  "Value": "",
+  "LastUsedStart": 133999926681835847,
+  "LastUsedStop": 133999926687817409
+ },
+ {
+  "Capability": "microphone",
+  "Hive": "HKLM",
+  "App": "(global)",
+  "Value": "Allow",
+  "LastUsedStart": null,
+  "LastUsedStop": null
+ }
+]
