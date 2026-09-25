@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from conversion.recording_sources import DeviceScan
 from ui import theme
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget, VideoSettingsDialog
 
@@ -100,7 +101,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
     def test_audio_discovery_populates_all_row_combos(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
 
-        widget._apply_audio_devices(["Microphone A", "Microphone B"])
+        widget._apply_device_scan(DeviceScan([], ["Microphone A", "Microphone B"], True))
 
         for row in widget.source_rows:
             self.assertEqual(
@@ -114,7 +115,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         settings["channels"][0]["audio_device"] = "Lab Microphone"
 
         widget.apply_recorder_settings(settings, refresh_previews=False)
-        widget._apply_audio_devices(["Microphone A"])
+        widget._apply_device_scan(DeviceScan([], ["Microphone A"], True))
 
         combo = widget.source_rows[0][7]
         self.assertEqual(combo.currentText(), "Lab Microphone (not found)")
@@ -124,28 +125,135 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
             "Lab Microphone",
         )
 
-    def test_widget_starts_audio_discovery_on_creation(self):
+    def test_widget_starts_device_discovery_on_creation(self):
         started = []
         with patch.object(
             MultiSourceRecorderWidget,
-            "start_audio_device_discovery",
+            "start_device_discovery",
             lambda self, force=False: started.append(force),
         ):
             MultiSourceRecorderWidget(auto_preview=False)
 
         self.assertEqual(started, [False])
 
-    def test_audio_discovery_result_is_ignored_after_widget_is_destroyed(self):
+    def test_discovery_result_is_ignored_after_widget_is_destroyed(self):
         with patch.object(
             MultiSourceRecorderWidget,
-            "start_audio_device_discovery",
+            "start_device_discovery",
             lambda self, force=False: None,
         ):
             widget = MultiSourceRecorderWidget(auto_preview=False)
         widget.deleteLater()
         self.app.sendPostedEvents(None, QEvent.DeferredDelete)
 
-        widget._deliver_audio_devices(["Microphone A"])
+        widget._deliver_device_scan(DeviceScan(["Camera A"], ["Microphone A"], True))
+
+    def _widget_with_scan(self, scans):
+        """A widget whose ffmpeg listing is replaced by `scans` (popped per call), run inline."""
+        calls = []
+
+        def fake_scan(_ffmpeg):
+            calls.append(_ffmpeg)
+            return scans.pop(0)
+
+        widget = self._inline_widget()
+        patcher = patch("ui.multi_source_recorder_widget.discover_directshow_devices", fake_scan)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return widget, calls
+
+    def _inline_widget(self):
+        """A widget whose background scans run inline (the construction scan included)."""
+        with patch.object(MultiSourceRecorderWidget, "_run_in_background", staticmethod(lambda fn: fn())):
+            widget = MultiSourceRecorderWidget(
+                directshow_devices=[], auto_preview=False, load_saved_settings=False
+            )
+        widget._run_in_background = lambda fn: fn()
+        widget.last_device_scan_at = None  # forget the construction scan
+        return widget
+
+    def test_device_discovery_runs_once_off_thread_and_fills_both_lists(self):
+        widget, calls = self._widget_with_scan(
+            [DeviceScan(["Camera A", "Camera B"], ["Microphone A"], True)]
+        )
+
+        self.assertTrue(widget.start_device_discovery(force=True))
+        self.app.processEvents()
+
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(widget.directshow_devices, ["Camera A", "Camera B"])
+        self.assertEqual(widget.directshow_audio_devices, ["Microphone A"])
+        self.assertFalse(widget.device_discovery_running)
+        combo = widget.source_rows[0][7]
+        self.assertEqual(
+            [combo.itemText(i) for i in range(combo.count())],
+            ["No Audio", "Microphone A"],
+        )
+
+    def test_failed_scan_keeps_the_lists_we_already_had(self):
+        widget, _calls = self._widget_with_scan([DeviceScan([], [], False)])
+        widget.directshow_devices = ["Camera A"]
+        widget.directshow_audio_devices = ["Microphone A"]
+
+        widget.start_device_discovery(force=True)
+        self.app.processEvents()
+
+        self.assertEqual(widget.directshow_devices, ["Camera A"])
+        self.assertEqual(widget.directshow_audio_devices, ["Microphone A"])
+        self.assertFalse(widget.last_device_scan_ok)
+        self.assertFalse(widget.device_discovery_running)
+
+    def test_fresh_results_are_reused_and_force_rescans(self):
+        widget, calls = self._widget_with_scan(
+            [DeviceScan(["Camera A"], [], True), DeviceScan(["Camera B"], [], True)]
+        )
+        widget.start_device_discovery(force=True)
+        self.app.processEvents()
+        self.assertFalse(widget.start_device_discovery())  # fresh: no second scan
+        self.assertEqual(len(calls), 1)
+
+        self.assertTrue(widget.start_device_discovery(force=True))
+        self.app.processEvents()
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(widget.directshow_devices, ["Camera B"])
+
+    def test_a_scan_that_raises_still_clears_the_running_flag(self):
+        widget = self._inline_widget()
+
+        def boom(_ffmpeg):
+            raise RuntimeError("ffmpeg exploded")
+
+        with patch("ui.multi_source_recorder_widget.discover_directshow_devices", boom):
+            widget.start_device_discovery(force=True)
+            self.app.processEvents()
+
+        self.assertFalse(widget.device_discovery_running)
+        self.assertFalse(widget.last_device_scan_ok)
+
+    def test_populating_a_source_row_never_blocks_on_a_scan(self):
+        widget, calls = self._widget_with_scan([DeviceScan(["Camera A"], [], True)])
+        pending = []
+        widget._run_in_background = pending.append  # hold the scan, like a slow ffmpeg
+        type_combo, source_edit = widget.source_rows[0][2], widget.source_rows[0][3]
+        with patch.object(widget, "discover_directshow_devices", side_effect=AssertionError("blocking scan")):
+            type_combo.setCurrentIndex(type_combo.findData("directshow"))
+            widget.populate_directshow_devices(source_edit)
+        # Nothing to offer yet, one scan queued, and the UI never waited for it.
+        self.assertEqual(source_edit.options(), [])
+        self.assertEqual(len(pending), 1)
+        pending[0]()
+        self.app.processEvents()
+        # The scan landed: the row offers the camera without filling it in
+        # behind the user's back.
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(source_edit.options(), ["Camera A"])
+        self.assertEqual(source_edit.text(), "")
+
+    def test_shutdown_terminates_device_probes(self):
+        widget = self._widget()
+        with patch("ui.multi_source_recorder_widget.terminate_device_probes") as terminate:
+            widget.shutdown()
+        terminate.assert_called_once()
 
     def test_selecting_usb_directshow_updates_preview_guidance(self):
         # "Opening preview" only appears once a camera name is filled in, so
@@ -2168,13 +2276,73 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)
         calls = {"discover": 0}
         widget.discover_directshow_devices = lambda: calls.__setitem__("discover", calls["discover"] + 1) or ["HD Pro Webcam C920"]
+        started = []
+        widget.start_device_discovery = lambda force=False: started.append(force) or True
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
         dialog.refresh_directshow_devices()
+        widget._apply_device_scan(DeviceScan(["HD Pro Webcam C920"], [], True))
 
         options = [dialog.dialog_rows[0][3].itemText(i) for i in range(dialog.dialog_rows[0][3].count())]
-        self.assertEqual(calls["discover"], 1)
+        self.assertEqual(calls["discover"], 0)          # never the blocking path
+        self.assertEqual(started[-1], True)             # an explicit refresh always rescans
         self.assertIn("HD Pro Webcam C920", options)
+
+    def test_video_settings_dialog_scans_in_the_background_when_it_opens(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)
+        started = []
+        widget.start_device_discovery = lambda force=False: started.append(force) or True
+
+        VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        self.assertEqual(started, [False])  # reuse a fresh listing, scan otherwise
+
+    def test_video_settings_dialog_shows_scan_progress_and_result(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)
+        widget.start_device_discovery = lambda force=False: True
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        widget.device_scan_started.emit()
+        self.assertIn("Scanning", dialog.device_scan_status.text())
+        self.assertFalse(dialog.refresh_devices_button.isEnabled())
+
+        widget._deliver_device_scan(DeviceScan(["Camera A", "Camera B"], ["Microphone A"], True))
+        self.assertEqual(dialog.device_scan_status.text(), "2 cameras, 1 microphone found")
+        self.assertTrue(dialog.refresh_devices_button.isEnabled())
+
+        widget._deliver_device_scan(DeviceScan([], [], False))
+        self.assertIn("failed", dialog.device_scan_status.text())
+        self.assertTrue(dialog.refresh_devices_button.isEnabled())
+
+    def test_refresh_button_is_a_glyph_button_that_rescans_everything(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)
+        started = []
+        widget.start_device_discovery = lambda force=False: started.append(force) or True
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        self.assertEqual(dialog.refresh_devices_button.property("glyph"), "refresh")
+        self.assertIs(dialog.refresh_devices_button, dialog.refresh_audio_devices_button)
+        # The opening scan is in flight: no doubling up until it lands.
+        self.assertFalse(dialog.refresh_devices_button.isEnabled())
+        widget._deliver_device_scan(DeviceScan([], [], True))
+        self.assertTrue(dialog.refresh_devices_button.isEnabled())
+
+        dialog.refresh_devices_button.click()
+
+        self.assertEqual(started, [False, True])
+
+    def test_picking_refresh_in_a_row_combo_rescans_and_keeps_the_previous_choice(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        started = []
+        widget.start_device_discovery = lambda force=False: started.append(force) or True
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        combo = dialog.dialog_rows[0][3]
+        combo.setCurrentText("Camera A")
+        started.clear()
+
+        combo.setCurrentIndex(combo.findData("refresh_directshow"))
+
+        self.assertEqual(started, [True])
+        self.assertEqual(combo.currentText(), "Camera A")  # not left on "Refresh USB devices..."
 
     def test_rtsp_camera_settings_can_fill_axis_rtsp_url(self):
         widget = MultiSourceRecorderWidget(directshow_devices=[], auto_preview=False)

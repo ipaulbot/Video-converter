@@ -56,14 +56,16 @@ from conversion.recording_commands import (
 )
 from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
+    DeviceScan,
     apply_axis_rtsp_recording_options,
     axis_mjpeg_preview_url,
     build_rtsp_url,
     build_source_text,
-    discover_directshow_audio_devices,
+    discover_directshow_devices,
     discover_directshow_video_devices,
     parse_directshow_video_options,
     parse_rtsp_url_settings,
+    terminate_device_probes,
 )
 from ui import theme
 from ui.glyph_icons import make_icon_button, reskin_icon_buttons
@@ -119,13 +121,22 @@ class SourceComboBox(QComboBox):
     def placeholderText(self):
         return self.lineEdit().placeholderText() if self.lineEdit() else ""
 
-    def set_options(self, options):
+    def set_options(self, options, auto_select=True):
+        """Replace the drop-down entries, keeping the typed text.
+
+        `auto_select=False` leaves an empty field empty: a scan landing seconds
+        after the user picked "USB camera" must not quietly fill in a camera.
+        """
         current = self.currentText()
         self.blockSignals(True)
         self.clear()
         self.addItems(options)
-        self.setCurrentText(current if current else (options[0] if options else ""))
+        fallback = options[0] if (options and auto_select) else ""
+        self.setCurrentText(current if current else fallback)
         self.blockSignals(False)
+
+    def options(self):
+        return [self.itemText(i) for i in range(self.count())]
 
 
 VIDEO_DEVICE_PLACEHOLDERS = {
@@ -223,6 +234,9 @@ class VideoSettingsDialog(QDialog):
         self.source_rows = source_rows
         self.output_controls = output_controls or {}
         self.dialog_rows = []
+        # Last real device text per row combo, so "Refresh USB devices..." can
+        # be undone after it has triggered a scan.
+        self._last_device_choice = {}
         self.camera_settings_buttons = []
         self.mode_status_labels = []
         layout = QVBoxLayout(self)
@@ -347,11 +361,38 @@ class VideoSettingsDialog(QDialog):
         grid.setColumnMinimumWidth(4, 16)
         grid.setColumnStretch(4, 0)
         layout.addLayout(grid)
-        self.refresh_audio_devices_button = QPushButton(_tr("Refresh devices"))
-        self.refresh_audio_devices_button.clicked.connect(self.refresh_audio_devices)
-        layout.addWidget(self.refresh_audio_devices_button, 0, Qt.AlignRight)
+        scan_row = QHBoxLayout()
+        scan_row.setContentsMargins(0, 0, 0, 0)
+        scan_row.setSpacing(6)
+        self.device_scan_status = QLabel("")
+        self.device_scan_status.setStyleSheet(theme.muted_label_style())
+        self.refresh_devices_button = make_icon_button(
+            "refresh",
+            _tr("Scan again for cameras and microphones"),
+            theme.skin().accent,
+            size=24,
+        )
+        self.refresh_devices_button.clicked.connect(self.refresh_devices)
+        # Older name, kept for callers that only knew about the audio side.
+        self.refresh_audio_devices_button = self.refresh_devices_button
+        scan_row.addStretch(1)
+        scan_row.addWidget(self.device_scan_status, 0, Qt.AlignVCenter)
+        scan_row.addWidget(self.refresh_devices_button, 0, Qt.AlignVCenter)
+        layout.addLayout(scan_row)
         if parent and hasattr(parent, "audio_devices_discovered"):
             parent.audio_devices_discovered.connect(self.apply_discovered_audio_devices)
+        if parent and hasattr(parent, "video_devices_discovered"):
+            parent.video_devices_discovered.connect(self.apply_discovered_video_devices)
+        if parent and hasattr(parent, "device_scan_started"):
+            parent.device_scan_started.connect(self._on_device_scan_started)
+            parent.device_scan_finished.connect(self._on_device_scan_finished)
+        if parent and hasattr(parent, "start_device_discovery"):
+            # Opening the dialog is the moment the lists matter; a listing that
+            # is still fresh is reused, otherwise one starts in the background.
+            if parent.start_device_discovery() or getattr(parent, "device_discovery_running", False):
+                self._on_device_scan_started()
+            else:
+                self._show_device_counts()
 
         preset_group = QGroupBox(_tr("Video Preset"))
         preset_layout = QHBoxLayout()
@@ -675,6 +716,8 @@ class VideoSettingsDialog(QDialog):
 
     def populate_video_device_combo(self, combo):
         current = combo.currentText()
+        if current == "Refresh USB devices...":
+            current = self._last_device_choice.get(combo, "No source selected...")
         combo.blockSignals(True)
         combo.clear()
         combo.addItem("No source selected...", "none")
@@ -702,17 +745,21 @@ class VideoSettingsDialog(QDialog):
             device_type = row_type.currentData()
         return device_type
 
-    def refresh_directshow_devices(self):
+    def refresh_devices(self):
+        """Rescan cameras and microphones in the background (one ffmpeg run)."""
         parent = self.parent()
-        if parent and hasattr(parent, "discover_directshow_devices"):
-            self.directshow_devices = parent.discover_directshow_devices()
+        if parent and hasattr(parent, "start_device_discovery"):
+            if parent.start_device_discovery(force=True):
+                self._on_device_scan_started()
+
+    # Both older entry points now mean the same thing: one scan lists both.
+    refresh_directshow_devices = refresh_devices
+    refresh_audio_devices = refresh_devices
+
+    def apply_discovered_video_devices(self, devices):
+        self.directshow_devices = list(devices or [])
         for dialog_row in self.dialog_rows:
             self.populate_video_device_combo(dialog_row[3])
-
-    def refresh_audio_devices(self):
-        parent = self.parent()
-        if parent and hasattr(parent, "start_audio_device_discovery"):
-            parent.start_audio_device_discovery(force=True)
 
     def apply_discovered_audio_devices(self, _devices):
         parent = self.parent()
@@ -725,10 +772,46 @@ class VideoSettingsDialog(QDialog):
                 parent._audio_device_value(combo),
             )
 
+    def _on_device_scan_started(self):
+        self.refresh_devices_button.setEnabled(False)
+        self.device_scan_status.setText(_tr("Scanning for cameras and microphones..."))
+
+    def _on_device_scan_finished(self, scan):
+        self.refresh_devices_button.setEnabled(True)
+        if not getattr(scan, "ok", False):
+            self.device_scan_status.setText(
+                _tr("Device scan failed. Check that ffmpeg.exe is present and try again.")
+            )
+            return
+        self._show_device_counts()
+
+    def _show_device_counts(self):
+        parent = self.parent()
+        cameras = len(getattr(parent, "directshow_devices", None) or self.directshow_devices or [])
+        microphones = len(getattr(parent, "directshow_audio_devices", None) or [])
+        camera_text = _tr("%(n)d camera") % {"n": cameras} if cameras == 1 else _tr("%(n)d cameras") % {"n": cameras}
+        microphone_text = (
+            _tr("%(n)d microphone") % {"n": microphones}
+            if microphones == 1
+            else _tr("%(n)d microphones") % {"n": microphones}
+        )
+        self.device_scan_status.setText(
+            _tr("%(cameras)s, %(microphones)s found")
+            % {"cameras": camera_text, "microphones": microphone_text}
+        )
+
     def handle_video_device_choice(self, combo):
         if combo.currentData() == "refresh_directshow":
-            self.refresh_directshow_devices()
+            # Put the previous choice back so the entry can be picked again
+            # and the row never records "Refresh USB devices..." as a camera.
+            previous = self._last_device_choice.get(combo, "No source selected...")
+            combo.blockSignals(True)
+            combo.setCurrentText(previous)
+            combo.blockSignals(False)
+            self.refresh_devices()
             return
+        if combo.currentText().strip():
+            self._last_device_choice[combo] = combo.currentText()
         self.detect_modes_for_combo(combo)
 
     def detect_modes_for_combo(self, combo):
@@ -947,7 +1030,16 @@ class MultiSourceRecorderWidget(QWidget):
     # Emitted whenever the output mode or the set of enabled sources changes, so a host
     # (the main window) can refresh the layout schematic shown in its sidebar preview.
     layout_preview_changed = pyqtSignal()
+    # One ffmpeg listing yields both lists; the Video Settings dialog listens
+    # to all three (the split ones for its combos, the summary for its status).
+    device_scan_finished = pyqtSignal(object)
     audio_devices_discovered = pyqtSignal(list)
+    video_devices_discovered = pyqtSignal(list)
+    device_scan_started = pyqtSignal()
+
+    # How long a listing stays "fresh": opening Video Settings within this
+    # window reuses it instead of spinning ffmpeg up again.
+    DEVICE_SCAN_TTL_S = 45.0
 
     def __init__(self, parent=None, button_style=None, directshow_devices=None, auto_preview=True, load_saved_settings=False):
         super().__init__(parent)
@@ -955,8 +1047,10 @@ class MultiSourceRecorderWidget(QWidget):
         self.button_style = button_style
         self.directshow_devices = directshow_devices
         self.directshow_audio_devices = []
-        self.audio_discovery_running = False
-        self.audio_devices_discovered.connect(self._apply_audio_devices)
+        self.device_discovery_running = False
+        self.last_device_scan_ok = None
+        self.last_device_scan_at = None
+        self.device_scan_finished.connect(self._apply_device_scan)
         self.auto_preview = auto_preview
         self.preview_processes = {}
         self.preview_files = {}
@@ -1000,7 +1094,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.record_start_watchdog_timer = QTimer(self)
         self.record_start_watchdog_timer.setSingleShot(True)
         self.record_start_watchdog_timer.timeout.connect(self._begin_pending_recording)
-        self.start_audio_device_discovery()
+        self.start_device_discovery()
         if load_saved_settings:
             self.load_current_recorder_settings()
 
@@ -1423,44 +1517,85 @@ class MultiSourceRecorderWidget(QWidget):
             self.update_ptz_overlay_for_row(row_index)
 
     def populate_directshow_devices(self, source_edit):
-        devices = self.discover_directshow_devices()
+        """Offer the cameras we know about now and refresh them in the background.
+
+        Never scans inline: a listing takes several seconds on a machine with
+        a few virtual cameras, and this runs while the user is picking a
+        source type or while saved settings load at startup.
+        """
         if hasattr(source_edit, "set_options"):
-            source_edit.set_options(devices)
+            source_edit.set_options(list(self.directshow_devices or []))
+        self.start_device_discovery()
 
     def discover_directshow_devices(self):
+        """Blocking listing, kept for callers that explicitly want to wait."""
         if not self.directshow_devices:
             self.directshow_devices = discover_directshow_video_devices(resource_path("ffmpeg.exe"))
         return self.directshow_devices
 
-    def start_audio_device_discovery(self, force=False):
-        if self.audio_discovery_running:
-            return
-        if self.directshow_audio_devices and not force:
-            self._apply_audio_devices(self.directshow_audio_devices)
-            return
-        self.audio_discovery_running = True
+    def device_scan_is_fresh(self):
+        if self.last_device_scan_ok is not True or self.last_device_scan_at is None:
+            return False
+        return (time.monotonic() - self.last_device_scan_at) < self.DEVICE_SCAN_TTL_S
+
+    def start_device_discovery(self, force=False):
+        """List cameras and microphones off the GUI thread.
+
+        Returns True when a scan was started. A fresh result is reused unless
+        `force`; a scan already in flight is never doubled up.
+        """
+        if self.device_discovery_running:
+            return False
+        if not force and self.device_scan_is_fresh():
+            return False
+        self.device_discovery_running = True
+        self.device_scan_started.emit()
 
         def discover():
-            devices = discover_directshow_audio_devices(resource_path("ffmpeg.exe"))
-            self._deliver_audio_devices(devices)
+            try:
+                scan = discover_directshow_devices(resource_path("ffmpeg.exe"))
+            except Exception:
+                logger.warning("Device listing failed", exc_info=True)
+                scan = DeviceScan([], [], False)
+            self._deliver_device_scan(scan)
 
-        threading.Thread(target=discover, daemon=True).start()
+        self._run_in_background(discover)
+        return True
 
-    def _deliver_audio_devices(self, devices):
+    # Alias kept for the Video Settings dialog and older call sites.
+    def start_audio_device_discovery(self, force=False):
+        return self.start_device_discovery(force=force)
+
+    @staticmethod
+    def _run_in_background(fn):
+        threading.Thread(target=fn, daemon=True).start()
+
+    def _deliver_device_scan(self, scan):
         try:
-            self.audio_devices_discovered.emit(devices)
+            self.device_scan_finished.emit(scan)
         except RuntimeError:
             logger.debug(
-                "Recorder closed before audio device discovery completed",
+                "Recorder closed before device discovery completed",
                 exc_info=True,
             )
 
-    def _apply_audio_devices(self, devices):
-        self.audio_discovery_running = False
-        self.directshow_audio_devices = list(devices or [])
+    def _apply_device_scan(self, scan):
+        self.device_discovery_running = False
+        self.last_device_scan_ok = bool(scan.ok)
+        self.last_device_scan_at = time.monotonic()
+        if not scan.ok:
+            # ffmpeg missing, crashed or timed out: the machine has not lost
+            # its cameras, we just could not ask. Keep what we had.
+            return
+        self.directshow_devices = list(scan.video)
+        self.directshow_audio_devices = list(scan.audio)
         for source_row in self.source_rows:
-            combo = source_row[7]
-            self.populate_audio_device_combo(combo, self._audio_device_value(combo))
+            type_combo, source_edit, audio_combo = source_row[2], source_row[3], source_row[7]
+            self.populate_audio_device_combo(audio_combo, self._audio_device_value(audio_combo))
+            if self._source_type_id(type_combo) == "directshow" and hasattr(source_edit, "set_options"):
+                source_edit.set_options(self.directshow_devices, auto_select=False)
+        self.video_devices_discovered.emit(list(self.directshow_devices))
+        self.audio_devices_discovered.emit(list(self.directshow_audio_devices))
 
     @staticmethod
     def _audio_device_value(combo):
@@ -1878,6 +2013,7 @@ class MultiSourceRecorderWidget(QWidget):
 
     def shutdown(self):
         self.pending_recording_start = None
+        terminate_device_probes()
         self.record_start_timer.stop()
         self.record_start_watchdog_timer.stop()
         self.preview_render_timer.stop()

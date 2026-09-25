@@ -6,6 +6,8 @@ accent colour, which is cheaper to paint than to maintain as 36 bitmaps.
 """
 from __future__ import annotations
 
+from math import cos, radians, sin
+
 from PyQt5.QtCore import QPointF, QRectF, QSize, Qt
 from PyQt5.QtGui import QColor, QIcon, QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 from PyQt5.QtWidgets import QToolButton
@@ -28,6 +30,10 @@ GLYPHS: tuple[str, ...] = (
     "folder_open",
     "report",
     "shield",
+    "refresh",
+    "settings",
+    "log",
+    "camera",
 )
 
 
@@ -154,6 +160,38 @@ def _paint(name: str, painter: QPainter, s: float, color: QColor) -> None:
         path.lineTo(P(0.20, 0.24))
         path.closeSubpath()
         painter.drawPath(path)
+    elif name == "refresh":
+        # Two half-arcs chasing each other, each with an arrowhead.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawArc(R(0.20, 0.20, 0.60, 0.60), 30 * 16, 130 * 16)
+        painter.drawArc(R(0.20, 0.20, 0.60, 0.60), 210 * 16, 130 * 16)
+        painter.setBrush(color)
+        painter.drawPolygon(QPolygonF([P(0.74, 0.14), P(0.86, 0.36), P(0.62, 0.34)]))
+        painter.drawPolygon(QPolygonF([P(0.26, 0.86), P(0.14, 0.64), P(0.38, 0.66)]))
+    elif name == "settings":
+        # A gear: ring plus eight teeth.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawEllipse(R(0.32, 0.32, 0.36, 0.36))
+        for i in range(8):
+            rad = radians(i * 45.0)
+            painter.drawLine(
+                P(0.5 + 0.30 * cos(rad), 0.5 + 0.30 * sin(rad)),
+                P(0.5 + 0.42 * cos(rad), 0.5 + 0.42 * sin(rad)),
+            )
+    elif name == "log":
+        # A bulleted list.
+        painter.setBrush(color)
+        for y in (0.28, 0.50, 0.72):
+            painter.drawEllipse(R(0.18, y - 0.05, 0.10, 0.10))
+            painter.drawLine(P(0.38, y), P(0.82, y))
+    elif name == "camera":
+        # A camera body with a lens and a viewfinder bump.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRoundedRect(R(0.14, 0.32, 0.72, 0.46), 2, 2)
+        painter.drawLine(P(0.34, 0.32), P(0.40, 0.22))
+        painter.drawLine(P(0.40, 0.22), P(0.60, 0.22))
+        painter.drawLine(P(0.60, 0.22), P(0.66, 0.32))
+        painter.drawEllipse(R(0.38, 0.42, 0.24, 0.24))
     else:
         raise KeyError(name)
 
