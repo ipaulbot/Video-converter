@@ -133,7 +133,10 @@ CHAPTERS: list[dict] = [
                 ("Auto Run on Startup",
                  "Starts monitoring automatically with the previous settings."),
                 ("Copy Only",
-                 "Copies files without converting them."),
+                 "Remuxes the source streams into the selected Output Format without "
+                 "re-encoding (FFmpeg -c copy), which is fast but fails when the container "
+                 "cannot hold the source streams. The Lossless Editor's Remux does the same "
+                 "for single files."),
                 ("Close on X (don't minimize to tray)",
                  "Ticked by default. Clear it to minimise NVC to the system tray when you "
                  "click X."),
