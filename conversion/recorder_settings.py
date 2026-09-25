@@ -38,6 +38,8 @@ def normalize_recorder_settings(settings):
             normalized[key] = value
     normalized["version"] = int(settings.get("version") or RECORDER_SETTINGS_VERSION)
     normalized["output"].update(settings.get("output") or {})
+    if normalized["output"].get("mode") == "Picture-in-picture":
+        normalized["output"]["mode"] = "Separate videos"
     normalized["timer"].update(settings.get("timer") or {})
     normalized["preview"].update(settings.get("preview") or {})
     normalized["channels"] = list(settings.get("channels") or [])

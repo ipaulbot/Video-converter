@@ -571,6 +571,36 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertEqual(widget.output_mode_combo.currentText(), "Combined grid")
 
+    def test_output_mode_combos_offer_only_implemented_modes(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+
+        expected = ["Separate videos", "Combined grid"]
+        self.assertEqual(
+            [
+                widget.output_mode_combo.itemText(index)
+                for index in range(widget.output_mode_combo.count())
+            ],
+            expected,
+        )
+        self.assertEqual(
+            [
+                dialog.output_mode_combo.itemText(index)
+                for index in range(dialog.output_mode_combo.count())
+            ],
+            expected,
+        )
+
+    def test_apply_settings_maps_legacy_picture_in_picture(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        settings = widget.capture_recorder_settings()
+        settings["output"]["mode"] = "Picture-in-picture"
+
+        widget.apply_recorder_settings(settings, refresh_previews=False)
+
+        self.assertEqual(widget.output_mode_combo.currentText(), "Separate videos")
+        self.assertIn("Picture-in-picture", "\n".join(widget.log_lines))
+
     def test_video_settings_apply_refreshes_main_preview_without_closing(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=False)
         calls = {"refresh": 0, "save": 0}
@@ -2341,7 +2371,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         fired = []
         widget.layout_preview_changed.connect(lambda: fired.append(True))
-        widget.output_mode_combo.setCurrentText("Picture-in-picture")
+        widget.output_mode_combo.setCurrentText("Combined grid")
         self.assertTrue(fired)
 
     def test_enabling_a_source_emits_layout_preview_changed(self):

@@ -420,7 +420,10 @@ class VideoSettingsDialog(QDialog):
         self.output_quality_combo = QComboBox()
         self.output_quality_combo.addItems(["Default", "High", "Balanced", "Compact"])
         self.output_mode_combo = QComboBox()
-        self.output_mode_combo.addItems(["Separate videos", "Picture-in-picture", "Combined grid"])
+        self.output_mode_combo.addItems([
+            _tr("Separate videos"),
+            _tr("Combined grid"),
+        ])
         output_mode_control = self.output_controls.get("output_mode")
         if output_mode_control:
             self.output_mode_combo.setCurrentText(output_mode_control.currentText())
@@ -1182,9 +1185,11 @@ class MultiSourceRecorderWidget(QWidget):
         self.codec_combo.addItems(["copy", "h264"])
         self.codec_combo.setMaximumWidth(120)
         self.output_mode_combo = QComboBox()
-        self.output_mode_combo.addItems(["Separate videos", "Picture-in-picture", "Combined grid"])
+        self.output_mode_combo.addItems([
+            _tr("Separate videos"),
+            _tr("Combined grid"),
+        ])
         self.output_mode_combo.setMaximumWidth(140)
-        self.output_mode_combo.setToolTip(_tr("Combined output layouts are saved here, but recording currently uses the stable separate-video path."))
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
         output_form.addRow("File base name:", self.base_name_edit)
@@ -1971,8 +1976,15 @@ class MultiSourceRecorderWidget(QWidget):
         })
 
     def apply_recorder_settings(self, settings, refresh_previews=True):
+        legacy_output_mode = (settings or {}).get("output", {}).get("mode")
         normalized = normalize_recorder_settings(settings)
         output = normalized.get("output", {})
+        if legacy_output_mode == "Picture-in-picture":
+            self._append_log(
+                _tr(
+                    "[recorder] legacy Picture-in-picture mode mapped to Separate videos"
+                )
+            )
         timer = normalized.get("timer", {})
         self.output_folder_edit.setText(output.get("folder", self.output_folder_edit.text()))
         self.base_name_edit.setText(output.get("base_name", self.base_name_edit.text()))
@@ -2372,11 +2384,6 @@ class MultiSourceRecorderWidget(QWidget):
         self.clear_preview_backlog()
         released_directshow_preview = self.release_preview_processes_for_recording(selected)
         self.save_current_recorder_settings()
-        if self.output_mode_combo.currentText() == "Picture-in-picture":
-            self._append_log(
-                f"[recorder] {self.output_mode_combo.currentText()} output is saved for later, "
-                "but recording currently uses separate files for reliability."
-            )
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.pending_recording_start = (ffmpeg, selected, output_folder, timestamp)
         if released_directshow_preview:
