@@ -152,4 +152,8 @@ Use this file to track user-visible fixes, improvements, and feature work.
   shown for the session even if hidden in settings.
 - Files Windows cannot decode show an inline "Convert to MP4 (H.264) and play" offer
   instead of a blank tile.
+- Fixed: MP4, MOV and MKV files now play. The player previously ran on Qt's DirectShow
+  backend, which cannot demux those containers on a stock Windows 10 install (only AVI
+  and WMV worked). The app now selects the Media Foundation backend at startup and
+  creates the player without the `VideoSurface` flag, which that backend rejects.
 - Player settings (last folder, panel count, volume, mute) persist between sessions.

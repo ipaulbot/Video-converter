@@ -38,10 +38,15 @@ from ui.media_player_support import (
     format_readout,
     frame_step_ms,
     player_convert_settings,
+    prefer_windows_media_foundation,
     probe_media_info,
 )
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
+
+# main.py does this before QApplication; repeating it here covers tests and scripts that
+# build the widget directly. It is a no-op once the variable is set.
+prefer_windows_media_foundation()
 
 
 def _tr(source: str) -> str:
@@ -209,7 +214,10 @@ class PlayerPanel(QWidget):
         # mass teardown; deferring until a clip is actually loaded avoids that entirely.
         if self.player is not None:
             return self.player
-        self.player = QMediaPlayer(self, QMediaPlayer.VideoSurface)
+        # No QMediaPlayer.VideoSurface flag: with the Media Foundation backend that flag
+        # makes every MP4 load end in InvalidMedia; the plain player renders to the
+        # QVideoWidget correctly (verified on Windows 10 with H.264/AAC MP4).
+        self.player = QMediaPlayer(self)
         self.player.setVideoOutput(self._ensure_video_widget())
         self.player.setNotifyInterval(50)
         if callable(self.on_player_created):

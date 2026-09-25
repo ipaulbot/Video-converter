@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-import sys
-import os
 import logging
+import os
+import sys
+
+from PyQt5.QtCore import QCoreApplication, QSharedMemory, QSystemSemaphore, Qt
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QMessageBox
-from PyQt5.QtCore import QCoreApplication, QSharedMemory, QSystemSemaphore
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon
+
 from ui.main_window import VideoConverterApp
+from ui.media_player_support import prefer_windows_media_foundation
+from utils.localization import initialize_localization
+from utils.logger import logger
 from utils.resources import resource_path
 from utils.retention import process_pending_deletions
-from utils.logger import logger
-from utils.localization import initialize_localization
-
 
 
 def _tr(source: str) -> str:
@@ -25,6 +26,9 @@ def _tr(source: str) -> str:
 logging.basicConfig(level=logging.INFO)
 
 def main():
+    # Qt's DirectShow backend cannot demux MP4/MOV/MKV on stock Windows 10; Media
+    # Foundation can. Decide before any QMediaPlayer exists (the plugin is chosen once).
+    prefer_windows_media_foundation()
     app = QApplication(sys.argv)
 
     # Install the saved language before anything builds a widget: NVC's widgets

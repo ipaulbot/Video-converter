@@ -18,6 +18,25 @@ DEFAULT_FPS = 25.0
 MEDIA_PLAYER_DEFAULTS = {"last_folder": "", "panel_count": 2, "volume": 100, "muted": False}
 PLAYER_CONVERT_CUSTOM_ARGS = "-crf 20 -preset veryfast -movflags +faststart"
 
+WMF_PLUGIN_ENV = "QT_MULTIMEDIA_PREFERRED_PLUGINS"
+WMF_PLUGIN_NAME = "windowsmediafoundation"
+
+
+def prefer_windows_media_foundation(env=None, os_name=os.name):
+    """Make Qt use its Media Foundation backend on Windows unless the user chose otherwise.
+
+    Qt 5's default DirectShow backend has no MP4/MOV/MKV demuxer on a stock Windows 10, so
+    QMediaPlayer reports InvalidMedia for the very files NVC produces. Media Foundation plays
+    them. Must run before the first QMediaPlayer is created (the plugin is chosen once).
+    Returns True when the variable was set by this call.
+    """
+    if env is None:
+        env = os.environ
+    if os_name != "nt" or env.get(WMF_PLUGIN_ENV):
+        return False
+    env[WMF_PLUGIN_ENV] = WMF_PLUGIN_NAME
+    return True
+
 
 def format_timecode_ms(milliseconds):
     """Format a millisecond position as H:MM:SS.mmm (hours always shown)."""

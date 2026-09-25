@@ -12,10 +12,26 @@ from ui.media_player_support import (
     frame_step_ms,
     parse_frame_rate,
     player_convert_settings,
+    prefer_windows_media_foundation,
     probe_media_info,
     total_frames,
     unsupported_message,
 )
+
+
+class BackendPreferenceTests(unittest.TestCase):
+    def test_prefers_wmf_on_windows_when_nothing_is_set(self):
+        env = {}
+        self.assertTrue(prefer_windows_media_foundation(env, os_name="nt"))
+        self.assertEqual(env["QT_MULTIMEDIA_PREFERRED_PLUGINS"], "windowsmediafoundation")
+
+    def test_respects_an_explicit_choice_and_other_platforms(self):
+        env = {"QT_MULTIMEDIA_PREFERRED_PLUGINS": "directshow"}
+        self.assertFalse(prefer_windows_media_foundation(env, os_name="nt"))
+        self.assertEqual(env["QT_MULTIMEDIA_PREFERRED_PLUGINS"], "directshow")
+        env = {}
+        self.assertFalse(prefer_windows_media_foundation(env, os_name="posix"))
+        self.assertEqual(env, {})
 
 
 class TimecodeTests(unittest.TestCase):
