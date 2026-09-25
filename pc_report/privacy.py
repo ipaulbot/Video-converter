@@ -441,7 +441,22 @@ def mask_value_locations(value):
     value = _URL_AUTHORITY.sub(_mask_url_authority, value)
     value = _UNC_HOST_PREFIX.sub(_mask_unc_prefix, value)
     value = _UNC_HOST_ONLY.sub(_mask_unc_host_only, value)
-    return _BARE_FQDN.sub(_mask_bare_fqdn, mask_ip(value))
+    return _BARE_FQDN.sub(_mask_bare_fqdn, _mask_free_text_ips(value))
+
+
+# Free text only: an IPv4 must stand alone (not glued to letters, '-' or '_' as in
+# "jdk-17.0.16.8-hotspot") and every octet must fit a byte ("10.0.19045.1" is a build number).
+_FREE_TEXT_IPV4 = re.compile(r"(?<![\w.\-])(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})(?![\w.\-])")
+
+
+def _mask_free_text_ipv4(match: re.Match[str]) -> str:
+    if any(int(octet) > 255 for octet in match.groups()):
+        return match.group(0)
+    return _mask_v4(match)
+
+
+def _mask_free_text_ips(value: str) -> str:
+    return _IPV6.sub(_mask_v6, _FREE_TEXT_IPV4.sub(_mask_free_text_ipv4, value))
 
 
 def redact_free_text(value):
@@ -547,7 +562,23 @@ def identity_tokens(env=None) -> list[tuple[str, str]]:
     return [(value, replacement) for value, replacement in values if value]
 
 
+# Keys that contain a sensitive token by accident of spelling but describe nothing identifying.
+_NOT_SENSITIVE_KEYS = {"processoridentifier", "processorarchitecture", "processorlevel", "processorrevision"}
+# Values the identity scrub already replaced; masking them again only hides the placeholder.
+_PLACEHOLDER_PARTS = {"pc-name", "user", "workgroup", "example.local", "logon-srv"}
+
+
+def _is_placeholder_value(value) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    parts = [p for p in re.split(r"[\\@]", value) if p]
+    # Only the DOMAIN\user / user@domain forms: fixtures use bare "PC-NAME" as a stand-in name.
+    return len(parts) >= 2 and all(p.casefold() in _PLACEHOLDER_PARTS for p in parts)
+
+
 def _name_is_sensitive(name: str) -> bool:
+    if norm_key(name) in _NOT_SENSITIVE_KEYS:
+        return False
     return name.upper() in SENSITIVE_ENV_NAMES or any(t in norm_key(name) for t in SENSITIVE_TOKENS)
 
 
@@ -644,7 +675,9 @@ def redact_value(key, value):
         return mask_hosts(value)
     if any(t in key_l for t in IP_TOKENS):
         return mask_ip(value)
-    if any(t in key_l for t in SENSITIVE_TOKENS):
+    if any(t in key_l for t in SENSITIVE_TOKENS) and key_l not in _NOT_SENSITIVE_KEYS:
+        if _is_placeholder_value(value):
+            return value
         if (
             key_l in {"networkprofile", "netprofilename"}
             and isinstance(value, str)

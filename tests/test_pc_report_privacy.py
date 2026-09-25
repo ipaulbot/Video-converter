@@ -1010,6 +1010,40 @@ class PcReportPrivacyTests(unittest.TestCase):
         self.assertNotIn("Jan", repr(out))
         self.assertEqual(kept, {"Label": "OSDisk", "VolumeName": "Data"})
 
+    def test_free_text_ipv4_leaves_versions_and_build_numbers_alone(self):
+        rows = redact_payload(
+            [
+                {"Name": "JAVA_HOME", "Value": r"C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\bin"},
+                {"Name": "BUILD", "Value": "Windows 10.0.19045.1 build"},
+                {"Name": "NVC_SERVER", "Value": "server at 203.0.113.77 port 80"},
+            ],
+            {"redact": True}, env={},
+        )
+        self.assertEqual(rows[0]["Value"], r"C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\bin")
+        self.assertEqual(rows[1]["Value"], "Windows 10.0.19045.1 build")
+        self.assertEqual(rows[2]["Value"], "server at 203.0.*.* port 80")
+
+    def test_processor_identifier_is_not_a_processor_id(self):
+        out = redact_payload(
+            [{"Name": "PROCESSOR_IDENTIFIER", "Value": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"},
+             {"Name": "PROCESSOR_ID", "Value": "BFEBFBFF000906A3"}],
+            {"redact": True}, env={},
+        )
+        self.assertEqual(out[0]["Value"], "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel")
+        self.assertNotIn("BFEBFBFF000906A3", out[1]["Value"])
+        self.assertEqual(redact_payload({"ProcessorId": "BFEBFBFF000906A3"}, {"redact": True}, env={})["ProcessorId"],
+                         "BF**********06A3")
+
+    def test_identity_placeholders_are_not_masked_again(self):
+        out = redact_payload(
+            {"Owner": "WORKGROUP\\user", "Start Name": "PC-NAME\\user", "User Name": "user", "Account Name": "jdoe-admin"},
+            {"redact": True}, env={},
+        )
+        self.assertEqual(out["Owner"], "WORKGROUP\\user")
+        self.assertEqual(out["Start Name"], "PC-NAME\\user")
+        self.assertEqual(out["User Name"], "****")  # a bare token is still masked
+        self.assertNotIn("jdoe", out["Account Name"])
+
 
 if __name__ == "__main__":
     unittest.main()
