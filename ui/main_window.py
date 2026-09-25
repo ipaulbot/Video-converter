@@ -937,8 +937,12 @@ class VideoConverterApp(QMainWindow):
         )
         return [w for w in candidates if w is not None and hasattr(w, "apply_layout_mode")]
 
-    def set_window_mode(self, name, persist=True):
+    def set_window_mode(self, name, persist=True, resize=True):
         """Switch between Compact (theme.COMPACT.window_size, normal) and Full window (maximised).
+
+        `resize=False` re-flows the tabs for the mode but leaves the window
+        geometry alone; changeEvent uses it when the title-bar maximize /
+        restore button already changed the window state.
 
         Raises ValueError for unknown names so a typo in settings cannot leave
         the window half-applied.
@@ -958,12 +962,12 @@ class VideoConverterApp(QMainWindow):
         # Before the first show() (i.e. from __init__) only record the window
         # state; main.py's show() honours it. Showing here would pop the window
         # up mid-construction, and in every test that builds the main window.
-        if metrics.name == "full":
+        if resize and metrics.name == "full":
             if self.isVisible():
                 self.showMaximized()
             else:
                 self.setWindowState(self.windowState() | Qt.WindowMaximized)
-        else:
+        elif resize:
             if self.isVisible():
                 self.showNormal()
             else:
@@ -972,6 +976,17 @@ class VideoConverterApp(QMainWindow):
             self.center_on_screen()
         if persist:
             save_settings(self.settings)
+
+    def changeEvent(self, event):
+        """Keep the window mode in step with the title-bar maximize / restore button."""
+        super().changeEvent(event)
+        if event.type() != QEvent.WindowStateChange or not self.isVisible():
+            return
+        if self.windowState() & Qt.WindowMinimized:
+            return
+        wanted = "full" if self.isMaximized() else "compact"
+        if wanted != theme.metrics().name:
+            self.set_window_mode(wanted, persist=True, resize=False)
 
     def open_pc_report_dialog(self):
         try:
@@ -2542,7 +2557,10 @@ class VideoConverterApp(QMainWindow):
         prev_geom = self.geometry()
         was_visible = self.isVisible()
 
-        base_flags = Qt.Window | Qt.CustomizeWindowHint | Qt.WindowCloseButtonHint
+        # Maximize/restore is always offered: it is how Full window mode is
+        # brought back to a manageable size (changeEvent keeps the mode in sync).
+        base_flags = (Qt.Window | Qt.CustomizeWindowHint | Qt.WindowCloseButtonHint
+                      | Qt.WindowMaximizeButtonHint)
         if close_on_x_enabled:
             base_flags |= Qt.WindowMinimizeButtonHint
 
