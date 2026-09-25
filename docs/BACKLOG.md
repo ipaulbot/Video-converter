@@ -53,6 +53,26 @@ comparison of the live report (2026-09-24):
   and falls back to GlobalMemoryStatusEx / WMI. Consider a `lodctr /R` hint in
   the Noldus Summary.
 
+Deferred from the final code review (all Minor):
+
+- Windows Update history: read `IUpdateHistoryEntry2.Categories` so security /
+  driver / definition updates can be told apart without parsing titles.
+- Query scripts use `-ErrorAction SilentlyContinue` widely; a missing provider
+  can still look like a genuinely empty machine. Move to `-ErrorAction Stop` at
+  query boundaries with narrow per-item catches (stderr is now kept as a note,
+  which covers the common cases).
+- `pc_report/noldus_terms.py` still carries the legacy filesystem scanners
+  (`scan_codec_files`, `scan_nvc_filter_files`, …) that nothing in production
+  calls; remove with their tests or wire into an explicit fallback.
+- No wall-clock deadline for a whole run (only per-query timeouts) and no job
+  object around `powershell.exe`/`dxdiag.exe`, so a timed-out child can leave
+  grandchildren behind. `dxdiag_xml` should write into a private temp directory.
+- `redact_text` (fixture recorder only) matches the English `Proxy Server(s)`
+  label; capture on a localised machine would need the host-based rule.
+- The elevated (administrator) live run has not been done yet: start NVC as
+  administrator once and confirm TPM, BitLocker, SMART reliability counters and
+  the SMB server rows fill in.
+
 Out of scope in the current design, kept for later:
 
 - UAC-elevated collection (relaunch elevated, or an elevated helper) so that
