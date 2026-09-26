@@ -44,8 +44,9 @@ class VideoConverterTabTests(unittest.TestCase):
         window.converted_files_widget.add_queued_file("clip.mp4", "C:/Videos")
         window.clear_log_tab()
         self.assertEqual(window.console_output.toPlainText(), "")
-        # The table has its own Clear button; the broom leaves it alone.
-        self.assertEqual(window.converted_files_widget.table_widget.rowCount(), 1)
+        # Since 2026-09-26 the table has no Clear button of its own: the broom
+        # empties the list together with the log.
+        self.assertEqual(window.converted_files_widget.table_widget.rowCount(), 0)
 
     def test_game_takes_the_whole_card_and_gives_it_back(self):
         window = self._window()

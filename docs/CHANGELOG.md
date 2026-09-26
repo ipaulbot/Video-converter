@@ -492,3 +492,13 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - The Media Player playlist and the Lossless Editor merge list wore Qt's
   near-black frame; both now use the same thin grey border as the other
   boxes (`theme.list_box_style()`).
+- **Media Player: a paused clip could quietly run on.** With the Windows
+  Media Foundation backend, a seek issued while paused sometimes plays at
+  full rate (with sound) although the player still reports Paused -- seen
+  when scrubbing right after a load, and when the re-presented frame on a
+  tab return did play -> pause in one go. The first-frame nudge now waits
+  for the pipeline to move before pausing, and every paused seek is watched
+  for about a second: if the position keeps advancing, a short muted
+  play/pause round trip pins the frame back at the requested spot (at most
+  three tries). Reproduced 4 times out of 5 with a probe before the fix,
+  0 of 8 after.
