@@ -497,6 +497,29 @@ CHAPTERS: list[dict] = [
                 "Presets are JSON files under "
                 r"Public\Documents\Noldus\NVC\MediaRecorder\Presets.",
             ]},
+            {"type": "para", "text": "Control from the command line"},
+            {"type": "para", "text": (
+                "Another program can start and stop a recording by running NVC.exe with a "
+                "switch. The switches are the same letters MediaRecorder's MRCmd.exe uses, so "
+                "entries in The Observer XT's external applications list can be reused with "
+                "NVC.exe as the program. If NVC is already running the switch is passed to it; "
+                "if not, /E, /R, /C and /B start NVC first, while /S and /X do nothing.")},
+            {"type": "table", "headers": ("Switch", "What it does"), "rows": [
+                ("/E", "Starts NVC, or brings the running NVC to the front."),
+                ("/R", "Starts recording with the current recorder settings."),
+                ("/S", "Stops the recording."),
+                ("/X", "Stops any recording and closes NVC."),
+                ("/C=name", "Loads the video preset with that name, or from a .json file path."),
+                ("/B=name", "Sets the recording file base name."),
+            ]},
+            {"type": "steps", "items": [
+                "Switches combine and always run in the order preset, base name, record, stop, "
+                r"close. Example: NVC.exe /E /C=Lab1 /B=Trial07 /R",
+                "Put a value with spaces in quotes: NVC.exe \"/C=Two cameras\".",
+                "The process exits with code 0 when the request succeeded and 1 when it did "
+                "not, for example when NVC is locked, a conversion is running, or the preset "
+                "does not exist. The reason is written to the console and to the conversion log.",
+            ]},
             {"type": "note", "items": [
                 "Without a microphone, a file or RTSP source in h264 mode keeps its own sound "
                 "track; in copy mode an RTSP source is recorded without audio; a USB camera "

@@ -207,6 +207,17 @@ Use this file to track user-visible fixes, improvements, and feature work.
   inside FFmpeg the moment it is opened, leaving the recording stuck behind
   the dialog. A preset that still names it loads as the built-in screen
   capture, with a log line saying so.
+- NVC can be driven from the command line the way MediaRecorder is driven by
+  `MRCmd.exe`, so The Observer XT's external-application entries work with
+  `NVC.exe` as the program: `/E` launch or bring to front, `/R` start
+  recording, `/S` stop, `/X` close, `/C=<preset name or .json path>` load a
+  video preset, `/B=<name>` set the file base name. Switches combine
+  (`NVC.exe /E /C=Lab1 /R`) and run as preset, base name, record, stop,
+  close. A running NVC receives the request over a local pipe and answers;
+  the calling process exits 0 on success and 1 with the reason (locked,
+  converting, preset missing, no source enabled) on the console and in the
+  conversion log. With no NVC running, `/E /R /C /B` start it first; `/S`
+  and `/X` have nothing to do. `/?` shows the switch summary.
 - Fixed "Select on screen..." in Screen Capture Settings showing an overlay
   that could not be clicked until both settings dialogs were closed. The two
   dialogs are modal and Qt sends input only to the newest modal window, so
