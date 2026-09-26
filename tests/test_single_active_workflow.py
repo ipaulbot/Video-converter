@@ -86,6 +86,28 @@ class SingleActiveWorkflowTests(unittest.TestCase):
         finally:
             window.shutdown()
 
+    def test_stopping_a_recording_returns_the_start_button_and_app_to_teal(self):
+        window = self._window_on_recorder_tab()
+        try:
+            recorder = window.multi_source_recorder_widget
+            recorder.status_label.setText("Recording")
+            recorder._notify_workflow_availability_change()
+            self.assertIn("#92cb4f", window.current_button_style)
+            self.assertIn("#92cb4f", window.tabs.styleSheet())
+
+            # What stop_recording() does once the last ffmpeg has exited.
+            recorder.status_label.setText("Not recording")
+            recorder._notify_workflow_availability_change()
+
+            self.assertEqual(window.start_button.text(), "Start Recording")
+            self.assertIn("#43a296", window.start_button.styleSheet())
+            self.assertNotIn("#92cb4f", window.start_button.styleSheet())
+            self.assertIn("#43a296", window.current_button_style)
+            self.assertIn("#43a296", window.tabs.styleSheet())
+            self.assertNotIn("GREEN", window.get_icon_path("INFO").upper())
+        finally:
+            window.shutdown()
+
     def test_recorder_starting_status_uses_standard_footer_status_label(self):
         window = self._window_on_recorder_tab()
         try:
