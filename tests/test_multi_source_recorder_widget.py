@@ -1114,6 +1114,74 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         finally:
             dialog.deleteLater()
 
+    def test_video_settings_dialog_lists_open_windows_for_screen_capture(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        with patch("ui.multi_source_recorder_widget.list_capture_windows", return_value=["Notepad", "Spreadsheet - Budget"]):
+            dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            labels = [row_device.itemText(i) for i in range(row_device.count())]
+            self.assertIn("Window: Notepad", labels)
+            self.assertIn("Window: Spreadsheet - Budget", labels)
+            self.assertEqual(row_device.itemData(labels.index("Window: Notepad")), "screen")
+            # Windows come after the screen entries and before the cameras.
+            self.assertLess(labels.index("Screen capture (desktop)"), labels.index("Window: Notepad"))
+            self.assertLess(labels.index("Window: Notepad"), labels.index("Camera A"))
+            row_device.setCurrentText("Window: Spreadsheet - Budget")
+            dialog.accept_with_changes()
+        finally:
+            dialog.deleteLater()
+
+        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
+        self.assertEqual(widget.source_rows[0][3].text(), "title=Spreadsheet - Budget")
+        self.assertEqual(widget.source_for_row(0), "screen=title=Spreadsheet - Budget")
+
+        # Reopening shows the window entry even if that window has since closed.
+        with patch("ui.multi_source_recorder_widget.list_capture_windows", return_value=[]):
+            dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Window: Spreadsheet - Budget")
+        finally:
+            dialog.deleteLater()
+
+    def test_video_settings_dialog_region_entry_opens_the_picker_and_stores_the_rectangle(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            self.assertGreaterEqual(row_device.findText("Screen capture (select region...)"), 0)
+            with patch("ui.multi_source_recorder_widget.pick_screen_region_value", return_value="region=100,200,800x600"):
+                row_device.setCurrentIndex(row_device.findText("Screen capture (select region...)"))
+            self.assertEqual(row_device.currentText(), "Screen capture (region 100,200 800x600)")
+            self.assertEqual(row_device.currentData(), "screen")
+            dialog.accept_with_changes()
+        finally:
+            dialog.deleteLater()
+
+        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
+        self.assertEqual(widget.source_rows[0][3].text(), "region=100,200,800x600")
+        self.assertEqual(widget.source_for_row(0), "screen=region=100,200,800x600")
+
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Screen capture (region 100,200 800x600)")
+        finally:
+            dialog.deleteLater()
+
+    def test_video_settings_dialog_region_pick_cancel_restores_the_previous_choice(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        widget.source_rows[0][2].setCurrentIndex(widget.source_rows[0][2].findData("directshow"))
+        widget.source_rows[0][3].setText("Camera A")
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            self.assertEqual(row_device.currentText(), "Camera A")
+            with patch("ui.multi_source_recorder_widget.pick_screen_region_value", return_value=""):
+                row_device.setCurrentIndex(row_device.findText("Screen capture (select region...)"))
+            self.assertEqual(row_device.currentText(), "Camera A")
+        finally:
+            dialog.deleteLater()
+
     def test_monitor_capture_falls_back_to_gdi_when_desktop_duplication_fails(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         row = widget.source_rows[0]

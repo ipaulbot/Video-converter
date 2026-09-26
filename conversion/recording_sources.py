@@ -1,6 +1,7 @@
 import atexit
 import re
 import subprocess
+import sys
 import threading
 from typing import NamedTuple
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
@@ -33,7 +34,8 @@ CAMERA_SOURCE_TYPES = [
         "label": "Screen capture",
         "hint": (
             "Leave empty (or 'desktop') for the whole screen, 'monitor=1' for GPU capture of one "
-            "display, or a window title to capture one window."
+            "display, 'region=X,Y,WxH' for part of the desktop, or a window title to capture one "
+            "window. Video Settings lists the displays, open windows and a region picker."
         ),
     },
     {
@@ -62,10 +64,29 @@ def is_hidden_directshow_video_device(name):
 
 
 _MONITOR_PATTERN = re.compile(r"^monitor\s*[= ]\s*(\d+)$", re.IGNORECASE)
+SCREEN_REGION_PREFIX = "region="      # region=X,Y,WxH in virtual-desktop pixels (gdigrab crop)
+_REGION_PATTERN = re.compile(
+    r"^region\s*=\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(\d+)\s*x\s*(\d+)$", re.IGNORECASE
+)
+
+
+def build_region_source_value(x, y, width, height):
+    return f"{SCREEN_REGION_PREFIX}{int(x)},{int(y)},{int(width)}x{int(height)}"
+
+
+def _parse_region(text):
+    match = _REGION_PATTERN.match((text or "").strip())
+    if not match:
+        return None
+    x, y, width, height = (int(match.group(i)) for i in range(1, 5))
+    if width <= 0 or height <= 0:
+        return None
+    return (x, y, width, height)
 
 
 def build_screen_source_text(value):
-    """`screen=desktop` / `screen=title=<window>` (gdigrab) or `screen=monitor=N` (ddagrab)."""
+    """`screen=desktop` / `screen=title=<window>` / `screen=region=X,Y,WxH` (gdigrab)
+    or `screen=monitor=N` (ddagrab)."""
     text = (value or "").strip()
     if text.lower().startswith(SCREEN_SOURCE_PREFIX):
         text = text[len(SCREEN_SOURCE_PREFIX):].strip()
@@ -74,9 +95,79 @@ def build_screen_source_text(value):
     monitor = _MONITOR_PATTERN.match(text)
     if monitor:
         return f"{SCREEN_SOURCE_PREFIX}{SCREEN_MONITOR_PREFIX}{int(monitor.group(1))}"
+    region = _parse_region(text)
+    if region:
+        return f"{SCREEN_SOURCE_PREFIX}{build_region_source_value(*region)}"
     if text.lower().startswith("title="):
         return f"{SCREEN_SOURCE_PREFIX}{text}"
     return f"{SCREEN_SOURCE_PREFIX}title={text}"
+
+
+def screen_region(source_text):
+    """(x, y, width, height) of a `screen=region=…` source, else None."""
+    text = (source_text or "").strip()
+    if not text.lower().startswith(SCREEN_SOURCE_PREFIX):
+        return None
+    return _parse_region(text[len(SCREEN_SOURCE_PREFIX):])
+
+
+# Windows whose title is not something a user would pick to record.
+_SHELL_WINDOW_TITLES = {"program manager", "windows input experience", "settings", "microsoft text input application"}
+_WINDOW_TITLE_LIMIT = 40
+
+
+def _enumerate_windows_win32():
+    """Yield (handle, title, visible) for every top-level window."""
+    import ctypes
+    from ctypes import wintypes
+
+    user32 = ctypes.windll.user32
+    windows = []
+    proc = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
+
+    def callback(hwnd, _lparam):
+        length = user32.GetWindowTextLengthW(hwnd)
+        title = ""
+        if length:
+            buffer = ctypes.create_unicode_buffer(length + 1)
+            user32.GetWindowTextW(hwnd, buffer, length + 1)
+            title = buffer.value
+        # Minimised windows stay listed: the user picks one here and restores it
+        # before recording. Hidden helper windows do not.
+        visible = bool(user32.IsWindowVisible(hwnd))
+        if visible:
+            # Cloaked windows (suspended UWP apps, other virtual desktops) report
+            # visible but have no pixels to grab.
+            cloaked = wintypes.DWORD(0)
+            try:
+                ctypes.windll.dwmapi.DwmGetWindowAttribute(hwnd, 14, ctypes.byref(cloaked), ctypes.sizeof(cloaked))
+            except OSError:
+                cloaked = wintypes.DWORD(0)
+            visible = cloaked.value == 0
+        windows.append((int(hwnd), title, visible))
+        return True
+
+    user32.EnumWindows(proc(callback), 0)
+    return windows
+
+
+def list_capture_windows(enumerate_windows=None):
+    """Titles of the windows gdigrab can capture right now, sorted, without duplicates."""
+    if enumerate_windows is None:
+        if sys.platform != "win32":
+            return []
+        enumerate_windows = _enumerate_windows_win32
+    try:
+        entries = list(enumerate_windows())
+    except (OSError, AttributeError):
+        return []
+    titles = []
+    for _handle, title, visible in entries:
+        title = (title or "").strip()
+        if not visible or not title or title.lower() in _SHELL_WINDOW_TITLES or title in titles:
+            continue
+        titles.append(title)
+    return sorted(titles, key=str.lower)[:_WINDOW_TITLE_LIMIT]
 
 
 def screen_monitor_index(source_text):
