@@ -578,58 +578,6 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertTrue(panel.placeholder.isHidden())
 
 
-class _FakePlayer(QObject):
-    """Just enough QMediaPlayer for the first-frame prime."""
-
-    positionChanged = pyqtSignal(int)
-    mediaStatusChanged = pyqtSignal(int)
-
-    def __init__(self, muted=False):
-        super().__init__()
-        self.calls = []
-        self._muted = muted
-
-    # shutdown() calls these on every created player.
-    def stop(self):
-        self.calls.append("stop")
-
-    def setMedia(self, _content):
-        pass
-
-    def setVideoOutput(self, _output):
-        pass
-
-    def setVolume(self, _volume):
-        pass
-
-    def setPlaybackRate(self, _rate):
-        pass
-
-    def isMuted(self):
-        return self._muted
-
-    def setMuted(self, muted):
-        self._muted = bool(muted)
-        self.calls.append(f"setMuted({bool(muted)})")
-
-    def play(self):
-        self.calls.append("play")
-
-    def pause(self):
-        self.calls.append("pause")
-
-    def setPosition(self, position):
-        self.calls.append(f"setPosition({int(position)})")
-
-    def state(self):
-        return QMediaPlayer.StoppedState
-
-    def position(self):
-        return 0
-
-    def duration(self):
-        return 0
-
     def test_playlist_next_and_previous_load_into_selected_panel(self):
         widget = self._widget()
         panel = widget.panels[0]
@@ -752,6 +700,59 @@ class _FakePlayer(QObject):
         )
         self.assertIn("failed", panel.overlay.progress_label.text().lower())
         self.assertTrue(panel.overlay.convert_btn.isEnabled())
+
+
+class _FakePlayer(QObject):
+    """Just enough QMediaPlayer for the first-frame prime."""
+
+    positionChanged = pyqtSignal(int)
+    mediaStatusChanged = pyqtSignal(int)
+
+    def __init__(self, muted=False):
+        super().__init__()
+        self.calls = []
+        self._muted = muted
+
+    # shutdown() calls these on every created player.
+    def stop(self):
+        self.calls.append("stop")
+
+    def setMedia(self, _content):
+        pass
+
+    def setVideoOutput(self, _output):
+        pass
+
+    def setVolume(self, _volume):
+        pass
+
+    def setPlaybackRate(self, _rate):
+        pass
+
+    def isMuted(self):
+        return self._muted
+
+    def setMuted(self, muted):
+        self._muted = bool(muted)
+        self.calls.append(f"setMuted({bool(muted)})")
+
+    def play(self):
+        self.calls.append("play")
+
+    def pause(self):
+        self.calls.append("pause")
+
+    def setPosition(self, position):
+        self.calls.append(f"setPosition({int(position)})")
+
+    def state(self):
+        return QMediaPlayer.StoppedState
+
+    def position(self):
+        return 0
+
+    def duration(self):
+        return 0
 
 
 class MediaPlayerRealFileSmokeTests(unittest.TestCase):
