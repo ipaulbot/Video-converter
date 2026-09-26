@@ -171,9 +171,10 @@ CHAPTERS: list[dict] = [
                 ("Doelmap", "Klik op Wijzigen om te kiezen waar geconverteerde bestanden worden geschreven."),
                 ("Back-upmap", "Klik op Wijzigen om te kiezen waarheen geback-upte originelen worden verplaatst."),
                 ("Logboekmap",
-                 r"Toont de locatie van de logboeken. NVC schrijft logboeken op dit moment "
-                 r"altijd naar %APPDATA%\NVC\logs; dit veld wijzigen heeft in deze versie geen "
-                 r"effect."),
+                 r"Waar de conversielogboeken per bestand worden geschreven. Laat het leeg "
+                 r"voor de standaardmap, %APPDATA%\NVC\logs. Het hoofdlogboek van de "
+                 r"toepassing blijft altijd in de standaardmap, omdat het wordt geopend "
+                 r"voordat de instellingen zijn gelezen."),
             ]},
             {"type": "para", "text": (
                 "Het tabblad Verwijderen regelt de originele bestanden. Zie het hoofdstuk "
@@ -735,9 +736,10 @@ CHAPTERS: list[dict] = [
                  "geconfigureerd\". Als een adres is geconfigureerd en er een nieuwere versie "
                  "bestaat, verschijnt \"Update v<versie> beschikbaar!\" in de zijbalk."),
                 ("Logbestand",
-                 r"Alle logboeken staan onder %APPDATA%\NVC\logs. Het roterende "
-                 r"toepassingslogboek is conversion_log.txt, en elke conversie heeft een "
-                 r"logboek <naam uitvoerbestand>.txt."),
+                 r"Het roterende toepassingslogboek, conversion_log.txt, staat onder "
+                 r"%APPDATA%\NVC\logs. Elke conversie heeft een logboek <naam "
+                 r"uitvoerbestand>.txt in dezelfde map, of in de Logboekmap die onder "
+                 r"Instellingen -- Mappen is gekozen."),
                 ("NVC_LOG_LEVEL",
                  "Zet deze omgevingsvariabele op DEBUG om volledige tracebacks vast te leggen."),
                 ("Instellingenbestand", r"%APPDATA%\NVC\config.json."),
@@ -800,7 +802,9 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": (
                 r"NVC bewaart logboeken onder %APPDATA%\NVC\logs: conversion_log.txt is het "
                 "roterende toepassingslogboek, en elke conversie heeft een logboek <naam "
-                "uitvoerbestand>.txt dat Geconverteerde bestanden -- Logbestand openen opent.")},
+                "uitvoerbestand>.txt dat Geconverteerde bestanden -- Logbestand openen opent "
+                "(conversielogboeken gaan naar de Logboekmap als die onder Instellingen -- "
+                "Mappen is ingesteld).")},
         ],
     },
     {
@@ -839,9 +843,10 @@ CHAPTERS: list[dict] = [
                  "HEVC is efficiënt maar minder universeel ondersteund dan H.264. Gebruik H.264 "
                  "als compatibiliteit belangrijk is."),
                 ("Waar worden logboeken opgeslagen?",
-                 r"Elk logboek staat onder %APPDATA%\NVC\logs: conversion_log.txt is het "
+                 r"Standaard onder %APPDATA%\NVC\logs: conversion_log.txt is het "
                  "roterende toepassingslogboek, met één logboek <naam uitvoerbestand>.txt per "
-                 "conversie."),
+                 "conversie. Instellingen -- Mappen -- Logboekmap verplaatst de "
+                 "conversielogboeken naar een andere map."),
                 ("Kan ik twee exemplaren van NVC tegelijk draaien?",
                  "Nee. NVC staat één exemplaar toe, zodat twee exemplaren niet dezelfde bronmap "
                  "kunnen verwerken."),

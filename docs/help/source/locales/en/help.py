@@ -169,8 +169,9 @@ CHAPTERS: list[dict] = [
                 ("Destination Folder", "Click Change to select where converted files are written."),
                 ("Backup Folder", "Click Change to select where backed-up originals are moved."),
                 ("Log Folder",
-                 r"Shows the log location. NVC currently always writes logs to "
-                 r"%APPDATA%\NVC\logs; changing this field has no effect in this version."),
+                 r"Where the per-file conversion logs are written. Leave it empty for the "
+                 r"default, %APPDATA%\NVC\logs. The main application log always stays in the "
+                 r"default folder because it opens before settings are read."),
             ]},
             {"type": "para", "text": (
                 "The Deletion tab controls original files. See the Original File Handling "
@@ -700,8 +701,9 @@ CHAPTERS: list[dict] = [
                  "\"Updates Not Configured\". When an address is configured and a newer "
                  "version exists, \"Update v<version> Available!\" appears in the sidebar."),
                 ("Log file",
-                 r"All logs are under %APPDATA%\NVC\logs. The rotating application log is "
-                 r"conversion_log.txt, and each conversion has an <output file name>.txt log."),
+                 r"The rotating application log, conversion_log.txt, is under "
+                 r"%APPDATA%\NVC\logs. Each conversion has an <output file name>.txt log in "
+                 r"the same folder, or in the Log Folder chosen under Settings -- Folders."),
                 ("NVC_LOG_LEVEL",
                  "Set this environment variable to DEBUG to record full tracebacks."),
                 ("Settings file", r"%APPDATA%\NVC\config.json."),
@@ -763,7 +765,8 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": (
                 r"NVC stores logs under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
                 "application log, and each conversion has an <output file name>.txt log that "
-                "Converted Files -- Open Log File opens.")},
+                "Converted Files -- Open Log File opens (per-conversion logs move to the Log "
+                "Folder if one is set under Settings -- Folders).")},
         ],
     },
     {
@@ -798,8 +801,9 @@ CHAPTERS: list[dict] = [
                  "HEVC is efficient but less universally supported than H.264. If compatibility "
                  "matters, use H.264."),
                 ("Where are logs stored?",
-                 r"Every log is under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
-                 "application log, with one <output file name>.txt log per conversion."),
+                 r"By default under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                 "application log, with one <output file name>.txt log per conversion. "
+                 "Settings -- Folders -- Log Folder moves the per-conversion logs elsewhere."),
                 ("Can I run two copies of NVC at once?",
                  "No. NVC allows a single instance, so two copies cannot process the same "
                  "source folder."),
