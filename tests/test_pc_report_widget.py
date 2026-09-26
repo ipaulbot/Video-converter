@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QSizePolicy
 from ui import theme
 from ui.main_window import VideoConverterApp
 from ui.pc_report_dialog import PCReportWidget, _PCReportWorker
+from ui.tab_header import TabHeader
 
 
 class PCReportWidgetTests(unittest.TestCase):
@@ -239,12 +240,18 @@ class PCReportWidgetTests(unittest.TestCase):
         fake_ctypes.windll.shell32.ShellExecuteW.assert_not_called()
         self.assertIn("Stop the current conversion or recording", widget.status_label.text())
 
-    def test_layout_mode_resizes_logo(self):
+    def test_header_is_the_shared_tab_header_with_the_heart_under_its_glyph(self):
         widget = PCReportWidget()
-        widget.apply_layout_mode(theme.FULL)
-        self.assertEqual(widget.logo_label.pixmap().width(), theme.FULL.pc_report_logo_w)
-        widget.apply_layout_mode(theme.COMPACT)
-        self.assertEqual(widget.logo_label.pixmap().width(), theme.COMPACT.pc_report_logo_w)
+        self.assertIsInstance(widget.header, TabHeader)
+        self.assertEqual(widget.header.glyph_name, "pc")
+        self.assertEqual(widget.header.title_label.text(), "PC Report")
+        self.assertIs(widget.logo_label, widget.header.glyph_label)
+        self.assertIs(widget.heart_label.parentWidget(), widget.header)
+        # One glyph size in both modes; the heart is scaled to sit in its screen.
+        for metrics in (theme.FULL, theme.COMPACT):
+            widget.apply_layout_mode(metrics)
+            self.assertEqual(widget.logo_label.pixmap().width(), TabHeader.GLYPH_PX, metrics.name)
+            self.assertEqual(widget.heart_label.pixmap().width(), TabHeader.GLYPH_PX, metrics.name)
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)

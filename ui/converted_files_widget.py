@@ -14,7 +14,6 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
-    QTableWidget,
     QTableWidgetItem,
     QTextEdit,
     QVBoxLayout,
@@ -22,6 +21,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.list_placeholder import PlaceholderTableWidget
 from utils.logger import logger
 
 
@@ -99,6 +99,9 @@ class ConvertedFilesWidget(QWidget):
     play_requested = pyqtSignal(str)  # file path the user wants to open in the Media Player
     inspect_requested = pyqtSignal(str)  # file path to show in the Media Player's Inspect panel
     drop_files_signal = pyqtSignal(list)  # emit list of file paths dropped onto the table
+    add_files_requested = pyqtSignal()  # right-click: pick videos to convert (the window owns the picker)
+    monitor_folder_requested = pyqtSignal(str)  # folder to monitor; "" = ask the user which one
+    open_in_requested = pyqtSignal(str, str)  # (target, file path); target: media_player / lossless_editor / system
 
     def __init__(self, parent=None, button_style=None):
         super().__init__(parent)
@@ -140,7 +143,7 @@ class ConvertedFilesWidget(QWidget):
         clear_button.clicked.connect(self.clear_table)
         theme.opt_out_of_button_style(clear_button)
 
-        self.table_widget = QTableWidget(0, 3)
+        self.table_widget = PlaceholderTableWidget(0, 3)   # faint rows while empty
         self.table_widget.setHorizontalHeaderLabels(["File Name", "Destination Folder", "Date Modified"])
         self.table_widget.setSelectionBehavior(self.table_widget.SelectRows)
         self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -469,45 +472,75 @@ class ConvertedFilesWidget(QWidget):
                                 % {"path": file_path})
 
     def show_context_menu(self, pos):
+        menu = self.build_context_menu(pos)
+        menu.exec_(self.table_widget.viewport().mapToGlobal(pos))
+
+    def build_context_menu(self, pos):
+        """The right-click menu for `pos` (viewport coordinates).
+
+        Empty space offers the two ways to feed the converter; a row adds the
+        per-file items on top. Actions are wired to slots, so the menu can be
+        exercised without exec_().
+        """
+        menu = QMenu(self)
+        menu.addAction(_tr("Add videos to convert..."), self.add_files_requested.emit)
+        # "" = the window asks which folder (it knows the current source folder).
+        menu.addAction(_tr("Monitor a folder..."), lambda: self.monitor_folder_requested.emit(""))
         index = self.table_widget.indexAt(pos)
         if not index.isValid():
-            return
+            return menu
         row = index.row()
-        file_item = self.table_widget.item(row, 0)
-        file_path = file_item.data(Qt.UserRole)
+        file_path = self.table_widget.item(row, 0).data(Qt.UserRole) or ""
         dest_folder = self.table_widget.item(row, 1).text()
-        menu = QMenu(self)
-        play_action = menu.addAction(_tr("Play in Media Player"))
-        inspect_action = menu.addAction(_tr("Inspect in Media Player"))
+        containing = os.path.dirname(file_path) if file_path else dest_folder
+        menu.addAction(
+            _tr("Monitor this file's folder"),
+            lambda: self.monitor_folder_requested.emit(containing),
+        )
         menu.addSeparator()
-        open_folder_action = menu.addAction(_tr("Open Containing Folder"))
-        open_log_action = menu.addAction(_tr("Open Log File"))
-        copy_action = menu.addAction(_tr("Copy File Path"))
+        menu.addAction(_tr("Play in Media Player"), lambda: self._emit_if_path(self.play_requested, file_path))
+        menu.addAction(_tr("Inspect in Media Player"), lambda: self._emit_if_path(self.inspect_requested, file_path))
+        open_in = menu.addMenu(_tr("Open in"))
+        for label, target in (
+            (_tr("Media Player"), "media_player"),
+            (_tr("Lossless Editor"), "lossless_editor"),
+            (_tr("Default app"), "system"),
+        ):
+            open_in.addAction(
+                label,
+                lambda target=target: self._emit_if_path(self.open_in_requested, file_path, target),
+            )
         menu.addSeparator()
-        settings_action = menu.addAction(_tr("Settings"))
-        action = menu.exec_(self.table_widget.viewport().mapToGlobal(pos))
-        if action == play_action and file_path:
-            self.play_requested.emit(file_path)
-        elif action == inspect_action and file_path:
-            self.inspect_requested.emit(file_path)
-        elif action == open_folder_action:
-            self.open_folder(dest_folder)
-        elif action == open_log_action:
-            self.open_log_file(file_path)
-        elif action == copy_action:
-            try:
-                from PyQt5.QtWidgets import QApplication
-                QApplication.clipboard().setText(file_path or "")
-            except Exception:
-                logger.debug("ConvertedFilesWidget.show_context_menu: suppressed error", exc_info=True)
-        elif action == settings_action:
-            # Access parent window's show_settings method
-            parent_window = self.parent()
-            while parent_window is not None:
-                if hasattr(parent_window, 'show_settings') and callable(parent_window.show_settings):
-                    parent_window.show_settings()
-                    break
-                parent_window = parent_window.parent()
+        menu.addAction(_tr("Open Containing Folder"), lambda: self.open_folder(dest_folder))
+        menu.addAction(_tr("Open Log File"), lambda: self.open_log_file(file_path))
+        menu.addAction(_tr("Copy File Path"), lambda: self._copy_to_clipboard(file_path))
+        menu.addSeparator()
+        menu.addAction(_tr("Settings"), self._show_window_settings)
+        return menu
+
+    @staticmethod
+    def _emit_if_path(signal, file_path, target=None):
+        if not file_path:
+            return
+        if target is None:
+            signal.emit(file_path)
+        else:
+            signal.emit(target, file_path)
+
+    @staticmethod
+    def _copy_to_clipboard(text):
+        try:
+            QApplication.clipboard().setText(text or "")
+        except Exception:
+            logger.debug("ConvertedFilesWidget._copy_to_clipboard: suppressed error", exc_info=True)
+
+    def _show_window_settings(self):
+        parent_window = self.parent()
+        while parent_window is not None:
+            if hasattr(parent_window, 'show_settings') and callable(parent_window.show_settings):
+                parent_window.show_settings()
+                break
+            parent_window = parent_window.parent()
 
     def open_folder(self, folder_path):
         if os.path.exists(folder_path):

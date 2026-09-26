@@ -196,10 +196,19 @@ def collect_video_files(folder, walker=os.walk):
 
 
 class PlaylistModel:
-    """Ordered, duplicate-free list of file paths with wrap-around navigation."""
+    """Ordered, duplicate-free list of file paths with wrap-around navigation.
+
+    Each clip carries a sync offset in seconds (default 0): how far that clip
+    is shifted against the shared seek position when several panels play
+    together. It lives here, next to the clip, and shows as the playlist's
+    Offset column (it used to be a spin box on every panel).
+    """
+
+    OFFSET_LIMIT_S = 600.0
 
     def __init__(self):
         self.items = []
+        self.offsets = {}
 
     def add(self, paths):
         added = 0
@@ -212,10 +221,30 @@ class PlaylistModel:
 
     def remove(self, index):
         if 0 <= index < len(self.items):
+            self.offsets.pop(self.items[index], None)
             del self.items[index]
 
     def clear(self):
         self.items = []
+        self.offsets = {}
+
+    def offset_for(self, path):
+        """Sync offset of `path` in seconds; 0.0 for anything unknown."""
+        return float(self.offsets.get(path, 0.0))
+
+    def set_offset(self, path, seconds):
+        """Store a clamped offset; 0 clears the entry so the dict holds only shifted clips."""
+        if path not in self.items:
+            return
+        try:
+            value = float(seconds)
+        except (TypeError, ValueError):
+            value = 0.0
+        value = max(-self.OFFSET_LIMIT_S, min(self.OFFSET_LIMIT_S, value))
+        if value:
+            self.offsets[path] = value
+        else:
+            self.offsets.pop(path, None)
 
     def move(self, source_index, destination_index):
         if not (0 <= source_index < len(self.items)):

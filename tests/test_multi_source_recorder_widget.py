@@ -7,7 +7,9 @@ from unittest.mock import patch
 from PyQt5.QtCore import QEvent, QProcess, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
+    QWIDGETSIZE_MAX,
     QApplication,
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QMessageBox,
@@ -499,6 +501,41 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertFalse(hasattr(dialog, "preset_save_button"))
         self.assertTrue(hasattr(dialog, "preset_save_as_button"))
         self.assertTrue(hasattr(dialog, "preset_delete_button"))
+
+    def _shown_video_settings_dialog(self, audio_devices):
+        widget = MultiSourceRecorderWidget(
+            directshow_devices=["Camera A"], auto_preview=False, load_saved_settings=False,
+        )
+        widget.directshow_audio_devices = list(audio_devices)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        dialog.owner = widget          # the parent must outlive this helper's frame
+        # No close() cleanup: conftest reaps the hidden parent (and with it the
+        # dialog) before unittest cleanups run, so close() would hit a dead object.
+        dialog.move(-7000, -7000)
+        dialog.show()
+        for _ in range(5):
+            self.app.processEvents()
+        return dialog
+
+    def test_video_settings_dialog_stays_narrow_with_long_device_names(self):
+        short = self._shown_video_settings_dialog(["Microphone A"])
+        long = self._shown_video_settings_dialog(
+            ["Microphone A (USB Audio Device, Realtek High Definition Audio Endpoint)", "Microphone B"]
+        )
+        # Long device names elide inside the combo instead of stretching the window.
+        self.assertEqual(long.width(), short.width())
+        audio_device = long.dialog_rows[0][7]
+        self.assertLessEqual(audio_device.width(), VideoSettingsDialog.AUDIO_DEVICE_MAX_W)
+        self.assertLessEqual(audio_device.width(), long.dialog_rows[0][3].width())   # video device is the wide one
+        dialog = long
+        self.assertEqual(audio_device.sizeAdjustPolicy(), QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.assertEqual(audio_device.toolTip(), audio_device.currentText())
+        # Save as / Delete are quiet text links, not filled buttons.
+        for button in (dialog.preset_save_as_button, dialog.preset_delete_button):
+            self.assertTrue(button.property("skipGlobalStyle"))
+            self.assertIn("background: transparent", button.styleSheet())
+            self.assertLessEqual(button.width(), 70)
+        self.assertIn("text-decoration: underline", dialog.preset_save_as_button.styleSheet())
 
     def test_video_settings_preset_actions_are_left_aligned_bracketed_links(self):
         widget = MultiSourceRecorderWidget()
@@ -4161,11 +4198,59 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
             # keeps its natural size so the file-location field stays short.
             self.assertEqual(widget.groups_layout.stretch(0), 0)
             self.assertEqual(widget.groups_layout.stretch(1), 1)
-            self.assertEqual(
-                widget.preview_boxes[0].maximumHeight(),
-                metrics.recorder_tile_max_h,
-            )
+            # Both boxes hang from the top edge: a QHBoxLayout would otherwise
+            # centre the shorter one and the properties table sat lower.
+            for position in (0, 1):
+                self.assertTrue(
+                    widget.groups_layout.itemAt(position).alignment() & Qt.AlignTop,
+                    (metrics.name, position),
+                )
         widget.apply_layout_mode(theme.COMPACT)
+
+    def test_preview_tiles_grow_to_fill_the_tab_in_either_mode(self):
+        widget = self._widget()
+        for metrics in (theme.COMPACT, theme.FULL):
+            widget.apply_layout_mode(metrics)
+            tile = widget.preview_boxes[0]
+            self.assertEqual(tile.sizePolicy().verticalPolicy(), QSizePolicy.Expanding, metrics.name)
+            self.assertEqual(tile.maximumHeight(), QWIDGETSIZE_MAX, metrics.name)
+        layout = widget.layout()
+        grid_index = next(
+            i for i in range(layout.count()) if layout.itemAt(i).layout() is widget.preview_grid
+        )
+        host_index = next(
+            i for i in range(layout.count()) if layout.itemAt(i).widget() is widget.groups_host
+        )
+        self.assertEqual(layout.stretch(grid_index), 1)
+        self.assertEqual(layout.stretch(host_index), 0)
+        widget.apply_layout_mode(theme.COMPACT)
+
+    def test_output_settings_fields_share_one_width(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.apply_layout_mode(theme.FULL)
+        widget.resize(1100, 700)
+        widget.move(-7000, -7000)   # geometry needs a realized widget; never on the desktop
+        widget.show()
+        for _ in range(5):
+            self.app.processEvents()
+        self.assertTrue(widget.isVisible())
+        fields = {
+            "base_name": widget.base_name_edit.geometry(),
+            "codec": widget.codec_combo.geometry(),
+            "mode": widget.output_mode_combo.geometry(),
+            "timer": widget.duration_edit.geometry(),
+        }
+        self.assertEqual(len({(r.left(), r.right()) for r in fields.values()}), 1, fields)
+        # The folder row spans the same width: edit + open-folder button.
+        folder = widget.output_folder_edit.geometry()
+        button = widget.open_output_folder_button.geometry()
+        self.assertEqual(folder.left(), fields["base_name"].left())
+        self.assertEqual(button.right(), fields["base_name"].right())
+        self.assertLessEqual(widget.output_group.maximumWidth(), 400)
+        # Boxes hang from one top edge; tiles took the height above them.
+        self.assertEqual(widget.output_group.y(), widget.source_group.y())
+        self.assertGreater(widget.preview_boxes[0].height(), 300)
+        widget.close()
 
     def test_stacked_layout_is_still_available_for_narrow_metrics(self):
         widget = self._widget()
@@ -4188,8 +4273,8 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
             widget.output_folder_edit.sizePolicy().horizontalPolicy(),
             QSizePolicy.Expanding,
         )
-        # Capped so the field never spans the whole window.
-        self.assertLessEqual(widget.output_folder_edit.maximumWidth(), 360)
+        # Capped (via the group) so the field never spans the whole window.
+        self.assertLessEqual(widget.output_group.maximumWidth(), 400)
 
     def test_copy_mode_note_only_for_usb_rows_in_copy_mode(self):
         widget = self._widget()

@@ -4,11 +4,13 @@ import os
 from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QAbstractItemView,
+    QDoubleSpinBox,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
-    QListWidget,
-    QListWidgetItem,
     QPushButton,
+    QStyledItemDelegate,
+    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -16,6 +18,8 @@ from PyQt5.QtWidgets import (
 from ui import theme
 from ui.glyph_icons import make_icon_button
 from ui.inspection_widget import InspectionWidget
+from ui.list_placeholder import PlaceholderTableWidget
+from ui.media_player_support import PlaylistModel
 
 
 def _tr(source: str) -> str:
@@ -40,15 +44,11 @@ class InspectionDock(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
-        self.title_label = QLabel(_tr("Inspect"))
-        self.title_label.setStyleSheet(theme.group_title_style())
-        layout.addWidget(self.title_label)
+        # No title row: the panel caption under the tile already names the
+        # clip, so the dock is just the Summary / JSON data.
         self.inspector = InspectionWidget(self, notify_preview=False, compact=True)
         self.inspector.layout().setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.inspector, 1)
-
-    def set_panel_title(self, panel_title):
-        self.title_label.setText(_tr("Inspect - %(panel)s") % {"panel": panel_title})
 
     def inspect_path(self, path):
         """Run ffprobe for `path` unless it is already shown; an empty path clears the dock."""
@@ -108,6 +108,120 @@ class FullscreenHost(QWidget):
         super().keyPressEvent(event)
 
 
+class _OffsetDelegate(QStyledItemDelegate):
+    """Edits the Offset column with a seconds spin box."""
+
+    def createEditor(self, parent, _option, _index):
+        spin = QDoubleSpinBox(parent)
+        spin.setRange(-PlaylistModel.OFFSET_LIMIT_S, PlaylistModel.OFFSET_LIMIT_S)
+        spin.setSingleStep(0.1)
+        spin.setDecimals(1)
+        spin.setSuffix(_tr(" s"))
+        return spin
+
+    def setEditorData(self, editor, index):
+        editor.setValue(float(index.data(Qt.UserRole) or 0.0))
+
+    def setModelData(self, editor, model, index):
+        editor.interpretText()
+        model.setData(index, float(editor.value()), Qt.UserRole)
+
+
+class PlaylistTable(PlaceholderTableWidget):
+    """Two columns -- Clip, Offset -- with drag-to-reorder rows.
+
+    The path rides on the clip cell's UserRole, the offset (seconds) on the
+    offset cell's. `rows_moved(source_row, destination_row)` fires on an
+    internal drop; `offset_edited(path, seconds)` when the Offset cell commits.
+    """
+
+    rows_moved = pyqtSignal(int, int)
+    offset_edited = pyqtSignal(str, float)
+    CLIP, OFFSET = 0, 1
+
+    def __init__(self, parent=None):
+        super().__init__(0, 2, parent)
+        self.setHorizontalHeaderLabels([_tr("Clip"), _tr("Offset")])
+        header = self.horizontalHeader()
+        header.setSectionResizeMode(self.CLIP, QHeaderView.Stretch)
+        header.setSectionResizeMode(self.OFFSET, QHeaderView.Fixed)
+        header.resizeSection(self.OFFSET, 76)
+        header.setHighlightSections(False)
+        header.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.verticalHeader().hide()
+        self.verticalHeader().setDefaultSectionSize(24)
+        self.setShowGrid(False)
+        self.setWordWrap(False)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setDragDropMode(QAbstractItemView.InternalMove)
+        self.setDragDropOverwriteMode(False)
+        self.setDefaultDropAction(Qt.MoveAction)
+        self.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.SelectedClicked)
+        self.setItemDelegateForColumn(self.OFFSET, _OffsetDelegate(self))
+        self.itemChanged.connect(self._on_item_changed)
+
+    # -- QListWidget-shaped helpers the dock and its tests lean on -----------
+    def count(self):
+        return self.rowCount()
+
+    def item(self, row, column=0):
+        return super().item(row, column)
+
+    def setCurrentRow(self, row):
+        self.setCurrentCell(row, self.CLIP)
+
+    def add_row(self, path, offset_s):
+        row = self.rowCount()
+        self.insertRow(row)
+        clip = QTableWidgetItem(os.path.basename(path) or path)
+        clip.setToolTip(path)
+        clip.setData(Qt.UserRole, path)
+        clip.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled)
+        offset = QTableWidgetItem(format_offset_seconds(offset_s))
+        offset.setData(Qt.UserRole, float(offset_s))
+        offset.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        offset.setToolTip(_tr("Sync offset: shift this clip earlier (negative) or later "
+                              "(positive) against the other panels. Double-click to edit."))
+        self.setItem(row, self.CLIP, clip)
+        self.setItem(row, self.OFFSET, offset)
+
+    def _on_item_changed(self, item):
+        if item.column() != self.OFFSET or self.signalsBlocked():
+            return
+        clip = self.item(item.row(), self.CLIP)
+        if clip is None:
+            return
+        self.offset_edited.emit(str(clip.data(Qt.UserRole)), float(item.data(Qt.UserRole) or 0.0))
+
+    def dropEvent(self, event):
+        if event.source() is not self or not event.mimeData().hasFormat(
+            "application/x-qabstractitemmodeldatalist"
+        ):
+            super().dropEvent(event)
+            return
+        rows = sorted({index.row() for index in self.selectedIndexes()})
+        if len(rows) != 1:
+            event.ignore()
+            return
+        target = self.indexAt(event.pos()).row()
+        if target < 0:
+            target = self.rowCount() - 1
+        elif self.dropIndicatorPosition() == QAbstractItemView.BelowItem and target < rows[0]:
+            target += 1
+        elif self.dropIndicatorPosition() == QAbstractItemView.AboveItem and target > rows[0]:
+            target -= 1
+        event.setDropAction(Qt.IgnoreAction)
+        event.accept()
+        if target != rows[0]:
+            self.rows_moved.emit(rows[0], target)
+
+
+def format_offset_seconds(seconds):
+    value = float(seconds or 0.0)
+    return f"{value:+.1f} s" if value else "0.0 s"
+
+
 class PlaylistDock(QWidget):
     """Playlist for one panel: a reorderable list plus Add/Remove/Clear controls.
 
@@ -119,6 +233,7 @@ class PlaylistDock(QWidget):
     activate_requested = pyqtSignal(str)
     files_requested = pyqtSignal()
     folder_requested = pyqtSignal()
+    offset_changed = pyqtSignal(str, float)
     STRIP_HEIGHT = 150
 
     def __init__(self, parent=None, horizontal=False):
@@ -137,12 +252,10 @@ class PlaylistDock(QWidget):
         self.title_label = QLabel(_tr("Playlist"))
         self.title_label.setStyleSheet(theme.group_title_style())
         layout.addWidget(self.title_label)
-        self.list = QListWidget(self)
-        self.list.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.list.setDragDropMode(QAbstractItemView.InternalMove)
-        self.list.setDefaultDropAction(Qt.MoveAction)
+        self.list = PlaylistTable(self)      # Clip | Offset, faint rows while empty
         self.list.itemDoubleClicked.connect(self._on_item_double_clicked)
-        self.list.model().rowsMoved.connect(self._on_rows_moved)
+        self.list.rows_moved.connect(self._on_row_moved)
+        self.list.offset_edited.connect(self._on_offset_edited)
         if self.horizontal:
             row = QHBoxLayout()
             row.setSpacing(6)
@@ -194,12 +307,9 @@ class PlaylistDock(QWidget):
 
     def refresh(self):
         self.list.blockSignals(True)
-        self.list.clear()
+        self.list.setRowCount(0)
         for path in (self.model.items if self.model else []):
-            item = QListWidgetItem(os.path.basename(path) or path)
-            item.setToolTip(path)
-            item.setData(Qt.UserRole, path)
-            self.list.addItem(item)
+            self.list.add_row(path, self.model.offset_for(path))
         self.list.blockSignals(False)
 
     def add_paths(self, paths):
@@ -231,14 +341,24 @@ class PlaylistDock(QWidget):
                 return
 
     def _on_item_double_clicked(self, item):
+        if item.column() != PlaylistTable.CLIP:
+            return          # the Offset cell opens its editor instead
         self.activate_requested.emit(str(item.data(Qt.UserRole)))
 
-    def _on_rows_moved(self, _parent, start, _end, _destination, row):
+    def _on_row_moved(self, source, destination):
         if self.model is None:
             return
-        destination = row - 1 if row > start else row
-        self.model.move(start, destination)
+        self.model.move(source, destination)
         self.refresh()
+        self.list.setCurrentRow(destination)
+
+    def _on_offset_edited(self, path, seconds):
+        if self.model is None:
+            return
+        self.model.set_offset(path, seconds)
+        self.refresh()
+        self.select_path(path)
+        self.offset_changed.emit(path, self.model.offset_for(path))
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():

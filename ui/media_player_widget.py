@@ -14,7 +14,6 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (
     QComboBox,
-    QDoubleSpinBox,
     QFileDialog,
     QFrame,
     QGridLayout,
@@ -47,6 +46,7 @@ from ui.media_player_support import (
     prefer_windows_media_foundation,
     probe_media_info,
 )
+from ui.tab_header import TabHeader
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
 
@@ -136,6 +136,7 @@ class PlayerPanel(QWidget):
         self._priming = False
         self._primed_path = ""
         self._prime_restore_muted = False
+        self._prime_target_ms = 0
         self._prime_timer = QTimer(self)
         self._prime_timer.setSingleShot(True)
         self._prime_timer.setInterval(200)
@@ -171,18 +172,6 @@ class PlayerPanel(QWidget):
         self.name_label.setStyleSheet(theme.video_label_style())
         self.name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
-        self.offset_spin = QDoubleSpinBox()
-        self.offset_spin.setRange(-600.0, 600.0)
-        self.offset_spin.setSingleStep(0.1)
-        self.offset_spin.setDecimals(1)
-        self.offset_spin.setValue(0.0)
-        self.offset_spin.setSuffix(_tr(" s"))
-        self.offset_spin.setMaximumWidth(78)
-        self.offset_spin.setToolTip(
-            _tr("Sync offset for this panel. Shift this clip earlier (negative) or later "
-            "(positive) so its action lines up with the other panels.")
-        )
-
         accent = theme.skin().accent
         self.load_btn = make_icon_button(
             "folder_open",
@@ -201,8 +190,6 @@ class PlayerPanel(QWidget):
         self.clear_btn.clicked.connect(self.clear_media)
 
         controls.addWidget(self.name_label)
-        controls.addWidget(QLabel(_tr("offset")))
-        controls.addWidget(self.offset_spin)
         controls.addWidget(self.load_btn)
         controls.addWidget(self.clear_btn)
 
@@ -272,12 +259,14 @@ class PlayerPanel(QWidget):
         self._wire_prime(player)
         return player
 
-    # --- first frame on load ------------------------------------------------
+    # --- presenting a frame while paused -----------------------------------
     # Media Foundation shows nothing until the session has run once: a freshly
     # loaded clip is a black tile, and dragging the timeline before the first
     # Play moves nothing. So when a clip reaches LoadedMedia while the host is
     # idle, run it muted for one position tick (200 ms at most), then pause at
     # 0. The first frame is on the tile and paused seeks repaint from then on.
+    # The same nudge, aimed at the current position, brings the frame back
+    # after the tile was hidden (another tab) -- WMF drops it with the surface.
     def _host_is_playing(self):
         return bool(getattr(self.host, "_is_playing", False))
 
@@ -290,16 +279,36 @@ class PlayerPanel(QWidget):
             return
         self._begin_prime()
 
-    def _begin_prime(self):
+    def _begin_prime(self, target_ms=0, caption=True):
         self._priming = True
         self._primed_path = self._media_path
-        self.placeholder.setText(_tr("Loading..."))
-        self.placeholder.show()
-        self.placeholder.raise_()
+        self._prime_target_ms = max(0, int(target_ms))
+        if caption:
+            self.placeholder.setText(_tr("Loading..."))
+            self.placeholder.show()
+            self.placeholder.raise_()
         self._prime_restore_muted = bool(self.player.isMuted())
         self.player.setMuted(True)
         self.player.play()
         self._prime_timer.start()
+
+    def represent_frame(self):
+        """Re-show the paused frame after the tile was hidden; a no-op otherwise."""
+        if (
+            self._priming
+            or self.player is None
+            or not self._media_path
+            or self._host_is_playing()
+            or self.isHidden()
+        ):
+            return False
+        self._begin_prime(target_ms=self.player.position(), caption=False)
+        return True
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        if self._primed_path and self._primed_path == self._media_path:
+            self.represent_frame()
 
     def _on_position_for_prime(self, _position):
         if self._priming:
@@ -312,7 +321,7 @@ class PlayerPanel(QWidget):
         self._prime_timer.stop()
         if self.player is not None:
             self.player.pause()
-            self.player.setPosition(0)
+            self.player.setPosition(self._prime_target_ms)
             self.player.setMuted(self._prime_restore_muted)
         self.placeholder.hide()
         self.placeholder.setText(_tr("Drop a video here\nor click Load"))
@@ -387,7 +396,10 @@ class PlayerPanel(QWidget):
         return bool(self._media_path)
 
     def offset_ms(self):
-        return int(round(self.offset_spin.value() * 1000))
+        """Sync offset of the clip on screen, from its playlist's Offset column."""
+        if not self._media_path:
+            return 0
+        return int(round(self.playlist.offset_for(self._media_path) * 1000))
 
     def duration_ms(self):
         return self.player.duration() if self.player is not None else 0
@@ -413,6 +425,9 @@ class PlayerPanel(QWidget):
         self.name_label.setToolTip(path)
         self.placeholder.hide()
         self.probe_info = {}
+        # The playlist is where you see what a panel holds: every load --
+        # drop, Load, Converted Files, playlist itself -- lands there once.
+        self.playlist.add([path])
         if self.host is not None and hasattr(self.host, "start_probe"):
             self.host.start_probe(self)
         self._notify_media_changed()
@@ -537,18 +552,14 @@ class MediaPlayerWidget(QWidget):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(10)
 
-        title = QLabel(_tr("Media Player"))
-        title.setStyleSheet(theme.tab_title_style())
-        layout.addWidget(title)
-
-        description = QLabel(
+        self.header = TabHeader(
+            "player",
+            _tr("Media Player"),
             _tr("Load up to four clips and review them side by side. Play, pause and seek "
-            "control every panel together; use each panel's offset to line up clips that "
-            "started at slightly different times.")
+                "control every panel together; the Inspect panel shows the selected clip's "
+                "ffprobe details."),
         )
-        description.setWordWrap(True)
-        description.setStyleSheet(theme.tab_description_style())
-        layout.addWidget(description)
+        layout.addWidget(self.header)
 
         self.grid = QGridLayout()
         self.grid.setSpacing(8)
@@ -584,6 +595,7 @@ class MediaPlayerWidget(QWidget):
         self.playlist_dock.activate_requested.connect(self._play_from_playlist)
         self.playlist_dock.files_requested.connect(self.add_playlist_files)
         self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
+        self.playlist_dock.offset_changed.connect(self._on_playlist_offset_changed)
         column_layout.addWidget(self.playlist_dock)
         self.playlist_dock.hide()
         self.stage.addWidget(self.video_column)
@@ -710,6 +722,7 @@ class MediaPlayerWidget(QWidget):
     def reskin(self):
         """Repaint every glyph (transport, panels, playlist dock) in the current skin."""
         self._icon_color = theme.skin().accent
+        self.header.reskin()
         reskin_icon_buttons(self, self._icon_color)
         self._set_play_glyph(self._is_playing)
         set_button_glyph(
@@ -934,6 +947,8 @@ class MediaPlayerWidget(QWidget):
     def _on_panel_media_changed(self, panel):
         """A panel loaded or cleared media; the dock and sidebar follow the selected one."""
         if panel is self.selected_panel():
+            self.playlist_dock.refresh()
+            self.playlist_dock.select_path(panel._media_path)
             self._refresh_inspection()
             self._announce_selected_media()
 
@@ -942,9 +957,7 @@ class MediaPlayerWidget(QWidget):
         inspect_btn = getattr(self, "inspect_btn", None)
         if inspect_btn is None or not inspect_btn.isChecked():
             return
-        panel = self.selected_panel()
-        self.inspect_dock.set_panel_title(panel.name_label.text())
-        self.inspect_dock.inspect_path(panel._media_path)
+        self.inspect_dock.inspect_path(self.selected_panel()._media_path)
 
     def add_playlist_files(self):
         paths, _ = QFileDialog.getOpenFileNames(
@@ -1172,6 +1185,17 @@ class MediaPlayerWidget(QWidget):
         self.seek_all(0)
         self.play_all()
 
+    def _on_playlist_offset_changed(self, path, _seconds):
+        """An Offset cell changed: re-seat every paused panel showing that clip."""
+        master = self.position_slider.value()
+        for panel in self.active_panels():
+            if panel._media_path != path or panel.player is None:
+                continue
+            if panel.player.state() != QMediaPlayer.PlayingState:
+                panel.player.setPosition(
+                    panel_seek_position_ms(master, panel.offset_ms(), panel.duration_ms())
+                )
+
     def seek_all(self, master_ms):
         self._set_slider_value(master_ms)
         for panel in self.active_panels():
@@ -1270,6 +1294,7 @@ class MediaPlayerWidget(QWidget):
         except Exception:
             logger.debug("MediaPlayerWidget.shutdown: suppressed error", exc_info=True)
         for panel in self.panels:
+            panel._cancel_prime()
             if panel.player is None:
                 continue
             try:

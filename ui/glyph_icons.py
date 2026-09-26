@@ -35,6 +35,12 @@ GLYPHS: tuple[str, ...] = (
     "log",
     "camera",
     "inspect",
+    # Tab header glyphs (ui/tab_header.py), one per tool tab.
+    "convert",
+    "pc",
+    "scissors",
+    "record",
+    "player",
 )
 
 
@@ -199,6 +205,50 @@ def _paint(name: str, painter: QPainter, s: float, color: QColor) -> None:
         painter.drawEllipse(R(0.18, 0.18, 0.44, 0.44))
         painter.setPen(_pen(color, max(1.8, s * 0.13)))
         painter.drawLine(P(0.58, 0.58), P(0.82, 0.82))
+    elif name == "convert":
+        # Two arrows cycling around a small play triangle: video in, video out.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawArc(R(0.17, 0.17, 0.66, 0.66), 30 * 16, 130 * 16)
+        painter.drawArc(R(0.17, 0.17, 0.66, 0.66), 210 * 16, 130 * 16)
+        painter.setBrush(color)
+        painter.drawPolygon(QPolygonF([P(0.76, 0.10), P(0.90, 0.34), P(0.64, 0.32)]))
+        painter.drawPolygon(QPolygonF([P(0.24, 0.90), P(0.10, 0.66), P(0.36, 0.68)]))
+        painter.drawPolygon(QPolygonF([P(0.42, 0.38), P(0.63, 0.50), P(0.42, 0.62)]))
+    elif name == "pc":
+        # A monitor on a stand.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRoundedRect(R(0.12, 0.16, 0.76, 0.50), 2, 2)
+        painter.drawLine(P(0.50, 0.66), P(0.50, 0.80))
+        painter.drawLine(P(0.32, 0.82), P(0.68, 0.82))
+    elif name == "scissors":
+        # Two rings for handles, blades crossing above them.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawEllipse(R(0.14, 0.62, 0.24, 0.24))
+        painter.drawEllipse(R(0.62, 0.62, 0.24, 0.24))
+        painter.drawLine(P(0.32, 0.64), P(0.74, 0.14))
+        painter.drawLine(P(0.68, 0.64), P(0.26, 0.14))
+    elif name == "record":
+        # The camera body with a filled lens: recording.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRoundedRect(R(0.14, 0.32, 0.72, 0.46), 2, 2)
+        painter.drawLine(P(0.34, 0.32), P(0.40, 0.22))
+        painter.drawLine(P(0.40, 0.22), P(0.60, 0.22))
+        painter.drawLine(P(0.60, 0.22), P(0.66, 0.32))
+        painter.setBrush(color)
+        painter.drawEllipse(R(0.39, 0.43, 0.22, 0.22))
+    elif name == "player":
+        # A magnifier with an eye in the lens: watch and inspect.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawEllipse(R(0.12, 0.12, 0.54, 0.54))
+        eye = QPainterPath(P(0.20, 0.39))
+        eye.quadTo(P(0.39, 0.20), P(0.58, 0.39))
+        eye.quadTo(P(0.39, 0.58), P(0.20, 0.39))
+        painter.setPen(_pen(color, max(1.2, s * 0.06)))
+        painter.drawPath(eye)
+        painter.setBrush(color)
+        painter.drawEllipse(R(0.33, 0.33, 0.12, 0.12))
+        painter.setPen(_pen(color, max(1.8, s * 0.13)))
+        painter.drawLine(P(0.62, 0.62), P(0.86, 0.86))
     else:
         raise KeyError(name)
 

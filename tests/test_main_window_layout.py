@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from ui import theme
 from ui.leaf_frame import LeafFrame
 from ui.main_window import VideoConverterApp
+from ui.tab_header import TabHeader
 
 
 class LeafFrameTests(unittest.TestCase):
@@ -109,6 +110,43 @@ class TabCardTests(unittest.TestCase):
         self.assertFalse(self.window.isMaximized())
         self.assertEqual(self.window.size().width(), theme.COMPACT.window_size[0])
 
+    def test_mode_switch_holds_repaints_until_the_relayout_and_resize_are_done(self):
+        # Full -> compact used to paint the re-flowed tabs at the old size,
+        # then the restored window, then the resized one: half a second of
+        # jitter. The whole switch now happens with updates off.
+        window = self.window
+        seen = []
+        real_apply = window.multi_source_recorder_widget.apply_layout_mode
+        real_center = window.center_on_screen
+
+        def spy_apply(metrics):
+            seen.append(("relayout", window.updatesEnabled()))
+            return real_apply(metrics)
+
+        def spy_center():
+            seen.append(("center", window.updatesEnabled()))
+            return real_center()
+
+        try:
+            window.set_window_mode("full", persist=False)
+            with patch.object(window.multi_source_recorder_widget, "apply_layout_mode", spy_apply), \
+                    patch.object(window, "center_on_screen", spy_center):
+                window.set_window_mode("compact", persist=False)
+        finally:
+            window.set_window_mode("compact", persist=False)
+        self.assertEqual(seen, [("relayout", False), ("center", False)])
+        self.assertTrue(window.updatesEnabled())
+
+    def test_mode_switch_re_enables_repaints_even_if_a_tab_relayout_fails(self):
+        window = self.window
+        with patch.object(
+            window.multi_source_recorder_widget, "apply_layout_mode", side_effect=RuntimeError("boom")
+        ):
+            with self.assertRaises(RuntimeError):
+                window.set_window_mode("compact", persist=False)
+        self.assertTrue(window.updatesEnabled())
+        window.set_window_mode("compact", persist=False)
+
     def test_title_bar_offers_maximize(self):
         self.assertTrue(self.window.windowFlags() & Qt.WindowMaximizeButtonHint)
 
@@ -190,3 +228,71 @@ class TabCardTests(unittest.TestCase):
         with patch.object(window.lossless_editor_widget, "reskin") as reskin:
             window.update_all_button_styles()
         reskin.assert_called_once()
+
+
+class TabHeaderUnityTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_every_tool_tab_opens_with_the_same_header_glyph_and_its_title(self):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        window._ensure_media_player_widget()
+        headers = window.tab_headers()
+        self.assertEqual(set(headers), set(window.tool_tab_widgets))
+        expected = {
+            "video_converter": ("convert", "Video Converter"),
+            "pc_report": ("pc", "PC Report"),
+            "lossless_editor": ("scissors", "Lossless Editor"),
+            "multi_source_recorder": ("record", "Multi-Source Recorder"),
+            "media_player": ("player", "Media Player"),
+        }
+        for key, (glyph, title) in expected.items():
+            header = headers[key]
+            self.assertIsInstance(header, TabHeader, key)
+            self.assertEqual(header.glyph_name, glyph, key)
+            self.assertEqual(header.title_label.text(), title, key)
+            self.assertEqual(header.title_label.text(), window.tabs.tabText(
+                window.tabs.indexOf(window.tool_tab_widgets[key])), key)
+            self.assertEqual(header.glyph_label.width(), TabHeader.GLYPH_PX, key)
+            self.assertFalse(header.description_label.isHidden(), key)
+        self.assertIn(window.converter_header, window.reskin_widgets())
+
+
+class MovableTabTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def _window(self, saved_order=None):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        if saved_order is not None:
+            window.settings["tool_tab_order"] = list(saved_order)
+            window.apply_tool_tab_order()
+        return window
+
+    def test_tabs_can_be_dragged_and_the_order_is_saved(self):
+        window = self._window()
+        self.assertTrue(window.tabs.isMovable())
+        self.assertEqual(window.current_tool_tab_order(), list(window.tool_tab_widgets))
+        with patch("ui.main_window.save_settings") as save:
+            window.tabs.tabBar().moveTab(0, 4)          # Video Converter to the far right
+        save.assert_called_once()
+        expected = ["pc_report", "lossless_editor", "multi_source_recorder", "media_player", "video_converter"]
+        self.assertEqual(window.current_tool_tab_order(), expected)
+        self.assertEqual(window.settings["tool_tab_order"], expected)
+
+    def test_a_saved_order_is_applied_at_start_and_hidden_tabs_keep_their_place(self):
+        order = ["media_player", "multi_source_recorder", "video_converter", "pc_report", "lossless_editor"]
+        window = self._window(order)
+        self.assertEqual(window.current_tool_tab_order(), order)
+        # Visibility toggles work on whichever index the tab now has.
+        window.settings["visible_tool_tabs"]["pc_report"] = True
+        window.apply_tool_tab_visibility()
+        index = window.tabs.indexOf(window.tool_tab_widgets["pc_report"])
+        self.assertEqual(index, 3)
+        self.assertTrue(window.tabs.isTabVisible(index))

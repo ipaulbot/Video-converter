@@ -225,6 +225,37 @@ Tab merge follow-ups (2026-09-26):
 - Translations: the new strings (Video Converter, Inspect, Inspect in Media
   Player, Inspect - %(panel)s, the Inspect tooltip) need nl / zh-CN entries.
 
+UI polish batch follow-ups (2026-09-26, later):
+
+- Re-capture the Help figures in a dedicated session: FIG-00 / FIG-03 (tab
+  headers, list placeholders), FIG-08 (playlist Clip | Offset column, no
+  offset spin on the panel) and FIG-09 (narrower Video Settings, quiet Save
+  as / Delete links). `capture_screenshots.py` shows the main window on
+  screen and FIG-08 reads pixels from the display, so it cannot run while
+  the operator's own NVC and desktop are in use.
+- Translations for the new strings: tab header descriptions, "Clip",
+  "Offset", "Add videos to convert...", "Monitor a folder...", "Monitor this
+  file's folder", "Open in" and its entries, "Choose the folder to monitor".
+- Playlist offset: only one row can be dragged at a time (multi-row drops are
+  ignored); the offset is not yet persisted with the (not yet persisted)
+  playlist. When playlists persist, store `offsets` beside `items`.
+- The sync-offset concept exists twice -- per recorder source in Video
+  Settings and per clip in the player playlist -- with the same name and
+  different units of storage (seconds both, but recorder rows are strings).
+  Fine for now; a shared "Sync offset" glossary entry in Help would tie them.
+- Recorder Output settings group is capped at 380 px; on Full window the
+  Recording properties group takes the rest. Revisit if the folder path
+  field feels cramped at compact size.
+- `set_window_mode` holds repaints for the switch; Windows still animates
+  the maximise / restore itself. If the OS animation reads as a flash,
+  disable it via `WS_EX` / DWM attributes per window (not done).
+- Planning doc `docs/planning/2026-09-26-product-naming-website-and-github.md`
+  needs the owner's decisions: public name, what goes public on GitHub, and
+  the purchase route (blocked on the licensing plan).
+- Three test files carry a literal RTSP URL with embedded credentials as a
+  fixture (pre-existing; flagged 2026-09-26). Replace with an obviously
+  fake host such as `rtsp://user:pass@camera.example/stream`.
+
 ## Done
 
 - Help documentation is now generated from `docs/help/source/` rather than

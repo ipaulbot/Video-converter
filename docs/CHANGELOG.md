@@ -389,3 +389,66 @@ Use this file to track user-visible fixes, improvements, and feature work.
   and a stream preview that dies with "Failed to resolve hostname" reads
   "Cannot resolve the camera address / Check the IP in Video Settings" and
   stops retrying until the source is edited.
+
+### UI polish batch (later the same day)
+
+- **One header on every tab.** Each tool tab now opens with the same
+  three-part header: a runtime-painted glyph (a magnifier with an eye for the
+  Media Player, an arrow cycle around a play symbol for the Video Converter,
+  a camera for the recorder, scissors for the Lossless Editor, a monitor for
+  PC Report), the tab's title and a one-line description. The Video Converter
+  tab, which had no header, gets one; PC Report keeps its heart as a layer
+  under the glyph. Headers follow the accent colour.
+- **Drag tabs into any order.** Tabs are movable; the order persists as
+  `tool_tab_order` in settings and is restored at start.
+- **Empty lists show their intent.** The Converted Files table and the
+  player's playlist paint faint grey bars, fading down the empty area, until
+  the first row arrives.
+- **Full window -> compact no longer jitters.** The whole mode switch (tab
+  re-flow, tab restyle, restore, resize, centre) happens with repaints held,
+  so it lands in one frame instead of half a second of resizing panels.
+- Video Converter right-click menu: on empty space, **Add videos to
+  convert...** and **Monitor a folder...**; on a row, additionally **Monitor
+  this file's folder** and an **Open in** submenu (Media Player, Lossless
+  Editor, Default app). Monitoring a folder sets the Source Folder and
+  restarts a running watch.
+
+### Media Player (polish)
+
+- The "Inspect - Panel N: ..." title row above the inspector is gone; the
+  panel caption already names the clip.
+- Every clip loaded into or dropped onto a panel is **added to that panel's
+  playlist** and selected there, so the strip shows what the panel has seen.
+- Leaving the Media Player tab and coming back no longer leaves the paused
+  tile blank: the panel re-presents its frame (Media Foundation drops the
+  presented picture when the surface is hidden) at the same position,
+  muted while it does so.
+- The per-panel **offset spin box moves into the playlist** as an
+  **Offset** column (Clip | Offset). Double-click the cell to edit the sync
+  shift in seconds; a paused panel showing that clip moves at once. Drag
+  reorder of playlist rows is kept.
+
+### Multi-Source Recorder (polish)
+
+- Output settings and Recording properties now sit **top-aligned** (the
+  shorter group used to hang lower), the Output settings fields share one
+  width, and the group is capped at 380 px.
+- Preview tiles **grow to fill the tab**, so Full window mode no longer
+  leaves most of the screen empty under four small tiles.
+- **Video Settings dialog is narrower** (about 990 -> 810 px at default
+  fonts): the Audio device column is capped and elides long device names
+  (the full name is in the tooltip), the Video device column takes the spare
+  width, and the preset **Save as... / Delete** buttons became quiet grey
+  text links so the eye is not pulled to them.
+
+### Docs
+
+- Help: Main Window Overview (headers, movable tabs), Converted Files (new
+  menu items, placeholders), Media Player (playlist behaviour, Offset
+  column), Multi-Source Recorder (Video Settings audio names, preset links).
+- Planning: `docs/planning/2026-09-26-product-naming-website-and-github.md`
+  records the landing-page site, the shared product voice / rename question
+  ("Media Multitool" argued against; short proper name + descriptor argued
+  for) and the GitHub presence steps. Planning only; nothing renamed.
+- Test hygiene: a `_FakePlayer` helper had been indented inside a test
+  class, which silently un-collected six Media Player tests; they run again.

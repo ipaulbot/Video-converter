@@ -83,6 +83,7 @@ from conversion.recording_sources import (
 from ui import theme
 from ui.glyph_icons import make_icon_button, reskin_icon_buttons, set_link_glyph
 from ui.screen_region_picker import pick_screen_region_value
+from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -464,6 +465,10 @@ class PTZOverlayButton(QPushButton):
 
 
 class VideoSettingsDialog(QDialog):
+    # The audio device column was the widest thing in the dialog (long
+    # microphone names); it is capped and the names elide instead.
+    AUDIO_DEVICE_MAX_W = 180
+
     def __init__(self, source_rows, output_controls=None, parent=None, button_style=None):
         super().__init__(parent)
         self.setWindowTitle(_tr("Video Settings"))
@@ -548,6 +553,16 @@ class VideoSettingsDialog(QDialog):
             row_audio_name.setMinimumWidth(58)
             row_audio_name.setMaximumWidth(82)
             row_audio_device = QComboBox()
+            # Microphone names run long ("... (USB Audio Device, ...)"); elide
+            # them in the field rather than let the column set the dialog width.
+            # The full name is the tooltip and shows in the drop-down.
+            row_audio_device.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+            row_audio_device.setMinimumContentsLength(12)
+            row_audio_device.setMaximumWidth(self.AUDIO_DEVICE_MAX_W)
+            row_audio_device.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            row_audio_device.currentTextChanged.connect(
+                lambda text, combo=row_audio_device: combo.setToolTip(text)
+            )
             stored_audio = (
                 parent._audio_device_value(audio_device_combo)
                 if parent and audio_device_combo
@@ -557,6 +572,7 @@ class VideoSettingsDialog(QDialog):
                 parent.populate_audio_device_combo(row_audio_device, stored_audio)
             else:
                 row_audio_device.addItem(_tr("No Audio"), "No Audio")
+            row_audio_device.setToolTip(row_audio_device.currentText())
             row_offset = make_sync_offset_spinbox()
             if offset_spin is not None:
                 row_offset.setValue(offset_spin.value())
@@ -589,9 +605,12 @@ class VideoSettingsDialog(QDialog):
                 row_enabled, row_label, row_type, row_device, row_frame_rate,
                 row_resolution, row_audio_name, row_audio_device, row_offset
             ))
-        grid.setColumnStretch(3, 1)
+        # Spare width goes to the video device column first, then the audio
+        # device column (capped); nothing else stretches.
+        grid.setColumnStretch(3, 3)
         grid.setColumnMinimumWidth(4, 20)
         grid.setColumnStretch(4, 0)
+        grid.setColumnStretch(8, 2)
         layout.addLayout(grid)
         scan_row = QHBoxLayout()
         scan_row.setContentsMargins(0, 0, 0, 0)
@@ -660,6 +679,26 @@ class VideoSettingsDialog(QDialog):
         for button in (self.preset_load_button, self.preset_set_button):
             button.setProperty("skipGlobalStyle", True)
             button.setStyleSheet(link_style)
+        # Save as / Delete are rarer than Load / Set: quiet text links in the
+        # muted colour, so the eye is not pulled to two filled buttons.
+        quiet_link_style = theme.qss("""
+            QPushButton {
+                background: transparent;
+                color: $grey_650;
+                border: none;
+                text-decoration: underline;
+                padding: 0px 4px;
+                text-align: left;
+            }
+            QPushButton:hover { color: $accent_deep; }
+        """)
+        for button in (self.preset_save_as_button, self.preset_delete_button):
+            button.setProperty("skipGlobalStyle", True)
+            button.setStyleSheet(quiet_link_style)
+            button.setCursor(Qt.PointingHandCursor)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.preset_save_as_button.setMaximumWidth(64)
+        self.preset_delete_button.setMaximumWidth(48)
         self.preset_combo.currentTextChanged.connect(lambda _text: self.update_selected_preset_path())
         self.preset_load_button.clicked.connect(self.load_selected_preset)
         self.preset_set_button.clicked.connect(self.set_selected_preset)
@@ -1342,6 +1381,10 @@ class MultiSourceRecorderWidget(QWidget):
     device_scan_started = pyqtSignal()
     hardware_encoder_detected = pyqtSignal(str)
 
+    # Output settings group width cap; its fields all stretch to this so they
+    # share one width (the folder row is edit + open-folder button).
+    OUTPUT_GROUP_MAX_W = 380
+
     # How long a listing stays "fresh": opening Video Settings within this
     # window reuses it instead of spinning ffmpeg up again.
     DEVICE_SCAN_TTL_S = 45.0
@@ -1422,6 +1465,13 @@ class MultiSourceRecorderWidget(QWidget):
         layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
 
+        self.header = TabHeader(
+            "record",
+            _tr("Multi-Source Recorder"),
+            _tr("Record up to four cameras, streams or screens at once, as separate files or one combined picture."),
+        )
+        layout.addWidget(self.header)
+
         self.status_label = QLabel(_tr("Not recording"))
         self.status_label.setStyleSheet(theme.qss("color: $grey_650;"))
 
@@ -1434,9 +1484,11 @@ class MultiSourceRecorderWidget(QWidget):
             preview.setText(_tr("Video %(number)s\nNo signal")
                             % {"number": index + 1})
             preview.setAlignment(Qt.AlignCenter)
+            # Tiles take whatever height the tab has left once the two groups
+            # (Fixed) have theirs; Ignored horizontally so a big pixmap never
+            # widens the window.
             preview.setMinimumHeight(74)
-            preview.setMaximumHeight(98)
-            preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+            preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Expanding)
             preview.setStyleSheet(theme.qss("""
                 QLabel {
                     background: $grey_950;
@@ -1450,7 +1502,7 @@ class MultiSourceRecorderWidget(QWidget):
             preview_grid.addWidget(preview, index // 2, index % 2)
             self.preview_boxes.append(preview)
             self.ptz_overlay_buttons.append(ptz_button)
-        layout.addLayout(preview_grid)
+        layout.addLayout(preview_grid, 1)
 
         self.groups_host = QWidget()
         self.groups_layout = None
@@ -1555,15 +1607,19 @@ class MultiSourceRecorderWidget(QWidget):
 
         output_group = QGroupBox(_tr("Output settings"))
         output_group.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        # The *group* is capped, not the fields: every field expands to the
+        # same width inside it, so the boxes line up instead of each having
+        # its own maximum.
+        output_group.setMaximumWidth(self.OUTPUT_GROUP_MAX_W)
         output_form = QFormLayout()
         output_form.setContentsMargins(6, 6, 6, 6)
         output_form.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
         output_form.setFormAlignment(Qt.AlignTop)
+        output_form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         output_form.setVerticalSpacing(3)
         self.output_folder_edit = QLineEdit(os.path.join(os.path.expanduser("~"), "Videos"))
         # Wide enough to read a path tail, never spanning the whole window.
         self.output_folder_edit.setMinimumWidth(200)
-        self.output_folder_edit.setMaximumWidth(320)
         self.output_folder_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         # Keep the folder *name* (the tail) visible when the path is set
         # programmatically; leave the caret alone while the user is typing.
@@ -1599,13 +1655,12 @@ class MultiSourceRecorderWidget(QWidget):
         self.open_output_folder_button.clicked.connect(self.open_output_folder)
         self.open_output_folder_link = self.open_output_folder_button
         folder_line = QHBoxLayout()
+        folder_line.setContentsMargins(0, 0, 0, 0)
         folder_line.addWidget(self.output_folder_edit, 1)
         folder_line.addWidget(self.open_output_folder_button, 0)
         self.base_name_edit = QLineEdit(_tr("Video"))
-        self.base_name_edit.setMaximumWidth(140)
         self.codec_combo = QComboBox()
         self.codec_combo.addItems(["copy", "h264"])
-        self.codec_combo.setMaximumWidth(120)
         self.output_mode_combo = QComboBox()
         self.output_mode_combo.addItems([
             _tr("Separate videos"),
@@ -1617,16 +1672,16 @@ class MultiSourceRecorderWidget(QWidget):
             "side by side. Picture-in-picture: one file with source 1 full frame and the "
             "others as insets."
         ))
-        self.output_mode_combo.setMaximumWidth(140)
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
         output_form.addRow("File base name:", self.base_name_edit)
         output_form.addRow("Encoding:", self.codec_combo)
         output_form.addRow("Output mode:", self.output_mode_combo)
         self.duration_edit = QLineEdit("")
-        self.duration_edit.setMaximumWidth(140)
         self.duration_edit.setPlaceholderText(_tr("blank = until stopped"))
         output_form.addRow("Timer:", self.duration_edit)
+        for field in (self.base_name_edit, self.codec_combo, self.output_mode_combo, self.duration_edit):
+            field.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.copy_mode_note = QLabel(
             _tr(
                 "USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources."
@@ -1687,8 +1742,8 @@ class MultiSourceRecorderWidget(QWidget):
 
     def apply_layout_mode(self, metrics):
         """Stack recorder groups in compact mode and place them side by side in full mode."""
-        for preview in self.preview_boxes:
-            preview.setMaximumHeight(metrics.recorder_tile_max_h)
+        # Tiles are uncapped in both modes (they fill what the groups leave);
+        # `metrics.recorder_tile_max_h` is no longer applied.
         old = self.groups_layout
         if old is not None:
             old.removeWidget(self.source_group)
@@ -1696,15 +1751,17 @@ class MultiSourceRecorderWidget(QWidget):
             QWidget().setLayout(old)
         # Output settings first (left / top); the properties table takes
         # whatever width is left so the output form keeps its natural size.
+        # Both hang from the top: a box layout centres items of unequal
+        # height, which is what left the properties table sitting lower.
         if metrics.recorder_stacked:
             new = QVBoxLayout(self.groups_host)
-            new.addWidget(self.output_group)
-            new.addWidget(self.source_group)
+            new.addWidget(self.output_group, 0, Qt.AlignTop)
+            new.addWidget(self.source_group, 0, Qt.AlignTop)
         else:
             new = QHBoxLayout(self.groups_host)
             new.setAlignment(Qt.AlignTop)
-            new.addWidget(self.output_group, 0)
-            new.addWidget(self.source_group, 1)
+            new.addWidget(self.output_group, 0, Qt.AlignTop)
+            new.addWidget(self.source_group, 1, Qt.AlignTop)
         new.setContentsMargins(0, 0, 0, 0)
         new.setSpacing(metrics.spacing * 2)
         self.groups_layout = new
@@ -1775,6 +1832,7 @@ class MultiSourceRecorderWidget(QWidget):
         """Links and glyph buttons follow the lock / converting skin like the bubbles do."""
         link = theme.link_button_style()
         accent = theme.skin().accent
+        self.header.reskin(accent)
         for widget, glyph in (
             (self.video_settings_link, "settings"),
             (self.recording_log_link, "log"),

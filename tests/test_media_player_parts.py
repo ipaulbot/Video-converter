@@ -7,11 +7,26 @@ from unittest.mock import patch
 
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWIDGETSIZE_MAX, QApplication, QLabel, QToolButton, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QWIDGETSIZE_MAX,
+    QApplication,
+    QDoubleSpinBox,
+    QLabel,
+    QStyledItemDelegate,
+    QToolButton,
+    QVBoxLayout,
+)
 
 from ui import inspection_widget as inspection_module
 from ui.inspection_widget import InspectionWidget
-from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
+from ui.media_player_parts import (
+    FullscreenHost,
+    InspectionDock,
+    PlaylistDock,
+    PlaylistTable,
+    UnsupportedOverlay,
+    format_offset_seconds,
+)
 from ui.media_player_support import PlaylistModel
 
 
@@ -92,11 +107,12 @@ class InspectionDockTests(unittest.TestCase):
         self.assertTrue(dock.inspector.summary_text.isHidden())
         self.assertFalse(dock.inspector.summary_drag_text.isHidden())
 
-    def test_title_names_the_panel(self):
+    def test_dock_is_the_inspector_alone_with_no_title_row(self):
         dock = InspectionDock()
         self.addCleanup(dock.close)
-        dock.set_panel_title("Panel 2: clip.mp4")
-        self.assertIn("Panel 2: clip.mp4", dock.title_label.text())
+        self.assertFalse(hasattr(dock, "title_label"))
+        self.assertFalse(hasattr(dock, "set_panel_title"))
+        self.assertIs(dock.layout().itemAt(0).widget(), dock.inspector)
 
 
 class FullscreenHostTests(unittest.TestCase):
@@ -192,8 +208,66 @@ class PlaylistDockTests(unittest.TestCase):
     def test_rows_moved_reorders_model(self):
         dock, model = self._dock()
         dock.add_paths(["a", "b", "c"])
-        dock._on_rows_moved(None, 0, 0, None, 3)
+        dock.list.rows_moved.emit(0, 2)
         self.assertEqual(model.items, ["b", "c", "a"])
+        self.assertEqual(dock.list.currentRow(), 2)
+
+    def test_playlist_has_a_clip_column_and_an_offset_column(self):
+        dock, model = self._dock()
+        self.assertEqual(dock.list.columnCount(), 2)
+        self.assertEqual(
+            [dock.list.horizontalHeaderItem(c).text() for c in range(2)], ["Clip", "Offset"]
+        )
+        dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        model.set_offset("C:\\Videos\\b.mp4", -1.25)
+        dock.refresh()
+        self.assertEqual(dock.list.item(0, PlaylistTable.OFFSET).text(), "0.0 s")
+        self.assertEqual(dock.list.item(1, PlaylistTable.OFFSET).text(), "-1.2 s")
+        self.assertEqual(dock.list.item(1, PlaylistTable.OFFSET).data(Qt.UserRole), -1.25)
+        # The clip cell is not editable; the offset cell is.
+        self.assertFalse(dock.list.item(0, PlaylistTable.CLIP).flags() & Qt.ItemIsEditable)
+        self.assertTrue(dock.list.item(0, PlaylistTable.OFFSET).flags() & Qt.ItemIsEditable)
+        self.assertIsInstance(
+            dock.list.itemDelegateForColumn(PlaylistTable.OFFSET), QStyledItemDelegate
+        )
+
+    def test_editing_the_offset_cell_updates_the_model_and_announces_it(self):
+        dock, model = self._dock()
+        dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        changes = []
+        dock.offset_changed.connect(lambda path, secs: changes.append((path, secs)))
+        # What the delegate's setModelData does when the spin box commits.
+        dock.list.item(1, PlaylistTable.OFFSET).setData(Qt.UserRole, 2.5)
+        self.assertEqual(model.offset_for("C:\\Videos\\b.mp4"), 2.5)
+        self.assertEqual(changes, [("C:\\Videos\\b.mp4", 2.5)])
+        self.assertEqual(dock.list.item(1, PlaylistTable.OFFSET).text(), "+2.5 s")
+        self.assertEqual(dock.list.currentRow(), 1)
+
+    def test_offset_editor_is_a_seconds_spin_box_bound_to_the_cell(self):
+        dock, _model = self._dock()
+        dock.add_paths(["C:\\Videos\\a.mp4"])
+        index = dock.list.model().index(0, PlaylistTable.OFFSET)
+        delegate = dock.list.itemDelegateForColumn(PlaylistTable.OFFSET)
+        editor = delegate.createEditor(dock.list, None, index)
+        self.assertIsInstance(editor, QDoubleSpinBox)
+        self.assertEqual(editor.maximum(), PlaylistModel.OFFSET_LIMIT_S)
+        self.assertEqual(editor.suffix(), " s")
+        editor.setValue(-3.0)
+        delegate.setModelData(editor, dock.list.model(), index)
+        self.assertEqual(dock.list.item(0, PlaylistTable.OFFSET).data(Qt.UserRole), -3.0)
+
+    def test_double_clicking_the_offset_cell_does_not_activate_the_clip(self):
+        dock, _model = self._dock()
+        dock.add_paths(["C:\\Videos\\a.mp4"])
+        activated = []
+        dock.activate_requested.connect(activated.append)
+        dock.list.itemDoubleClicked.emit(dock.list.item(0, PlaylistTable.OFFSET))
+        self.assertEqual(activated, [])
+
+    def test_offset_text_is_signed_and_one_decimal(self):
+        self.assertEqual(format_offset_seconds(0), "0.0 s")
+        self.assertEqual(format_offset_seconds(1.25), "+1.2 s")
+        self.assertEqual(format_offset_seconds(-0.5), "-0.5 s")
 
 
 class UnsupportedOverlayTests(unittest.TestCase):

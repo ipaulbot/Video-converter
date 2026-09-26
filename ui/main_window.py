@@ -11,12 +11,13 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QStyle, QMenu,
     QPlainTextEdit, QMessageBox, QSpacerItem, QSizePolicy, QProgressBar,
     QAction, QToolBar, QToolButton, QFrame, QStackedWidget, QGridLayout,
-    QApplication, QStackedLayout, QSlider, QScrollArea, QSplitter
+    QApplication, QStackedLayout, QSlider, QScrollArea, QSplitter, QFileDialog
 )
 from PyQt5.QtCore import (QCoreApplication, Qt, QTimer, QThreadPool, pyqtSignal,
                           QSize, QEvent, QUrl, QProcess, QPoint,
                           QPropertyAnimation, QEasingCurve)
-from PyQt5.QtGui import QPixmap, QIcon, QFont, QTextCursor, QPainter, QColor, QImage, QWheelEvent, QPen, QBrush
+from PyQt5.QtGui import (QPixmap, QIcon, QFont, QTextCursor, QPainter, QColor, QImage, QWheelEvent, QPen, QBrush,
+                         QDesktopServices)
 
 # Use native Observer; fall back to PollingObserver if needed.
 from watchdog.observers import Observer
@@ -26,7 +27,7 @@ from watchdog.events import FileSystemEventHandler
 from ui.converted_files_widget import ConvertedFilesWidget
 from ui.settings_dialog import SettingsDialog
 from ui.dialogs import InfoDialog, ConfirmationDialog, EasterEggDialog
-from utils.config import load_settings, save_settings
+from utils.config import load_settings, normalize_tool_tab_order, save_settings
 from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
@@ -49,6 +50,7 @@ from ui.media_player_widget import MediaPlayerWidget
 from conversion.recording_commands import recording_layout_preview_rects
 from conversion.recorder_settings import load_recorder_settings
 from ui.pc_report_dialog import PCReportWidget
+from ui.tab_header import TabHeader
 from utils.update_checker import UpdateChecker, UpdateWorker
 
 
@@ -280,6 +282,9 @@ class VideoConverterApp(QMainWindow):
         # bar is too narrow for every enabled tool tab.
         self.tabs.setUsesScrollButtons(False)
         self.tabs.setElideMode(Qt.ElideRight)
+        # Drag a tab to reorder; the order is saved once the tool tabs exist
+        # (see apply_tool_tab_order / _on_tab_moved).
+        self.tabs.setMovable(True)
         self.apply_tab_style("#43a296")
         # Conversion Log Tab
         self.log_tab = QWidget()
@@ -523,12 +528,21 @@ class VideoConverterApp(QMainWindow):
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         self.converted_files_widget.play_requested.connect(self.play_in_media_player)
         self.converted_files_widget.inspect_requested.connect(self.inspect_in_media_player)
+        self.converted_files_widget.add_files_requested.connect(lambda: self.open_file_dialog())
+        self.converted_files_widget.monitor_folder_requested.connect(self.monitor_folder_from_menu)
+        self.converted_files_widget.open_in_requested.connect(self.open_file_in)
         # Clean modern styling for converted files widget
         self.converted_files_widget.setStyleSheet(theme.qss("QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
 
         self.converter_tab = QWidget()
         converter_layout = QVBoxLayout(self.converter_tab)
         converter_layout.setContentsMargins(0, 0, 0, 0)
+        self.converter_header = TabHeader(
+            "convert",
+            _tr("Video Converter"),
+            _tr("Drop files or monitor a folder; converted files are listed above the log."),
+        )
+        converter_layout.addWidget(self.converter_header)
         self.converter_splitter = QSplitter(Qt.Vertical)
         self.converter_splitter.setChildrenCollapsible(False)
         self.converter_splitter.setHandleWidth(8)
@@ -669,6 +683,8 @@ class VideoConverterApp(QMainWindow):
             "multi_source_recorder": self.multi_source_recorder_tab_scroll,
             "media_player": self.media_player_tab_scroll,
         }
+        self.apply_tool_tab_order()
+        self.tabs.tabBar().tabMoved.connect(self._on_tab_moved)
         self.apply_tool_tab_visibility()
         if get_game_unlocked():
             self.add_game_icons()
@@ -887,30 +903,39 @@ class VideoConverterApp(QMainWindow):
         self.settings["window_mode"] = metrics.name
         for mode, action in getattr(self, "window_mode_actions", {}).items():
             action.setChecked(mode == metrics.name)
-        central = self.centralWidget()
-        if central is not None and central.layout() is not None:
-            m = metrics.margin
-            central.layout().setContentsMargins(m, m, m, m)
-        for widget in self.layout_mode_widgets():
-            widget.apply_layout_mode(metrics)
-        if hasattr(self, "tabs"):
-            self.apply_tab_style(theme.highlight_color())
-            self._fit_burger_button()
-        # Before the first show() (i.e. from __init__) only record the window
-        # state; main.py's show() honours it. Showing here would pop the window
-        # up mid-construction, and in every test that builds the main window.
-        if resize and metrics.name == "full":
-            if self.isVisible():
-                self.showMaximized()
-            else:
-                self.setWindowState(self.windowState() | Qt.WindowMaximized)
-        elif resize:
-            if self.isVisible():
-                self.showNormal()
-            else:
-                self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
-            self.resize(*metrics.window_size)
-            self.center_on_screen()
+        # One frame, not five: the re-flow (margins, every tab's layout mode,
+        # tab restyle) and the geometry change (restore, resize, centre) each
+        # used to paint on their own, so full -> compact flickered through
+        # half-laid-out panels for about half a second. Hold repaints until
+        # everything is in place, then let a single paint show the result.
+        self.setUpdatesEnabled(False)
+        try:
+            central = self.centralWidget()
+            if central is not None and central.layout() is not None:
+                m = metrics.margin
+                central.layout().setContentsMargins(m, m, m, m)
+            for widget in self.layout_mode_widgets():
+                widget.apply_layout_mode(metrics)
+            if hasattr(self, "tabs"):
+                self.apply_tab_style(theme.highlight_color())
+                self._fit_burger_button()
+            # Before the first show() (i.e. from __init__) only record the window
+            # state; main.py's show() honours it. Showing here would pop the window
+            # up mid-construction, and in every test that builds the main window.
+            if resize and metrics.name == "full":
+                if self.isVisible():
+                    self.showMaximized()
+                else:
+                    self.setWindowState(self.windowState() | Qt.WindowMaximized)
+            elif resize:
+                if self.isVisible():
+                    self.showNormal()
+                else:
+                    self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
+                self.resize(*metrics.window_size)
+                self.center_on_screen()
+        finally:
+            self.setUpdatesEnabled(True)
         if persist:
             save_settings(self.settings)
 
@@ -1025,6 +1050,42 @@ class VideoConverterApp(QMainWindow):
         if index >= 0:
             self.tabs.setCurrentIndex(index)
             self.on_tab_changed(index)
+
+    def current_tool_tab_order(self):
+        """Tool tab keys left to right as the bar shows them now."""
+        widgets = getattr(self, 'tool_tab_widgets', {})
+        by_widget = {widget: key for key, widget in widgets.items()}
+        order = []
+        for index in range(self.tabs.count()):
+            key = by_widget.get(self.tabs.widget(index))
+            if key is not None:
+                order.append(key)
+        return order
+
+    def apply_tool_tab_order(self):
+        """Arrange the tool tabs as saved in settings["tool_tab_order"]."""
+        order = normalize_tool_tab_order(self.settings.get('tool_tab_order'))
+        widgets = getattr(self, 'tool_tab_widgets', {})
+        bar = self.tabs.tabBar()
+        # QTabWidget follows the bar's tabMoved signal to move the page, so the
+        # signal must stay live; a flag keeps _on_tab_moved from re-saving.
+        self._applying_tab_order = True
+        try:
+            for target, key in enumerate(order):
+                widget = widgets.get(key)
+                current = self.tabs.indexOf(widget) if widget is not None else -1
+                if current >= 0 and current != target:
+                    bar.moveTab(current, target)
+        finally:
+            self._applying_tab_order = False
+
+    def _on_tab_moved(self, _from_index, _to_index):
+        if getattr(self, '_applying_tab_order', False):
+            return
+        order = self.current_tool_tab_order()
+        if order and order != self.settings.get('tool_tab_order'):
+            self.settings['tool_tab_order'] = order
+            save_settings(self.settings)
 
     def apply_tool_tab_visibility(self):
         visible_tabs = self.settings.get('visible_tool_tabs', {})
@@ -1936,7 +1997,7 @@ class VideoConverterApp(QMainWindow):
         # Ensure log tab is visible so user can read the banner
         try:
             if hasattr(self, 'tabs'):
-                self.tabs.setCurrentIndex(0)  # Conversion Log tab
+                self.tabs.setCurrentWidget(self.converter_tab_scroll)  # the log lives on the Video Converter tab
                 # Mimic drag-drop behaviour: hide instruction text
                 if hasattr(self, 'drag_drop_text'):
                     self.drag_drop_text.hide()
@@ -2897,8 +2958,21 @@ class VideoConverterApp(QMainWindow):
             getattr(self, "media_player_widget", None),
             getattr(self, "multi_source_recorder_widget", None),
             getattr(self, "converted_files_widget", None),
+            getattr(self, "converter_header", None),
         ] + list(getattr(self, "tool_tab_cards", {}).values())
         return [w for w in candidates if w is not None and hasattr(w, "reskin")]
+
+    def tab_headers(self):
+        """The shared TabHeader at the top of each tool tab, keyed like tool_tab_widgets."""
+        headers = {}
+        for key, widget in getattr(self, "tool_tab_widgets", {}).items():
+            if key == "video_converter":
+                headers[key] = self.converter_header
+                continue
+            header = widget.findChild(TabHeader)
+            if header is not None:
+                headers[key] = header
+        return headers
 
     def apply_button_style_to_all_widgets(self, widget):
         """Apply the current button style beneath `widget`.
@@ -3201,14 +3275,49 @@ class VideoConverterApp(QMainWindow):
         widget.inspect_btn.setChecked(True)
 
     def show_media_player_tab(self):
-        index = self.tabs.indexOf(self.media_player_tab_scroll)
+        self._show_tool_tab_for_session(self.media_player_tab_scroll)
+
+    def _show_tool_tab_for_session(self, tab_widget):
+        """Reveal and raise a tool tab without changing the saved visibility setting."""
+        index = self.tabs.indexOf(tab_widget)
         if index < 0:
             return
         try:
             self.tabs.setTabVisible(index, True)
         except AttributeError:
-            self.media_player_tab_scroll.setVisible(True)
+            tab_widget.setVisible(True)
         self.tabs.setCurrentIndex(index)
+
+    # --- Video Converter list: right-click feeds ------------------------------
+    def monitor_folder_from_menu(self, folder):
+        """Right-click "Monitor ..." on the file list; "" means ask which folder."""
+        if not folder:
+            folder = QFileDialog.getExistingDirectory(
+                self, _tr("Choose the folder to monitor"), self.source_folder or ""
+            )
+            if not folder:
+                return
+        self.set_monitored_folder(folder)
+
+    def set_monitored_folder(self, folder):
+        """Save `folder` as the source folder; a running watch moves over to it."""
+        self.update_settings({"source_folder": folder})
+        self.append_log(f"Monitoring folder set to: {folder}")
+        if self.running:
+            self.stop_conversion()
+            self.start_conversion()
+
+    def open_file_in(self, target, path):
+        """Right-click "Open in" on the file list."""
+        if not path or not os.path.exists(path):
+            return
+        if target == "media_player":
+            self.play_in_media_player(path)
+        elif target == "lossless_editor":
+            self.lossless_editor_widget.input_edit.setText(path)
+            self._show_tool_tab_for_session(self.lossless_editor_tab_scroll)
+        else:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
     def launch_ballbuster_game(self):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None:

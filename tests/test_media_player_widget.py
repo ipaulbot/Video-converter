@@ -7,7 +7,14 @@ import unittest
 from PyQt5.QtCore import QEvent, QObject, QPointF, Qt, pyqtSignal
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWidgets import QWIDGETSIZE_MAX, QApplication, QSizePolicy, QSplitter, QToolButton
+from PyQt5.QtWidgets import (
+    QWIDGETSIZE_MAX,
+    QApplication,
+    QLabel,
+    QSizePolicy,
+    QSplitter,
+    QToolButton,
+)
 
 from ui import theme
 from ui.media_player_widget import (
@@ -148,6 +155,42 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         try:
             for panel in widget.panels:
                 self.assertEqual(panel.offset_ms(), 0)
+                self.assertFalse(hasattr(panel, "offset_spin"))   # lives in the playlist now
+        finally:
+            widget.shutdown()
+
+    def test_panel_offset_comes_from_the_current_clips_playlist_row(self):
+        widget = MediaPlayerWidget()
+        try:
+            panel = widget.panels[0]
+            panel.player = _FakePlayer()
+            panel._media_path = "C:\\Videos\\a.mp4"
+            panel.playlist.add(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+            panel.playlist.set_offset("C:\\Videos\\a.mp4", 1.5)
+            panel.playlist.set_offset("C:\\Videos\\b.mp4", -2.0)
+            self.assertEqual(panel.offset_ms(), 1500)
+            panel._media_path = "C:\\Videos\\b.mp4"
+            self.assertEqual(panel.offset_ms(), -2000)
+            panel._media_path = ""
+            self.assertEqual(panel.offset_ms(), 0)
+        finally:
+            widget.shutdown()
+
+    def test_editing_an_offset_in_the_playlist_reseats_the_paused_panel(self):
+        widget = MediaPlayerWidget()
+        try:
+            panel = widget.panels[0]
+            panel.player = _FakePlayer(duration=60000)
+            panel._media_path = "C:\\Videos\\a.mp4"
+            panel.playlist.add(["C:\\Videos\\a.mp4"])
+            widget.select_panel(0)
+            widget.playlist_dock.refresh()
+            widget.position_slider.setRange(0, 60000)
+            widget._set_slider_value(4000)
+            panel.player.calls.clear()
+            widget.playlist_dock.list.item(0, 1).setData(Qt.UserRole, 1.5)
+            self.assertEqual(panel.offset_ms(), 1500)
+            self.assertIn("setPosition(5500)", panel.player.calls)
         finally:
             widget.shutdown()
 
@@ -481,7 +524,70 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertEqual(inspected, [])            # dock closed: nothing runs
         widget.inspect_btn.setChecked(True)
         self.assertEqual(inspected, ["C:/Videos/b.mp4"])
-        self.assertIn("Panel 2", widget.inspect_dock.title_label.text())
+
+    def test_the_inspect_dock_has_no_title_row(self):
+        # The panel caption already names the clip; the dock is just the data.
+        widget = self._widget()
+        self.assertFalse(hasattr(widget.inspect_dock, "title_label"))
+        labels = widget.inspect_dock.findChildren(QLabel)
+        self.assertFalse(any(label.text().startswith("Inspect") for label in labels))
+
+    # --- loading feeds the playlist ---------------------------------------------
+
+    def test_loading_a_clip_adds_it_to_that_panels_playlist_and_selects_it(self):
+        widget = self._widget()
+        widget.playlist_btn.setChecked(True)
+        panel = widget.panels[0]
+        with tempfile.TemporaryDirectory() as folder:
+            clip = os.path.join(folder, "a.mp4")
+            with open(clip, "wb") as handle:
+                handle.write(b"x")
+            panel.load_media(clip)
+            self.assertEqual(panel.playlist.items, [clip])
+            self.assertEqual(widget.playlist_dock.list.currentRow(), 0)
+            # Loading it again does not duplicate the entry.
+            panel.load_media(clip)
+            self.assertEqual(panel.playlist.items, [clip])
+
+    def test_loading_into_an_unselected_panel_fills_that_panels_list_only(self):
+        widget = self._widget()
+        with tempfile.TemporaryDirectory() as folder:
+            clip = os.path.join(folder, "b.mp4")
+            with open(clip, "wb") as handle:
+                handle.write(b"x")
+            widget.panels[1].load_media(clip)
+            self.assertEqual(widget.panels[1].playlist.items, [clip])
+            self.assertEqual(widget.panels[0].playlist.items, [])
+
+    # --- coming back to the tab re-presents the frame -------------------------
+
+    def test_showing_the_widget_again_nudges_paused_panels_back_to_their_frame(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=4200)
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._primed_path = panel._media_path      # first frame already shown
+        widget.hide()
+        widget.show()
+        self.assertEqual(player.calls, ["setMuted(True)", "play"])
+        player.positionChanged.emit(4240)
+        self.assertEqual(player.calls[2:], ["pause", "setPosition(4200)", "setMuted(False)"])
+
+    def test_re_show_leaves_playing_and_empty_panels_alone(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=10)
+        panel._adopt_player(player)
+        widget._is_playing = True
+        panel._media_path = "C:/Videos/a.mp4"
+        widget.hide()
+        widget.show()
+        widget._is_playing = False
+        panel._media_path = ""
+        widget.hide()
+        widget.show()
+        self.assertEqual(player.calls, [])
 
     def test_selecting_another_panel_re_inspects_while_the_dock_is_open(self):
         widget = self._widget()
@@ -577,58 +683,6 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         panel._finish_prime()
         self.assertTrue(panel.placeholder.isHidden())
 
-
-class _FakePlayer(QObject):
-    """Just enough QMediaPlayer for the first-frame prime."""
-
-    positionChanged = pyqtSignal(int)
-    mediaStatusChanged = pyqtSignal(int)
-
-    def __init__(self, muted=False):
-        super().__init__()
-        self.calls = []
-        self._muted = muted
-
-    # shutdown() calls these on every created player.
-    def stop(self):
-        self.calls.append("stop")
-
-    def setMedia(self, _content):
-        pass
-
-    def setVideoOutput(self, _output):
-        pass
-
-    def setVolume(self, _volume):
-        pass
-
-    def setPlaybackRate(self, _rate):
-        pass
-
-    def isMuted(self):
-        return self._muted
-
-    def setMuted(self, muted):
-        self._muted = bool(muted)
-        self.calls.append(f"setMuted({bool(muted)})")
-
-    def play(self):
-        self.calls.append("play")
-
-    def pause(self):
-        self.calls.append("pause")
-
-    def setPosition(self, position):
-        self.calls.append(f"setPosition({int(position)})")
-
-    def state(self):
-        return QMediaPlayer.StoppedState
-
-    def position(self):
-        return 0
-
-    def duration(self):
-        return 0
 
     def test_playlist_next_and_previous_load_into_selected_panel(self):
         widget = self._widget()
@@ -754,6 +808,61 @@ class _FakePlayer(QObject):
         self.assertTrue(panel.overlay.convert_btn.isEnabled())
 
 
+class _FakePlayer(QObject):
+    """Just enough QMediaPlayer for the first-frame prime."""
+
+    positionChanged = pyqtSignal(int)
+    mediaStatusChanged = pyqtSignal(int)
+
+    def __init__(self, muted=False, position=0, duration=0):
+        super().__init__()
+        self.calls = []
+        self._muted = muted
+        self._position = position
+        self._duration = duration
+
+    # shutdown() calls these on every created player.
+    def stop(self):
+        self.calls.append("stop")
+
+    def setMedia(self, _content):
+        pass
+
+    def setVideoOutput(self, _output):
+        pass
+
+    def setVolume(self, _volume):
+        pass
+
+    def setPlaybackRate(self, _rate):
+        pass
+
+    def isMuted(self):
+        return self._muted
+
+    def setMuted(self, muted):
+        self._muted = bool(muted)
+        self.calls.append(f"setMuted({bool(muted)})")
+
+    def play(self):
+        self.calls.append("play")
+
+    def pause(self):
+        self.calls.append("pause")
+
+    def setPosition(self, position):
+        self.calls.append(f"setPosition({int(position)})")
+
+    def state(self):
+        return QMediaPlayer.StoppedState
+
+    def position(self):
+        return self._position
+
+    def duration(self):
+        return self._duration
+
+
 class MediaPlayerRealFileSmokeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -798,8 +907,36 @@ class MediaPlayerRealFileSmokeTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if cls.clip and os.path.exists(cls.clip):
-            os.remove(cls.clip)
+        if not (cls.clip and os.path.exists(cls.clip)):
+            return
+        # WMF lets go of the file only once the players are really deleted.
+        deadline = time.monotonic() + 3
+        while True:
+            cls.app.sendPostedEvents(None, QEvent.DeferredDelete)
+            cls.app.processEvents()
+            try:
+                os.remove(cls.clip)
+                return
+            except PermissionError:
+                if time.monotonic() > deadline:
+                    raise
+                time.sleep(0.05)
+
+    def _shown_widget(self):
+        """A widget that was really shown (WMF builds a presenter); deleted at the end."""
+        widget = MediaPlayerWidget(settings={})
+        widget.move(-7000, -7000)   # shown for real, but never on the desktop
+
+        def dispose():
+            try:
+                widget.shutdown()
+                widget.close()
+                widget.deleteLater()
+            except RuntimeError:
+                pass
+
+        self.addCleanup(dispose)
+        return widget
 
     def test_load_reports_duration_and_one_frame_step_moves_one_frame(self):
         if not self.clip:
@@ -835,8 +972,7 @@ class MediaPlayerRealFileSmokeTests(unittest.TestCase):
         # The first-frame prime against the real backend: play, one tick, pause at 0.
         if not self.clip:
             self.skipTest("ffmpeg.exe not available to synthesise a clip")
-        widget = MediaPlayerWidget(settings={})
-        self.addCleanup(widget.shutdown)
+        widget = self._shown_widget()
         panel = widget.panels[0]
         self.assertTrue(panel.load_media(self.clip))
         deadline = time.monotonic() + 8
@@ -859,6 +995,24 @@ class MediaPlayerRealFileSmokeTests(unittest.TestCase):
             self.app.processEvents()
             time.sleep(0.02)
         self.assertGreater(panel.player.position(), 500)
+        # Leaving the tab and coming back nudges the frame back at the same
+        # spot: still paused, still near 800, still audible.
+        widget.hide()
+        self.app.processEvents()
+        widget.show()
+        deadline = time.monotonic() + 4
+        started = False
+        while time.monotonic() < deadline:
+            self.app.processEvents()
+            time.sleep(0.02)
+            started = started or panel._priming
+            if started and not panel._priming:
+                break
+        self.assertTrue(started, "re-show did not nudge the paused panel")
+        self.assertFalse(panel._priming)
+        self.assertEqual(panel.player.state(), QMediaPlayer.PausedState)
+        self.assertLessEqual(abs(panel.player.position() - 800), 250)
+        self.assertFalse(panel.player.isMuted())
 
 
 if __name__ == "__main__":
