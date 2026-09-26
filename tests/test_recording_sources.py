@@ -19,11 +19,24 @@ from conversion.recording_sources import (
     parse_rtsp_url_settings,
     screen_monitor_index,
     screen_region,
+    stream_host_problem,
     terminate_device_probes,
 )
 
 
 class RecordingSourceTests(unittest.TestCase):
+    def test_stream_host_problem_flags_numeric_hosts_that_are_not_ipv4(self):
+        self.assertEqual(stream_host_problem("10.0.100.5"), "")
+        self.assertEqual(stream_host_problem("camera.local"), "")
+        self.assertEqual(stream_host_problem("rtsp://10.0.100.5:554/axis-media/media.amp"), "")
+        self.assertEqual(stream_host_problem(""), "")
+        self.assertEqual(stream_host_problem("10.0.100.5:554"), "")
+        for bad in ("10.0.1000.5", "10.0.100", "10.0.100.5.6", "10..100.5", "10.0.256.5", "10.0.1000.5:554"):
+            with self.subTest(bad=bad):
+                self.assertIn(bad.split(":")[0], stream_host_problem(bad))
+        # Wrapped in a full URL the host is still checked.
+        self.assertIn("10.0.1000.5", stream_host_problem("rtsp://user:pw@10.0.1000.5:554/stream"))
+
     def test_camera_source_types_include_common_camera_families(self):
         ids = [item["id"] for item in CAMERA_SOURCE_TYPES]
 

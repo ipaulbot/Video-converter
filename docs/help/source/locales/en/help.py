@@ -323,13 +323,14 @@ CHAPTERS: list[dict] = [
         "title": "Media Inspection",
         "blocks": [
             {"type": "para", "text": (
-                "Media inspection lives in the Media Player: the Inspect button on the "
-                "transport bar (a magnifier, next to Playlist) opens a panel beside the video "
-                "with Summary and Detailed JSON sub-tabs for the selected panel's clip. "
-                "Selecting another panel, or loading a different file into the selected one, "
-                "updates it. Playlist and Inspect share the same space, so opening one closes "
-                "the other. Drop a file on either sub-tab to inspect that file without "
-                "loading it. Summary lists File, Container, "
+                "Media inspection lives in the Media Player: the Inspect panel beside the "
+                "video (open by default; the magnifier button on the transport bar hides and "
+                "shows it) has Summary and Detailed JSON sub-tabs for the selected panel's "
+                "clip. Selecting another panel, or loading a different file into the selected "
+                "one, updates it. Drag the divider between the video and the panel to resize "
+                "it; the panel keeps its share of the window as the window grows. Drop a file "
+                "on either sub-tab to inspect that file without loading it. Summary lists "
+                "File, Container, "
                 "Duration, Size, Bitrate and Number of Streams. It then lists each video, "
                 "audio and subtitle stream, including its codec and the applicable resolution, "
                 "frame rate or channels. A Keyframe Analysis (First 30s) block follows the "
@@ -484,7 +485,11 @@ CHAPTERS: list[dict] = [
                 "In Video device choose a USB camera by its Windows name, choose RTSP/IP Camera "
                 "and click the camera button to enter Address / URL, Username, Password, Port "
                 "and Stream path, or type an rtsp://, http:// or https:// URL, a file path, or "
-                "a Basler / GenICam source string directly. Refresh USB devices... rescans.",
+                "a Basler / GenICam source string directly. Refresh USB devices... rescans. "
+                "The camera dialog refuses an Address that looks like an IP but is not one "
+                "(a number over 255, or three or five numbers); if a saved address is wrong, "
+                "the preview tile reads \"Cannot resolve the camera address\" instead of "
+                "reconnecting -- open Video Settings and correct it.",
                 "The default Frame rate list is 30.00, 25.00 and 15.00; the default Resolution "
                 "list is 1920 x 1080, 1280 x 720, 640 x 480 and Auto. When a USB camera is "
                 "selected, NVC replaces both lists with the modes the driver reports and adds "
@@ -563,8 +568,9 @@ CHAPTERS: list[dict] = [
                 ("Panels", "Shows 1, 2 or 4 panels."),
                 ("Volume", "Sets the volume for every panel from 0 to 100."),
                 ("Mute", "Mutes every panel and reads Unmute while muted."),
-                ("Fullscreen", "Shows the panels and transport bar fullscreen."),
-                ("Playlist", "Shows or hides the playlist for the selected panel."),
+                ("Fullscreen", "Shows the panels and transport bar fullscreen; the Inspect and Playlist panels step aside until you leave."),
+                ("Playlist", "Shows or hides the playlist strip under the video for the selected panel."),
+                ("Inspect", "Shows or hides the Inspect panel beside the video (see Media Inspection)."),
             ]},
             {"type": "para", "text": (
                 "The readout shows H:MM:SS.mmm / H:MM:SS.mmm · frame N / M. "
@@ -591,15 +597,21 @@ CHAPTERS: list[dict] = [
                 "hides three seconds after the mouse stops moving and returns when the mouse "
                 "moves. Press Escape or F, or double-click, to leave fullscreen.")},
             {"type": "para", "text": (
-                "Playlist opens a dock for the selected panel with Add files..., Add folder..., "
-                "Remove and Clear. Drag entries to reorder them, or drop files from Explorer "
-                "into the dock. N and P move through the playlist. With Panels set to 1, the "
-                "next item starts automatically when a clip ends.")},
+                "Playlist opens a strip under the video for the selected panel with Add "
+                "files..., Add folder..., Remove and Clear. Drag entries to reorder them, or "
+                "drop files from Explorer into the strip. N and P move through the playlist. "
+                "With Panels set to 1, the next item starts automatically when a clip ends.")},
+            {"type": "para", "text": (
+                "A clip shows its first frame as soon as it is loaded or dropped onto a panel "
+                "(the tile reads Loading... for a moment), and the seek slider moves the "
+                "picture before you press Play. The sidebar preview on the left follows the "
+                "selected panel's clip.")},
             {"type": "note", "items": [
                 'A file Windows cannot decode shows "Windows cannot play this file." or names '
                 'the codec and container, with "Convert to MP4 (H.264) and play". The converted '
                 "copy is written to your Destination Folder with a unique name and then loaded.",
-                "NVC remembers the last folder, panel count, volume and mute between sessions.",
+                "NVC remembers the last folder, panel count, volume, mute and whether the "
+                "Inspect and Playlist panels were open between sessions.",
                 "Playback uses Windows Media Foundation. MP4, MOV, MKV, AVI and WMV files with "
                 "common codecs play directly; use the convert offer for anything else.",
             ]},

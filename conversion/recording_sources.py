@@ -227,6 +227,35 @@ def build_rtsp_url(host, port="", username="", password="", path="stream"):
     return f"rtsp://{auth}{host_text}{port_part}/{path_text}"
 
 
+def stream_host_problem(address):
+    """Explain why `address` cannot reach a camera, or "" when it looks usable.
+
+    Only one class of mistake is caught: a host made of digits and dots that
+    is not a valid IPv4 literal (a four-digit octet, three octets, an octet
+    over 255). ffmpeg does not reject those -- it hands them to DNS, which
+    fails with "Failed to resolve hostname", and the preview reconnects for
+    ever. Host names and full URLs are left alone: the network decides.
+    """
+    text = (address or "").strip()
+    if not text:
+        return ""
+    if "://" in text:
+        try:
+            host = urlparse(text).hostname or ""
+        except ValueError:
+            return ""
+    else:
+        host = text.split("/", 1)[0]
+        if host.count(":") == 1:
+            host = host.split(":", 1)[0]
+    if not host or not re.fullmatch(r"[0-9.]+", host):
+        return ""
+    octets = host.split(".")
+    if len(octets) == 4 and all(o.isdigit() and 0 <= int(o) <= 255 for o in octets):
+        return ""
+    return f"'{host}' is not a valid IP address (four numbers 0-255 separated by dots)."
+
+
 def parse_rtsp_url_settings(url):
     text = (url or "").strip()
     if not text:

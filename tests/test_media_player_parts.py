@@ -1,9 +1,15 @@
+import os
+import sys
+import tempfile
+import time
 import unittest
+from unittest.mock import patch
 
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QApplication, QLabel, QToolButton
+from PyQt5.QtWidgets import QWIDGETSIZE_MAX, QApplication, QLabel, QToolButton, QVBoxLayout
 
+from ui import inspection_widget as inspection_module
 from ui.inspection_widget import InspectionWidget
 from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import PlaylistModel
@@ -19,7 +25,59 @@ class InspectionDockTests(unittest.TestCase):
         self.addCleanup(dock.close)
         self.assertIsInstance(dock.inspector, InspectionWidget)
         self.assertFalse(dock.inspector.notify_preview)
-        self.assertGreaterEqual(dock.minimumWidth(), 320)
+        self.assertGreaterEqual(dock.minimumWidth(), 260)
+        self.assertEqual(dock.maximumWidth(), QWIDGETSIZE_MAX)     # scales with the window
+
+    def test_dock_uses_the_compact_inspector_without_dashed_drop_frames(self):
+        dock = InspectionDock()
+        self.addCleanup(dock.close)
+        inspector = dock.inspector
+        self.assertTrue(inspector.compact)
+        for zone in (inspector.summary_drag_drop, inspector.json_drag_drop):
+            self.assertNotIn("dashed", zone.styleSheet())
+        # Real scroll bars: the old style hid them (width 0 / transparent handle).
+        for text in (inspector.summary_text, inspector.info_display):
+            self.assertNotIn("width: 0px", text.styleSheet())
+            self.assertNotIn("QScrollBar::handle", text.styleSheet())
+        self.assertIn("drop a file here", inspector.summary_drag_text.text())
+        # Drag feedback must not bring the dashed frame back.
+        inspector.summary_drag_leave(None)
+        self.assertNotIn("dashed", inspector.summary_drag_drop.styleSheet())
+
+    def test_stop_inspection_kills_a_running_probe_and_joins_the_thread(self):
+        # Destroying a QThread that is still running aborts the process; a
+        # probe on a slow drive must not be able to take NVC down at exit.
+        inspector = InspectionWidget(compact=True)
+        self.addCleanup(inspector.close)
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as handle:
+            path = handle.name
+        self.addCleanup(lambda: os.path.exists(path) and os.remove(path))
+        sleeper = [sys.executable, "-c", "import time; time.sleep(30)"]
+
+        def slow_run(self):
+            try:
+                self._run_probe(sleeper, 60)
+            except InterruptedError:
+                return
+
+        with patch.object(inspection_module.InspectionWorker, "run", slow_run):
+            inspector.inspect_file(path)
+            worker = inspector._inspection_worker
+            deadline = time.monotonic() + 3
+            while worker._process is None and time.monotonic() < deadline:
+                time.sleep(0.02)
+            self.assertIsNotNone(worker._process)
+            started = time.monotonic()
+            inspector.stop_inspection()
+        self.assertIsNone(inspector._inspection_worker)
+        self.assertFalse(worker.isRunning())
+        self.assertLess(time.monotonic() - started, 3)
+
+    def test_stand_alone_inspector_keeps_its_drop_zone_look(self):
+        inspector = InspectionWidget()
+        self.addCleanup(inspector.close)
+        self.assertFalse(inspector.compact)
+        self.assertIn("dashed", inspector.summary_drag_drop.styleSheet())
 
     def test_inspect_path_runs_ffprobe_once_per_path_and_clears_on_empty(self):
         dock = InspectionDock()
@@ -92,6 +150,17 @@ class PlaylistDockTests(unittest.TestCase):
             self.assertIsInstance(button, QToolButton, tip)
             self.assertEqual(button.toolTip(), tip)
         self.assertLessEqual(dock.sizeHint().width(), 320)
+
+    def test_horizontal_dock_is_a_short_strip_with_buttons_beside_the_list(self):
+        dock = PlaylistDock(horizontal=True)
+        self.addCleanup(dock.close)
+        self.assertTrue(dock.horizontal)
+        self.assertLessEqual(dock.maximumHeight(), 160)
+        self.assertEqual(dock.maximumWidth(), QWIDGETSIZE_MAX)
+        self.assertEqual(dock.minimumWidth(), 0)
+        row = dock.layout().itemAt(1).layout()          # title above; list + buttons below
+        self.assertIs(row.itemAt(0).widget(), dock.list)
+        self.assertIsInstance(row.itemAt(1).layout(), QVBoxLayout)
 
     def test_refresh_lists_model_items_and_title(self):
         dock, model = self._dock()

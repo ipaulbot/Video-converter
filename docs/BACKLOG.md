@@ -204,8 +204,17 @@ Tab merge follow-ups (2026-09-26):
 
 - Remember the Video Converter splitter position (files table vs log) between
   sessions; today it starts at the 2:3 default every launch.
-- Inspect panel: remember whether it was open, and its width, per session, as
-  the playlist already does for panel count and volume.
+- Inspect panel: remember its splitter width per session (open/closed is
+  remembered since the second pass on 2026-09-26; the width still starts at
+  28 % of the stage).
+- Sidebar preview: with the Media Player showing the clip, its Inspect panel
+  showing the ffprobe data, and the recorder tab drawing its own layout
+  schematic, the left-hand preview box mostly duplicates what is on screen.
+  It still earns its place on the Video Converter tab (a frame of the file
+  being converted) and it is the drop target under the logo. Options: keep
+  it only on the Video Converter tab; fold it into the Converted Files row
+  (a thumbnail column); or drop it and reclaim the sidebar for settings. Ask
+  before removing -- the user said "for now have the preview work".
 - Inspect from a playlist row (right-click) without loading the clip into the
   panel first.
 - The Inspect panel re-runs ffprobe when the selected panel changes; cache the

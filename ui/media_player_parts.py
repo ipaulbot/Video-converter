@@ -34,16 +34,17 @@ class InspectionDock(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_path = ""
-        # JSON needs more room than a playlist.
-        self.setMinimumWidth(320)
-        self.setMaximumWidth(480)
+        # A floor so the JSON stays readable; no ceiling -- the dock lives in
+        # a splitter and scales with the window.
+        self.setMinimumWidth(260)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
         self.title_label = QLabel(_tr("Inspect"))
         self.title_label.setStyleSheet(theme.group_title_style())
         layout.addWidget(self.title_label)
-        self.inspector = InspectionWidget(self, notify_preview=False)
+        self.inspector = InspectionWidget(self, notify_preview=False, compact=True)
+        self.inspector.layout().setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.inspector, 1)
 
     def set_panel_title(self, panel_title):
@@ -108,18 +109,28 @@ class FullscreenHost(QWidget):
 
 
 class PlaylistDock(QWidget):
-    """Playlist for one panel: a reorderable list plus Add/Remove/Clear controls."""
+    """Playlist for one panel: a reorderable list plus Add/Remove/Clear controls.
+
+    Vertical (default): a side column with the buttons in a row underneath.
+    `horizontal=True`: a short strip for under the video -- title on top, the
+    list beside a column of buttons -- with no width limits.
+    """
 
     activate_requested = pyqtSignal(str)
     files_requested = pyqtSignal()
     folder_requested = pyqtSignal()
+    STRIP_HEIGHT = 150
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, horizontal=False):
         super().__init__(parent)
         self.model = None
+        self.horizontal = bool(horizontal)
         self.setAcceptDrops(True)
-        self.setMinimumWidth(200)
-        self.setMaximumWidth(320)
+        if self.horizontal:
+            self.setMaximumHeight(self.STRIP_HEIGHT)
+        else:
+            self.setMinimumWidth(200)
+            self.setMaximumWidth(320)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
@@ -132,8 +143,16 @@ class PlaylistDock(QWidget):
         self.list.setDefaultDropAction(Qt.MoveAction)
         self.list.itemDoubleClicked.connect(self._on_item_double_clicked)
         self.list.model().rowsMoved.connect(self._on_rows_moved)
-        layout.addWidget(self.list, 1)
-        buttons = QHBoxLayout()
+        if self.horizontal:
+            row = QHBoxLayout()
+            row.setSpacing(6)
+            row.addWidget(self.list, 1)
+            buttons = QVBoxLayout()
+            row.addLayout(buttons)
+            layout.addLayout(row, 1)
+        else:
+            layout.addWidget(self.list, 1)
+            buttons = QHBoxLayout()
         buttons.setSpacing(4)
         accent = theme.skin().accent
         self.add_files_btn = make_icon_button(
@@ -148,7 +167,8 @@ class PlaylistDock(QWidget):
         self.clear_btn = make_icon_button(
             "clear", _tr("Clear playlist"), accent, size=24
         )
-        buttons.addStretch(1)
+        if not self.horizontal:
+            buttons.addStretch(1)
         for button in (
             self.add_files_btn,
             self.add_folder_btn,
@@ -156,7 +176,10 @@ class PlaylistDock(QWidget):
             self.clear_btn,
         ):
             buttons.addWidget(button)
-        layout.addLayout(buttons)
+        if self.horizontal:
+            buttons.addStretch(1)
+        else:
+            layout.addLayout(buttons)
         self.add_files_btn.clicked.connect(self.files_requested.emit)
         self.add_folder_btn.clicked.connect(self.folder_requested.emit)
         self.remove_btn.clicked.connect(self.remove_selected)

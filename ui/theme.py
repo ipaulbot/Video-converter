@@ -586,6 +586,32 @@ def drop_zone_style(radius: int = 18) -> str:
     )
 
 
+def inspect_text_style(radius: int = RADIUS_MD) -> str:
+    """The Media Player's Inspect text: a plain panel with real scroll bars.
+
+    The stand-alone inspector wraps its text in `drop_zone_style` and hides the
+    scroll bar; beside the video that dashed frame read as a second, empty
+    drop target, so the dock uses this instead.
+    """
+    s = skin()
+    return (
+        f"QPlainTextEdit {{ background: {s.panel_bg}; color: {s.text_body}; "
+        f"border: 1px solid {s.panel_border}; border-radius: {radius}px; "
+        f"padding: 6px; font-size: {FONT_BASE}px; }}"
+    )
+
+
+def plain_drop_target_style(object_name: str, active: bool = False) -> str:
+    """A borderless drop target; `active` tints it while a drag is over it.
+
+    Scoped by object name so the rule does not cascade onto the text widget
+    inside it.
+    """
+    s = skin()
+    background = rgba(s.accent, 0.08) if active else "transparent"
+    return f"#{object_name} {{ background: {background}; border: none; margin: 0px; }}"
+
+
 def preview_box_style(radius: int = 18) -> str:
     """The sidebar preview frame: a dashed drop target that accents on hover."""
     s = skin()

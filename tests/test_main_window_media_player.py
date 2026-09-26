@@ -56,6 +56,24 @@ class PlayInMediaPlayerTests(unittest.TestCase):
         window.converted_files_widget.inspect_requested.emit(path)
         self.assertEqual(window.tabs.currentWidget(), window.media_player_tab_scroll)
         self.assertTrue(widget.inspect_btn.isChecked())
-        self.assertFalse(widget.playlist_btn.isChecked())
         self.assertEqual(inspected[-1], path)
         self.assertEqual(widget.selected_panel()._media_path, path)
+
+    def test_the_sidebar_preview_follows_the_players_selected_clip(self):
+        window = VideoConverterApp()
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as handle:
+            path = handle.name
+
+        def cleanup():
+            window.shutdown()
+            if os.path.exists(path):
+                os.remove(path)
+
+        self.addCleanup(cleanup)
+        previewed = []
+        window.preview_file = lambda p: previewed.append(p)
+        widget = window._ensure_media_player_widget()
+        widget.selected_panel().load_media(path)
+        self.assertEqual(previewed, [path])
+        widget.selected_panel().clear_media()
+        self.assertEqual(previewed, [path])          # nothing to preview: left alone

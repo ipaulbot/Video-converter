@@ -4,10 +4,10 @@ import tempfile
 import time
 import unittest
 
-from PyQt5.QtCore import QEvent, QPointF, Qt
+from PyQt5.QtCore import QEvent, QObject, QPointF, Qt, pyqtSignal
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtMultimedia import QMediaPlayer
-from PyQt5.QtWidgets import QApplication, QSizePolicy, QToolButton
+from PyQt5.QtWidgets import QWIDGETSIZE_MAX, QApplication, QSizePolicy, QSplitter, QToolButton
 
 from ui import theme
 from ui.media_player_widget import (
@@ -381,32 +381,99 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertFalse(widget.panels[0].selected)
         self.assertIs(widget.playlist_dock.model, widget.panels[1].playlist)
 
-    def test_playlist_visible_by_default_only_for_one_panel(self):
-        widget = self._widget()
-        widget.show()
-        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
-        widget.panels_combo.setCurrentIndex(0)
-        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
-        widget.playlist_btn.setChecked(False)
-        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+    # --- stage layout: playlist strip under the grid, Inspect on the right ----
 
-    # --- Inspect dock (absorbed the Video Inspection Tool tab) ---------------
-
-    def test_inspect_and_playlist_docks_are_mutually_exclusive(self):
+    def test_stage_is_a_splitter_with_the_video_column_left_and_inspect_right(self):
         widget = self._widget()
+        self.assertIsInstance(widget.stage, QSplitter)
+        self.assertEqual(widget.stage.orientation(), Qt.Horizontal)
+        self.assertIs(widget.stage.widget(0), widget.video_column)
+        self.assertIs(widget.stage.widget(1), widget.inspect_dock)
+        self.assertFalse(widget.stage.childrenCollapsible())
+        # The dock scales with the window: a floor, no ceiling.
+        self.assertGreaterEqual(widget.inspect_dock.minimumWidth(), 260)
+        self.assertEqual(widget.inspect_dock.maximumWidth(), QWIDGETSIZE_MAX)
+        # Playlist sits below the panel grid inside the video column.
+        column = widget.video_column.layout()
+        self.assertIs(column.itemAt(column.count() - 1).widget(), widget.playlist_dock)
+        self.assertTrue(widget.playlist_dock.horizontal)
+
+    def test_splitter_gives_the_video_roughly_three_quarters(self):
+        widget = self._widget()
+        widget.resize(1600, 900)
         widget.show()
-        widget.playlist_btn.setChecked(True)
-        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+        self.app.processEvents()
         widget.inspect_btn.setChecked(True)
+        widget._apply_initial_splitter_sizes()
+        video_w, dock_w = widget.stage.sizes()
+        self.assertGreater(video_w, dock_w * 2)
+        self.assertGreater(dock_w, 300)
+
+    def test_inspect_is_open_by_default_and_the_playlist_is_not(self):
+        widget = self._widget()
+        widget.show()
+        self.assertTrue(widget.inspect_btn.isChecked())
         self.assertTrue(widget.inspect_dock.isVisibleTo(widget))
         self.assertFalse(widget.playlist_btn.isChecked())
         self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+        # Panel count no longer drives the playlist.
+        widget.panels_combo.setCurrentIndex(0)
+        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+
+    def test_inspect_and_playlist_toggle_independently(self):
+        widget = self._widget()
+        widget.show()
         widget.playlist_btn.setChecked(True)
-        self.assertFalse(widget.inspect_btn.isChecked())
+        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+        self.assertTrue(widget.inspect_dock.isVisibleTo(widget))
+        widget.inspect_btn.setChecked(False)
         self.assertFalse(widget.inspect_dock.isVisibleTo(widget))
+        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+
+    def test_dock_visibility_persists_and_restores(self):
+        saves = []
+        settings = {}
+        widget = self._widget(settings=settings, saves=saves)
+        widget.inspect_btn.setChecked(False)
+        widget.playlist_btn.setChecked(True)
+        self.assertFalse(settings["media_player"]["inspect_visible"])
+        self.assertTrue(settings["media_player"]["playlist_visible"])
+        self.assertEqual(len(saves), 2)
+        restored = self._widget(settings={"media_player": {"inspect_visible": False, "playlist_visible": True}})
+        self.assertFalse(restored.inspect_btn.isChecked())
+        self.assertTrue(restored.playlist_btn.isChecked())
+
+    def test_fullscreen_hides_the_docks_and_restores_them(self):
+        widget = self._widget()
+        widget.show()
+        widget.playlist_btn.setChecked(True)
+        widget.enter_fullscreen()
+        host = widget._fullscreen_host
+        self.assertFalse(widget.inspect_dock.isVisibleTo(host))
+        self.assertFalse(widget.playlist_dock.isVisibleTo(host))
+        widget.exit_fullscreen()
+        self.assertTrue(widget.inspect_dock.isVisibleTo(widget))
+        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+        self.assertTrue(widget.inspect_btn.isChecked())
+        self.assertTrue(widget.playlist_btn.isChecked())
+
+    def test_selected_media_is_announced_for_the_sidebar_preview(self):
+        widget = self._widget()
+        seen = []
+        widget.media_selected.connect(seen.append)
+        widget.panels[1]._media_path = "C:/Videos/b.mp4"
+        widget.select_panel(1)
+        widget.panels[1]._media_path = ""
+        widget._on_panel_media_changed(widget.panels[1])
+        widget.panels[0]._media_path = "C:/Videos/a.mp4"
+        widget._on_panel_media_changed(widget.panels[0])      # not selected: silent
+        self.assertEqual(seen, ["C:/Videos/b.mp4", ""])
+
+    # --- Inspect dock (absorbed the Video Inspection Tool tab) ---------------
 
     def test_opening_the_inspect_dock_inspects_the_selected_panels_file(self):
         widget = self._widget()
+        widget.inspect_btn.setChecked(False)
         inspected = []
         widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
         widget.panels[1]._media_path = "C:/Videos/b.mp4"
@@ -418,6 +485,7 @@ class MediaPlayerWidgetTests(unittest.TestCase):
 
     def test_selecting_another_panel_re_inspects_while_the_dock_is_open(self):
         widget = self._widget()
+        widget.inspect_btn.setChecked(False)
         inspected = []
         widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
         widget.panels[0]._media_path = "C:/Videos/a.mp4"
@@ -430,22 +498,137 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         widget = self._widget()
         inspected = []
         widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
-        widget.inspect_btn.setChecked(True)
         panel = widget.selected_panel()
         panel._media_path = "C:/Videos/a.mp4"
         widget._on_panel_media_changed(panel)
         panel._media_path = ""
         widget._on_panel_media_changed(panel)
-        self.assertEqual(inspected, ["", "C:/Videos/a.mp4", ""])   # empty path = clear
+        self.assertEqual(inspected, ["C:/Videos/a.mp4", ""])   # empty path = clear
 
     def test_media_change_on_an_unselected_panel_is_ignored(self):
         widget = self._widget()
         inspected = []
         widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
-        widget.inspect_btn.setChecked(True)
         widget.panels[2]._media_path = "C:/Videos/c.mp4"
         widget._on_panel_media_changed(widget.panels[2])
-        self.assertEqual(inspected, [""])
+        self.assertEqual(inspected, [])
+
+    # --- first frame on load ---------------------------------------------------
+
+    def test_load_primes_the_first_frame_then_pauses_at_zero(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer()
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
+        self.assertEqual(player.calls, ["setMuted(True)", "play"])
+        player.positionChanged.emit(40)
+        self.assertEqual(player.calls[2:], ["pause", "setPosition(0)", "setMuted(False)"])
+        self.assertFalse(panel._priming)
+        # Only once per load.
+        panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
+        self.assertEqual(len(player.calls), 5)
+
+    def test_prime_falls_back_to_a_timer_when_no_position_arrives(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer()
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._on_status_for_prime(QMediaPlayer.BufferedMedia)
+        self.assertTrue(panel._prime_timer.isActive())
+        panel._prime_timer.timeout.emit()
+        self.assertEqual(player.calls[-3:], ["pause", "setPosition(0)", "setMuted(False)"])
+
+    def test_no_prime_while_the_host_is_playing_or_the_panel_is_empty(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer()
+        panel._adopt_player(player)
+        widget._is_playing = True
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
+        widget._is_playing = False
+        panel._media_path = ""
+        panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
+        self.assertEqual(player.calls, [])
+
+    def test_prime_restores_the_users_mute_choice(self):
+        widget = self._widget()
+        widget.mute_btn.setChecked(True)
+        panel = widget.panels[0]
+        player = _FakePlayer(muted=True)
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
+        player.positionChanged.emit(1)
+        self.assertEqual(player.calls[-1], "setMuted(True)")
+
+    def test_loading_shows_a_caption_until_the_first_frame(self):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer()
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._begin_prime()
+        self.assertIn("Loading", panel.placeholder.text())
+        self.assertFalse(panel.placeholder.isHidden())
+        panel._finish_prime()
+        self.assertTrue(panel.placeholder.isHidden())
+
+
+class _FakePlayer(QObject):
+    """Just enough QMediaPlayer for the first-frame prime."""
+
+    positionChanged = pyqtSignal(int)
+    mediaStatusChanged = pyqtSignal(int)
+
+    def __init__(self, muted=False):
+        super().__init__()
+        self.calls = []
+        self._muted = muted
+
+    # shutdown() calls these on every created player.
+    def stop(self):
+        self.calls.append("stop")
+
+    def setMedia(self, _content):
+        pass
+
+    def setVideoOutput(self, _output):
+        pass
+
+    def setVolume(self, _volume):
+        pass
+
+    def setPlaybackRate(self, _rate):
+        pass
+
+    def isMuted(self):
+        return self._muted
+
+    def setMuted(self, muted):
+        self._muted = bool(muted)
+        self.calls.append(f"setMuted({bool(muted)})")
+
+    def play(self):
+        self.calls.append("play")
+
+    def pause(self):
+        self.calls.append("pause")
+
+    def setPosition(self, position):
+        self.calls.append(f"setPosition({int(position)})")
+
+    def state(self):
+        return QMediaPlayer.StoppedState
+
+    def position(self):
+        return 0
+
+    def duration(self):
+        return 0
 
     def test_playlist_next_and_previous_load_into_selected_panel(self):
         widget = self._widget()
@@ -647,6 +830,35 @@ class MediaPlayerRealFileSmokeTests(unittest.TestCase):
             self.app.processEvents()
             time.sleep(0.02)
         self.assertLessEqual(abs(panel.player.position() - 440), 40)
+
+    def test_loading_a_real_clip_ends_paused_at_the_start_with_audio_restored(self):
+        # The first-frame prime against the real backend: play, one tick, pause at 0.
+        if not self.clip:
+            self.skipTest("ffmpeg.exe not available to synthesise a clip")
+        widget = MediaPlayerWidget(settings={})
+        self.addCleanup(widget.shutdown)
+        panel = widget.panels[0]
+        self.assertTrue(panel.load_media(self.clip))
+        deadline = time.monotonic() + 8
+        while (
+            panel.duration_ms() <= 0 or panel._primed_path != self.clip or panel._priming
+        ) and time.monotonic() < deadline:
+            self.app.processEvents()
+            time.sleep(0.02)
+        if panel.duration_ms() <= 0:
+            self.skipTest("QMediaPlayer backend reported no duration in the headless session")
+        self.assertEqual(panel._primed_path, self.clip)
+        self.assertFalse(panel._priming)
+        self.assertEqual(panel.player.state(), QMediaPlayer.PausedState)
+        self.assertLessEqual(panel.player.position(), 200)
+        self.assertFalse(panel.player.isMuted())
+        self.assertTrue(panel.placeholder.isHidden())
+        # A later seek while paused must not re-prime (no jump back to 0).
+        widget.seek_all(800)
+        for _ in range(20):
+            self.app.processEvents()
+            time.sleep(0.02)
+        self.assertGreater(panel.player.position(), 500)
 
 
 if __name__ == "__main__":
