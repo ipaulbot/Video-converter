@@ -104,6 +104,26 @@ def no_real_device_listing(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def pc_reports_stay_out_of_the_desktop(monkeypatch, tmp_path):
+    """Keep PC Report tests from saving to the real Desktop.
+
+    `PCReportWidget.on_run()` picks `~/Desktop/PC_Report_<stamp>.html`, and the
+    heart-animation test drives it to completion with a stub page: one 13-byte
+    HTML and a 2-byte JSON per suite run, on the developer's Desktop. Eighty of
+    them were found there after a night of test runs.
+    """
+    from ui.pc_report_dialog import PCReportWidget
+
+    real_default_report_path = PCReportWidget.default_report_path
+
+    def tmp_default_report_path(self):
+        name = os.path.basename(real_default_report_path(self))
+        return str(tmp_path / name)
+
+    monkeypatch.setattr(PCReportWidget, "default_report_path", tmp_default_report_path)
+
+
+@pytest.fixture(autouse=True)
 def reap_hidden_top_level_widgets():
     """Destroy the hidden top-level windows each test created.
 
