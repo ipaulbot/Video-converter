@@ -136,6 +136,7 @@ class PlayerPanel(QWidget):
         self._priming = False
         self._primed_path = ""
         self._prime_restore_muted = False
+        self._prime_target_ms = 0
         self._prime_timer = QTimer(self)
         self._prime_timer.setSingleShot(True)
         self._prime_timer.setInterval(200)
@@ -272,12 +273,14 @@ class PlayerPanel(QWidget):
         self._wire_prime(player)
         return player
 
-    # --- first frame on load ------------------------------------------------
+    # --- presenting a frame while paused -----------------------------------
     # Media Foundation shows nothing until the session has run once: a freshly
     # loaded clip is a black tile, and dragging the timeline before the first
     # Play moves nothing. So when a clip reaches LoadedMedia while the host is
     # idle, run it muted for one position tick (200 ms at most), then pause at
     # 0. The first frame is on the tile and paused seeks repaint from then on.
+    # The same nudge, aimed at the current position, brings the frame back
+    # after the tile was hidden (another tab) -- WMF drops it with the surface.
     def _host_is_playing(self):
         return bool(getattr(self.host, "_is_playing", False))
 
@@ -290,16 +293,36 @@ class PlayerPanel(QWidget):
             return
         self._begin_prime()
 
-    def _begin_prime(self):
+    def _begin_prime(self, target_ms=0, caption=True):
         self._priming = True
         self._primed_path = self._media_path
-        self.placeholder.setText(_tr("Loading..."))
-        self.placeholder.show()
-        self.placeholder.raise_()
+        self._prime_target_ms = max(0, int(target_ms))
+        if caption:
+            self.placeholder.setText(_tr("Loading..."))
+            self.placeholder.show()
+            self.placeholder.raise_()
         self._prime_restore_muted = bool(self.player.isMuted())
         self.player.setMuted(True)
         self.player.play()
         self._prime_timer.start()
+
+    def represent_frame(self):
+        """Re-show the paused frame after the tile was hidden; a no-op otherwise."""
+        if (
+            self._priming
+            or self.player is None
+            or not self._media_path
+            or self._host_is_playing()
+            or self.isHidden()
+        ):
+            return False
+        self._begin_prime(target_ms=self.player.position(), caption=False)
+        return True
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        if self._primed_path and self._primed_path == self._media_path:
+            self.represent_frame()
 
     def _on_position_for_prime(self, _position):
         if self._priming:
@@ -312,7 +335,7 @@ class PlayerPanel(QWidget):
         self._prime_timer.stop()
         if self.player is not None:
             self.player.pause()
-            self.player.setPosition(0)
+            self.player.setPosition(self._prime_target_ms)
             self.player.setMuted(self._prime_restore_muted)
         self.placeholder.hide()
         self.placeholder.setText(_tr("Drop a video here\nor click Load"))
@@ -413,6 +436,9 @@ class PlayerPanel(QWidget):
         self.name_label.setToolTip(path)
         self.placeholder.hide()
         self.probe_info = {}
+        # The playlist is where you see what a panel holds: every load --
+        # drop, Load, Converted Files, playlist itself -- lands there once.
+        self.playlist.add([path])
         if self.host is not None and hasattr(self.host, "start_probe"):
             self.host.start_probe(self)
         self._notify_media_changed()
@@ -934,6 +960,8 @@ class MediaPlayerWidget(QWidget):
     def _on_panel_media_changed(self, panel):
         """A panel loaded or cleared media; the dock and sidebar follow the selected one."""
         if panel is self.selected_panel():
+            self.playlist_dock.refresh()
+            self.playlist_dock.select_path(panel._media_path)
             self._refresh_inspection()
             self._announce_selected_media()
 
@@ -942,9 +970,7 @@ class MediaPlayerWidget(QWidget):
         inspect_btn = getattr(self, "inspect_btn", None)
         if inspect_btn is None or not inspect_btn.isChecked():
             return
-        panel = self.selected_panel()
-        self.inspect_dock.set_panel_title(panel.name_label.text())
-        self.inspect_dock.inspect_path(panel._media_path)
+        self.inspect_dock.inspect_path(self.selected_panel()._media_path)
 
     def add_playlist_files(self):
         paths, _ = QFileDialog.getOpenFileNames(
@@ -1270,6 +1296,7 @@ class MediaPlayerWidget(QWidget):
         except Exception:
             logger.debug("MediaPlayerWidget.shutdown: suppressed error", exc_info=True)
         for panel in self.panels:
+            panel._cancel_prime()
             if panel.player is None:
                 continue
             try:

@@ -92,11 +92,12 @@ class InspectionDockTests(unittest.TestCase):
         self.assertTrue(dock.inspector.summary_text.isHidden())
         self.assertFalse(dock.inspector.summary_drag_text.isHidden())
 
-    def test_title_names_the_panel(self):
+    def test_dock_is_the_inspector_alone_with_no_title_row(self):
         dock = InspectionDock()
         self.addCleanup(dock.close)
-        dock.set_panel_title("Panel 2: clip.mp4")
-        self.assertIn("Panel 2: clip.mp4", dock.title_label.text())
+        self.assertFalse(hasattr(dock, "title_label"))
+        self.assertFalse(hasattr(dock, "set_panel_title"))
+        self.assertIs(dock.layout().itemAt(0).widget(), dock.inspector)
 
 
 class FullscreenHostTests(unittest.TestCase):

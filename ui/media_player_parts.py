@@ -40,15 +40,11 @@ class InspectionDock(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
-        self.title_label = QLabel(_tr("Inspect"))
-        self.title_label.setStyleSheet(theme.group_title_style())
-        layout.addWidget(self.title_label)
+        # No title row: the panel caption under the tile already names the
+        # clip, so the dock is just the Summary / JSON data.
         self.inspector = InspectionWidget(self, notify_preview=False, compact=True)
         self.inspector.layout().setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.inspector, 1)
-
-    def set_panel_title(self, panel_title):
-        self.title_label.setText(_tr("Inspect - %(panel)s") % {"panel": panel_title})
 
     def inspect_path(self, path):
         """Run ffprobe for `path` unless it is already shown; an empty path clears the dock."""
