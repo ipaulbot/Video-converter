@@ -540,3 +540,38 @@ Use this file to track user-visible fixes, improvements, and feature work.
   and shown again with the re-presented frame, so a tab switch cannot show
   stale screen content (the converter table, in the report) in the tile.
   Not reproducible headless -- see BACKLOG for the follow-up if it persists.
+
+### Follow-up pass (16:14)
+
+- Media Player: the "Playlist - Panel N" title row above the playlist is
+  gone (the panel name stays as the list's tooltip) and the first column is
+  headed "File Name", matching the Video Converter table.
+- **Dutch and Simplified Chinese UI catalogues complete**: 462 of 462
+  strings translated in `translations/nvc_nl.ts` / `nvc_zh_CN.ts`, `.qm`
+  files rebuilt. Fixed on the way: `build_translations.py` dropped the blank
+  line inside strings that contain a paragraph break (`"\n\n"`), so eight
+  dialog texts could never match at runtime; the `.ts` writer now uses
+  `ElementTree.indent` and a round-trip test guards it.
+- **Dutch and Simplified Chinese manuals** (Help and Quick Start Guide, PDF
+  and DOCX; `docs/help/source/locales/nl`, `locales/zh_CN`). New
+  `doc_strings.py` localises the builder's own words (Contents, Note,
+  Figure N., missing-figure text, document titles) and `manual_fonts.py`
+  embeds Microsoft YaHei from the Windows font folder for zh-CN (fallback
+  chain, then the STSong-Light CID font). The PDF wrapper now breaks
+  spaceless CJK text per character with hanging punctuation, so Chinese
+  paragraphs fill the measure. File names keep the English titles because
+  the in-app Help menu looks manuals up by title and falls back to English.
+- English Help updated for Picture-in-picture, screen capture, the Language
+  setting and the current Media Player (File Name / Panel / Offset columns,
+  Inspect panel); glossary entries for Picture-in-picture and Screen capture.
+  The Settings -- Folders -- Log Folder text no longer says the field has no
+  effect: it now points per-conversion logs at the chosen folder.
+- **Help figures re-captured** without touching the display: the capture
+  script parks every window off-screen and only ever calls `widget.grab()`.
+  Recorder widgets are built with previews off for the run, so the
+  operator's saved cameras and screen-capture sources are never opened; the
+  FIG-07 tiles receive ffmpeg test patterns through the widget's own frame
+  path. The Media Player's native video tile (black to `grab()`) gets the
+  frame ffmpeg extracts at the paused position composited in. The FIG-08
+  clip lives in the Public Videos folder for the duration of the run, because
+  the Inspect panel prints its full path. All 12 manuals regenerated.

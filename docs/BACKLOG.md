@@ -155,19 +155,24 @@ Out of scope in the current design, kept for later:
 
 ## Help documentation follow-ups
 
-- Dutch and Simplified Chinese manuals. The pipeline supports it: add the tags
-  to `SUPPORTED_DOCUMENT_TAGS` / `_LOCALE_PACKAGES` in
-  `docs/help/source/document_registry.py` and translate `locales/en` into
-  `locales/nl` and `locales/zh_CN`. The PDF builder uses Helvetica, which has
-  no CJK glyphs; a CJK-capable font must be registered before a zh-CN PDF can
-  render.
+- ~~Dutch and Simplified Chinese manuals.~~ Done 2026-09-26 (`locales/nl`,
+  `locales/zh_CN`, `doc_strings.py`, `manual_fonts.py`). Follow-ups:
+  - The zh-CN PDF embeds Microsoft YaHei from the Windows font folder. A
+    build machine without it falls back to the STSong-Light CID font (thin,
+    not embedded). Drop a licensed Noto Sans SC / Source Han Sans TTF into
+    `docs/help/source/fonts/` so the build is reproducible anywhere.
+  - `requirements-help.txt` pins `pypdf`; the tests import `PyPDF2` because
+    only that is installed here. Install `pypdf` and switch the import.
+  - The manuals were translated in one pass; a native-speaker read of the nl
+    and zh-CN text before the exe ships.
+  - A Language chapter screenshot (Settings with the Language combo) is not
+    in the figure catalogue.
 - ~~`open_help_document` does not pass the active locale to
   `resolve_help_document`.~~ Fixed 2026-09-25.
 - A Developer Guide (architecture, module map, test layout, how the manuals are
   built).
 - ~~Settings → Folders "Log Folder" is saved but never read.~~ Fixed
-  2026-09-25 (`utils.paths.log_dir`); the manual still says logs are always
-  under `%APPDATA%\NVC\logs` — update it with the next manual regeneration.
+  2026-09-25 (`utils.paths.log_dir`); manual text updated 2026-09-26.
 - ~~`pyproject.toml` says 2.2.0 while `utils/version.py` says 2.3.0.~~ Fixed
   2026-09-25; `tests/test_version.py` keeps them equal.
 
@@ -175,11 +180,11 @@ Out of scope in the current design, kept for later:
 
 Deferred from UI iteration 2 (2026-09-25) until the feature set settles:
 
-- Regenerate the Help manual and its screenshots: window modes, leaf cards, the
+- ~~Regenerate the Help manual and its screenshots: window modes, leaf cards, the
   new PC Report / Media Player / Lossless Editor / Recorder controls, Output
-  quality, Timer binding, Log Folder.
-- Translate the new UI strings (Window menu, tooltips, copy-mode note, PC Report
-  copy) in `translations/`.
+  quality, Timer binding, Log Folder.~~ Done 2026-09-26.
+- ~~Translate the new UI strings (Window menu, tooltips, copy-mode note, PC Report
+  copy) in `translations/`.~~ Done 2026-09-26 (nl and zh-CN at 462/462).
 - Compact mode always resizes to 1024x640 when chosen from the burger menu;
   consider remembering a user-resized compact geometry (the title-bar Restore
   button already keeps whatever size the window had).
@@ -222,20 +227,20 @@ Tab merge follow-ups (2026-09-26):
 - Media Player replaces the standalone Video Inspection Tool; if anyone still
   wants a full-width inspector, a "Pop out" on the Inspect panel would be
   cheaper than bringing the tab back.
-- Translations: the new strings (Video Converter, Inspect, Inspect in Media
-  Player, Inspect - %(panel)s, the Inspect tooltip) need nl / zh-CN entries.
+- ~~Translations: the new strings (Video Converter, Inspect, Inspect in Media
+  Player, Inspect - %(panel)s, the Inspect tooltip) need nl / zh-CN entries.~~
+  Done 2026-09-26.
 
 UI polish batch follow-ups (2026-09-26, later):
 
-- Re-capture the Help figures in a dedicated session: FIG-00 / FIG-03 (tab
-  headers, list placeholders), FIG-08 (playlist Clip | Offset column, no
-  offset spin on the panel) and FIG-09 (narrower Video Settings, quiet Save
-  as / Delete links). `capture_screenshots.py` shows the main window on
-  screen and FIG-08 reads pixels from the display, so it cannot run while
-  the operator's own NVC and desktop are in use.
-- Translations for the new strings: tab header descriptions, "Clip",
+- ~~Re-capture the Help figures in a dedicated session: FIG-00 / FIG-03,
+  FIG-08 and FIG-09.~~ Done 2026-09-26; `capture_screenshots.py` now runs
+  parked off-screen with `grab()` only, previews off and synthetic frames,
+  so it can run while the operator's own NVC and desktop are in use.
+- ~~Translations for the new strings: tab header descriptions, "Clip",
   "Offset", "Add videos to convert...", "Monitor a folder...", "Monitor this
-  file's folder", "Open in" and its entries, "Choose the folder to monitor".
+  file's folder", "Open in" and its entries, "Choose the folder to monitor".~~
+  Done 2026-09-26.
 - Playlist offset: only one row can be dragged at a time (multi-row drops are
   ignored); the offset is not yet persisted with the (not yet persisted)
   playlist. When playlists persist, store `offsets` beside `items`.
@@ -252,7 +257,7 @@ UI polish batch follow-ups (2026-09-26, later):
 - Planning doc `docs/planning/2026-09-26-product-naming-website-and-github.md`
   needs the owner's decisions: public name, what goes public on GitHub, and
   the purchase route (blocked on the licensing plan).
-- Three test files carry a literal RTSP URL with embedded credentials as a
+- Four test files carry a literal RTSP URL with embedded credentials as a
   fixture (pre-existing; flagged 2026-09-26). Replace with an obviously
   fake host such as `rtsp://user:pass@camera.example/stream`.
 
@@ -267,11 +272,54 @@ Workflow rules / player pass follow-ups (2026-09-26, 15:32):
 - The recorder's own `status_label` still carries "Unavailable while
   conversion is running" / "Not recording" wording; the footer no longer
   does. Consider folding the recorder line into the shared status too.
-- Translations for the new "Workflow" context (rule reasons, status words)
-  and "ElidedLabel" (no strings yet), plus the Media Player help additions.
+- ~~Translations for the new "Workflow" context (rule reasons, status words)
+  and "ElidedLabel" (no strings yet), plus the Media Player help additions.~~
+  Done 2026-09-26.
 - Rule 4 allows lossless edits during a conversion. If both prove to
   compete on disk, make `lossless_edit` follow `record` in
   `blocked_reason()`; it is a one-line change with a test to flip.
+
+## Release readiness (before the 2.3.0 exe and the portfolio site)
+
+Collected 2026-09-26 for the review -> exe -> website sequence. None started.
+
+- Packaging: `NVC.spec` already bundles `ffmpeg.exe` / `ffprobe.exe`,
+  `translations/*.qm` and `docs/help/NVC *.pdf`; check it also picks up the
+  `.docx` manuals if they should ship, `graphics/`, and that
+  `utils.resources.resource_path` resolves every asset in a frozen run.
+  Smoke-test the frozen exe on a clean Windows VM (no Python, no Visual C++
+  redistributable assumptions).
+- Installer: Inno Setup script with per-user/all-users choice, Start Menu
+  entry, optional "Launch at Windows startup", and the `NVC.exe /R /S ...`
+  command-line contract documented in the installer's readme.
+- Code signing: an unsigned exe trips SmartScreen; budget a certificate or
+  document the "More info -> Run anyway" step for the site.
+- Version bump: `utils/version.py` + `pyproject.toml` (test keeps them
+  equal), `DOC_VERSION` in `build_help_docs.py`, manual file names, and a
+  dated release-notes section cut from `docs/CHANGELOG.md`.
+- Update check: `get_update_url()` must point at the real release feed (or
+  the build keeps answering "Updates Not Configured"); decide the feed
+  format (GitHub Releases JSON is enough).
+- Repository hygiene before anything goes public: remove the literal RTSP
+  URL with credentials from the four test files that carry it
+  (`test_recording_sources`, `test_recording_commands`, `test_ptz_controls`,
+  `test_multi_source_recorder_widget`); scan the tree for machine names,
+  user names and camera addresses; `.gitignore` already covers build output
+  and the ledger -- add local settings files if any are ever written into
+  the tree; add `LICENSE` and a top-level `README.md` with screenshots (the
+  help figures are already clean and can be reused).
+- Bundled settings: the installer must not ship a `config.json` or
+  `Current Settings.json` from this machine.
+- Third-party notices: ffmpeg (LGPL/GPL build?), PyQt5 (GPL/commercial),
+  Microsoft YaHei is not redistributable -- the zh-CN manual is fine as a
+  PDF, but the build machine needs the bundled font follow-up above.
+- Dependencies: `pypdf` install (see Help follow-ups); pin `requirements*.txt`
+  to the versions the exe is built with.
+- Portfolio site: reuse the help figures and the executive-overview style;
+  each project gets a one-paragraph brief, a feature list, a screenshot strip
+  and a download / GitHub link. Host on GitHub Pages (static) unless a CMS is
+  wanted. Decisions still open in
+  `docs/planning/2026-09-26-product-naming-website-and-github.md`.
 
 ## Done
 
