@@ -256,6 +256,23 @@ UI polish batch follow-ups (2026-09-26, later):
   fixture (pre-existing; flagged 2026-09-26). Replace with an obviously
   fake host such as `rtsp://user:pass@camera.example/stream`.
 
+Workflow rules / player pass follow-ups (2026-09-26, 15:32):
+
+- "Overlay of the Video Converter table" on the player after a tab switch:
+  not reproducible headless (grab() paints correctly), so it is attributed
+  to the native Media Foundation window painting nothing until a frame
+  lands. The surface is now parked while its panel is hidden. If it still
+  shows, capture it on screen and check whether it sits exactly in a tile
+  (surface) or elsewhere (a layout problem) before changing anything else.
+- The recorder's own `status_label` still carries "Unavailable while
+  conversion is running" / "Not recording" wording; the footer no longer
+  does. Consider folding the recorder line into the shared status too.
+- Translations for the new "Workflow" context (rule reasons, status words)
+  and "ElidedLabel" (no strings yet), plus the Media Player help additions.
+- Rule 4 allows lossless edits during a conversion. If both prove to
+  compete on disk, make `lossless_edit` follow `record` in
+  `blocked_reason()`; it is a one-line change with a test to flip.
+
 ## Done
 
 - Help documentation is now generated from `docs/help/source/` rather than

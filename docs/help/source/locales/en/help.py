@@ -92,6 +92,19 @@ CHAPTERS: list[dict] = [
                 "Recording. The lock icon locks settings, and the Start button then reads "
                 "Locked. The file picker selects media files to convert, and the broom clears "
                 "the log.",
+                "The status label is the same on every tab and lists whatever is running -- "
+                "Recording, Converting, Monitoring, or Locked -- joined by dots; when nothing "
+                "runs it reads Idle. The dot is green while a job runs, amber while only the "
+                "folder monitor is on, red after a failed recording and grey when locked.",
+                "Switching tabs never stops anything: recording, conversion, folder monitoring "
+                "and media playback carry on whatever tab is in front, and no tab is ever "
+                "greyed out. Recording is exclusive with the other ffmpeg jobs: while a "
+                "recording is starting, running or stopping, the Start button on the converter "
+                "tab reads Recording... and the Lossless Editor's Trim, Remux, Extract audio, "
+                "Remove audio and Merge are greyed out, each with the reason as tooltip. While "
+                "a conversion or the folder monitor runs, Start Recording is unavailable "
+                "(the button reads Converting...) but the rest of the recorder -- previews, "
+                "settings, devices -- stays usable. Media Player and PC Report always work.",
                 "Clicking X closes NVC by default. Clear "
                 "\"Close on X (don't minimize to tray)\" in Settings -- General to minimise "
                 "to the system tray instead. The tray menu has Show and Quit. Only one copy "
@@ -610,6 +623,16 @@ CHAPTERS: list[dict] = [
                 "Fullscreen, or double-click a panel to enter fullscreen. The transport bar "
                 "hides three seconds after the mouse stops moving and returns when the mouse "
                 "moves. Press Escape or F, or double-click, to leave fullscreen.")},
+            {"type": "para", "text": (
+                "The transport bar sits under the seek slider in three groups from the left: "
+                "Play, Stop and Restart; Fullscreen, Playlist and Inspect; then Panels, Speed, "
+                "Volume and Mute. Under each tile a caption names its clip, shortened in the "
+                "middle when the name is long (hover for the full name).")},
+            {"type": "para", "text": (
+                "Loading a clip into a panel -- by drop, its Load button or the playlist -- "
+                "also selects that panel: the Playlist strip switches to that panel's list and "
+                "the Inspect panel shows the clip's details, so a drop on the second panel is "
+                "visible at once.")},
             {"type": "para", "text": (
                 "Playlist opens a strip under the video for the selected panel with Add "
                 "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
