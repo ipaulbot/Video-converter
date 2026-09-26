@@ -9,6 +9,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QWIDGETSIZE_MAX,
     QApplication,
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QMessageBox,
@@ -500,6 +501,41 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertFalse(hasattr(dialog, "preset_save_button"))
         self.assertTrue(hasattr(dialog, "preset_save_as_button"))
         self.assertTrue(hasattr(dialog, "preset_delete_button"))
+
+    def _shown_video_settings_dialog(self, audio_devices):
+        widget = MultiSourceRecorderWidget(
+            directshow_devices=["Camera A"], auto_preview=False, load_saved_settings=False,
+        )
+        widget.directshow_audio_devices = list(audio_devices)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        dialog.owner = widget          # the parent must outlive this helper's frame
+        # No close() cleanup: conftest reaps the hidden parent (and with it the
+        # dialog) before unittest cleanups run, so close() would hit a dead object.
+        dialog.move(-7000, -7000)
+        dialog.show()
+        for _ in range(5):
+            self.app.processEvents()
+        return dialog
+
+    def test_video_settings_dialog_stays_narrow_with_long_device_names(self):
+        short = self._shown_video_settings_dialog(["Microphone A"])
+        long = self._shown_video_settings_dialog(
+            ["Microphone A (USB Audio Device, Realtek High Definition Audio Endpoint)", "Microphone B"]
+        )
+        # Long device names elide inside the combo instead of stretching the window.
+        self.assertEqual(long.width(), short.width())
+        audio_device = long.dialog_rows[0][7]
+        self.assertLessEqual(audio_device.width(), VideoSettingsDialog.AUDIO_DEVICE_MAX_W)
+        self.assertLessEqual(audio_device.width(), long.dialog_rows[0][3].width())   # video device is the wide one
+        dialog = long
+        self.assertEqual(audio_device.sizeAdjustPolicy(), QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.assertEqual(audio_device.toolTip(), audio_device.currentText())
+        # Save as / Delete are quiet text links, not filled buttons.
+        for button in (dialog.preset_save_as_button, dialog.preset_delete_button):
+            self.assertTrue(button.property("skipGlobalStyle"))
+            self.assertIn("background: transparent", button.styleSheet())
+            self.assertLessEqual(button.width(), 70)
+        self.assertIn("text-decoration: underline", dialog.preset_save_as_button.styleSheet())
 
     def test_video_settings_preset_actions_are_left_aligned_bracketed_links(self):
         widget = MultiSourceRecorderWidget()

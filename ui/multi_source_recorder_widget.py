@@ -465,6 +465,10 @@ class PTZOverlayButton(QPushButton):
 
 
 class VideoSettingsDialog(QDialog):
+    # The audio device column was the widest thing in the dialog (long
+    # microphone names); it is capped and the names elide instead.
+    AUDIO_DEVICE_MAX_W = 180
+
     def __init__(self, source_rows, output_controls=None, parent=None, button_style=None):
         super().__init__(parent)
         self.setWindowTitle(_tr("Video Settings"))
@@ -549,6 +553,16 @@ class VideoSettingsDialog(QDialog):
             row_audio_name.setMinimumWidth(58)
             row_audio_name.setMaximumWidth(82)
             row_audio_device = QComboBox()
+            # Microphone names run long ("... (USB Audio Device, ...)"); elide
+            # them in the field rather than let the column set the dialog width.
+            # The full name is the tooltip and shows in the drop-down.
+            row_audio_device.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+            row_audio_device.setMinimumContentsLength(12)
+            row_audio_device.setMaximumWidth(self.AUDIO_DEVICE_MAX_W)
+            row_audio_device.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            row_audio_device.currentTextChanged.connect(
+                lambda text, combo=row_audio_device: combo.setToolTip(text)
+            )
             stored_audio = (
                 parent._audio_device_value(audio_device_combo)
                 if parent and audio_device_combo
@@ -558,6 +572,7 @@ class VideoSettingsDialog(QDialog):
                 parent.populate_audio_device_combo(row_audio_device, stored_audio)
             else:
                 row_audio_device.addItem(_tr("No Audio"), "No Audio")
+            row_audio_device.setToolTip(row_audio_device.currentText())
             row_offset = make_sync_offset_spinbox()
             if offset_spin is not None:
                 row_offset.setValue(offset_spin.value())
@@ -590,9 +605,12 @@ class VideoSettingsDialog(QDialog):
                 row_enabled, row_label, row_type, row_device, row_frame_rate,
                 row_resolution, row_audio_name, row_audio_device, row_offset
             ))
-        grid.setColumnStretch(3, 1)
+        # Spare width goes to the video device column first, then the audio
+        # device column (capped); nothing else stretches.
+        grid.setColumnStretch(3, 3)
         grid.setColumnMinimumWidth(4, 20)
         grid.setColumnStretch(4, 0)
+        grid.setColumnStretch(8, 2)
         layout.addLayout(grid)
         scan_row = QHBoxLayout()
         scan_row.setContentsMargins(0, 0, 0, 0)
@@ -661,6 +679,26 @@ class VideoSettingsDialog(QDialog):
         for button in (self.preset_load_button, self.preset_set_button):
             button.setProperty("skipGlobalStyle", True)
             button.setStyleSheet(link_style)
+        # Save as / Delete are rarer than Load / Set: quiet text links in the
+        # muted colour, so the eye is not pulled to two filled buttons.
+        quiet_link_style = theme.qss("""
+            QPushButton {
+                background: transparent;
+                color: $grey_650;
+                border: none;
+                text-decoration: underline;
+                padding: 0px 4px;
+                text-align: left;
+            }
+            QPushButton:hover { color: $accent_deep; }
+        """)
+        for button in (self.preset_save_as_button, self.preset_delete_button):
+            button.setProperty("skipGlobalStyle", True)
+            button.setStyleSheet(quiet_link_style)
+            button.setCursor(Qt.PointingHandCursor)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.preset_save_as_button.setMaximumWidth(64)
+        self.preset_delete_button.setMaximumWidth(48)
         self.preset_combo.currentTextChanged.connect(lambda _text: self.update_selected_preset_path())
         self.preset_load_button.clicked.connect(self.load_selected_preset)
         self.preset_set_button.clicked.connect(self.set_selected_preset)
