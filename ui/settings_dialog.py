@@ -1013,18 +1013,16 @@ class SettingsDialog(QDialog):
         visible_tabs = self.current_settings.get('visible_tool_tabs', default_settings.get('visible_tool_tabs', {}))
         self.tool_tab_checkboxes = {}
         labels = [
-            ("conversion_log", "Conversion Log"),
-            ("converted_files", "Converted Files"),
-            ("video_inspection", "Video Inspection Tool"),
-            ("pc_report", "PC Report"),
-            ("lossless_editor", "Lossless Editor"),
-            ("multi_source_recorder", "Multi-Source Recorder"),
-            ("media_player", "Media Player"),
+            ("video_converter", _tr("Video Converter")),
+            ("media_player", _tr("Media Player")),
+            ("multi_source_recorder", _tr("Multi-Source Recorder")),
+            ("lossless_editor", _tr("Lossless Editor")),
+            ("pc_report", _tr("PC Report")),
         ]
         for key, label in labels:
             checkbox = QCheckBox(label)
             checkbox.setChecked(bool(visible_tabs.get(key, default_settings["visible_tool_tabs"].get(key, False))))
-            if key in ("conversion_log", "converted_files", "video_inspection"):
+            if key in ("video_converter", "media_player"):
                 checkbox.setToolTip(_tr("Visible by default. You can hide it, but keeping core workflow tabs visible is recommended."))
             else:
                 checkbox.setToolTip(_tr("Show this optional tool as a main-window tab."))

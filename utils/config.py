@@ -60,13 +60,11 @@ default_settings = {
     # Text overlay default
     "text_overlay": "None",
     "visible_tool_tabs": {
-        "conversion_log": True,
-        "converted_files": True,
-        "video_inspection": True,
+        "video_converter": True,
         "pc_report": False,
         "lossless_editor": False,
         "multi_source_recorder": True,
-        "media_player": False,
+        "media_player": True,
     },
     "media_player": {
         "last_folder": "",
@@ -110,6 +108,24 @@ def normalize_media_player_settings(group):
     }
 
 
+def migrate_tool_tab_keys(tabs):
+    """Map tab keys from before the 2026-09-26 tab merge onto the current ones.
+
+    Conversion Log + Converted Files became one Video Converter tab (on if
+    either was on). The Video Inspection Tool moved into the Media Player, so
+    a saved inspection tab turns the player on rather than vanishing.
+    """
+    tabs = dict(tabs)
+    old_log = tabs.pop("conversion_log", None)
+    old_files = tabs.pop("converted_files", None)
+    if "video_converter" not in tabs and (old_log is not None or old_files is not None):
+        tabs["video_converter"] = bool(old_log) or bool(old_files)
+    old_inspection = tabs.pop("video_inspection", None)
+    if old_inspection:
+        tabs["media_player"] = True
+    return tabs
+
+
 def normalize_settings(settings):
     normalized = default_settings.copy()
     normalized.update(settings or {})
@@ -118,6 +134,7 @@ def normalize_settings(settings):
     supplied_tabs = normalized.get("visible_tool_tabs")
     if not isinstance(supplied_tabs, dict):
         supplied_tabs = {}
+    supplied_tabs = migrate_tool_tab_keys(supplied_tabs)
     normalized["visible_tool_tabs"] = {
         key: bool(supplied_tabs.get(key, default_value))
         for key, default_value in default_tabs.items()

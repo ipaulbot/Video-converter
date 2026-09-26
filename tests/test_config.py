@@ -26,13 +26,11 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(
             settings["visible_tool_tabs"],
             {
-                "conversion_log": True,
-                "converted_files": True,
-                "video_inspection": True,
+                "video_converter": True,
                 "pc_report": False,
                 "lossless_editor": False,
                 "multi_source_recorder": True,
-                "media_player": False,
+                "media_player": True,
             },
         )
 
@@ -40,8 +38,26 @@ class ConfigTests(unittest.TestCase):
         settings = normalize_settings({"visible_tool_tabs": {"pc_report": True}})
 
         self.assertTrue(settings["visible_tool_tabs"]["pc_report"])
-        self.assertTrue(settings["visible_tool_tabs"]["conversion_log"])
+        self.assertTrue(settings["visible_tool_tabs"]["video_converter"])
         self.assertTrue(settings["visible_tool_tabs"]["multi_source_recorder"])
+
+    def test_old_log_and_files_tabs_migrate_to_the_video_converter_tab(self):
+        # Either old tab on -> the merged tab on; both off -> off.
+        on = normalize_settings({"visible_tool_tabs": {"conversion_log": False, "converted_files": True}})
+        off = normalize_settings({"visible_tool_tabs": {"conversion_log": False, "converted_files": False}})
+        self.assertTrue(on["visible_tool_tabs"]["video_converter"])
+        self.assertFalse(off["visible_tool_tabs"]["video_converter"])
+        self.assertNotIn("conversion_log", on["visible_tool_tabs"])
+        self.assertNotIn("converted_files", on["visible_tool_tabs"])
+
+    def test_old_video_inspection_tab_turns_the_media_player_on(self):
+        # The inspector now lives inside the Media Player; nobody should lose it.
+        settings = normalize_settings({"visible_tool_tabs": {"video_inspection": True, "media_player": False}})
+        self.assertTrue(settings["visible_tool_tabs"]["media_player"])
+        self.assertNotIn("video_inspection", settings["visible_tool_tabs"])
+
+        settings = normalize_settings({"visible_tool_tabs": {"video_inspection": False, "media_player": False}})
+        self.assertFalse(settings["visible_tool_tabs"]["media_player"])
 
     def test_existing_recorder_visibility_false_is_preserved(self):
         settings = normalize_settings({
