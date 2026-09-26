@@ -31,7 +31,10 @@ CAMERA_SOURCE_TYPES = [
     {
         "id": "screen",
         "label": "Screen capture",
-        "hint": "Leave empty (or 'desktop') for the whole screen, or a window title to capture one window.",
+        "hint": (
+            "Leave empty (or 'desktop') for the whole screen, 'monitor=1' for GPU capture of one "
+            "display, or a window title to capture one window."
+        ),
     },
     {
         "id": "file",
@@ -42,18 +45,50 @@ CAMERA_SOURCE_TYPES = [
 
 SCREEN_SOURCE_PREFIX = "screen="
 SCREEN_DEFAULT_TARGET = "desktop"      # gdigrab's name for the whole screen
+SCREEN_MONITOR_PREFIX = "monitor="     # one display via Desktop Duplication (ddagrab), 1-based
+
+# DirectShow video filters that are not cameras and must not be offered as one.
+# Medialooks' filter pops a licence dialog inside the ffmpeg process as soon as it
+# is instantiated, which blocks the recording; the built-in screen source
+# (gdigrab / ddagrab) replaces it.
+HIDDEN_DIRECTSHOW_VIDEO_DEVICES = ("medialooks",)
+
+
+def is_hidden_directshow_video_device(name):
+    text = (name or "").strip().lower()
+    if text.startswith("video="):
+        text = text[len("video="):]
+    return bool(text) and any(marker in text for marker in HIDDEN_DIRECTSHOW_VIDEO_DEVICES)
+
+
+_MONITOR_PATTERN = re.compile(r"^monitor\s*[= ]\s*(\d+)$", re.IGNORECASE)
 
 
 def build_screen_source_text(value):
-    """`screen=desktop` or `screen=title=<window>`; both are gdigrab targets."""
+    """`screen=desktop` / `screen=title=<window>` (gdigrab) or `screen=monitor=N` (ddagrab)."""
     text = (value or "").strip()
     if text.lower().startswith(SCREEN_SOURCE_PREFIX):
         text = text[len(SCREEN_SOURCE_PREFIX):].strip()
     if not text or text.lower() == SCREEN_DEFAULT_TARGET:
         return f"{SCREEN_SOURCE_PREFIX}{SCREEN_DEFAULT_TARGET}"
+    monitor = _MONITOR_PATTERN.match(text)
+    if monitor:
+        return f"{SCREEN_SOURCE_PREFIX}{SCREEN_MONITOR_PREFIX}{int(monitor.group(1))}"
     if text.lower().startswith("title="):
         return f"{SCREEN_SOURCE_PREFIX}{text}"
     return f"{SCREEN_SOURCE_PREFIX}title={text}"
+
+
+def screen_monitor_index(source_text):
+    """1-based monitor number of a `screen=monitor=N` source, else None."""
+    text = (source_text or "").strip()
+    if not text.lower().startswith(SCREEN_SOURCE_PREFIX):
+        return None
+    monitor = _MONITOR_PATTERN.match(text[len(SCREEN_SOURCE_PREFIX):].strip())
+    if not monitor:
+        return None
+    index = int(monitor.group(1))
+    return index if index >= 1 else None
 
 
 def build_source_text(source_type, value, port="", username="", password=""):
@@ -190,6 +225,8 @@ def parse_directshow_video_devices(output):
             device_name = line[first_quote + 1:last_quote]
             is_non_video = re.search(r'"\s+\((?:none|audio)\)', line, flags=re.IGNORECASE)
             if is_non_video and "basler genicam source" not in device_name.lower():
+                continue
+            if is_hidden_directshow_video_device(device_name):
                 continue
             devices.append(device_name)
     return devices

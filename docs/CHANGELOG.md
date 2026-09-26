@@ -170,11 +170,25 @@ Use this file to track user-visible fixes, improvements, and feature work.
   left, matching the layout schematic in the sidebar. Presets saved with this
   mode load as Picture-in-picture again.
 - New Screen capture source type. Leave the address empty (or `desktop`) for
-  the whole screen, or enter a window title to capture one window. It records
-  at 15 fps by default (adjustable per source in Video Settings), is always
-  encoded to H.264, previews like a network stream, and can be mixed with
-  cameras in Combined grid or Picture-in-picture. The Video Settings device
-  list offers it as "Screen capture (desktop)".
+  the whole screen, enter `monitor=1` (or pick "Screen capture (monitor 1,
+  GPU)" in Video Settings) to record one display through the GPU, or enter a
+  window title to capture one window. It records at the row's frame rate
+  (15 fps when set to Auto), is always encoded to H.264, previews like a
+  network stream, and can be mixed with cameras in Combined grid or
+  Picture-in-picture. The Video Settings device list offers the whole
+  desktop plus one GPU entry per attached display.
+  - The GPU mode uses the Desktop Duplication API, so DirectX content is
+    captured and a 4K display costs no CPU; if it cannot start (no D3D11
+    device, a remote session, a display that is no longer attached) the
+    recording falls back to a GDI grab of the whole desktop.
+  - Screen recordings are encoded as 4:2:0 H.264 with even dimensions. The
+    grabbers deliver BGRA, which libx264 otherwise encodes as 4:4:4 — a
+    file the Windows players and hardware decoders refuse to play.
+- The "Medialooks Screen Capture" DirectShow filter installed by MediaRecorder
+  is no longer offered as a camera. Its licence check pops a modal dialog
+  inside FFmpeg the moment it is opened, leaving the recording stuck behind
+  the dialog. A preset that still names it loads as the built-in screen
+  capture, with a log line saying so.
 - Fixed "Start Recording" staying green after a recording was stopped. The
   button's style was rendered before the theme was told the recording had
   ended, so it always showed the previous state's colour. The tab underline

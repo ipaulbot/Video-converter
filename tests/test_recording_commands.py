@@ -1126,6 +1126,70 @@ class ScreenCaptureTests(unittest.TestCase):
         self.assertEqual(command[command.index("-framerate") + 1], "15")
         self.assertIn("xstack=inputs=2", command[command.index("-filter_complex") + 1])
 
+    def test_screen_recordings_are_encoded_as_playable_yuv420p(self):
+        # gdigrab/ddagrab deliver BGRA; left alone libx264 encodes 4:4:4, which the
+        # Windows players and hardware decoders refuse. The whole virtual desktop
+        # can also have an odd height, which yuv420p cannot represent.
+        command = build_record_command("ffmpeg.exe", "screen=desktop", "screen.mp4")
+        video_filter = command[command.index("-vf") + 1]
+        self.assertEqual(video_filter, rc.SCREEN_ENCODE_FILTER)
+        self.assertIn("format=yuv420p", video_filter)
+        self.assertIn("trunc(iw/2)*2", video_filter)
+        self.assertLess(command.index("-vf"), command.index("libx264"))
+
+        camera = build_record_command("ffmpeg.exe", "video=Camera A", "camera.mp4")
+        self.assertNotIn("-vf", camera)
+
+    def test_screen_tiles_in_a_composite_are_converted_before_stacking(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A", "screen=desktop"], "combined.mp4",
+        )
+        graph = command[command.index("-filter_complex") + 1]
+        tiles = [part for part in graph.split(";") if part.startswith("[")]
+        self.assertTrue(tiles[1].startswith("[1:v]"))
+        self.assertTrue(tiles[1].endswith(",format=yuv420p[v1]"), tiles[1])
+        self.assertNotIn("format=yuv420p", tiles[0])
+
+    def test_single_screen_source_in_composite_mode_is_also_converted(self):
+        command = build_combined_grid_record_command("ffmpeg.exe", ["screen=desktop"], "combined.mp4")
+        self.assertEqual(command[command.index("-vf") + 1], rc.SCREEN_ENCODE_FILTER)
+
+
+class GpuMonitorCaptureTests(unittest.TestCase):
+    def test_monitor_source_records_through_ddagrab(self):
+        command = build_record_command("ffmpeg.exe", "screen=monitor=2", "screen.mp4", frame_rate="30")
+
+        i = command.index("-i")
+        self.assertEqual(command[i - 2:i], ["-f", "lavfi"])
+        # monitor=2 as shown to the user is output_idx=1 for DXGI.
+        self.assertEqual(command[i + 1], "ddagrab=output_idx=1:framerate=30,hwdownload,format=bgra")
+        self.assertNotIn("gdigrab", command)
+        self.assertIn("libx264", command)
+        self.assertEqual(command[command.index("-vf") + 1], rc.SCREEN_ENCODE_FILTER)
+
+    def test_monitor_source_defaults_to_the_screen_frame_rates(self):
+        record = build_record_command("ffmpeg.exe", "screen=monitor=1", "screen.mp4")
+        self.assertIn(f"framerate={rc.SCREEN_CAPTURE_FPS}", record[record.index("-i") + 1])
+
+        preview = build_preview_stream_command("ffmpeg.exe", "screen=monitor=1")
+        self.assertEqual(preview[preview.index("-f") + 1], "lavfi")
+        self.assertIn(f"ddagrab=output_idx=0:framerate={rc.SCREEN_PREVIEW_FPS}", preview[preview.index("-i") + 1])
+        self.assertIn("image2pipe", preview)
+
+    def test_monitor_source_in_a_picture_in_picture_composite(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["screen=monitor=1", "video=Camera A"], "combined.mp4", layout="pip",
+        )
+        self.assertEqual(command[command.index("-f") + 1], "lavfi")
+        graph = command[command.index("-filter_complex") + 1]
+        self.assertIn("format=yuv420p[v0]", graph)
+        self.assertIn("overlay=", graph)
+
+    def test_gdi_fallback_source_for_a_monitor_capture(self):
+        self.assertEqual(rc.screen_gdi_fallback_source("screen=monitor=2"), "screen=desktop")
+        self.assertEqual(rc.screen_gdi_fallback_source("screen=desktop"), "")
+        self.assertEqual(rc.screen_gdi_fallback_source("video=Camera A"), "")
+
 
 class OutputQualityTests(unittest.TestCase):
     def test_quality_table_and_default(self):
