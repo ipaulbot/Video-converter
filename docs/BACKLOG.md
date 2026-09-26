@@ -98,9 +98,15 @@ Out of scope in the current design, kept for later:
   whether the label should say so.~~ Fixed 2026-09-25: a note under Output
   settings appears when "copy" is selected with a USB source enabled.
 - ~~Screen capture through FFmpeg gdigrab.~~ Done 2026-09-25 (`screen=desktop`
-  / `screen=title=…` source type). Follow-ups: capture a region or a chosen
-  monitor (`-offset_x/-offset_y/-video_size`), and a window picker instead of
-  typing the title.
+  / `screen=title=…` source type); 2026-09-26 added `screen=monitor=N` through
+  the Desktop Duplication API with a GDI fallback. Follow-ups: capture a
+  region (`-offset_x/-offset_y/-video_size`), a window picker instead of
+  typing the title, system audio for a screen source (WASAPI loopback has no
+  DirectShow input; the open-source `virtual-audio-capturer` filter would
+  do), and encoding a GPU capture with `h264_nvenc`/`h264_amf`/`h264_qsv`
+  when the bundled ffmpeg reports one (today the frame is downloaded and
+  encoded with libx264). The monitor numbering follows DXGI output order,
+  which is normally but not always the Windows display order.
 - ~~Picture-in-picture recording.~~ Done 2026-09-25. Follow-ups: choose which
   source is the main frame and the inset corner/size; the geometry is the
   fixed set in `_pip_preview_rects`.
