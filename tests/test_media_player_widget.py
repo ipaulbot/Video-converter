@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.media_player_parts import PlaylistTable
 from ui.media_player_widget import (
     MAX_PANELS,
     PANEL_COUNT_OPTIONS,
@@ -188,7 +189,7 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             widget.position_slider.setRange(0, 60000)
             widget._set_slider_value(4000)
             panel.player.calls.clear()
-            widget.playlist_dock.list.item(0, 1).setData(Qt.UserRole, 1.5)
+            widget.playlist_dock.list.item(0, PlaylistTable.OFFSET).setData(Qt.UserRole, 1.5)
             self.assertEqual(panel.offset_ms(), 1500)
             self.assertIn("setPosition(5500)", panel.player.calls)
         finally:
@@ -524,6 +525,56 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         self.assertEqual(inspected, [])            # dock closed: nothing runs
         widget.inspect_btn.setChecked(True)
         self.assertEqual(inspected, ["C:/Videos/b.mp4"])
+
+    def test_highlighting_a_playlist_row_inspects_that_clip_without_loading_it(self):
+        widget = self._widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        panel = widget.panels[0]
+        panel.playlist.add(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        widget.select_panel(0)
+        widget.playlist_dock.refresh()
+        inspected.clear()
+        widget.playlist_dock.list.setCurrentRow(1)
+        self.assertEqual(inspected, ["C:\\Videos\\b.mp4"])
+        self.assertEqual(panel._media_path, "")               # highlighted, not loaded
+        # With the dock closed, highlighting runs nothing.
+        widget.inspect_btn.setChecked(False)
+        inspected.clear()
+        widget.playlist_dock.list.setCurrentRow(0)
+        self.assertEqual(inspected, [])
+
+    def test_clicking_the_video_surface_selects_that_panel(self):
+        # The native QVideoWidget sits over the panel; a press on it must
+        # still count as a click on the panel (and so refresh Inspect).
+        widget = self._widget()
+        panel = widget.panels[1]
+        video = panel._ensure_video_widget()
+        self.assertNotEqual(widget.selected_index, 1)
+        press = QMouseEvent(QEvent.MouseButtonPress, QPointF(5, 5), Qt.LeftButton,
+                            Qt.LeftButton, Qt.NoModifier)
+        QApplication.sendEvent(video, press)
+        self.assertEqual(widget.selected_index, 1)
+
+    def test_panel_column_shows_where_each_clip_is_on_screen_only_with_several_panels(self):
+        widget = self._widget()
+        widget.panels_combo.setCurrentIndex(widget.panels_combo.findData(1))
+        panel = widget.panels[0]
+        panel.playlist.add(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        panel._media_path = "C:\\Videos\\a.mp4"
+        widget.panels[1]._media_path = "C:\\Videos\\a.mp4"
+        widget.select_panel(0)
+        table = widget.playlist_dock.list
+        self.assertTrue(table.isColumnHidden(PlaylistTable.PANEL))       # one panel: hidden
+        widget.panels_combo.setCurrentIndex(widget.panels_combo.findData(2))
+        self.assertFalse(table.isColumnHidden(PlaylistTable.PANEL))
+        self.assertEqual(table.item(0, PlaylistTable.PANEL).text(), "1, 2")
+        self.assertEqual(table.item(1, PlaylistTable.PANEL).text(), "")
+        # A panel changing its clip updates the column even when it is not the selected one.
+        widget.panels[1]._media_path = "C:\\Videos\\b.mp4"
+        widget._on_panel_media_changed(widget.panels[1])
+        self.assertEqual(table.item(0, PlaylistTable.PANEL).text(), "1")
+        self.assertEqual(table.item(1, PlaylistTable.PANEL).text(), "2")
 
     def test_the_inspect_dock_has_no_title_row(self):
         # The panel caption already names the clip; the dock is just the data.

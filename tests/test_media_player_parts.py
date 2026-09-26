@@ -214,9 +214,10 @@ class PlaylistDockTests(unittest.TestCase):
 
     def test_playlist_has_a_clip_column_and_an_offset_column(self):
         dock, model = self._dock()
-        self.assertEqual(dock.list.columnCount(), 2)
+        self.assertEqual(dock.list.columnCount(), 3)
         self.assertEqual(
-            [dock.list.horizontalHeaderItem(c).text() for c in range(2)], ["Clip", "Offset"]
+            [dock.list.horizontalHeaderItem(c).text() for c in range(3)],
+            ["Clip", "Panel", "Offset"],
         )
         dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
         model.set_offset("C:\\Videos\\b.mp4", -1.25)
@@ -263,6 +264,38 @@ class PlaylistDockTests(unittest.TestCase):
         dock.activate_requested.connect(activated.append)
         dock.list.itemDoubleClicked.emit(dock.list.item(0, PlaylistTable.OFFSET))
         self.assertEqual(activated, [])
+
+    def test_panel_column_names_the_panels_showing_each_clip(self):
+        dock, _model = self._dock()
+        showing = {"C:\\Videos\\a.mp4": [1, 3]}
+        dock.set_panel_lookup(lambda path: showing.get(path, []))
+        dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        self.assertEqual(
+            [dock.list.horizontalHeaderItem(c).text() for c in range(3)],
+            ["Clip", "Panel", "Offset"],
+        )
+        self.assertEqual(dock.list.item(0, PlaylistTable.PANEL).text(), "1, 3")
+        self.assertEqual(dock.list.item(1, PlaylistTable.PANEL).text(), "")
+        self.assertFalse(dock.list.item(0, PlaylistTable.PANEL).flags() & Qt.ItemIsEditable)
+
+    def test_panel_column_is_hidden_unless_more_than_one_panel_shows(self):
+        dock, _model = self._dock()
+        self.assertTrue(dock.list.isColumnHidden(PlaylistTable.PANEL))   # single panel default
+        dock.set_panel_column_visible(True)
+        self.assertFalse(dock.list.isColumnHidden(PlaylistTable.PANEL))
+        dock.set_panel_column_visible(False)
+        self.assertTrue(dock.list.isColumnHidden(PlaylistTable.PANEL))
+
+    def test_highlighting_a_row_announces_its_path(self):
+        dock, _model = self._dock()
+        dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+        seen = []
+        dock.current_changed.connect(seen.append)
+        dock.list.setCurrentRow(1)
+        dock.list.setCurrentCell(0, PlaylistTable.OFFSET)   # any cell of the row counts
+        self.assertEqual(seen, ["C:\\Videos\\b.mp4", "C:\\Videos\\a.mp4"])
+        dock.clear()
+        self.assertEqual(seen[-1], "")                       # nothing highlighted any more
 
     def test_offset_text_is_signed_and_one_decimal(self):
         self.assertEqual(format_offset_seconds(0), "0.0 s")

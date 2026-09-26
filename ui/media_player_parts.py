@@ -128,24 +128,29 @@ class _OffsetDelegate(QStyledItemDelegate):
 
 
 class PlaylistTable(PlaceholderTableWidget):
-    """Two columns -- Clip, Offset -- with drag-to-reorder rows.
+    """Columns Clip, Panel, Offset with drag-to-reorder rows.
 
     The path rides on the clip cell's UserRole, the offset (seconds) on the
-    offset cell's. `rows_moved(source_row, destination_row)` fires on an
-    internal drop; `offset_edited(path, seconds)` when the Offset cell commits.
+    offset cell's. Panel lists the panels currently showing the clip and is
+    hidden while only one panel is on screen. `rows_moved(source_row,
+    destination_row)` fires on an internal drop; `offset_edited(path,
+    seconds)` when the Offset cell commits.
     """
 
     rows_moved = pyqtSignal(int, int)
     offset_edited = pyqtSignal(str, float)
-    CLIP, OFFSET = 0, 1
+    CLIP, PANEL, OFFSET = 0, 1, 2
 
     def __init__(self, parent=None):
-        super().__init__(0, 2, parent)
-        self.setHorizontalHeaderLabels([_tr("Clip"), _tr("Offset")])
+        super().__init__(0, 3, parent)
+        self.setHorizontalHeaderLabels([_tr("Clip"), _tr("Panel"), _tr("Offset")])
         header = self.horizontalHeader()
         header.setSectionResizeMode(self.CLIP, QHeaderView.Stretch)
+        header.setSectionResizeMode(self.PANEL, QHeaderView.Fixed)
+        header.resizeSection(self.PANEL, 56)
         header.setSectionResizeMode(self.OFFSET, QHeaderView.Fixed)
         header.resizeSection(self.OFFSET, 76)
+        self.setColumnHidden(self.PANEL, True)
         header.setHighlightSections(False)
         header.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.verticalHeader().hide()
@@ -171,19 +176,24 @@ class PlaylistTable(PlaceholderTableWidget):
     def setCurrentRow(self, row):
         self.setCurrentCell(row, self.CLIP)
 
-    def add_row(self, path, offset_s):
+    def add_row(self, path, offset_s, panels=()):
         row = self.rowCount()
         self.insertRow(row)
         clip = QTableWidgetItem(os.path.basename(path) or path)
         clip.setToolTip(path)
         clip.setData(Qt.UserRole, path)
         clip.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled)
+        panel = QTableWidgetItem(", ".join(str(number) for number in panels))
+        panel.setTextAlignment(Qt.AlignCenter)
+        panel.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        panel.setToolTip(_tr("Panels showing this clip right now."))
         offset = QTableWidgetItem(format_offset_seconds(offset_s))
         offset.setData(Qt.UserRole, float(offset_s))
         offset.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
         offset.setToolTip(_tr("Sync offset: shift this clip earlier (negative) or later "
                               "(positive) against the other panels. Double-click to edit."))
         self.setItem(row, self.CLIP, clip)
+        self.setItem(row, self.PANEL, panel)
         self.setItem(row, self.OFFSET, offset)
 
     def _on_item_changed(self, item):
@@ -234,11 +244,13 @@ class PlaylistDock(QWidget):
     files_requested = pyqtSignal()
     folder_requested = pyqtSignal()
     offset_changed = pyqtSignal(str, float)
+    current_changed = pyqtSignal(str)       # highlighted row's path ("" when none)
     STRIP_HEIGHT = 150
 
     def __init__(self, parent=None, horizontal=False):
         super().__init__(parent)
         self.model = None
+        self.panel_lookup = None            # path -> [panel numbers showing it]
         self.horizontal = bool(horizontal)
         self.setAcceptDrops(True)
         if self.horizontal:
@@ -256,6 +268,7 @@ class PlaylistDock(QWidget):
         self.list.itemDoubleClicked.connect(self._on_item_double_clicked)
         self.list.rows_moved.connect(self._on_row_moved)
         self.list.offset_edited.connect(self._on_offset_edited)
+        self.list.currentCellChanged.connect(self._on_current_cell_changed)
         if self.horizontal:
             row = QHBoxLayout()
             row.setSpacing(6)
@@ -305,12 +318,24 @@ class PlaylistDock(QWidget):
         )
         self.refresh()
 
+    def set_panel_lookup(self, lookup):
+        """`lookup(path)` -> panel numbers showing that clip; fills the Panel column."""
+        self.panel_lookup = lookup
+        self.refresh()
+
+    def set_panel_column_visible(self, visible):
+        self.list.setColumnHidden(PlaylistTable.PANEL, not visible)
+
     def refresh(self):
+        had_current = self.list.currentRow() >= 0
         self.list.blockSignals(True)
         self.list.setRowCount(0)
         for path in (self.model.items if self.model else []):
-            self.list.add_row(path, self.model.offset_for(path))
+            panels = self.panel_lookup(path) if callable(self.panel_lookup) else ()
+            self.list.add_row(path, self.model.offset_for(path), panels)
         self.list.blockSignals(False)
+        if had_current and self.list.currentRow() < 0:
+            self.current_changed.emit("")
 
     def add_paths(self, paths):
         if self.model is None:
@@ -339,6 +364,15 @@ class PlaylistDock(QWidget):
             if self.list.item(row).data(Qt.UserRole) == path:
                 self.list.setCurrentRow(row)
                 return
+
+    def current_path(self):
+        row = self.list.currentRow()
+        item = self.list.item(row, PlaylistTable.CLIP) if row >= 0 else None
+        return str(item.data(Qt.UserRole)) if item is not None else ""
+
+    def _on_current_cell_changed(self, row, _col, previous_row, _prev_col):
+        if row != previous_row:
+            self.current_changed.emit(self.current_path())
 
     def _on_item_double_clicked(self, item):
         if item.column() != PlaylistTable.CLIP:
