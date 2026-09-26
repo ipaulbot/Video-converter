@@ -50,6 +50,7 @@ from ui.media_player_widget import MediaPlayerWidget
 from conversion.recording_commands import recording_layout_preview_rects
 from conversion.recorder_settings import load_recorder_settings
 from ui.pc_report_dialog import PCReportWidget
+from ui.tab_header import TabHeader
 from utils.update_checker import UpdateChecker, UpdateWorker
 
 
@@ -536,6 +537,12 @@ class VideoConverterApp(QMainWindow):
         self.converter_tab = QWidget()
         converter_layout = QVBoxLayout(self.converter_tab)
         converter_layout.setContentsMargins(0, 0, 0, 0)
+        self.converter_header = TabHeader(
+            "convert",
+            _tr("Video Converter"),
+            _tr("Drop files or monitor a folder; converted files are listed above the log."),
+        )
+        converter_layout.addWidget(self.converter_header)
         self.converter_splitter = QSplitter(Qt.Vertical)
         self.converter_splitter.setChildrenCollapsible(False)
         self.converter_splitter.setHandleWidth(8)
@@ -2942,8 +2949,21 @@ class VideoConverterApp(QMainWindow):
             getattr(self, "media_player_widget", None),
             getattr(self, "multi_source_recorder_widget", None),
             getattr(self, "converted_files_widget", None),
+            getattr(self, "converter_header", None),
         ] + list(getattr(self, "tool_tab_cards", {}).values())
         return [w for w in candidates if w is not None and hasattr(w, "reskin")]
+
+    def tab_headers(self):
+        """The shared TabHeader at the top of each tool tab, keyed like tool_tab_widgets."""
+        headers = {}
+        for key, widget in getattr(self, "tool_tab_widgets", {}).items():
+            if key == "video_converter":
+                headers[key] = self.converter_header
+                continue
+            header = widget.findChild(TabHeader)
+            if header is not None:
+                headers[key] = header
+        return headers
 
     def apply_button_style_to_all_widgets(self, widget):
         """Apply the current button style beneath `widget`.

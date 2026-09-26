@@ -83,6 +83,7 @@ from conversion.recording_sources import (
 from ui import theme
 from ui.glyph_icons import make_icon_button, reskin_icon_buttons, set_link_glyph
 from ui.screen_region_picker import pick_screen_region_value
+from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -1426,6 +1427,13 @@ class MultiSourceRecorderWidget(QWidget):
         layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
 
+        self.header = TabHeader(
+            "record",
+            _tr("Multi-Source Recorder"),
+            _tr("Record up to four cameras, streams or screens at once, as separate files or one combined picture."),
+        )
+        layout.addWidget(self.header)
+
         self.status_label = QLabel(_tr("Not recording"))
         self.status_label.setStyleSheet(theme.qss("color: $grey_650;"))
 
@@ -1786,6 +1794,7 @@ class MultiSourceRecorderWidget(QWidget):
         """Links and glyph buttons follow the lock / converting skin like the bubbles do."""
         link = theme.link_button_style()
         accent = theme.skin().accent
+        self.header.reskin(accent)
         for widget, glyph in (
             (self.video_settings_link, "settings"),
             (self.recording_log_link, "log"),

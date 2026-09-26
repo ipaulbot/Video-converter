@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from ui import theme
 from ui.leaf_frame import LeafFrame
 from ui.main_window import VideoConverterApp
+from ui.tab_header import TabHeader
 
 
 class LeafFrameTests(unittest.TestCase):
@@ -190,6 +191,37 @@ class TabCardTests(unittest.TestCase):
         with patch.object(window.lossless_editor_widget, "reskin") as reskin:
             window.update_all_button_styles()
         reskin.assert_called_once()
+
+
+class TabHeaderUnityTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_every_tool_tab_opens_with_the_same_header_glyph_and_its_title(self):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        window._ensure_media_player_widget()
+        headers = window.tab_headers()
+        self.assertEqual(set(headers), set(window.tool_tab_widgets))
+        expected = {
+            "video_converter": ("convert", "Video Converter"),
+            "pc_report": ("pc", "PC Report"),
+            "lossless_editor": ("scissors", "Lossless Editor"),
+            "multi_source_recorder": ("record", "Multi-Source Recorder"),
+            "media_player": ("player", "Media Player"),
+        }
+        for key, (glyph, title) in expected.items():
+            header = headers[key]
+            self.assertIsInstance(header, TabHeader, key)
+            self.assertEqual(header.glyph_name, glyph, key)
+            self.assertEqual(header.title_label.text(), title, key)
+            self.assertEqual(header.title_label.text(), window.tabs.tabText(
+                window.tabs.indexOf(window.tool_tab_widgets[key])), key)
+            self.assertEqual(header.glyph_label.width(), TabHeader.GLYPH_PX, key)
+            self.assertFalse(header.description_label.isHidden(), key)
+        self.assertIn(window.converter_header, window.reskin_widgets())
 
 
 class MovableTabTests(unittest.TestCase):

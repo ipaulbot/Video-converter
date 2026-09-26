@@ -17,7 +17,6 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import (
     QGraphicsOpacityEffect,
-    QGridLayout,
     QHBoxLayout,
     QLabel,
     QPlainTextEdit,
@@ -35,6 +34,7 @@ from pc_report.render_json import render as render_json
 from pc_report.section import esc
 from ui import theme
 from ui.glyph_icons import set_link_glyph
+from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 
@@ -110,12 +110,14 @@ class PCReportWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
 
-        header = QHBoxLayout()
-        header.setSpacing(14)
-        # The heart sits under the monitor logo's transparent cut-out and pulses
-        # while a report runs (restored from the pre-343d9c1 dialog).
-        logo_stack = QGridLayout()
-        logo_stack.setContentsMargins(0, 0, 0, 0)
+        # The shared tab header: a monitor glyph, title, description. The heart
+        # sits under the glyph's screen and pulses while a report runs
+        # (restored from the pre-343d9c1 dialog).
+        self.header = TabHeader(
+            "pc",
+            _tr("PC Report"),
+            _tr("Collects system details for support. Redaction is always on."),
+        )
         self.heart_label = QLabel()
         self.heart_label.setStyleSheet("QLabel { background: transparent; border: none; }")
         self.heart_label.setAlignment(Qt.AlignCenter)
@@ -124,23 +126,11 @@ class PCReportWidget(QWidget):
         self.heart_label.setGraphicsEffect(self.heart_effect)
         self.heart_label.hide()
         self.heart_anim = None
-        self.logo_label = QLabel()
-        self.logo_label.setAlignment(Qt.AlignCenter)
-        self.logo_label.setStyleSheet("QLabel { background: transparent; border: none; }")
-        logo_stack.addWidget(self.heart_label, 0, 0, Qt.AlignCenter)
-        logo_stack.addWidget(self.logo_label, 0, 0, Qt.AlignCenter)
-        self.logo_width = theme.metrics().pc_report_logo_w
+        self.header.add_layer_under_glyph(self.heart_label)
+        self.logo_label = self.header.glyph_label
+        self.logo_width = TabHeader.GLYPH_PX
         self._set_logo()
-        header.addLayout(logo_stack, 0)
-
-        intro = QVBoxLayout()
-        intro.setSpacing(2)
-        title = QLabel(_tr("PC Report"))
-        title.setStyleSheet(theme.tab_title_style())
-        intro.addWidget(title)
-        description = QLabel(_tr("Collects system details for support. Redaction is always on."))
-        description.setStyleSheet(theme.qss("color: $text_body; font-size: 9pt;"))
-        intro.addWidget(description)
+        layout.addWidget(self.header)
 
         actions = QHBoxLayout()
         actions.setSpacing(14)
@@ -165,9 +155,7 @@ class PCReportWidget(QWidget):
         actions.addWidget(self.btn_folder)
         actions.addStretch(1)
         actions.addWidget(self.btn_admin)
-        intro.addLayout(actions)
-        header.addLayout(intro, 1)
-        layout.addLayout(header)
+        layout.addLayout(actions)
 
         self.progress = QProgressBar()
         self.progress.setRange(0, 0)
@@ -196,22 +184,21 @@ class PCReportWidget(QWidget):
         self.btn_admin.clicked.connect(self.relaunch_elevated)
 
     def _set_logo(self):
+        """Paint the monitor glyph for the current state and size the heart to sit in its screen."""
+        accent = theme.skin_for_state(locked=self.locked, active=self.converting).accent
+        self.header.reskin(accent)
         try:
             from PyQt5.QtGui import QPixmap
 
             from utils.resources import resource_path
-            if self.locked:
-                logo, heart = "graphics/GRAYSCALEPCREPORT.png", "graphics/PCREPORTHEART.png"
-            elif self.converting:
-                logo, heart = "graphics/GREENPCREPORT.png", "graphics/GREENPCREPORTHEART.png"
-            else:
-                logo, heart = "graphics/PCREPORT.png", "graphics/PCREPORTHEART.png"
-            for label, rel in ((self.logo_label, logo), (self.heart_label, heart)):
-                path = resource_path(rel)
-                if os.path.exists(path):
-                    label.setPixmap(
-                        QPixmap(path).scaledToWidth(self.logo_width, Qt.SmoothTransformation)
-                    )
+            heart = "graphics/GREENPCREPORTHEART.png" if self.converting else "graphics/PCREPORTHEART.png"
+            path = resource_path(heart)
+            if os.path.exists(path):
+                # The heart canvas is the old logo's canvas, so scaled to the glyph
+                # size the heart lands where the monitor's screen is.
+                self.heart_label.setPixmap(
+                    QPixmap(path).scaledToWidth(self.logo_width, Qt.SmoothTransformation)
+                )
         except Exception:
             logger.debug("PCReportWidget._set_logo: suppressed error", exc_info=True)
 
@@ -226,7 +213,8 @@ class PCReportWidget(QWidget):
             set_link_glyph(link, glyph, accent)
 
     def apply_layout_mode(self, metrics):
-        self.logo_width = metrics.pc_report_logo_w
+        # The header glyph has one size in both modes (metrics.pc_report_logo_w
+        # is no longer applied); the heart keeps in step with it.
         self._set_logo()
 
     @staticmethod

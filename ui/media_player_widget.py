@@ -47,6 +47,7 @@ from ui.media_player_support import (
     prefer_windows_media_foundation,
     probe_media_info,
 )
+from ui.tab_header import TabHeader
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
 
@@ -563,18 +564,14 @@ class MediaPlayerWidget(QWidget):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(10)
 
-        title = QLabel(_tr("Media Player"))
-        title.setStyleSheet(theme.tab_title_style())
-        layout.addWidget(title)
-
-        description = QLabel(
+        self.header = TabHeader(
+            "player",
+            _tr("Media Player"),
             _tr("Load up to four clips and review them side by side. Play, pause and seek "
-            "control every panel together; use each panel's offset to line up clips that "
-            "started at slightly different times.")
+                "control every panel together; the Inspect panel shows the selected clip's "
+                "ffprobe details."),
         )
-        description.setWordWrap(True)
-        description.setStyleSheet(theme.tab_description_style())
-        layout.addWidget(description)
+        layout.addWidget(self.header)
 
         self.grid = QGridLayout()
         self.grid.setSpacing(8)
@@ -736,6 +733,7 @@ class MediaPlayerWidget(QWidget):
     def reskin(self):
         """Repaint every glyph (transport, panels, playlist dock) in the current skin."""
         self._icon_color = theme.skin().accent
+        self.header.reskin()
         reskin_icon_buttons(self, self._icon_color)
         self._set_play_glyph(self._is_playing)
         set_button_glyph(
