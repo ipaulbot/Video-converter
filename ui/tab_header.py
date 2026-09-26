@@ -30,7 +30,10 @@ class TabHeader(QWidget):
         self.glyph_label.setAlignment(Qt.AlignCenter)
         self.glyph_label.setStyleSheet("QLabel { background: transparent; border: none; }")
         self.glyph_stack.addWidget(self.glyph_label, 0, 0, Qt.AlignCenter)
+        # Top-aligned, not centred: a description that wraps to two lines
+        # must not push this tab's glyph lower than the other tabs'.
         layout.addLayout(self.glyph_stack, 0)
+        layout.setAlignment(self.glyph_stack, Qt.AlignTop)
 
         text = QVBoxLayout()
         text.setContentsMargins(0, 0, 0, 0)

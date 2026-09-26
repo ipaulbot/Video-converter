@@ -549,15 +549,16 @@ class MediaPlayerWidget(QWidget):
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
+        # No outer margins: the tab container pads every tool tab the same
+        # way; 16 px here put this header below and right of the others'.
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
 
         self.header = TabHeader(
             "player",
             _tr("Media Player"),
-            _tr("Load up to four clips and review them side by side. Play, pause and seek "
-                "control every panel together; the Inspect panel shows the selected clip's "
-                "ffprobe details."),
+            _tr("Review up to four clips side by side with one transport; Inspect shows "
+                "the selected clip's ffprobe details."),
         )
         layout.addWidget(self.header)
 

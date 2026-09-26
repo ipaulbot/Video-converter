@@ -46,6 +46,21 @@ class TabHeaderTests(unittest.TestCase):
         self.assertNotEqual(header.glyph_label.pixmap().toImage(), before)
         self.assertIn("#ff0000", header.title_label.styleSheet())
 
+    def test_glyph_stays_at_the_top_when_the_description_wraps(self):
+        # A long description wrapping to two lines used to push the centred
+        # glyph down, so that tab's glyph sat lower than every other tab's.
+        header = TabHeader("player", "Media Player", "word " * 60)
+        header.move(-7000, -7000)
+        header.resize(320, header.sizeHint().height())
+        header.show()
+        try:
+            for _ in range(4):
+                self.app.processEvents()
+            self.assertGreater(header.description_label.height(), header.title_label.height() * 2)
+            self.assertLessEqual(header.glyph_label.y(), header.title_label.y() + 1)
+        finally:
+            header.close()
+
     def test_a_layer_can_sit_under_the_glyph(self):
         header = TabHeader("pc", "PC Report")
         self.addCleanup(header.close)

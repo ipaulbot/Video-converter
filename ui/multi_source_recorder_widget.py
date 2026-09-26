@@ -1462,7 +1462,9 @@ class MultiSourceRecorderWidget(QWidget):
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(6, 6, 6, 6)
+        # No outer margins: the tab container already pads every tool tab the
+        # same way, and a margin here put this header 6 px below the others'.
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(4)
 
         self.header = TabHeader(
