@@ -89,6 +89,16 @@ Out of scope in the current design, kept for later:
 
 ## Recorder follow-ups
 
+- ~~A deselected webcam stays on (light lit) and the desktop capture keeps
+  showing after every row is set to "No source selected...".~~ Fixed
+  2026-09-26 (18:16): previews are `kill()`ed (terminate is a no-op for a
+  windowless ffmpeg), a row that no longer previews anything stops its old
+  process, and "USB / DirectShow" no longer pre-fills the first camera.
+  Follow-ups: `release_preview_processes_for_recording` still calls
+  `terminate()` then waits up to 750 ms per camera before `kill()`; on
+  Windows that wait always expires, so Start Recording could be ~0.75 s
+  faster per USB row by killing directly. Document in Help that the tile
+  says "Configure the source" until a camera is chosen.
 - ~~Timer-dialog fields: time format, decimals, maximum time not read
   anywhere.~~ Fixed 2026-09-25: Time format / Decimals removed; "Use maximum
   recording time" is bound to the tab's Timer field. Document it.
@@ -281,7 +291,9 @@ Workflow rules / player pass follow-ups (2026-09-26, 15:32):
 
 ## Release readiness (before the 2.3.0 exe and the portfolio site)
 
-Collected 2026-09-26 for the review -> exe -> website sequence. None started.
+Collected 2026-09-26 for the review -> exe -> website sequence. The exe build
+is scheduled for 2026-09-27 (owner's call, 18:16); the portfolio site started
+2026-09-26 (see the last item).
 
 - Packaging: `NVC.spec` already bundles `ffmpeg.exe` / `ffprobe.exe`,
   `translations/*.qm` and `docs/help/NVC *.pdf`; check it also picks up the
@@ -315,11 +327,18 @@ Collected 2026-09-26 for the review -> exe -> website sequence. None started.
   PDF, but the build machine needs the bundled font follow-up above.
 - Dependencies: `pypdf` install (see Help follow-ups); pin `requirements*.txt`
   to the versions the exe is built with.
-- Portfolio site: reuse the help figures and the executive-overview style;
+- Portfolio site: ~~reuse the help figures and the executive-overview style;
   each project gets a one-paragraph brief, a feature list, a screenshot strip
   and a download / GitHub link. Host on GitHub Pages (static) unless a CMS is
-  wanted. Decisions still open in
-  `docs/planning/2026-09-26-product-naming-website-and-github.md`.
+  wanted.~~ Skeleton built 2026-09-26 at `D:\Python Projects\portfolio-site`
+  (own repo; `docs/superpowers/specs/2026-09-26-portfolio-site-design.md`).
+  Remaining: owner fills the `TODO` placeholders in `content.py` (name,
+  contact, current role, resume entries, extra projects), decides whether
+  the employer branding visible in both products' screenshots may appear
+  publicly, picks hosting (GitHub Pages `/docs`) and a domain, supplies a
+  resume PDF; add download / source links once the GitHub decision in
+  `docs/planning/2026-09-26-product-naming-website-and-github.md` is made;
+  re-copy the screenshots after each product release.
 
 ## Done
 
