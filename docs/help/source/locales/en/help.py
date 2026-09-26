@@ -637,7 +637,7 @@ CHAPTERS: list[dict] = [
                 "Playlist opens a strip under the video for the selected panel with Add "
                 "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
                 "panel is added to that panel's playlist, so the strip always shows what the "
-                "panel has seen. The strip has columns Clip, Panel and Offset; Panel lists "
+                "panel has seen. The strip has columns File Name, Panel and Offset; Panel lists "
                 "the panels showing that clip right now and only appears when more than one "
                 "panel is on screen. Highlighting a row shows that clip's details in the "
                 "Inspect panel without loading it; clicking a panel does the same for its "
