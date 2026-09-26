@@ -148,6 +148,23 @@ class TabCardTests(unittest.TestCase):
         centre = image.pixelColor(90, 60)
         self.assertGreater(centre.lightness(), 200)                    # tile is white, not black
 
+    def test_burger_button_fits_the_tab_bar_corner_in_both_modes(self):
+        # QTabWidget gives its corner widget the tab bar's height and clips the
+        # rest; a 43 px button in a 31 px slot lost the bottom of its round icon.
+        try:
+            for mode in ("full", "compact"):
+                self.window.set_window_mode(mode, persist=False)
+                self.app.processEvents()
+                button = self.window.burger_button
+                slot = self.window.tabs.tabBar().sizeHint().height()
+                self.assertLessEqual(button.height(), slot, mode)
+                padding = button.property("glyph_padding") or 0
+                self.assertLessEqual(
+                    button.iconSize().height() + 2 * padding, button.height(), mode
+                )
+        finally:
+            self.window.set_window_mode("compact", persist=False)
+
     def test_settings_folder_change_buttons_carry_a_folder_glyph(self):
         from ui.settings_dialog import SettingsDialog
 

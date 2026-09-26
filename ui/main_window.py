@@ -837,8 +837,6 @@ class VideoConverterApp(QMainWindow):
         # Add compact mode toggle and burger menu to the top right
         from PyQt5.QtWidgets import QToolButton, QMenu
         self.burger_button = QToolButton()
-        self.burger_button.setIconSize(QSize(43, 43))
-        self.burger_button.setFixedSize(43, 43)
         self.burger_button.setPopupMode(QToolButton.InstantPopup)
         self.burger_button.setCursor(Qt.PointingHandCursor)
         # Create the dropdown menu
@@ -880,22 +878,7 @@ class VideoConverterApp(QMainWindow):
         top_right_layout.setSpacing(4)
         top_right_layout.addWidget(self.burger_button)
         self.tabs.setCornerWidget(top_right_widget, Qt.TopRightCorner)
-        self.burger_button.setStyleSheet(theme.qss("""
-            QToolButton { 
-                background: transparent; 
-                border: none; 
-                padding: 4px;
-                margin: 0px;
-                spacing: 0px;
-            }
-            QToolButton:hover {
-                background: $inner_border;
-                border-radius: 18px;
-            }
-            QToolButton::menu-indicator { 
-                image: none; 
-            }
-        """))
+        self._fit_burger_button()
         # React to tab changes (e.g., restore log view, keep UI in sync)
         try:
             self.tabs.currentChanged.connect(self.on_tab_changed)
@@ -942,6 +925,40 @@ class VideoConverterApp(QMainWindow):
         )
         return [w for w in candidates if w is not None and hasattr(w, "apply_layout_mode")]
 
+    def _fit_burger_button(self):
+        """Size the burger to the corner slot QTabWidget actually gives it.
+
+        The corner widget is laid out at the tab bar's height and clipped to
+        it. The button used to be a fixed 43 px with a 43 px icon and 4 px of
+        padding, so in a 31 px slot the round icon lost its bottom edge. The
+        tab bar's height depends on the layout mode (tab font / padding), so
+        set_window_mode calls this again after restyling the tabs.
+        """
+        button = getattr(self, "burger_button", None)
+        if button is None or not hasattr(self, "tabs"):
+            return
+        padding = 2
+        size = max(20, self.tabs.tabBar().sizeHint().height())
+        button.setFixedSize(size, size)
+        button.setIconSize(QSize(size - 2 * padding, size - 2 * padding))
+        button.setProperty("glyph_padding", padding)
+        button.setStyleSheet(theme.qss("""
+            QToolButton {
+                background: transparent;
+                border: none;
+                padding: ${padding}px;
+                margin: 0px;
+                spacing: 0px;
+            }
+            QToolButton:hover {
+                background: $inner_border;
+                border-radius: ${radius}px;
+            }
+            QToolButton::menu-indicator {
+                image: none;
+            }
+        """, padding=padding, radius=size // 2))
+
     def set_window_mode(self, name, persist=True, resize=True):
         """Switch between Compact (theme.COMPACT.window_size, normal) and Full window (maximised).
 
@@ -964,6 +981,7 @@ class VideoConverterApp(QMainWindow):
             widget.apply_layout_mode(metrics)
         if hasattr(self, "tabs"):
             self.apply_tab_style(theme.highlight_color())
+            self._fit_burger_button()
         # Before the first show() (i.e. from __init__) only record the window
         # state; main.py's show() honours it. Showing here would pop the window
         # up mid-construction, and in every test that builds the main window.
