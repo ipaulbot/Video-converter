@@ -145,6 +145,7 @@ class LosslessEditorWidget(QWidget):
         self.merge_list = QListWidget()
         self.merge_list.setAcceptDrops(False)
         self.merge_list.setMaximumHeight(120)
+        self.merge_list.setStyleSheet(theme.list_box_style())   # grey box, not Qt's black frame
 
         merge_header = QHBoxLayout()
         merge_header.setSpacing(4)

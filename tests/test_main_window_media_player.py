@@ -89,6 +89,24 @@ class ConverterContextMenuWiringTests(unittest.TestCase):
         self.addCleanup(window.shutdown)
         return window
 
+    def test_the_footer_broom_clears_the_file_list_with_the_log(self):
+        window = self._window()
+        table = window.converted_files_widget
+        table.add_queued_file("Session 1.mp4", r"C:\Videos")
+        window.console_output.appendPlainText("converting...")
+        window.clear_log_tab()
+        self.assertEqual(table.table_widget.rowCount(), 0)
+        self.assertEqual(window.console_output.toPlainText(), "")
+        self.assertIn("file list", window.broom_label_log_tab.toolTip())
+
+    def test_splitter_handles_are_transparent(self):
+        # The default handle painted a grey band above the log and beside the
+        # player's Inspect panel, which read as a stray background.
+        window = self._window()
+        self.assertIn("QSplitter::handle", window.styleSheet())
+        rule = window.styleSheet().split("QSplitter::handle", 1)[1].split("}", 1)[0]
+        self.assertIn("transparent", rule)
+
     def test_add_videos_opens_the_windows_file_picker(self):
         window = self._window()
         with mock.patch.object(window, "open_file_dialog") as picker:

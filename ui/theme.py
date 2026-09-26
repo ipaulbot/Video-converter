@@ -880,6 +880,21 @@ def table_style() -> str:
     )
 
 
+def list_box_style() -> str:
+    """The plain list / table box (playlist, editor merge list): the same thin
+    grey border every other box on the tab wears, instead of Qt's black frame."""
+    s = skin()
+    return (
+        f"QListWidget, QTableWidget {{ background: {s.panel_bg}; color: {s.text_body}; "
+        f"border: 1px solid {s.separator}; border-radius: {RADIUS_SM}px; "
+        f"gridline-color: {s.panel_border}; }} "
+        f"QHeaderView::section {{ background: {s.panel_alt_bg}; color: {s.text_muted}; "
+        f"padding: 2px 6px; border: none; border-bottom: 1px solid {s.panel_border}; "
+        f"border-right: 1px solid {s.panel_border}; font-weight: 600; }} "
+        f"QHeaderView::section:last {{ border-right: none; }}"
+    )
+
+
 def input_style() -> str:
     s = skin()
     return (

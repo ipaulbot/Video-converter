@@ -165,6 +165,9 @@ class VideoConverterApp(QMainWindow):
                 border: 1px solid $separator;
                 border-radius: 4px;
             }
+            QSplitter::handle {
+                background: transparent;
+            }
             QMenuBar, QMenu {
                 background: white;
                 border: 1px solid $separator;
@@ -508,6 +511,7 @@ class VideoConverterApp(QMainWindow):
         # Wrap footer in a widget with explicit zero margins for show/hide control
         self.log_tab_footer_widget = QWidget()
         self.log_tab_footer = make_footer(self.lock_icon_label_log_tab, self.status_label_log_tab, self.clear_log_tab)
+        self.broom_label_log_tab.setToolTip(_tr("Clear the file list and the log"))
         # Explicitly set zero margins on both the widget and layout to match direct addLayout behavior
         self.log_tab_footer_widget.setContentsMargins(0, 0, 0, 0)
         self.log_tab_footer.setContentsMargins(0, 0, 0, 0)
@@ -2809,6 +2813,10 @@ class VideoConverterApp(QMainWindow):
 
     # Add clear log methods
     def clear_log_tab(self, event=None):
+        """The converter footer's broom: empty the file list and the log together."""
+        table = getattr(self, "converted_files_widget", None)
+        if table is not None:
+            table.clear_table()
         self.console_output.clear()
         # Show the instruction text again when log is cleared
         if hasattr(self, 'drag_drop_text'):

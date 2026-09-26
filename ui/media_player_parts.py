@@ -151,6 +151,7 @@ class PlaylistTable(PlaceholderTableWidget):
         header.setSectionResizeMode(self.OFFSET, QHeaderView.Fixed)
         header.resizeSection(self.OFFSET, 76)
         self.setColumnHidden(self.PANEL, True)
+        self.setStyleSheet(theme.list_box_style())   # grey box, not Qt's black frame
         header.setHighlightSections(False)
         header.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.verticalHeader().hide()
