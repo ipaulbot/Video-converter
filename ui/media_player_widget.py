@@ -3,6 +3,7 @@ import threading
 
 from PyQt5.QtCore import (
     QCoreApplication,
+    QEvent,
     Qt,
     QThreadPool,
     QTimer,
@@ -216,9 +217,21 @@ class PlayerPanel(QWidget):
             # the next time the layout is invalidated (e.g. after a fullscreen
             # round trip) and the panel balloons to full video height.
             self.video_widget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+            # The native surface takes the press itself; make it count as a
+            # click on the panel (selection, and so Inspect) all the same.
+            self.video_widget.installEventFilter(self)
             self._video_layout.addWidget(self.video_widget)
             self.placeholder.raise_()
         return self.video_widget
+
+    def eventFilter(self, watched, event):
+        if (
+            watched is self.video_widget
+            and event.type() == QEvent.MouseButtonPress
+            and callable(self.on_selected)
+        ):
+            self.on_selected(self)
+        return super().eventFilter(watched, event)
 
     def _ensure_player(self):
         # Create the QMediaPlayer lazily on first load. Creating it up front for every
@@ -549,15 +562,16 @@ class MediaPlayerWidget(QWidget):
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
+        # No outer margins: the tab container pads every tool tab the same
+        # way; 16 px here put this header below and right of the others'.
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
 
         self.header = TabHeader(
             "player",
             _tr("Media Player"),
-            _tr("Load up to four clips and review them side by side. Play, pause and seek "
-                "control every panel together; the Inspect panel shows the selected clip's "
-                "ffprobe details."),
+            _tr("Review up to four clips side by side with one transport; Inspect shows "
+                "the selected clip's ffprobe details."),
         )
         layout.addWidget(self.header)
 
@@ -596,6 +610,8 @@ class MediaPlayerWidget(QWidget):
         self.playlist_dock.files_requested.connect(self.add_playlist_files)
         self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
         self.playlist_dock.offset_changed.connect(self._on_playlist_offset_changed)
+        self.playlist_dock.current_changed.connect(self._on_playlist_current_changed)
+        self.playlist_dock.set_panel_lookup(self.panels_showing)
         column_layout.addWidget(self.playlist_dock)
         self.playlist_dock.hide()
         self.stage.addWidget(self.video_column)
@@ -946,11 +962,31 @@ class MediaPlayerWidget(QWidget):
 
     def _on_panel_media_changed(self, panel):
         """A panel loaded or cleared media; the dock and sidebar follow the selected one."""
+        # Any panel's change can move a clip between the Panel column's cells.
+        self.playlist_dock.refresh()
         if panel is self.selected_panel():
-            self.playlist_dock.refresh()
             self.playlist_dock.select_path(panel._media_path)
             self._refresh_inspection()
             self._announce_selected_media()
+
+    def panels_showing(self, path):
+        """Numbers (1-based) of the visible panels currently showing `path`."""
+        if not path:
+            return []
+        return [
+            panel.index + 1
+            for panel in self.panels
+            if not panel.isHidden() and panel._media_path == path
+        ]
+
+    def _on_playlist_current_changed(self, path):
+        """A highlighted playlist row shows its details in Inspect, without loading."""
+        if not path:
+            return
+        inspect_btn = getattr(self, "inspect_btn", None)
+        if inspect_btn is None or not inspect_btn.isChecked():
+            return
+        self.inspect_dock.inspect_path(path)
 
     def _refresh_inspection(self):
         # select_panel(0) runs from _build_ui before the transport bar exists.
@@ -1008,6 +1044,11 @@ class MediaPlayerWidget(QWidget):
     def set_visible_panel_count(self, count):
         for index, panel in enumerate(self.panels):
             panel.setVisible(index < count)
+        # The Panel column only means something with several panels on screen.
+        dock = getattr(self, "playlist_dock", None)
+        if dock is not None:
+            dock.set_panel_column_visible(int(count) > 1)
+            dock.refresh()
 
     def visible_panel_count(self):
         return sum(1 for panel in self.panels if not panel.isHidden())

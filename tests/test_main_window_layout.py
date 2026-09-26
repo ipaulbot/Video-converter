@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtWidgets import QApplication
 
 from ui import theme
@@ -259,6 +259,32 @@ class TabHeaderUnityTests(unittest.TestCase):
             self.assertEqual(header.glyph_label.width(), TabHeader.GLYPH_PX, key)
             self.assertFalse(header.description_label.isHidden(), key)
         self.assertIn(window.converter_header, window.reskin_widgets())
+
+    def test_every_tool_tab_header_sits_at_the_same_spot_in_the_window(self):
+        # The recorder's and the player's headers sat 6 / 16 px lower and
+        # further right than the others: their widgets kept their own outer
+        # layout margins while the other tabs use none.
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        window.settings["visible_tool_tabs"] = dict.fromkeys(
+            window.settings.get("visible_tool_tabs", {}), True)
+        window.apply_tool_tab_visibility()
+        window._ensure_media_player_widget()
+        window.move(-7000, -7000)
+        window.show()
+        try:
+            spots = {}
+            for key, header in window.tab_headers().items():
+                window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
+                for _ in range(6):
+                    self.app.processEvents()
+                origin = header.mapTo(window, QPoint(0, 0))
+                glyph = header.glyph_label.mapTo(window, QPoint(0, 0))
+                spots[key] = (origin.x(), origin.y(), glyph.y() - origin.y())
+            self.assertEqual(len(set(spots.values())), 1, spots)
+        finally:
+            window.hide()
 
 
 class MovableTabTests(unittest.TestCase):

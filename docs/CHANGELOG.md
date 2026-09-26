@@ -452,3 +452,19 @@ Use this file to track user-visible fixes, improvements, and feature work.
   for) and the GitHub presence steps. Planning only; nothing renamed.
 - Test hygiene: a `_FakePlayer` helper had been indented inside a test
   class, which silently un-collected six Media Player tests; they run again.
+
+### Follow-up pass (12:04)
+
+- List placeholders are now **thin hairlines** under every empty row slot,
+  all the way down the view (the look of an old spreadsheet grid), instead
+  of fat, rounded, fading bars.
+- The **Multi-Source Recorder and Media Player headers line up** with the
+  other tabs: both widgets dropped their own outer layout margins (6 / 16 px)
+  and the header glyph is top-aligned so a wrapped description cannot push
+  it down. The player's description is shorter so it stays on one line.
+- Media Player playlist gains a **Panel** column listing the panels showing
+  each clip; it appears only when more than one panel is on screen.
+  **Highlighting a playlist row shows that clip's ffprobe details in
+  Inspect** without loading it, and a click on the video surface itself now
+  selects the panel (the native surface used to swallow the press), so
+  clicking a video shows its codec info too.
