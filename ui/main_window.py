@@ -27,7 +27,7 @@ from watchdog.events import FileSystemEventHandler
 from ui.converted_files_widget import ConvertedFilesWidget
 from ui.settings_dialog import SettingsDialog
 from ui.dialogs import InfoDialog, ConfirmationDialog, EasterEggDialog
-from utils.config import load_settings, save_settings
+from utils.config import load_settings, normalize_tool_tab_order, save_settings
 from utils.system_state import get_game_unlocked, set_game_unlocked
 from utils.logger import logger
 from utils.resources import resource_path
@@ -281,6 +281,9 @@ class VideoConverterApp(QMainWindow):
         # bar is too narrow for every enabled tool tab.
         self.tabs.setUsesScrollButtons(False)
         self.tabs.setElideMode(Qt.ElideRight)
+        # Drag a tab to reorder; the order is saved once the tool tabs exist
+        # (see apply_tool_tab_order / _on_tab_moved).
+        self.tabs.setMovable(True)
         self.apply_tab_style("#43a296")
         # Conversion Log Tab
         self.log_tab = QWidget()
@@ -673,6 +676,8 @@ class VideoConverterApp(QMainWindow):
             "multi_source_recorder": self.multi_source_recorder_tab_scroll,
             "media_player": self.media_player_tab_scroll,
         }
+        self.apply_tool_tab_order()
+        self.tabs.tabBar().tabMoved.connect(self._on_tab_moved)
         self.apply_tool_tab_visibility()
         if get_game_unlocked():
             self.add_game_icons()
@@ -1029,6 +1034,42 @@ class VideoConverterApp(QMainWindow):
         if index >= 0:
             self.tabs.setCurrentIndex(index)
             self.on_tab_changed(index)
+
+    def current_tool_tab_order(self):
+        """Tool tab keys left to right as the bar shows them now."""
+        widgets = getattr(self, 'tool_tab_widgets', {})
+        by_widget = {widget: key for key, widget in widgets.items()}
+        order = []
+        for index in range(self.tabs.count()):
+            key = by_widget.get(self.tabs.widget(index))
+            if key is not None:
+                order.append(key)
+        return order
+
+    def apply_tool_tab_order(self):
+        """Arrange the tool tabs as saved in settings["tool_tab_order"]."""
+        order = normalize_tool_tab_order(self.settings.get('tool_tab_order'))
+        widgets = getattr(self, 'tool_tab_widgets', {})
+        bar = self.tabs.tabBar()
+        # QTabWidget follows the bar's tabMoved signal to move the page, so the
+        # signal must stay live; a flag keeps _on_tab_moved from re-saving.
+        self._applying_tab_order = True
+        try:
+            for target, key in enumerate(order):
+                widget = widgets.get(key)
+                current = self.tabs.indexOf(widget) if widget is not None else -1
+                if current >= 0 and current != target:
+                    bar.moveTab(current, target)
+        finally:
+            self._applying_tab_order = False
+
+    def _on_tab_moved(self, _from_index, _to_index):
+        if getattr(self, '_applying_tab_order', False):
+            return
+        order = self.current_tool_tab_order()
+        if order and order != self.settings.get('tool_tab_order'):
+            self.settings['tool_tab_order'] = order
+            save_settings(self.settings)
 
     def apply_tool_tab_visibility(self):
         visible_tabs = self.settings.get('visible_tool_tabs', {})
@@ -1940,7 +1981,7 @@ class VideoConverterApp(QMainWindow):
         # Ensure log tab is visible so user can read the banner
         try:
             if hasattr(self, 'tabs'):
-                self.tabs.setCurrentIndex(0)  # Conversion Log tab
+                self.tabs.setCurrentWidget(self.converter_tab_scroll)  # the log lives on the Video Converter tab
                 # Mimic drag-drop behaviour: hide instruction text
                 if hasattr(self, 'drag_drop_text'):
                     self.drag_drop_text.hide()

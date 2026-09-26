@@ -75,7 +75,11 @@ default_settings = {
         "inspect_visible": True,
         "playlist_visible": False,
     },
+    # Left-to-right order of the tool tabs (the user drags them); keys as in
+    # visible_tool_tabs. Filled in after the dict so the two stay in step.
+    "tool_tab_order": [],
 }
+default_settings["tool_tab_order"] = list(default_settings["visible_tool_tabs"])
 
 config_file = os.path.join(get_data_dir(), "config.json")
 
@@ -131,6 +135,17 @@ def migrate_tool_tab_keys(tabs):
     return tabs
 
 
+def normalize_tool_tab_order(order):
+    """Known tab keys in the saved order, once each; anything missing follows in default order."""
+    known = list(default_settings["visible_tool_tabs"])
+    result = []
+    for key in (order if isinstance(order, (list, tuple)) else []):
+        if key in known and key not in result:
+            result.append(key)
+    result.extend(key for key in known if key not in result)
+    return result
+
+
 def normalize_settings(settings):
     normalized = default_settings.copy()
     normalized.update(settings or {})
@@ -145,6 +160,7 @@ def normalize_settings(settings):
         for key, default_value in default_tabs.items()
     }
     normalized["media_player"] = normalize_media_player_settings(normalized.get("media_player"))
+    normalized["tool_tab_order"] = normalize_tool_tab_order(normalized.get("tool_tab_order"))
     mode = normalized.get("window_mode")
     mode = mode.strip().lower() if isinstance(mode, str) else ""
     normalized["window_mode"] = mode if mode in ("compact", "full") else "compact"

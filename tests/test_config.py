@@ -1,6 +1,11 @@
 import unittest
 
-from utils.config import coerce_retention_days, default_settings, normalize_settings
+from utils.config import (
+    coerce_retention_days,
+    default_settings,
+    normalize_settings,
+    normalize_tool_tab_order,
+)
 
 
 class ConfigTests(unittest.TestCase):
@@ -104,6 +109,22 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(normalize_settings({"window_mode": "FULL"})["window_mode"], "full")
         self.assertEqual(normalize_settings({"window_mode": "giant"})["window_mode"], "compact")
         self.assertEqual(normalize_settings({"window_mode": 3})["window_mode"], "compact")
+
+    def test_tool_tab_order_defaults_to_the_visibility_key_order(self):
+        keys = list(default_settings["visible_tool_tabs"])
+        self.assertEqual(default_settings["tool_tab_order"], keys)
+        self.assertEqual(normalize_settings({})["tool_tab_order"], keys)
+
+    def test_tool_tab_order_keeps_known_keys_and_appends_the_missing_ones(self):
+        order = normalize_tool_tab_order(["media_player", "bogus", "video_converter", "media_player"])
+        self.assertEqual(
+            order,
+            ["media_player", "video_converter", "pc_report", "lossless_editor", "multi_source_recorder"],
+        )
+        self.assertEqual(normalize_tool_tab_order("nonsense"), list(default_settings["visible_tool_tabs"]))
+        self.assertEqual(
+            normalize_settings({"tool_tab_order": ["pc_report"]})["tool_tab_order"][0], "pc_report"
+        )
 
 
 if __name__ == "__main__":

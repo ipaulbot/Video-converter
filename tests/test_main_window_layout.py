@@ -190,3 +190,40 @@ class TabCardTests(unittest.TestCase):
         with patch.object(window.lossless_editor_widget, "reskin") as reskin:
             window.update_all_button_styles()
         reskin.assert_called_once()
+
+
+class MovableTabTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def _window(self, saved_order=None):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        if saved_order is not None:
+            window.settings["tool_tab_order"] = list(saved_order)
+            window.apply_tool_tab_order()
+        return window
+
+    def test_tabs_can_be_dragged_and_the_order_is_saved(self):
+        window = self._window()
+        self.assertTrue(window.tabs.isMovable())
+        self.assertEqual(window.current_tool_tab_order(), list(window.tool_tab_widgets))
+        with patch("ui.main_window.save_settings") as save:
+            window.tabs.tabBar().moveTab(0, 4)          # Video Converter to the far right
+        save.assert_called_once()
+        expected = ["pc_report", "lossless_editor", "multi_source_recorder", "media_player", "video_converter"]
+        self.assertEqual(window.current_tool_tab_order(), expected)
+        self.assertEqual(window.settings["tool_tab_order"], expected)
+
+    def test_a_saved_order_is_applied_at_start_and_hidden_tabs_keep_their_place(self):
+        order = ["media_player", "multi_source_recorder", "video_converter", "pc_report", "lossless_editor"]
+        window = self._window(order)
+        self.assertEqual(window.current_tool_tab_order(), order)
+        # Visibility toggles work on whichever index the tab now has.
+        window.settings["visible_tool_tabs"]["pc_report"] = True
+        window.apply_tool_tab_visibility()
+        index = window.tabs.indexOf(window.tool_tab_widgets["pc_report"])
+        self.assertEqual(index, 3)
+        self.assertTrue(window.tabs.isTabVisible(index))
