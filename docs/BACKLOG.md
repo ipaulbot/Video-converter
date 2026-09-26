@@ -113,6 +113,16 @@ Out of scope in the current design, kept for later:
   but not always the Windows display order. A picked region is not
   re-validated when the monitor layout changes; gdigrab then fails with
   "extends outside window area" and the row needs re-picking.
+- ~~Command-line control for The Observer XT (MRCmd-style `/E /R /S /X /C=
+  /B=`).~~ Done 2026-09-26 on `NVC.exe` itself over a `QLocalServer` pipe.
+  Follow-ups: `/F=<folder>` for the output folder and `/T=<seconds>` for the
+  timer (both are one step each in `run_command_request`); a status query
+  (`/Q` printing recording / idle / file being written) so Observer's wait
+  time can be replaced by polling; a `NVCCmd.exe` stub for sites that must
+  not have a second `NVC.exe` in the path; a `--no-gui` start for `/R` so the
+  recorder can run headless; and, if Noldus grants SDK access, an N-Linx
+  agent (RabbitMQ + Thrift) so Observer can also import the finished videos
+  the way it does from MediaRecorder.
 - ~~Picture-in-picture recording.~~ Done 2026-09-25. Follow-ups: choose which
   source is the main frame and the inset corner/size; the geometry is the
   fixed set in `_pip_preview_rects`.
