@@ -176,7 +176,35 @@ class LosslessEditorWidget(QWidget):
         self.log_output.setPlaceholderText(_tr("FFmpeg output appears here."))
         layout.addWidget(self.log_output, 1)
 
+        # The ffmpeg-running buttons and their own tooltips, so set_blocked()
+        # can grey them out with a reason and put the tooltips back later.
+        self._job_buttons = {
+            button: button.toolTip()
+            for button in (
+                self.trim_btn,
+                self.remux_btn,
+                self.extract_audio_btn,
+                self.remove_audio_btn,
+                self.merge_btn,
+            )
+        }
+        self._blocked_reason = ""
         self._apply_tier_styles()
+
+    def set_blocked(self, reason):
+        """Grey out every ffmpeg job with `reason` as tooltip; "" lifts the block.
+
+        The main window calls this from the workflow rules (a recording is
+        active). Browsing, the merge list and the log stay usable.
+        """
+        reason = reason or ""
+        self._blocked_reason = reason
+        for button, own_tooltip in self._job_buttons.items():
+            button.setEnabled(not reason)
+            button.setToolTip(reason or own_tooltip)
+
+    def blocked_reason(self):
+        return self._blocked_reason
 
     def _apply_tier_styles(self):
         compact = theme.compact_button_style()
@@ -236,6 +264,10 @@ class LosslessEditorWidget(QWidget):
         return get_unique_path(os.path.join(directory, f"{stem}_{suffix}.{ext}"))
 
     def _run_command(self, command):
+        if self._blocked_reason:
+            # Keyboard shortcuts or scripts can reach here with the buttons greyed out.
+            self.log_output.appendPlainText(self._blocked_reason)
+            return
         self.log_output.clear()
         self.log_output.appendPlainText(" ".join(f'"{part}"' if " " in part else part for part in command))
         self.worker = LosslessWorker(command, self)

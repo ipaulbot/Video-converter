@@ -60,6 +60,23 @@ class InspectionDockTests(unittest.TestCase):
         inspector.summary_drag_leave(None)
         self.assertNotIn("dashed", inspector.summary_drag_drop.styleSheet())
 
+    def test_dock_is_a_grey_box_even_while_empty(self):
+        # 15:32 report: the Summary / JSON area was white and "floated" until
+        # something was inspected. The tab pane now wears the list-box border.
+        dock = InspectionDock()
+        self.addCleanup(dock.close)
+        pane_style = dock.inspector.tabs.styleSheet()
+        self.assertIn("QTabWidget::pane", pane_style)
+        self.assertIn(theme.skin().separator, pane_style)
+        # One frame, not two: the text panels inside are borderless.
+        for text in (dock.inspector.summary_text, dock.inspector.info_display):
+            self.assertIn("border: none", text.styleSheet())
+        # The stand-alone inspector (no dock) keeps its own look.
+        from ui.inspection_widget import InspectionWidget
+        plain = InspectionWidget(compact=False)
+        self.addCleanup(plain.close)
+        self.assertEqual(plain.tabs.styleSheet(), "")
+
     def test_stop_inspection_kills_a_running_probe_and_joins_the_thread(self):
         # Destroying a QThread that is still running aborts the process; a
         # probe on a slow drive must not be able to take NVC down at exit.

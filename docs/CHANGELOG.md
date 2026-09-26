@@ -502,3 +502,41 @@ Use this file to track user-visible fixes, improvements, and feature work.
   play/pause round trip pins the frame back at the requested spot (at most
   three tries). Reproduced 4 times out of 5 with a probe before the fix,
   0 of 8 after.
+
+### Follow-up pass (15:32)
+
+- **Workflow rules, written down and applied** (`ui/workflow_rules.py`, spec
+  `docs/superpowers/specs/2026-09-26-workflow-rules-and-player-responsiveness-design.md`).
+  Switching tabs never stops or pauses anything and no tab is ever greyed out
+  (the old "recording locks every other tab" is gone). Recording is exclusive
+  with the other ffmpeg jobs: while a recording is starting, running or
+  stopping, the converter's Start reads "Recording..." and the Lossless
+  Editor's job buttons are greyed out, each with the reason as tooltip. A
+  conversion or the folder monitor blocks Start Recording only; the rest of
+  the recorder stays usable (it used to be disabled wholesale). Media Player
+  and PC Report are never blocked.
+- **One status line on every tab.** The five footers each had their own
+  label and three of them were never written. Every footer now shows the same
+  `Status: ...` line listing what runs (Recording · Converting · Monitoring,
+  Locked first), "Idle" when nothing does; the dot is green for a running
+  job, amber for the monitor alone, red after a failed recording, grey when
+  locked.
+- **Media Player: a drop on the second panel showed nothing.** The playlist
+  strip and Inspect follow the *selected* panel and a load did not select.
+  Now any load -- drop, Load button, playlist -- selects its panel first, so
+  the strip switches to that panel's list and Inspect shows the clip.
+- Media Player: Panels, Speed and Volume moved left to sit with the other
+  controls (three groups: transport, view, playback settings).
+- Media Player: the Inspect dock was a white void until something was
+  inspected; the Summary / JSON pane now wears the grey list-box border while
+  empty (and the text panels inside dropped their own border).
+- **Media Player: compact window cut the Inspect dock off.** Reproduced: the
+  panel captions were plain QLabels whose minimum width is their whole text,
+  so two long clip names pushed the tab past the window and behind a
+  horizontal scroll bar. Captions now elide in the middle (`ElidedLabel`,
+  full name on hover); the tab's minimum width no longer depends on file
+  names.
+- Media Player: the native video surface is hidden while its panel is hidden
+  and shown again with the re-presented frame, so a tab switch cannot show
+  stale screen content (the converter table, in the report) in the tile.
+  Not reproducible headless -- see BACKLOG for the follow-up if it persists.

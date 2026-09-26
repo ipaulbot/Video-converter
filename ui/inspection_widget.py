@@ -207,6 +207,9 @@ class InspectionWidget(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
         self.tabs = QTabWidget()
+        if self.compact:
+            # A grey box even while empty (spec 2026-09-26 §1).
+            self.tabs.setStyleSheet(theme.inspect_pane_style())
 
         # Summary tab with drag and drop area
         self.summary_tab = QWidget()
