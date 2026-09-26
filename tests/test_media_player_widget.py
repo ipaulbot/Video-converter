@@ -22,6 +22,7 @@ from ui.media_player_widget import (
     MAX_PANELS,
     PANEL_COUNT_OPTIONS,
     MediaPlayerWidget,
+    PlayerPanel,
     format_timecode,
     panel_seek_position_ms,
 )
@@ -711,6 +712,94 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         panel._on_status_for_prime(QMediaPlayer.LoadedMedia)
         self.assertEqual(player.calls, [])
 
+    def test_a_position_emitted_from_inside_play_does_not_finish_the_prime(self):
+        # Media Foundation emits positionChanged() synchronously from play();
+        # pausing in that stack loses the pause and the clip runs on.
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=800)
+        original_play = player.play
+
+        def play_emitting_position():
+            original_play()
+            player.positionChanged.emit(800)
+
+        player.play = play_emitting_position
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._primed_path = panel._media_path
+        self.assertTrue(panel.represent_frame())
+        self.assertTrue(panel._priming)
+        self.assertEqual(player.calls, ["setMuted(True)", "play"])
+        # Still at the target: no frame has been drawn yet either.
+        player.positionChanged.emit(800)
+        self.assertTrue(panel._priming)
+        player.positionChanged.emit(840)
+        self.assertFalse(panel._priming)
+        self.assertEqual(player.calls[2:], ["pause", "setPosition(800)", "setMuted(False)"])
+
+    # --- paused-seek watchdog -------------------------------------------------
+
+    def _paused_panel(self, position=0):
+        widget = self._widget()
+        panel = widget.panels[0]
+        player = _FakePausedPlayer(position=position)
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._primed_path = panel._media_path
+        return widget, panel, player
+
+    def test_a_paused_seek_is_watched_and_left_alone_when_it_holds(self):
+        widget, panel, player = self._paused_panel()
+        widget._is_playing = False
+        widget.seek_all(800)
+        self.assertEqual(player.calls, ["setPosition(800)"])
+        self.assertTrue(panel._settle_timer.isActive())
+        player._position = 800
+        for _ in range(PlayerPanel.SETTLE_TICKS):
+            panel._on_settle_tick()
+        self.assertFalse(panel._settle_timer.isActive())
+        self.assertEqual(player.calls, ["setPosition(800)"])
+
+    def test_a_paused_seek_that_runs_away_is_pinned_back_with_a_play_pause_round_trip(self):
+        # Media Foundation may keep decoding at full rate while state() says Paused.
+        widget, panel, player = self._paused_panel()
+        widget._is_playing = False
+        panel.seek_paused(800)
+        player._position = 800
+        panel._on_settle_tick()
+        player._position = 1010                      # +210 ms in one 100 ms tick
+        panel._on_settle_tick()
+        self.assertTrue(panel._priming)
+        self.assertEqual(panel._prime_target_ms, 800)
+        self.assertEqual(player.calls[-2:], ["setMuted(True)", "play"])
+        player.positionChanged.emit(1060)
+        self.assertEqual(player.calls[-3:], ["pause", "setPosition(800)", "setMuted(False)"])
+        self.assertTrue(panel._settle_timer.isActive())   # and watched again
+
+    def test_the_watchdog_gives_up_after_a_few_retries(self):
+        widget, panel, player = self._paused_panel()
+        widget._is_playing = False
+        panel.seek_paused(800)
+        for _ in range(PlayerPanel.SETTLE_MAX_RETRIES + 2):
+            player._position = 800
+            panel._on_settle_tick()
+            player._position = 1100
+            panel._on_settle_tick()
+            if panel._priming:
+                player.positionChanged.emit(1150)
+        self.assertEqual(player.calls.count("play"), PlayerPanel.SETTLE_MAX_RETRIES)
+
+    def test_play_stops_the_watchdog_so_playback_is_never_pinned(self):
+        widget, panel, player = self._paused_panel()
+        widget._is_playing = False
+        panel.seek_paused(800)
+        widget.play_all()
+        self.assertFalse(panel._settle_timer.isActive())
+        widget._is_playing = True
+        widget.seek_all(1200)
+        self.assertFalse(panel._settle_timer.isActive())   # playing seeks are not watched
+
     def test_prime_restores_the_users_mute_choice(self):
         widget = self._widget()
         widget.mute_btn.setChecked(True)
@@ -864,6 +953,7 @@ class _FakePlayer(QObject):
 
     positionChanged = pyqtSignal(int)
     mediaStatusChanged = pyqtSignal(int)
+    stateChanged = pyqtSignal(int)
 
     def __init__(self, muted=False, position=0, duration=0):
         super().__init__()
@@ -912,6 +1002,13 @@ class _FakePlayer(QObject):
 
     def duration(self):
         return self._duration
+
+
+class _FakePausedPlayer(_FakePlayer):
+    """A loaded player that reports Paused whatever it is really doing."""
+
+    def state(self):
+        return QMediaPlayer.PausedState
 
 
 class MediaPlayerRealFileSmokeTests(unittest.TestCase):
@@ -1062,6 +1159,12 @@ class MediaPlayerRealFileSmokeTests(unittest.TestCase):
         self.assertTrue(started, "re-show did not nudge the paused panel")
         self.assertFalse(panel._priming)
         self.assertEqual(panel.player.state(), QMediaPlayer.PausedState)
+        # The closing setPosition() is asynchronous in Media Foundation; give
+        # it a moment to land before reading the position back.
+        deadline = time.monotonic() + 1.5
+        while time.monotonic() < deadline and abs(panel.player.position() - 800) > 250:
+            self.app.processEvents()
+            time.sleep(0.02)
         self.assertLessEqual(abs(panel.player.position() - 800), 250)
         self.assertFalse(panel.player.isMuted())
 

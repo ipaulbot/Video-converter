@@ -116,6 +116,11 @@ def panel_seek_position_ms(master_ms, offset_ms, duration_ms):
 class PlayerPanel(QWidget):
     """A single video tile: a video surface plus its own player and sync offset."""
 
+    SETTLE_TICK_MS = 100      # watchdog sampling period after a paused seek
+    SETTLE_TICKS = 12         # how long to keep watching (~1.2 s)
+    SETTLE_DRIFT_MS = 60      # position growth per tick that means "it is playing"
+    SETTLE_MAX_RETRIES = 3
+
     def __init__(self, index, parent=None):
         super().__init__(parent)
         self.index = index
@@ -138,10 +143,21 @@ class PlayerPanel(QWidget):
         self._primed_path = ""
         self._prime_restore_muted = False
         self._prime_target_ms = 0
+        self._prime_starting = False
         self._prime_timer = QTimer(self)
         self._prime_timer.setSingleShot(True)
         self._prime_timer.setInterval(200)
         self._prime_timer.timeout.connect(self._finish_prime)
+        # Paused-seek watchdog (see seek_paused): Media Foundation sometimes
+        # runs a seek issued while paused at full rate although the player
+        # still reports Paused. We watch the position and pin it back.
+        self._settle_timer = QTimer(self)
+        self._settle_timer.setInterval(self.SETTLE_TICK_MS)
+        self._settle_timer.timeout.connect(self._on_settle_tick)
+        self._settle_target_ms = 0
+        self._settle_ticks = 0
+        self._settle_last_pos = None
+        self._settle_retries = 0
         self._build_ui()
 
     def _build_ui(self):
@@ -302,7 +318,14 @@ class PlayerPanel(QWidget):
             self.placeholder.raise_()
         self._prime_restore_muted = bool(self.player.isMuted())
         self.player.setMuted(True)
-        self.player.play()
+        # Media Foundation emits positionChanged() from inside play(); pausing
+        # there, before the start has gone through, loses the pause and the
+        # clip runs on while the player still says Paused.
+        self._prime_starting = True
+        try:
+            self.player.play()
+        finally:
+            self._prime_starting = False
         self._prime_timer.start()
 
     def represent_frame(self):
@@ -323,8 +346,10 @@ class PlayerPanel(QWidget):
         if self._primed_path and self._primed_path == self._media_path:
             self.represent_frame()
 
-    def _on_position_for_prime(self, _position):
-        if self._priming:
+    def _on_position_for_prime(self, position):
+        # Finish only once the pipeline has demonstrably moved past the target
+        # (a frame is on screen); the 200 ms timer covers clips that never do.
+        if self._priming and not self._prime_starting and int(position) != self._prime_target_ms:
             self._finish_prime()
 
     def _finish_prime(self):
@@ -336,8 +361,52 @@ class PlayerPanel(QWidget):
             self.player.pause()
             self.player.setPosition(self._prime_target_ms)
             self.player.setMuted(self._prime_restore_muted)
+            self._watch_paused_seek(self._prime_target_ms)
         self.placeholder.hide()
         self.placeholder.setText(_tr("Drop a video here\nor click Load"))
+
+    # --- paused-seek watchdog ---------------------------------------------------
+
+    def seek_paused(self, target_ms):
+        """Seek while the transport is paused and make sure the frame holds there."""
+        if self.player is None:
+            return
+        self._settle_retries = 0
+        self.player.setPosition(int(target_ms))
+        self._watch_paused_seek(target_ms)
+
+    def _watch_paused_seek(self, target_ms):
+        self._settle_target_ms = max(0, int(target_ms))
+        self._settle_ticks = 0
+        self._settle_last_pos = None
+        self._settle_timer.start()
+
+    def _stop_settle_watch(self):
+        self._settle_timer.stop()
+        self._settle_last_pos = None
+
+    def _on_settle_tick(self):
+        if self.player is None or self._priming or self._host_is_playing():
+            self._stop_settle_watch()
+            return
+        position = int(self.player.position())
+        moving = (
+            self._settle_last_pos is not None
+            and position - self._settle_last_pos >= self.SETTLE_DRIFT_MS
+        )
+        self._settle_last_pos = position
+        self._settle_ticks += 1
+        if moving and self.player.state() == QMediaPlayer.PausedState:
+            # Playing behind our back. pause() is a no-op for a player that
+            # believes it is paused; a short play/pause round trip (the prime)
+            # is what actually stops the pipeline, then it seeks back.
+            self._stop_settle_watch()
+            if self._settle_retries < self.SETTLE_MAX_RETRIES:
+                self._settle_retries += 1
+                self._begin_prime(target_ms=self._settle_target_ms, caption=False)
+            return
+        if self._settle_ticks >= self.SETTLE_TICKS:
+            self._stop_settle_watch()
 
     def _cancel_prime(self, forget=False):
         """Drop an in-flight prime.
@@ -346,6 +415,7 @@ class PlayerPanel(QWidget):
         default (the user pressed Play) marks this clip done so a later
         BufferedMedia -- they arrive after seeks -- can never yank it to 0.
         """
+        self._stop_settle_watch()      # Play/Stop/Load: nothing to pin any more
         if self._priming:
             self._priming = False
             self._prime_timer.stop()
@@ -1216,6 +1286,7 @@ class MediaPlayerWidget(QWidget):
     def stop_all(self):
         for panel in self.panels:
             if panel.player is not None:
+                panel._stop_settle_watch()
                 panel.player.stop()
         self._is_playing = False
         self._set_play_glyph(playing=False)
@@ -1233,16 +1304,18 @@ class MediaPlayerWidget(QWidget):
             if panel._media_path != path or panel.player is None:
                 continue
             if panel.player.state() != QMediaPlayer.PlayingState:
-                panel.player.setPosition(
+                panel.seek_paused(
                     panel_seek_position_ms(master, panel.offset_ms(), panel.duration_ms())
                 )
 
     def seek_all(self, master_ms):
         self._set_slider_value(master_ms)
         for panel in self.active_panels():
-            panel.player.setPosition(
-                panel_seek_position_ms(master_ms, panel.offset_ms(), panel.duration_ms())
-            )
+            target = panel_seek_position_ms(master_ms, panel.offset_ms(), panel.duration_ms())
+            if self._is_playing:
+                panel.player.setPosition(target)
+            else:
+                panel.seek_paused(target)
         self._update_time_label(master_ms)
 
     def _clamp_master(self, master_ms):

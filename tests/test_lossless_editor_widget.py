@@ -24,6 +24,12 @@ class LosslessEditorLayoutTests(unittest.TestCase):
         self.assertEqual(self.widget.remove_audio_btn.text(), "Remove audio")
         self.assertEqual(self.widget.merge_btn.text(), "Merge")
 
+    def test_merge_list_wears_the_grey_box_border(self):
+        # Qt's default list frame is near-black; every other box on the tab is grey.
+        from ui import theme
+        self.assertEqual(self.widget.merge_list.styleSheet(), theme.list_box_style())
+        self.assertIn(theme.skin().separator, self.widget.merge_list.styleSheet())
+
     def test_browse_is_a_folder_glyph_button(self):
         self.assertIsInstance(self.widget.browse_btn, QToolButton)
         self.assertEqual(self.widget.browse_btn.property("glyph"), "folder_open")

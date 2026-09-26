@@ -4225,6 +4225,42 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(layout.stretch(host_index), 0)
         widget.apply_layout_mode(theme.COMPACT)
 
+    def test_a_preview_frame_never_asks_the_layout_for_more_room(self):
+        # A QLabel's hints follow its pixmap; frames are scaled to the tile's
+        # current size, so the default hints made every frame 2 px taller than
+        # the last (pixmap + frame) and a single-source tab crept downwards.
+        widget = self._widget()
+        tile = widget.preview_boxes[0]
+        before = (tile.sizeHint(), tile.minimumSizeHint())
+        big = QPixmap(1280, 720)
+        big.fill(Qt.blue)
+        tile.setPixmap(big)
+        self.assertEqual((tile.sizeHint(), tile.minimumSizeHint()), before)
+        self.assertEqual(tile.minimumSizeHint().height(), tile.minimumHeight())
+        self.assertLess(tile.sizeHint().height(), 200)
+
+    def test_single_source_tile_keeps_its_height_frame_after_frame(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        for index, row in enumerate(widget.source_rows):
+            row[0].setChecked(index == 0)
+        widget.update_preview_panel_visibility()
+        widget.resize(1000, 620)
+        widget.move(-7000, -7000)
+        widget.show()
+        for _ in range(5):
+            self.app.processEvents()
+        tile = widget.preview_boxes[0]
+        start = tile.height()
+        frame = QPixmap(1280, 720)
+        frame.fill(Qt.darkGray)
+        for _ in range(6):
+            tile.setPixmap(frame.scaled(tile.contentsRect().size(), Qt.KeepAspectRatio))
+            for _ in range(4):
+                self.app.processEvents()
+        self.assertEqual(tile.height(), start)
+        self.assertEqual(widget.height(), 620)
+        widget.close()
+
     def test_output_settings_fields_share_one_width(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         widget.apply_layout_mode(theme.FULL)

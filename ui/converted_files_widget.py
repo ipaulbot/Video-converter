@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.glyph_icons import make_icon_button, reskin_icon_buttons
 from ui.list_placeholder import PlaceholderTableWidget
 from utils.logger import logger
 
@@ -127,24 +128,22 @@ class ConvertedFilesWidget(QWidget):
         # Create a container widget similar to conversion log
         from PyQt5.QtWidgets import QFrame
         self.table_container = QFrame()
+        self.table_container.setObjectName("converted_files_frame")
         self.table_container.setFrameStyle(QFrame.Box)
-        self.table_container.setStyleSheet(theme.qss("QFrame { border: 1px solid $separator; border-radius: 6px; background: white; }"))
+        # Scoped to this frame: a bare `QFrame {}` rule also reached the table's
+        # headers (QFrame subclasses) and drew a rounded box down the row-number column.
+        self.table_container.setStyleSheet(theme.qss(
+            "#converted_files_frame { border: 1px solid $separator; border-radius: 6px; background: white; }"
+        ))
 
         # Create a layout for the container
         container_layout = QVBoxLayout(self.table_container)
         container_layout.setContentsMargins(0, 0, 0, 0)
         container_layout.setSpacing(0)
 
-        # Create clear button
-        self.clear_button = QPushButton(_tr("Clear"))
-        clear_button = self.clear_button
-        clear_button.setCursor(Qt.PointingHandCursor)
-        clear_button.setStyleSheet(theme.compact_button_style())
-        clear_button.clicked.connect(self.clear_table)
-        theme.opt_out_of_button_style(clear_button)
-
         self.table_widget = PlaceholderTableWidget(0, 3)   # faint rows while empty
         self.table_widget.setHorizontalHeaderLabels(["File Name", "Destination Folder", "Date Modified"])
+        self.table_widget.verticalHeader().hide()          # the status glyph already leads each row
         self.table_widget.setSelectionBehavior(self.table_widget.SelectRows)
         self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_widget.setEditTriggers(self.table_widget.NoEditTriggers)
@@ -195,6 +194,7 @@ class ConvertedFilesWidget(QWidget):
             }
             QTableWidget::item:selected {
                 background: $inner_border;
+                color: $text_body;
             }
             QHeaderView::section {
                 background: $grey_050;
@@ -214,27 +214,26 @@ class ConvertedFilesWidget(QWidget):
 
         # Add container to main layout
         layout.addWidget(self.table_container)
+        # Quiet glyph buttons for the selected row (Play / Inspect); no Clear --
+        # the footer broom empties the list together with the log. The green
+        # push buttons here read as a second toolbar under the footer's icons.
         actions_row = QHBoxLayout()
-        actions_row.setContentsMargins(0, 6, 0, 0)
+        actions_row.setContentsMargins(0, 4, 0, 0)
+        actions_row.setSpacing(4)
         actions_row.addStretch(1)
-        actions_row.addWidget(clear_button)
-        self.play_button = QPushButton(_tr("Play"))
-        self.play_button.setCursor(Qt.PointingHandCursor)
-        self.play_button.setToolTip(
-            _tr("Open the selected file in the Media Player tab")
+        accent = theme.skin().accent
+        self.play_button = make_icon_button(
+            "play", _tr("Open the selected file in the Media Player tab"), accent, size=24
         )
-        self.play_button.setStyleSheet(theme.compact_button_style())
-        theme.opt_out_of_button_style(self.play_button)
         self.play_button.clicked.connect(self.request_play_selected)
         self.play_button.hide()
         actions_row.addWidget(self.play_button)
-        self.inspect_button = QPushButton(_tr("Inspect"))
-        self.inspect_button.setCursor(Qt.PointingHandCursor)
-        self.inspect_button.setToolTip(
-            _tr("Show the selected file's ffprobe details in the Media Player's Inspect panel")
+        self.inspect_button = make_icon_button(
+            "inspect",
+            _tr("Show the selected file's ffprobe details in the Media Player's Inspect panel"),
+            accent,
+            size=24,
         )
-        self.inspect_button.setStyleSheet(theme.compact_button_style())
-        theme.opt_out_of_button_style(self.inspect_button)
         self.inspect_button.clicked.connect(self.request_inspect_selected)
         self.inspect_button.hide()
         actions_row.addWidget(self.inspect_button)
@@ -245,7 +244,6 @@ class ConvertedFilesWidget(QWidget):
         self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_widget.customContextMenuRequested.connect(self.show_context_menu)
         self.table_widget.selectionModel().selectionChanged.connect(self._handle_selection_changed)
-        self._refresh_clear_button()
 
     # Basic drag-and-drop support; parent handles the actual conversion logic.
     def dragEnterEvent(self, event):
@@ -291,7 +289,6 @@ class ConvertedFilesWidget(QWidget):
         self.table_widget.setItem(row, 1, dest_item)
         self.table_widget.setItem(row, 2, QTableWidgetItem("-"))
         self.table_widget.item(row, 0).setData(Qt.UserRole, os.path.join(destination_folder, file_name_only))
-        self._refresh_clear_button()
 
     def update_file_status(self, file_name, status, date_str=None):
         """Update the status icon for a file in the table. Status: 'queued', 'processing', 'success', 'failure'.
@@ -435,7 +432,6 @@ class ConvertedFilesWidget(QWidget):
                 self.table_widget.item(row, 0).setData(Qt.UserRole, output_file_path)
                 # Force table refresh
                 self.table_widget.viewport().update()
-            self._refresh_clear_button()
             # Write per-file log
             if not os.path.exists(self.log_folder):
                 os.makedirs(self.log_folder, exist_ok=True)
@@ -596,21 +592,15 @@ class ConvertedFilesWidget(QWidget):
     def clear_table(self):
         """Clear the converted files table."""
         self.table_widget.setRowCount(0)
-        self._refresh_clear_button()
         self.preview_requested.emit("")  # Clear preview on table clear
 
-    def _refresh_clear_button(self):
-        self.clear_button.setVisible(self.table_widget.rowCount() > 0)
-
     def update_button_style(self, new_style=None):
-        """Skin changed: Clear and Play stay on the compact tier, in the new accent."""
+        """Skin changed: repaint the Play / Inspect glyphs in the new accent."""
         self.button_style = new_style or self.button_style
         self.reskin()
 
     def reskin(self):
-        compact = theme.compact_button_style()
-        for button in (self.clear_button, self.play_button, self.inspect_button):
-            button.setStyleSheet(compact)
+        reskin_icon_buttons(self, theme.skin().accent)
 
     def clear_logs(self):
         # Delete all .txt logs in the log folder

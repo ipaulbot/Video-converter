@@ -468,3 +468,37 @@ Use this file to track user-visible fixes, improvements, and feature work.
   Inspect** without loading it, and a click on the video surface itself now
   selects the panel (the native surface used to swallow the press), so
   clicking a video shows its codec info too.
+
+### Follow-up pass (14:18)
+
+- **Recorder tab crept downwards with one source.** Each preview frame was
+  scaled to the tile's current size, and a QLabel's size hints follow its
+  pixmap, so every frame asked the layout for 2 px more (pixmap + frame),
+  got it, and the next frame was scaled 2 px taller -- until Output settings
+  and Recording properties needed scrolling. Tiles now have fixed size hints
+  (the layout alone sizes them) and frames are scaled to the content rect.
+- List placeholders: the hairlines break at the column boundaries and stop
+  8 px short of the view edges.
+- Video Converter list: the green Clear / Play / Inspect push buttons are
+  gone. Play and Inspect are quiet 24 px glyph buttons under the table's
+  right edge (still only when a row is selected); Clear is the footer broom,
+  which now empties the file list together with the log (the footer's file
+  button already adds videos). The selected row's text is readable again.
+- Two stray grey shapes fixed: the table's row-number column drew a rounded
+  box down the left (a `QFrame` style rule on the container leaked onto the
+  header; the header is hidden and the rule is scoped), and the splitter
+  handles above the log and beside the player's Inspect panel painted as
+  grey bands (now transparent, still 8 px to grab).
+- The Media Player playlist and the Lossless Editor merge list wore Qt's
+  near-black frame; both now use the same thin grey border as the other
+  boxes (`theme.list_box_style()`).
+- **Media Player: a paused clip could quietly run on.** With the Windows
+  Media Foundation backend, a seek issued while paused sometimes plays at
+  full rate (with sound) although the player still reports Paused -- seen
+  when scrubbing right after a load, and when the re-presented frame on a
+  tab return did play -> pause in one go. The first-frame nudge now waits
+  for the pipeline to move before pausing, and every paused seek is watched
+  for about a second: if the position keeps advancing, a short muted
+  play/pause round trip pins the frame back at the requested spot (at most
+  three tries). Reproduced 4 times out of 5 with a probe before the fix,
+  0 of 8 after.

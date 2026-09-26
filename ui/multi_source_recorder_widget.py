@@ -391,10 +391,24 @@ class PreviewLabel(QLabel):
     # "Stop Recording" button is shown/hidden, and without this hook the overlay drifts
     # off-center (it was just .move()'d to absolute coordinates the last time the
     # source was updated).
+    # The tile's size comes from the layout, never from the picture on it. A
+    # QLabel's size hints follow its pixmap, and each preview frame is scaled
+    # to the tile's *current* size -- so with the default hints every frame
+    # asked for pixmap height + 2 px of frame, the layout obliged, the next
+    # frame was scaled 2 px taller, and a single-source tab crept downwards a
+    # frame at a time until the groups below needed scrolling.
+    HINT = QSize(160, 90)
+
     def __init__(self, recorder, row_index, parent=None):
         super().__init__(parent)
         self._recorder = recorder
         self._row_index = row_index
+
+    def sizeHint(self):
+        return QSize(self.HINT)
+
+    def minimumSizeHint(self):
+        return QSize(0, self.minimumHeight())
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -2275,7 +2289,7 @@ class MultiSourceRecorderWidget(QWidget):
                             f"{pixmap.width()}x{pixmap.height()} avg_luma={average_luma:.1f}"
                         )
                     self.preview_boxes[row_index].setPixmap(
-                        pixmap.scaled(self.preview_boxes[row_index].size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        pixmap.scaled(self.preview_boxes[row_index].contentsRect().size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     )
         except RuntimeError:
             return
@@ -2313,7 +2327,7 @@ class MultiSourceRecorderWidget(QWidget):
             x, y, width, height = self._combined_preview_crop_rect(index, total, pixmap.width(), pixmap.height())
             cropped = pixmap.copy(x, y, width, height)
             self.preview_boxes[row_index].setPixmap(
-                cropped.scaled(self.preview_boxes[row_index].size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                cropped.scaled(self.preview_boxes[row_index].contentsRect().size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             )
 
     def _preview_finished(self, row_index, exit_code, process=None):

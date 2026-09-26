@@ -3,7 +3,7 @@ import tempfile
 import unittest
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QToolButton
 
 from ui.converted_files_widget import ConvertedFilesWidget
 
@@ -129,17 +129,39 @@ class ContextMenuTests(unittest.TestCase):
         ])
 
 
-class ClearButtonTests(unittest.TestCase):
+class ActionRowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
-    def test_clear_button_tracks_row_count(self):
+    def test_no_clear_button_the_footer_broom_does_that(self):
+        # The green Clear / Play / Inspect push buttons read as a second
+        # toolbar next to the footer's icons; Clear is gone (the broom clears
+        # the list with the log) and Play / Inspect are quiet glyph buttons.
         widget = ConvertedFilesWidget()
         self.addCleanup(widget.close)
-
-        self.assertTrue(widget.clear_button.isHidden())
+        self.assertFalse(hasattr(widget, "clear_button"))
         widget.add_queued_file("Session 1.mp4", r"C:\Videos")
-        self.assertFalse(widget.clear_button.isHidden())
         widget.clear_table()
-        self.assertTrue(widget.clear_button.isHidden())
+        self.assertEqual(widget.table_widget.rowCount(), 0)
+
+    def test_play_and_inspect_are_glyph_buttons(self):
+        widget = ConvertedFilesWidget()
+        self.addCleanup(widget.close)
+        for button in (widget.play_button, widget.inspect_button):
+            self.assertIsInstance(button, QToolButton)
+            self.assertFalse(button.icon().isNull())
+            self.assertEqual(button.text(), "")
+            self.assertLessEqual(button.iconSize().width(), 24)
+        self.assertEqual(widget.play_button.property("glyph"), "play")
+        self.assertEqual(widget.inspect_button.property("glyph"), "inspect")
+
+    def test_row_numbers_are_hidden_and_the_frame_style_stays_on_the_frame(self):
+        # The container's `QFrame { border-radius }` rule leaked onto the
+        # vertical header (a QFrame too) and drew a rounded box down the
+        # row-number column; the header is hidden and the rule is scoped.
+        widget = ConvertedFilesWidget()
+        self.addCleanup(widget.close)
+        self.assertTrue(widget.table_widget.verticalHeader().isHidden())
+        self.assertIn("#", widget.table_container.styleSheet().split("{")[0])
+        self.assertNotEqual(widget.table_container.objectName(), "")

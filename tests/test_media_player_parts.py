@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import inspection_widget as inspection_module
+from ui import theme
 from ui.inspection_widget import InspectionWidget
 from ui.media_player_parts import (
     FullscreenHost,
@@ -296,6 +297,11 @@ class PlaylistDockTests(unittest.TestCase):
         self.assertEqual(seen, ["C:\\Videos\\b.mp4", "C:\\Videos\\a.mp4"])
         dock.clear()
         self.assertEqual(seen[-1], "")                       # nothing highlighted any more
+
+    def test_playlist_box_wears_the_grey_border_not_qts_black_frame(self):
+        dock, _model = self._dock()
+        self.assertEqual(dock.list.styleSheet(), theme.list_box_style())
+        self.assertIn(theme.skin().separator, dock.list.styleSheet())
 
     def test_offset_text_is_signed_and_one_decimal(self):
         self.assertEqual(format_offset_seconds(0), "0.0 s")
