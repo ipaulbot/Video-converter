@@ -48,6 +48,7 @@ from ui.lossless_editor_widget import LosslessEditorWidget
 from ui.multi_source_recorder_widget import MultiSourceRecorderWidget
 from ui.media_player_widget import MediaPlayerWidget
 from conversion.recording_commands import recording_layout_preview_rects
+from conversion.recorder_settings import load_recorder_settings
 from ui.pc_report_dialog import PCReportWidget
 from utils.update_checker import UpdateChecker, UpdateWorker
 
@@ -1020,6 +1021,97 @@ class VideoConverterApp(QMainWindow):
                 self.pc_report_widget.on_run()
         except Exception as e:
             logger.error(f"Failed to start embedded PC Report: {e}")
+
+    # -- command-line control (NVC.exe /E /R /S /X /C= /B=) -------------------
+
+    def run_command_request(self, request):
+        """Apply MRCmd-style switches to this running NVC.
+
+        Returns (ok, message) for the caller's console and exit code. Steps run
+        in the order preset, base name, record, stop, close; the first failure
+        stops the run so `/C=Wrong /R` does not record with the old preset.
+        """
+        done = []
+        for action, value in request.steps():
+            ok, note = self._run_command_step(action, value)
+            self.append_log(f"[command] /{action} {value or ''}: {note}".rstrip(), is_error=not ok)
+            done.append(note)
+            if not ok:
+                return False, "; ".join(done)
+        if request.launch:
+            self.showNormal()
+            self.raise_()
+            self.activateWindow()
+            done.append("NVC brought to the front")
+        return True, "; ".join(done) or "nothing to do"
+
+    def _run_command_step(self, action, value):
+        recorder = getattr(self, "multi_source_recorder_widget", None)
+        if recorder is None:
+            return False, "the recorder is not available"
+        if action == "preset":
+            return self._command_load_preset(recorder, value)
+        if action == "base_name":
+            recorder.base_name_edit.setText(value)
+            return True, f"base name set to {value}"
+        if action == "record":
+            return self._command_start_recording(recorder)
+        if action == "stop":
+            if not self.is_recorder_recording():
+                return True, "not recording; nothing to stop"
+            recorder.stop_recording()
+            return True, "recording stopped"
+        if action == "close":
+            if self.is_recorder_recording():
+                recorder.stop_recording()
+            # Deferred so the reply reaches the command-line process before the
+            # event loop goes away.
+            self._schedule(500, self.quit_application)
+            return True, "NVC is closing"
+        return False, f"unknown command {action}"
+
+    def _command_load_preset(self, recorder, value):
+        looks_like_path = value.lower().endswith(".json") or os.sep in value or "/" in value
+        if looks_like_path:
+            if not os.path.isfile(value):
+                return False, f"preset file not found: {value}"
+            recorder.apply_recorder_settings(load_recorder_settings(value))
+            recorder.refresh_previews_from_sources()
+            recorder.save_current_recorder_settings()
+            return True, f"preset loaded from {value}"
+        if not os.path.isfile(recorder.recorder_preset_path(value)):
+            return False, f"preset not found: {value}"
+        recorder.load_named_recorder_preset(value)
+        return True, f"preset {value} loaded"
+
+    def _command_start_recording(self, recorder):
+        if self.locked:
+            return False, "NVC is locked; unlock it before recording"
+        if self.running or getattr(self, "is_converting", False):
+            return False, "a conversion is running; recording cannot start"
+        if self.is_recorder_recording() or recorder.status_label.text() == "Starting recording...":
+            return True, "already recording"
+        self.show_recorder_tab()
+        recorder.start_recording()
+        started = self.is_recorder_recording() or recorder.status_label.text() == "Starting recording..."
+        if not started:
+            return False, "recording did not start (check that a source is enabled)"
+        self.update_single_workflow_availability()
+        return True, "recording started"
+
+    def show_recorder_tab(self):
+        """Make the (optional) recorder tab visible and current."""
+        scroll = getattr(self, "multi_source_recorder_tab_scroll", None)
+        if scroll is None:
+            return
+        visible_tabs = self.settings.setdefault("visible_tool_tabs", {})
+        if not visible_tabs.get("multi_source_recorder"):
+            visible_tabs["multi_source_recorder"] = True
+            self.apply_tool_tab_visibility()
+        index = self.tabs.indexOf(scroll)
+        if index >= 0:
+            self.tabs.setCurrentIndex(index)
+            self.on_tab_changed(index)
 
     def apply_tool_tab_visibility(self):
         visible_tabs = self.settings.get('visible_tool_tabs', {})
