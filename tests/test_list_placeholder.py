@@ -6,39 +6,36 @@ from PyQt5.QtWidgets import QApplication
 
 from ui.converted_files_widget import ConvertedFilesWidget
 from ui.list_placeholder import (
-    PLACEHOLDER_MAX_ROWS,
+    PLACEHOLDER_ROW_H,
     PlaceholderListWidget,
     PlaceholderTableWidget,
-    placeholder_bars,
+    placeholder_rules,
 )
 from ui.media_player_parts import PlaylistDock
 
 
-def _first_bar_pixel(view):
-    """Colour at the centre of the first placeholder bar, rendered off-screen."""
+def _pixel(view, x, y):
+    """Colour at viewport pixel (x, y), rendered off-screen."""
     image = view.viewport().grab().toImage()
-    bars = placeholder_bars(view.viewport().width(), view.viewport().height())
-    rect = bars[0][0]
-    return QColor(image.pixel(rect.center()))
+    return QColor(image.pixel(x, y))
 
 
-class PlaceholderBarTests(unittest.TestCase):
-    def test_bars_fill_rows_and_fade_down_the_view(self):
-        bars = placeholder_bars(300, 26 * 10)
-        self.assertEqual(len(bars), PLACEHOLDER_MAX_ROWS)
-        alphas = [alpha for _rect, alpha in bars]
-        self.assertEqual(alphas, sorted(alphas, reverse=True))
-        self.assertEqual(alphas[0], 1.0)
-        self.assertGreater(alphas[-1], 0.2)
-        self.assertLess(bars[0][0].width(), 300)
+def _first_rule_y(view, row_height=PLACEHOLDER_ROW_H):
+    return placeholder_rules(view.viewport().width(), view.viewport().height(), row_height)[0]
 
-    def test_columns_get_one_bar_each_and_tiny_or_empty_views_get_none(self):
-        bars = placeholder_bars(400, 26, columns=[(0, 200), (200, 200)])
-        self.assertEqual(len(bars), 2)
-        self.assertEqual(bars[0][0].left(), 10)
-        self.assertEqual(bars[1][0].left(), 210)
-        self.assertEqual(placeholder_bars(0, 100), [])
-        self.assertEqual(placeholder_bars(400, 10), [])
+
+class PlaceholderRuleTests(unittest.TestCase):
+    def test_one_hairline_under_every_row_slot_all_the_way_down(self):
+        rules = placeholder_rules(300, 24 * 10 + 7)
+        self.assertEqual(len(rules), 10)                       # fills the view, no cap
+        self.assertEqual(rules[0], 23)                         # bottom pixel of the first slot
+        self.assertEqual(rules[1] - rules[0], 24)              # evenly spaced
+        self.assertEqual(placeholder_rules(300, 100, row_height=26)[:2], [25, 51])
+
+    def test_tiny_or_empty_views_get_none(self):
+        self.assertEqual(placeholder_rules(0, 100), [])
+        self.assertEqual(placeholder_rules(400, 10), [])
+        self.assertEqual(placeholder_rules(400, 100, row_height=0), [])
 
 
 class PlaceholderViewTests(unittest.TestCase):
@@ -54,19 +51,30 @@ class PlaceholderViewTests(unittest.TestCase):
         self.addCleanup(view.close)
         return view
 
-    def test_empty_table_shows_grey_bars_and_a_row_clears_them(self):
+    def test_empty_table_rules_its_rows_edge_to_edge_and_a_row_clears_them(self):
         table = self._shown(PlaceholderTableWidget(0, 2))
         table.setStyleSheet("QTableWidget { background: white; }")
-        grey = _first_bar_pixel(table)
-        self.assertNotEqual(grey.name(), "#ffffff")
+        table.verticalHeader().setDefaultSectionSize(24)
+        self.app.processEvents()
+        y = _first_rule_y(table)
+        width = table.viewport().width()
+        # Grey on the rule, from the left edge to the right edge; white just above it.
+        self.assertNotEqual(_pixel(table, 0, y).name(), "#ffffff")
+        self.assertNotEqual(_pixel(table, width // 2, y).name(), "#ffffff")
+        self.assertNotEqual(_pixel(table, width - 1, y).name(), "#ffffff")
+        self.assertEqual(_pixel(table, width // 2, y - 1).name(), "#ffffff")   # one pixel thin
+        self.assertEqual(_pixel(table, width // 2, y - 10).name(), "#ffffff")  # no fat bar
         table.insertRow(0)
         self.app.processEvents()
-        self.assertEqual(_first_bar_pixel(table).name(), "#ffffff")
+        # The real row draws its own grid line at y; the slot below it is now plain.
+        self.assertEqual(_pixel(table, width // 2, y + 24).name(), "#ffffff")
 
-    def test_empty_list_shows_grey_bars(self):
+    def test_empty_list_rules_its_rows(self):
         view = self._shown(PlaceholderListWidget())
         view.setStyleSheet("QListWidget { background: white; }")
-        self.assertNotEqual(_first_bar_pixel(view).name(), "#ffffff")
+        y = _first_rule_y(view)
+        self.assertNotEqual(_pixel(view, 5, y).name(), "#ffffff")
+        self.assertEqual(_pixel(view, 5, y - 1).name(), "#ffffff")
 
     def test_converter_table_and_playlist_use_the_placeholder_views(self):
         widget = ConvertedFilesWidget()
