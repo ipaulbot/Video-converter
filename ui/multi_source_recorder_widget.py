@@ -5,6 +5,7 @@ import threading
 import time
 from datetime import datetime
 
+from PyQt5 import sip
 from PyQt5.QtCore import QCoreApplication, QProcess, QSize, Qt, QTimer, QUrl, pyqtSignal
 from PyQt5.QtGui import QDesktopServices, QPixmap
 from PyQt5.QtWidgets import (
@@ -1860,6 +1861,8 @@ class MultiSourceRecorderWidget(QWidget):
             except Exception:
                 logger.warning("Device listing failed", exc_info=True)
                 scan = DeviceScan([], [], False)
+            if sip.isdeleted(self):
+                return          # the recorder was closed while the listing ran
             self._deliver_device_scan(scan)
             # Same background pass: which hardware H.264 encoder starts here
             # (cached, so only the first scan pays the ~1 s).
@@ -1868,6 +1871,8 @@ class MultiSourceRecorderWidget(QWidget):
             except Exception:
                 logger.warning("Hardware encoder probe failed", exc_info=True)
                 encoder = ""
+            if sip.isdeleted(self):
+                return
             try:
                 self.hardware_encoder_detected.emit(encoder)
             except RuntimeError:
