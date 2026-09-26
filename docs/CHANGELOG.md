@@ -575,3 +575,32 @@ Use this file to track user-visible fixes, improvements, and feature work.
   frame ffmpeg extracts at the paused position composited in. The FIG-08
   clip lives in the Public Videos folder for the duration of the run, because
   the Inspect panel prints its full path. All 12 manuals regenerated.
+
+### Follow-up pass (18:16)
+
+- **Recorder: previews really stop.** `QProcess.terminate()` is `WM_CLOSE`
+  on Windows and `ffmpeg.exe` has no window, so an unchecked row's preview
+  kept running -- camera light on -- after the widget had already forgotten
+  it. Previews are now ended with `kill()` (they write JPEGs to a pipe and
+  have nothing to flush; `stop_preview_processes` also loses its 1.5 s
+  blocking wait). A row that stops describing a previewable source (USB
+  camera with "No source selected...", a file, a plain URL) now stops the
+  preview it had before, so the desktop capture no longer lingers in the
+  tile. Choosing "USB / DirectShow" no longer pre-fills the first known
+  camera: "No source selected..." means no camera, and the tile says
+  "Configure the source" until one is picked.
+- **BallBuster keeps its pace at any window size.** Every frame rescaled the
+  background and every ball with smooth transformation (and re-read the halo
+  PNG from disk); at 1920x1080 a paint took ~20 ms while the 16 ms loop
+  advanced one fixed step per tick, so the game ran in slow motion. Scaled
+  pixmaps are cached per size and the loop now runs as many 1/60 s steps as
+  real time elapsed (capped at 4), so ball speed is pixels per second.
+  While the game runs, the Video Converter header becomes a ball glyph +
+  "BallBuster XT" + a one-line joke; leaving the game restores it.
+- **Portfolio site started** as a separate repository
+  (`D:\Python Projects\portfolio-site`): a static one-page site plus resume
+  generated from a single `content.py`, with NVC and Virtual IO Box project
+  cards using the clean help-figure screenshots. Identity, contact and resume
+  facts are placeholders the build lists until filled in. Design note:
+  `docs/superpowers/specs/2026-09-26-portfolio-site-design.md`.
+- The 2.3.0 exe build is deferred to tomorrow at the owner's request.

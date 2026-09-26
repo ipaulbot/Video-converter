@@ -3419,6 +3419,13 @@ class VideoConverterApp(QMainWindow):
             self.drag_drop_overlay.hide()
 
         self.ballbuster_widget.destroyed.connect(self.restore_log_view)
+        # The tab header belongs to the game while it runs.
+        self.converter_header.set_heading(
+            "balls",
+            _tr("BallBuster XT"),
+            _tr("Fling balls at other balls until the balls are gone. Video conversion "
+                "has been temporarily postponed in the name of science."),
+        )
         # Update status label to Gaming
         self.status_label_log_tab.setText(_tr("Status: Gaming <font color='#43a296'>●</font>"))
 
@@ -3487,6 +3494,11 @@ class VideoConverterApp(QMainWindow):
         self.log_container.show()
         self.restore_files_table_after_game()
         self.log_tab_footer_widget.show()
+        self.converter_header.set_heading(
+            "convert",
+            _tr("Video Converter"),
+            _tr("Drop files or monitor a folder; converted files are listed above the log."),
+        )
         # Restore NVC logo and tray icon
         self.update_icons()
 

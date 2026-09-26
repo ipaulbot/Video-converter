@@ -135,8 +135,14 @@ def _load_custom_levels():
 
 _load_custom_levels()
 
-SPEED = 12
+SPEED = 12          # px per simulation step
 GRAVITY = 0.4
+# The simulation runs in fixed steps of one 60 Hz frame. game_tick() runs as
+# many steps as wall time asks for (capped), so a frame the painter could not
+# finish in time costs nothing in ball speed -- the pace is the same at any
+# window size and on any machine.
+STEP_S = 1 / 60
+MAX_STEPS_PER_TICK = 4
 BASE_SCORE = 10
 BOMB_BONUS = 20      # flat bonus for using a bumper bomb
 CUE_BOMB_BONUS = 50  # flat bonus for N bomb
@@ -271,6 +277,9 @@ class SnoodWidget(QWidget):
         self.backgrounds = {i: self.images.get(f'level{i}') for i in range(1, 11)}
 
         self.ball_radius = 0
+        # Scaled copies of the background and ball pixmaps, keyed by
+        # (name, w, h); see _scaled(). Cleared whenever the geometry changes.
+        self._scaled_cache = {}
         self.ping_targets = set()
         self.ping_final_rc = None
         self.row_height = 0
@@ -292,6 +301,9 @@ class SnoodWidget(QWidget):
                 set_best_level(1)
         except Exception:
             logger.debug("SnoodWidget.__init__: suppressed error", exc_info=True)
+
+        self._clock = time.perf_counter
+        self._last_tick = None
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_tick)
@@ -384,6 +396,10 @@ class SnoodWidget(QWidget):
         red_path = resource_path('graphics/red.png')
         if os.path.exists(red_path):
             images['red'] = QPixmap(red_path)
+        # white halo behind special balls (was reloaded from disk every frame)
+        white_path = resource_path('graphics/white.png')
+        if os.path.exists(white_path):
+            images['white'] = QPixmap(white_path)
         # ping-pong special ball
         ping_map = {
             'gray': 'GRAYSCALEBALLBUSTER.png',
@@ -549,7 +565,27 @@ class SnoodWidget(QWidget):
         self.recalculate_geometry()
         super().resizeEvent(event)
 
+    def _scaled(self, name, pixmap, width, height, mode=Qt.KeepAspectRatio):
+        """`pixmap` smooth-scaled to width x height, computed once per size.
+
+        Rescaling the full-window background and every one of ~135 board
+        balls on each frame took longer than a 60 Hz tick at 1920x1080.
+        """
+        key = (name, int(width), int(height))
+        scaled = self._scaled_cache.get(key)
+        if scaled is None:
+            scaled = pixmap.scaled(int(width), int(height), mode, Qt.SmoothTransformation)
+            self._scaled_cache[key] = scaled
+        return scaled
+
+    def _ball_pixmap(self, name, draw_size):
+        pixmap = self.images.get(name)
+        if pixmap is None:
+            return None
+        return self._scaled(name, pixmap, draw_size, draw_size)
+
     def recalculate_geometry(self):
+        self._scaled_cache.clear()  # every cached pixmap was for the old size
         # Account for taller window by keeping board compact
         max_board_height = self.height() - 100
         radius_by_height = max_board_height / (2 + (MAX_ROWS - 1) * math.sqrt(3))
@@ -570,11 +606,26 @@ class SnoodWidget(QWidget):
             self.current['y'] = self.shooter_y
 
     def game_tick(self):
-        # Allow falling animation even after logical finish
+        """Timer slot: advance the simulation by the wall time that passed."""
         if self.game_over:
             return
+        now = self._clock()
+        if self._last_tick is None:
+            steps = 1
+        else:
+            steps = max(1, min(MAX_STEPS_PER_TICK, round((now - self._last_tick) / STEP_S)))
+        self._last_tick = now
         self.handle_input()
-                # Handle delayed charged explosions
+        for _ in range(steps):
+            if not self._step():
+                break
+        # Request redraw
+        self.update_celebration()
+        self.update()
+
+    def _step(self):
+        """One fixed simulation step. Returns False once the game has ended."""
+        # Handle delayed charged explosions
         if self.pending_explosion:
             self.pending_explosion['delay'] -= 1
             # Flash red overlay for cue bombs (toggle every ~0.4 s)
@@ -673,7 +724,7 @@ class SnoodWidget(QWidget):
             if out_left or out_right or out_bottom or out_top:
                 self.moving = None
                 self.finish_game()
-                return
+                return False
         # Check if drop animation finished
         if getattr(self, 'awaiting_level_clear', False) and not self.falling:
             self.awaiting_level_clear = False
@@ -681,9 +732,8 @@ class SnoodWidget(QWidget):
         if getattr(self, 'drop_animating', False) and not self.falling:
             self.drop_animating = False
             self.game_over = True
-        # Request redraw
-        self.update_celebration()
-        self.update()
+            return False
+        return True
 
     def update_loading(self):
         """Animate the next-ball preview rolling toward the shooter.
@@ -1553,8 +1603,9 @@ class SnoodWidget(QWidget):
         painter = QPainter(self)
         bg = getattr(self, 'backgrounds', {}).get(self.level_index+1)
         if bg:
-            scaled = bg.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-            painter.drawPixmap(0, 0, scaled)
+            painter.drawPixmap(0, 0, self._scaled(("bg", self.level_index + 1), bg,
+                                                  self.width(), self.height(),
+                                                  Qt.KeepAspectRatioByExpanding))
         else:
             painter.fillRect(self.rect(), QColor("#F0FFF8"))
 
@@ -1598,47 +1649,46 @@ class SnoodWidget(QWidget):
                         # Draw background halo for special balls
                         is_special = cell['type'] in ('pingpong','bouncy','cue') or cell.get('charged')
                         if is_special:
-                            white_path = resource_path('graphics/white.png')
-                            if os.path.exists(white_path):
-                                white_pix = QPixmap(white_path)
-                                painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2),
-                                                   white_pix.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                            halo = self._ball_pixmap('white', draw_size)
+                            if halo:
+                                painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), halo)
                         # Draw yellow/red overlays
-                        if cell.get('red_overlay') and 'red' in self.images:
-                            painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2),
-                                               self.images['red'].scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-                        if cell.get('yellow_overlay') and 'yellow' in self.images:
-                            painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2),
-                                               self.images['yellow'].scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        if cell.get('red_overlay'):
+                            overlay = self._ball_pixmap('red', draw_size)
+                            if overlay:
+                                painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), overlay)
+                        if cell.get('yellow_overlay'):
+                            overlay = self._ball_pixmap('yellow', draw_size)
+                            if overlay:
+                                painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), overlay)
                         # Then draw the normal ball on top
-                        pixmap = self.images.get(cell['type'])
+                        pixmap = self._ball_pixmap(cell['type'], draw_size)
                         if pixmap:
-                            painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-                        pixmap = self.images.get(cell['type'])
-                        if pixmap:
-                            painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                            painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), pixmap)
 
             for ball in self.falling:
-                if ball.get('red_overlay') and 'red' in self.images:
-                    painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2),
-                                       self.images['red'].scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-                if ball.get('yellow_overlay') and 'yellow' in self.images:
-                    painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2),
-                                       self.images['yellow'].scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-                pixmap = self.images.get(ball['type'])
+                if ball.get('red_overlay'):
+                    overlay = self._ball_pixmap('red', draw_size)
+                    if overlay:
+                        painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2), overlay)
+                if ball.get('yellow_overlay'):
+                    overlay = self._ball_pixmap('yellow', draw_size)
+                    if overlay:
+                        painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2), overlay)
+                pixmap = self._ball_pixmap(ball['type'], draw_size)
                 if pixmap:
-                    painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    painter.drawPixmap(int(ball['x'] - draw_size/2), int(ball['y'] - draw_size/2), pixmap)
 
             # Draw moving ball first so it appears underneath shooter overlay
             if self.moving:
-                pixmap = self.images.get(self.moving['type'])
+                pixmap = self._ball_pixmap(self.moving['type'], draw_size)
                 if pixmap:
-                    painter.drawPixmap(int(self.moving['x'] - draw_size/2), int(self.moving['y'] - draw_size/2), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    painter.drawPixmap(int(self.moving['x'] - draw_size/2), int(self.moving['y'] - draw_size/2), pixmap)
             # stuck ball visual
             if self.stuck_ball:
-                pixmap = self.images.get(self.stuck_ball['type'])
+                pixmap = self._ball_pixmap(self.stuck_ball['type'], draw_size)
                 if pixmap:
-                    painter.drawPixmap(int(self.stuck_ball['x'] - draw_size/2), int(self.stuck_ball['y'] - draw_size/2), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    painter.drawPixmap(int(self.stuck_ball['x'] - draw_size/2), int(self.stuck_ball['y'] - draw_size/2), pixmap)
 
             shooter_x, shooter_y = self.width() / 2, self.shooter_y
             # Offset the start so the line begins at the ball surface, not its centre
@@ -1650,14 +1700,13 @@ class SnoodWidget(QWidget):
             painter.drawLine(int(start_x), int(start_y), int(end_x), int(end_y))
 
             if self.current:
-                pixmap = self.images.get(self.current['type'])
+                pixmap = self._ball_pixmap(self.current['type'], draw_size)
                 if pixmap:
                     jitter = random.uniform(-3,3) if getattr(self, 'explosion_wiggle_until', 0) > time.time() else 0
-                    painter.drawPixmap(int(self.current['x'] - draw_size/2 + jitter), int(self.current['y'] - draw_size/2 + jitter), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    painter.drawPixmap(int(self.current['x'] - draw_size/2 + jitter), int(self.current['y'] - draw_size/2 + jitter), pixmap)
             if self.loading_ball:
-                pixmap = self.images.get(self.loading_ball['type'])
-                if pixmap:
-                    scaled = pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                scaled = self._ball_pixmap(self.loading_ball['type'], draw_size)
+                if scaled:
                     painter.save()
                     painter.translate(self.loading_ball['x'], self.loading_ball['y'])
                     painter.rotate(self.loading_ball.get('rot', 0))
@@ -1670,21 +1719,8 @@ class SnoodWidget(QWidget):
             color = QColor('#d10c0c') if self.display_score > self.score else self.primary_color
             painter.setPen(color)
             score_x, score_y = 20, self.height() - 35
-            # Determine gaming level from best level reached
-            try:
-                best_level = get_best_level()
-            except Exception:
-                best_level = 0
-            if best_level <= 2:
-                rank = "Trainee"
-            elif best_level <= 4:
-                rank = "Trainer"
-            elif best_level <= 6:
-                rank = "Administrator"
-            elif best_level <= 9:
-                rank = "Ballbuster"
-            else:
-                rank = "Master Ballbuster"
+            # (The rank derived from get_best_level() used to be computed here
+            # every frame -- a JSON read from disk per paint -- and never drawn.)
             score_text  = f"Score: {self.display_score}"
             level_text  = f"Level: {self.level_index + 1}"
             # Compute dynamic spacing so the two labels don’t crowd each other
@@ -1700,12 +1736,12 @@ class SnoodWidget(QWidget):
             painter.drawText(int(level_x), int(level_y), level_text)
 
             if self.next:
-                pixmap = self.images.get(self.next['type'])
+                pixmap = self._ball_pixmap(self.next['type'], draw_size)
                 if pixmap:
                     preview_x = self.width() - self.ball_radius*2 - 20
                     preview_y = self.shooter_y
                     jitter = random.uniform(-3,3) if getattr(self, 'explosion_wiggle_until', 0) > time.time() else 0
-                    painter.drawPixmap(int(preview_x - draw_size/2 + jitter), int(preview_y - draw_size/2 + jitter), pixmap.scaled(draw_size, draw_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    painter.drawPixmap(int(preview_x - draw_size/2 + jitter), int(preview_y - draw_size/2 + jitter), pixmap)
 
         # Draw celebration particles (confetti + fireworks)
         self.draw_celebration(painter)

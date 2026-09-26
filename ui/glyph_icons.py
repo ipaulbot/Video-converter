@@ -41,6 +41,8 @@ GLYPHS: tuple[str, ...] = (
     "scissors",
     "record",
     "player",
+    # The Video Converter tab's header while BallBuster XT is running.
+    "balls",
 )
 
 
@@ -249,6 +251,19 @@ def _paint(name: str, painter: QPainter, s: float, color: QColor) -> None:
         painter.drawEllipse(R(0.33, 0.33, 0.12, 0.12))
         painter.setPen(_pen(color, max(1.8, s * 0.13)))
         painter.drawLine(P(0.62, 0.62), P(0.86, 0.86))
+    elif name == "balls":
+        # A three-ball cluster hanging from the ceiling, one ball rising
+        # from the shooter below with an aim line -- BallBuster in miniature.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawLine(P(0.10, 0.12), P(0.90, 0.12))
+        painter.drawEllipse(R(0.22, 0.16, 0.26, 0.26))
+        painter.drawEllipse(R(0.52, 0.16, 0.26, 0.26))
+        painter.drawEllipse(R(0.37, 0.38, 0.26, 0.26))
+        painter.setPen(_pen(color, max(1.2, s * 0.06)))
+        painter.drawLine(P(0.50, 0.80), P(0.50, 0.68))
+        painter.setPen(_pen(color, max(1.4, s * 0.09)))
+        painter.setBrush(color)
+        painter.drawEllipse(R(0.39, 0.72, 0.22, 0.22))
     else:
         raise KeyError(name)
 
