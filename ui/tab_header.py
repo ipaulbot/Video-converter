@@ -62,6 +62,14 @@ class TabHeader(QWidget):
         self.description_label.setText(text)
         self.description_label.setVisible(bool(text))
 
+    def set_heading(self, glyph: str, title: str, description: str = ""):
+        """Swap glyph, title and description at once (a tab lending its
+        header to something else, e.g. the converter to BallBuster)."""
+        self.glyph_name = glyph
+        self.title_label.setText(title)
+        self.set_description(description)
+        self.reskin()
+
     def add_layer_under_glyph(self, widget):
         """Stack `widget` beneath the glyph (same cell, drawn first)."""
         self.glyph_stack.addWidget(widget, 0, 0, Qt.AlignCenter)

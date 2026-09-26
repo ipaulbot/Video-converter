@@ -55,6 +55,20 @@ class VideoConverterTabTests(unittest.TestCase):
         window.restore_files_table_after_game()
         self.assertFalse(window.converted_files_widget.isHidden())
 
+    def test_game_borrows_the_tab_header_and_returns_it(self):
+        window = self._window()
+        header = window.converter_header
+        window.launch_ballbuster_game()
+        try:
+            self.assertEqual(header.glyph_name, "balls")
+            self.assertEqual(header.title_label.text(), "BallBuster XT")
+            self.assertIn("balls", header.description_label.text().lower())
+        finally:
+            window.restore_log_view()
+        self.assertEqual(header.glyph_name, "convert")
+        self.assertEqual(header.title_label.text(), "Video Converter")
+        self.assertTrue(header.description_label.text().startswith("Drop files"))
+
 
 if __name__ == "__main__":
     unittest.main()
