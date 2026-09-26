@@ -71,6 +71,42 @@ The landing-page website, the product rename ("Media Multitool"?) and the
 GitHub tidy-up are planning items: `docs/planning/2026-09-26-product-
 naming-website-and-github.md`.
 
+## Additions (10:54, same day)
+
+9. **Sync offset: off the panel, into the playlist.** The offset was a spin
+   box on every panel caption, which the owner found cluttering and possibly
+   unnecessary. It stays (lining up two cameras is the point of the
+   multi-panel view) but moves to where the clip is: `PlaylistModel` keeps
+   `offsets[path]` (seconds, clamped to ±600, 0 drops the entry, removed with
+   the clip); the playlist strip becomes a two-column table, `Clip | Offset`
+   (`PlaylistTable`, a `PlaceholderTableWidget`), the Offset cell edited by a
+   `QDoubleSpinBox` delegate; `PlayerPanel.offset_ms()` reads the current
+   clip's offset. Editing an offset re-seats the paused panel showing that
+   clip. Drag-to-reorder rows is kept with a custom `dropEvent` that emits
+   `rows_moved(source, destination)` instead of letting `QTableWidget`
+   overwrite cells.
+10. **Video Settings dialog width.** The Audio device combo grew to its
+    longest item (~300 px) and the dialog to ~990 px. The combo now uses
+    `AdjustToMinimumContentsLengthWithIcon` with a 180 px cap and the full
+    name in its tooltip; the Video device column takes the spare width.
+    Save as / Delete become quiet grey underlined text links (transparent
+    background, hover in accent) so the eye is not pulled to them. Measured
+    off-screen: 990 → 808 px.
+11. **Resize jitter (full → compact).** `set_window_mode` re-flowed every
+    tab, restyled the tab bar, restored the window, resized it and centred
+    it, each painting on its own. It now wraps the whole switch in
+    `setUpdatesEnabled(False)` / `True` (try/finally) so one paint shows the
+    result.
+12. **List placeholders.** `ui/list_placeholder.py`: faint grey bars that
+    fade down the empty area of the converter's Converted Files table and
+    the playlist, painted only while the view has no rows.
+13. **One header on every tab.** `ui/tab_header.py`: `TabHeader(glyph,
+    title, description)`, 36 px runtime-painted glyph (`player` = magnifier
+    with an eye, `convert` = arrow cycle around a play triangle, `record`,
+    `scissors`, `pc`) + tab title + one-line description; PC Report keeps its
+    heart as a layer under the glyph. The converter tab, which had no
+    header, gets one.
+
 ## Testing
 
 - Player: title label absent from the dock; `load_media` adds to the

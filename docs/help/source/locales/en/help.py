@@ -56,7 +56,12 @@ CHAPTERS: list[dict] = [
         "blocks": [
             {"type": "para", "text": (
                 "The main window is organised into tabs, with a shared preview panel and a "
-                "status footer.")},
+                "status footer. Every tab opens with the same header: a glyph for the tool "
+                "(a magnifier with an eye for the Media Player, an arrow cycle around a play "
+                "symbol for the Video Converter, a camera for the Recorder, scissors for the "
+                "Lossless Editor, a monitor for PC Report), the tab's title and a one-line "
+                "description. Drag a tab along the tab bar to put the tabs in the order you "
+                "prefer; NVC remembers the order.")},
             {"type": "table", "headers": ("Area", "What it does"), "rows": [
                 ("Video Converter",
                  "The Converted Files table (queued, processing, successful and failed "
@@ -304,13 +309,19 @@ CHAPTERS: list[dict] = [
                 "Name, Destination Folder and Date Modified columns. Status icons identify "
                 "queued, processing, successful and failed conversions. Play and Inspect are "
                 "buttons below the table; they appear once a row is selected. The remaining "
-                "actions are on the row's right-click menu. The broom in the footer clears the "
-                "log; Clear empties the table.")},
+                "actions are on the row's right-click menu. Right-clicking the empty part of "
+                "the table offers Add videos to convert... and Monitor a folder.... While the "
+                "table is empty, faint grey bars mark where the rows will appear. The broom in "
+                "the footer clears the log; Clear empties the table.")},
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Play", "Opens the selected file in the Media Player tab."),
                 ("Inspect", "Opens the selected file in the Media Player with the Inspect panel showing its ffprobe details."),
+                ("Add videos to convert...", "Opens the file picker, the same as the Add Files button."),
+                ("Monitor a folder...", "Chooses a folder to watch; it becomes the Source Folder in Settings. If monitoring is running it restarts on the new folder."),
+                ("Monitor this file's folder", "Makes the selected file's folder the Source Folder."),
                 ("Play in Media Player", "Opens the selected file in the Media Player tab."),
                 ("Inspect in Media Player", "Same as the Inspect button."),
+                ("Open in", "Submenu: Media Player, Lossless Editor (fills its input file and shows the tab) or the Windows default app."),
                 ("Open Containing Folder", "Opens the selected file's destination folder."),
                 ("Open Log File", "Opens a dialog containing the per-file conversion log."),
                 ("Copy File Path", "Copies the selected file path."),
@@ -496,8 +507,10 @@ CHAPTERS: list[dict] = [
                 "Auto to each. If detection fails, the lists are left as they were: leave "
                 "Resolution at Auto and choose a frame rate the camera supports. Auto is only "
                 "offered for Frame rate after successful detection.",
-                "Choose an Audio device per row, or No Audio. Refresh devices rescans "
-                "microphones. Mute or Volume 0 on the tab records that row without sound.",
+                "Choose an Audio device per row, or No Audio. Long device names are shortened "
+                "in the list to keep the dialog narrow; hover the box to read the full name. "
+                "Refresh devices rescans microphones. Mute or Volume 0 on the tab records that "
+                "row without sound.",
                 "Sync offset shifts a source earlier or later in a Combined grid recording so "
                 "clips that started at slightly different times line up.",
                 "Apply keeps the dialog open; OK applies and closes.",
@@ -505,8 +518,8 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": "Presets"},
             {"type": "steps", "items": [
                 "Load applies the selected preset; Set overwrites it with the current settings; "
-                "Save as... creates a new one; Delete removes it. An asterisk after the name "
-                "marks unsaved changes.",
+                "the small Save as... and Delete links create a new one or remove it. An "
+                "asterisk after the name marks unsaved changes.",
                 "Presets are JSON files under "
                 r"Public\Documents\Noldus\NVC\MediaRecorder\Presets.",
             ]},
@@ -559,7 +572,7 @@ CHAPTERS: list[dict] = [
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Load", "Loads a clip into that panel."),
                 ("Clear", "Removes the clip from that panel."),
-                ("offset", "Shifts that panel in seconds relative to the shared seek position."),
+                ("Offset (playlist column)", "Shifts that clip in seconds relative to the shared seek position; double-click the cell to edit."),
                 ("Play all", "Plays every visible loaded panel and reads Pause all while playing."),
                 ("Stop all", "Stops every loaded panel and returns the shared position to zero."),
                 ("Restart", "Returns to the beginning and plays every visible loaded panel."),
@@ -598,9 +611,17 @@ CHAPTERS: list[dict] = [
                 "moves. Press Escape or F, or double-click, to leave fullscreen.")},
             {"type": "para", "text": (
                 "Playlist opens a strip under the video for the selected panel with Add "
-                "files..., Add folder..., Remove and Clear. Drag entries to reorder them, or "
-                "drop files from Explorer into the strip. N and P move through the playlist. "
-                "With Panels set to 1, the next item starts automatically when a clip ends.")},
+                "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
+                "panel is added to that panel's playlist, so the strip always shows what the "
+                "panel has seen. The strip has two columns: Clip and Offset. Drag rows to "
+                "reorder them, or drop files from Explorer into the strip. N and P move "
+                "through the playlist. With Panels set to 1, the next item starts automatically "
+                "when a clip ends.")},
+            {"type": "para", "text": (
+                "Offset is a per-clip sync shift in seconds: a negative value plays that clip "
+                "earlier than the others, a positive value later, so recordings of the same "
+                "moment from two cameras line up. Double-click the Offset cell and type or "
+                "step the value; a paused panel moves to the new position at once.")},
             {"type": "para", "text": (
                 "A clip shows its first frame as soon as it is loaded or dropped onto a panel "
                 "(the tile reads Loading... for a moment), and the seek slider moves the "
