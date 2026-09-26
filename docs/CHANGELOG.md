@@ -158,6 +158,16 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - "Video Settings" and "Show recording log" links carry gear and list glyphs;
   each camera's settings button is a camera glyph; the rescan control is a
   refresh glyph. All follow the locked/active accent like the other icons.
+- Fixed "Start Recording" staying green after a recording was stopped. The
+  button's style was rendered before the theme was told the recording had
+  ended, so it always showed the previous state's colour. The tab underline
+  now also turns green while recording, as it already did during conversion.
+
+### Main window
+
+- Fixed the burger menu icon being cut off at the bottom: the button was
+  taller than the tab-bar corner it sits in. It is now sized from the tab bar
+  in both window modes.
 
 ### Media Player
 
