@@ -62,10 +62,22 @@ class InspectionWorker(QThread):
             self.finished.emit('', '', f"Error inspecting file:\n{e}")
 
 class InspectionWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, notify_preview=True):
         super().__init__(parent)
+        # The main window's sidebar preview follows inspected files; inside the
+        # Media Player the clip is already on screen, so the dock turns this off.
+        self.notify_preview = notify_preview
         self.init_ui()
         self.setAcceptDrops(True)
+
+    def reset(self):
+        """Back to the empty drop zones."""
+        self.summary_text.clear()
+        self.summary_text.hide()
+        self.summary_drag_text.show()
+        self.info_display.clear()
+        self.info_display.hide()
+        self.json_drag_text.show()
 
     def init_ui(self):
         layout = QVBoxLayout()
@@ -440,6 +452,8 @@ class InspectionWidget(QWidget):
 
     def _notify_main_preview(self, file_path):
         """Tell parent (main window) to update the sidebar preview, if available."""
+        if not self.notify_preview:
+            return
         try:
             widget = self
             while widget is not None:

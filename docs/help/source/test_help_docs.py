@@ -118,7 +118,7 @@ class FigureTests(unittest.TestCase):
 
 class ContentTests(unittest.TestCase):
     TOOL_TAB_LABELS = (
-        "Conversion Log", "Converted Files", "Video Inspection Tool", "PC Report",
+        "Video Converter", "PC Report",
         "Lossless Editor", "Multi-Source Recorder", "Media Player",
     )
 

@@ -49,6 +49,17 @@ class ConvertedFilesPlayTests(unittest.TestCase):
         )
         self.assertTrue(received[0].endswith("clip.mp4"))
 
+    def test_inspect_button_follows_the_selection_and_emits_the_path(self):
+        widget = self._widget_with_row()
+        widget.show()
+        self.assertFalse(widget.inspect_button.isVisibleTo(widget))
+        widget.table_widget.selectRow(0)
+        self.assertTrue(widget.inspect_button.isVisibleTo(widget))
+        received = []
+        widget.inspect_requested.connect(received.append)
+        widget.inspect_button.click()
+        self.assertEqual(received, [widget.table_widget.item(0, 0).data(Qt.UserRole)])
+
 
 class ClearButtonTests(unittest.TestCase):
     @classmethod

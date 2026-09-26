@@ -35,7 +35,7 @@ from ui.glyph_icons import (
     reskin_icon_buttons,
     set_button_glyph,
 )
-from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
+from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
     PlaylistModel,
@@ -329,7 +329,12 @@ class PlayerPanel(QWidget):
         self.probe_info = {}
         if self.host is not None and hasattr(self.host, "start_probe"):
             self.host.start_probe(self)
+        self._notify_media_changed()
         return True
+
+    def _notify_media_changed(self):
+        if self.host is not None and hasattr(self.host, "_on_panel_media_changed"):
+            self.host._on_panel_media_changed(self)
 
     def clear_media(self):
         self.hide_unsupported()
@@ -342,6 +347,7 @@ class PlayerPanel(QWidget):
                                 % {"number": self.index + 1})
         self.name_label.setToolTip("")
         self.placeholder.show()
+        self._notify_media_changed()
 
     def show_unsupported(self, text):
         self.overlay.show_message(text)
@@ -469,6 +475,10 @@ class MediaPlayerWidget(QWidget):
         self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
         stage_layout.addWidget(self.playlist_dock)
         self.playlist_dock.hide()
+        # Same slot as the playlist: ffprobe details for the selected panel.
+        self.inspect_dock = InspectionDock(self.stage)
+        stage_layout.addWidget(self.inspect_dock)
+        self.inspect_dock.hide()
         self.selected_index = 0
         self.select_panel(0)
         self._stage_layout = stage_layout
@@ -529,6 +539,9 @@ class MediaPlayerWidget(QWidget):
         self.playlist_btn = make_icon_button("playlist", _tr("Playlist"), accent)
         self.playlist_btn.setCheckable(True)
         self.playlist_btn.toggled.connect(self._on_playlist_toggled)
+        self.inspect_btn = make_icon_button("inspect", _tr("Inspect (ffprobe details for the selected panel)"), accent)
+        self.inspect_btn.setCheckable(True)
+        self.inspect_btn.toggled.connect(self._on_inspect_toggled)
 
         speed_label = QLabel(_tr("Speed"))
         speed_label.setStyleSheet(theme.video_label_style())
@@ -564,6 +577,7 @@ class MediaPlayerWidget(QWidget):
         button_row.addSpacing(12)
         button_row.addWidget(self.fullscreen_btn)
         button_row.addWidget(self.playlist_btn)
+        button_row.addWidget(self.inspect_btn)
         button_row.addStretch(1)
         button_row.addWidget(panels_label)
         button_row.addWidget(self.panels_combo)
@@ -762,6 +776,7 @@ class MediaPlayerWidget(QWidget):
             _tr("Panel %(number)s") % {"number": index + 1},
         )
         self.playlist_dock.select_path(panel._media_path)
+        self._refresh_inspection()
 
     def selected_panel(self):
         panel = self.panels[self.selected_index]
@@ -776,7 +791,31 @@ class MediaPlayerWidget(QWidget):
         self.playlist_btn.setChecked(not self.playlist_btn.isChecked())
 
     def _on_playlist_toggled(self, checked):
+        if checked:
+            self.inspect_btn.setChecked(False)
         self.playlist_dock.setVisible(bool(checked))
+
+    # --- inspect dock ------------------------------------------------------
+    def _on_inspect_toggled(self, checked):
+        if checked:
+            self.playlist_btn.setChecked(False)
+        self.inspect_dock.setVisible(bool(checked))
+        if checked:
+            self._refresh_inspection()
+
+    def _on_panel_media_changed(self, panel):
+        """A panel loaded or cleared media; the dock follows the selected one."""
+        if panel is self.selected_panel():
+            self._refresh_inspection()
+
+    def _refresh_inspection(self):
+        # select_panel(0) runs from _build_ui before the transport bar exists.
+        inspect_btn = getattr(self, "inspect_btn", None)
+        if inspect_btn is None or not inspect_btn.isChecked():
+            return
+        panel = self.selected_panel()
+        self.inspect_dock.set_panel_title(panel.name_label.text())
+        self.inspect_dock.inspect_path(panel._media_path)
 
     def add_playlist_files(self):
         paths, _ = QFileDialog.getOpenFileNames(

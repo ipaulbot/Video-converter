@@ -390,6 +390,63 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         widget.playlist_btn.setChecked(False)
         self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
 
+    # --- Inspect dock (absorbed the Video Inspection Tool tab) ---------------
+
+    def test_inspect_and_playlist_docks_are_mutually_exclusive(self):
+        widget = self._widget()
+        widget.show()
+        widget.playlist_btn.setChecked(True)
+        self.assertTrue(widget.playlist_dock.isVisibleTo(widget))
+        widget.inspect_btn.setChecked(True)
+        self.assertTrue(widget.inspect_dock.isVisibleTo(widget))
+        self.assertFalse(widget.playlist_btn.isChecked())
+        self.assertFalse(widget.playlist_dock.isVisibleTo(widget))
+        widget.playlist_btn.setChecked(True)
+        self.assertFalse(widget.inspect_btn.isChecked())
+        self.assertFalse(widget.inspect_dock.isVisibleTo(widget))
+
+    def test_opening_the_inspect_dock_inspects_the_selected_panels_file(self):
+        widget = self._widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        widget.panels[1]._media_path = "C:/Videos/b.mp4"
+        widget.select_panel(1)
+        self.assertEqual(inspected, [])            # dock closed: nothing runs
+        widget.inspect_btn.setChecked(True)
+        self.assertEqual(inspected, ["C:/Videos/b.mp4"])
+        self.assertIn("Panel 2", widget.inspect_dock.title_label.text())
+
+    def test_selecting_another_panel_re_inspects_while_the_dock_is_open(self):
+        widget = self._widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        widget.panels[0]._media_path = "C:/Videos/a.mp4"
+        widget.panels[1]._media_path = "C:/Videos/b.mp4"
+        widget.inspect_btn.setChecked(True)
+        widget.select_panel(1)
+        self.assertEqual(inspected, ["C:/Videos/a.mp4", "C:/Videos/b.mp4"])
+
+    def test_loading_or_clearing_the_selected_panel_updates_the_dock(self):
+        widget = self._widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        widget.inspect_btn.setChecked(True)
+        panel = widget.selected_panel()
+        panel._media_path = "C:/Videos/a.mp4"
+        widget._on_panel_media_changed(panel)
+        panel._media_path = ""
+        widget._on_panel_media_changed(panel)
+        self.assertEqual(inspected, ["", "C:/Videos/a.mp4", ""])   # empty path = clear
+
+    def test_media_change_on_an_unselected_panel_is_ignored(self):
+        widget = self._widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        widget.inspect_btn.setChecked(True)
+        widget.panels[2]._media_path = "C:/Videos/c.mp4"
+        widget._on_panel_media_changed(widget.panels[2])
+        self.assertEqual(inspected, [""])
+
     def test_playlist_next_and_previous_load_into_selected_panel(self):
         widget = self._widget()
         panel = widget.panels[0]

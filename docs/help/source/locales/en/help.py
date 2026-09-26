@@ -58,12 +58,10 @@ CHAPTERS: list[dict] = [
                 "The main window is organised into tabs, with a shared preview panel and a "
                 "status footer.")},
             {"type": "table", "headers": ("Area", "What it does"), "rows": [
-                ("Conversion Log",
-                 "Shows conversion messages, progress, warnings and results."),
-                ("Converted Files",
-                 "Lists queued, processing, successful and failed conversions."),
-                ("Video Inspection Tool",
-                 "Shows a summary and detailed media information for a selected file."),
+                ("Video Converter",
+                 "The Converted Files table (queued, processing, successful and failed "
+                 "conversions) above the conversion log with its messages, progress, "
+                 "warnings and results. Drag the divider between them."),
                 ("PC Report",
                  "Generates a PC report for support and troubleshooting."),
                 ("Lossless Editor",
@@ -71,16 +69,17 @@ CHAPTERS: list[dict] = [
                 ("Multi-Source Recorder",
                  "Records up to four video sources."),
                 ("Media Player",
-                 "Plays media in one, two or four panels."),
+                 "Plays media in one, two or four panels, with an Inspect panel showing "
+                 "the selected clip's ffprobe summary and JSON."),
                 ("Preview Panel",
                  "Shows a preview of the current file or recorder layout."),
                 ("Menu",
                  "Opens Info, Help, folders, Settings, Language, updates and Quit."),
             ]},
             {"type": "note", "items": [
-                "PC Report, Lossless Editor and Media Player are hidden by default. Turn them "
-                "on in Settings -- Tools. Play in Media Player shows the Media Player tab for "
-                "the current session even when it is switched off.",
+                "PC Report and Lossless Editor are hidden by default. Turn them on in "
+                "Settings -- Tools. Play or Inspect in Media Player shows the Media Player "
+                "tab for the current session even when it is switched off.",
                 "The Menu contains Info, Help, Open Source Folder, Open Destination Folder, "
                 "Open Backup Folder, Settings, Language, Check for Updates and Quit.",
                 "The footer has the Start/Stop button, a lock icon, a file picker, a broom and "
@@ -103,9 +102,8 @@ CHAPTERS: list[dict] = [
                 "When monitoring is active, NVC watches the source folder for new supported "
                 "videos. It also scans existing files in that folder when monitoring starts.")},
             {"type": "para", "text": (
-                "You can drag files onto Conversion Log, Converted Files or Video Inspection "
-                "Tool. You can also use the file picker in the footer to select media files "
-                "to convert.")},
+                "You can drag files onto either half of the Video Converter tab. You can also "
+                "use the file picker in the footer to select media files to convert.")},
             {"type": "para", "text": (
                 "NVC protects existing converted files. If a converted output name already "
                 "exists, NVC chooses the next available browser-style filename:")},
@@ -289,7 +287,7 @@ CHAPTERS: list[dict] = [
                 "End Time for conversion.")},
             {"type": "note", "items": [
                 "A file detected outside the window is skipped with \"Current time outside "
-                "allowed range\" in the Conversion Log. It is not queued for later. Drop the "
+                "allowed range\" in the conversion log. It is not queued for later. Drop the "
                 "file again, or let monitoring re-detect it, inside the permitted window.",
                 "An End Time earlier than the Start Time means an overnight window.",
                 "The default is No Time Restrictions.",
@@ -298,16 +296,21 @@ CHAPTERS: list[dict] = [
     },
     {
         "id": "converted-files",
-        "title": "Converted Files",
+        "title": "Video Converter: Converted Files",
         "blocks": [
             {"type": "para", "text": (
-                "Converted Files has File Name, Destination Folder and Date Modified columns. "
-                "Status icons identify queued, processing, successful and failed conversions. "
-                "Play is a button below the table; it appears once a row is selected. The "
-                "remaining actions are on the row's right-click menu.")},
+                "The Video Converter tab shows the Converted Files table above the conversion "
+                "log; drag the divider between them to change the split. The table has File "
+                "Name, Destination Folder and Date Modified columns. Status icons identify "
+                "queued, processing, successful and failed conversions. Play and Inspect are "
+                "buttons below the table; they appear once a row is selected. The remaining "
+                "actions are on the row's right-click menu. The broom in the footer clears the "
+                "log; Clear empties the table.")},
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Play", "Opens the selected file in the Media Player tab."),
+                ("Inspect", "Opens the selected file in the Media Player with the Inspect panel showing its ffprobe details."),
                 ("Play in Media Player", "Opens the selected file in the Media Player tab."),
+                ("Inspect in Media Player", "Same as the Inspect button."),
                 ("Open Containing Folder", "Opens the selected file's destination folder."),
                 ("Open Log File", "Opens a dialog containing the per-file conversion log."),
                 ("Copy File Path", "Copies the selected file path."),
@@ -320,8 +323,13 @@ CHAPTERS: list[dict] = [
         "title": "Media Inspection",
         "blocks": [
             {"type": "para", "text": (
-                "The Video Inspection Tool tab has Summary and Detailed JSON sub-tabs. Drop a "
-                "file on either sub-tab to populate both. Summary lists File, Container, "
+                "Media inspection lives in the Media Player: the Inspect button on the "
+                "transport bar (a magnifier, next to Playlist) opens a panel beside the video "
+                "with Summary and Detailed JSON sub-tabs for the selected panel's clip. "
+                "Selecting another panel, or loading a different file into the selected one, "
+                "updates it. Playlist and Inspect share the same space, so opening one closes "
+                "the other. Drop a file on either sub-tab to inspect that file without "
+                "loading it. Summary lists File, Container, "
                 "Duration, Size, Bitrate and Number of Streams. It then lists each video, "
                 "audio and subtitle stream, including its codec and the applicable resolution, "
                 "frame rate or channels. A Keyframe Analysis (First 30s) block follows the "

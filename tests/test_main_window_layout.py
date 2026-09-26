@@ -45,9 +45,7 @@ class TabCardTests(unittest.TestCase):
 
     def test_every_tool_tab_sits_in_a_leaf_card(self):
         keys = {
-            "conversion_log",
-            "converted_files",
-            "video_inspection",
+            "video_converter",
             "pc_report",
             "lossless_editor",
             "multi_source_recorder",

@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QStyle, QMenu,
     QPlainTextEdit, QMessageBox, QSpacerItem, QSizePolicy, QProgressBar,
     QAction, QToolBar, QToolButton, QFrame, QStackedWidget, QGridLayout,
-    QApplication, QStackedLayout, QSlider, QScrollArea
+    QApplication, QStackedLayout, QSlider, QScrollArea, QSplitter
 )
 from PyQt5.QtCore import (QCoreApplication, Qt, QTimer, QThreadPool, pyqtSignal,
                           QSize, QEvent, QUrl, QProcess, QPoint,
@@ -23,7 +23,6 @@ from watchdog.observers import Observer
 from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
-from ui.inspection_widget import InspectionWidget
 from ui.converted_files_widget import ConvertedFilesWidget
 from ui.settings_dialog import SettingsDialog
 from ui.dialogs import InfoDialog, ConfirmationDialog, EasterEggDialog
@@ -491,12 +490,6 @@ class VideoConverterApp(QMainWindow):
             if status_label is self.status_label_log_tab:
                 self.file_label_log_tab = file_label
                 self.broom_label_log_tab = broom_label
-            elif status_label is self.status_label_converted_tab:
-                self.file_label_converted_tab = file_label
-                self.broom_label_converted_tab = broom_label
-            elif status_label is self.status_label_inspection_tab:
-                self.file_label_inspection_tab = file_label
-                self.broom_label_inspection_tab = broom_label
             self.footer_lock_labels.append(lock_label)
             self.footer_file_labels.append(file_label)
             self.footer_broom_labels.append(broom_label)
@@ -514,31 +507,9 @@ class VideoConverterApp(QMainWindow):
         self.log_tab_footer_widget.setContentsMargins(0, 0, 0, 0)
         self.log_tab_footer.setContentsMargins(0, 0, 0, 0)
         self.log_tab_footer_widget.setLayout(self.log_tab_footer)
-        log_tab_layout.addWidget(self.log_tab_footer_widget)
-        # Scroll wrapper for log tab (scrolling enabled, scrollbar hidden)
-        self.log_tab_scroll = QScrollArea()
-        self.log_tab_scroll.setWidgetResizable(True)
-        self.log_tab_scroll.setFrameShape(QFrame.NoFrame)
-        self.log_tab_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.log_tab_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.log_tab_scroll.setStyleSheet("""
-            QScrollArea { border: none; background: transparent; }
-            QScrollBar { width: 0px; height: 0px; }
-        """)
-        card = LeafFrame(radius=28)
-        card.body.addWidget(self.log_tab)
-        self.tool_tab_cards["conversion_log"] = card
-        self.log_tab_scroll.setWidget(card)
-        # Forward wheel events from the scroll area to the log text for smooth scrolling
-        self.log_tab_scroll.wheelEvent = lambda e: self._forward_log_wheel(e)
-        self.log_tab_scroll.installEventFilter(self)
-        self.tabs.addTab(self.log_tab_scroll, _tr("Conversion Log"))
-
-        # Converted Files Tab
-        self.converted_files_tab = QWidget()
-        converted_layout = QVBoxLayout(self.converted_files_tab)
-        # Set margins to match conversion log baseline
-        converted_layout.setContentsMargins(0, 0, 0, 0)
+        # Video Converter tab: the Converted Files table above the conversion log,
+        # in one card with one footer. Replaced the separate Conversion Log and
+        # Converted Files tabs on 2026-09-26.
         self.converted_files_widget = ConvertedFilesWidget(button_style=getattr(self, 'current_button_style', None))
         # Forward drag/drop from the converted list to the main window handler
         self.converted_files_widget.drop_files_signal.connect(self._handle_converted_tab_drop)
@@ -551,103 +522,40 @@ class VideoConverterApp(QMainWindow):
         except Exception:
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         self.converted_files_widget.play_requested.connect(self.play_in_media_player)
+        self.converted_files_widget.inspect_requested.connect(self.inspect_in_media_player)
         # Clean modern styling for converted files widget
         self.converted_files_widget.setStyleSheet(theme.qss("QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
-        converted_layout.addWidget(self.converted_files_widget)
-        # Initialize footer widgets before make_footer
-        self.lock_icon_label_converted_tab = QLabel()
-        self.status_label_converted_tab = QLabel()
-        self.status_label_converted_tab.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.status_label_converted_tab.setFont(monospaced_font)
-        self.converted_footer = make_footer(self.lock_icon_label_converted_tab, self.status_label_converted_tab, self.clear_converted_tab)
-        converted_layout.addLayout(self.converted_footer)
-        # Scroll wrapper for converted files tab
-        self.converted_tab_scroll = QScrollArea()
-        self.converted_tab_scroll.setWidgetResizable(True)
-        self.converted_tab_scroll.setFrameShape(QFrame.NoFrame)
-        self.converted_tab_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.converted_tab_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.converted_tab_scroll.setStyleSheet("""
-            QScrollArea { border: none; background: transparent; }
-            QScrollBar { width: 0px; height: 0px; }
-        """)
-        card = LeafFrame(radius=28)
-        card.body.addWidget(self.converted_files_tab)
-        self.tool_tab_cards["converted_files"] = card
-        self.converted_tab_scroll.setWidget(card)
-        # Accept drops anywhere in the Converted tab container and forward them to the table
-        self.converted_tab_scroll.setAcceptDrops(True)
-        self.converted_tab_scroll.dragEnterEvent = lambda e: self.converted_files_widget.dragEnterEvent(e)
-        self.converted_tab_scroll.dropEvent = lambda e: self.converted_files_widget.dropEvent(e)
-        self.tabs.addTab(self.converted_tab_scroll, _tr("Converted Files"))
 
-        # Inspection Tab
-        self.inspection_tab = QWidget()
-        inspection_layout = QVBoxLayout(self.inspection_tab)
-        # Set margins to match conversion log baseline
-        inspection_layout.setContentsMargins(0, 0, 0, 0)
-        self.inspection_widget = InspectionWidget()
-        # Clean modern styling for inspection widget
-        self.inspection_widget.setStyleSheet(theme.qss("QWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
-        # Context menu for inspection texts/areas
-        try:
-            self.inspection_widget.summary_text.setContextMenuPolicy(Qt.CustomContextMenu)
-            self.inspection_widget.summary_text.customContextMenuRequested.connect(
-                lambda pos: self.show_inspection_context_menu_global(
-                    self.inspection_widget.summary_text.mapToGlobal(pos),
-                    self.inspection_widget.summary_text
-                )
-            )
-            self.inspection_widget.info_display.setContextMenuPolicy(Qt.CustomContextMenu)
-            self.inspection_widget.info_display.customContextMenuRequested.connect(
-                lambda pos: self.show_inspection_context_menu_global(
-                    self.inspection_widget.info_display.mapToGlobal(pos),
-                    self.inspection_widget.info_display
-                )
-            )
-            # Drag/drop areas share the same menu, targeting their respective text widgets
-            self.inspection_widget.summary_drag_drop.setContextMenuPolicy(Qt.CustomContextMenu)
-            self.inspection_widget.summary_drag_drop.customContextMenuRequested.connect(
-                lambda pos: self.show_inspection_context_menu_global(
-                    self.inspection_widget.summary_drag_drop.mapToGlobal(pos),
-                    self.inspection_widget.summary_text
-                )
-            )
-            self.inspection_widget.json_drag_drop.setContextMenuPolicy(Qt.CustomContextMenu)
-            self.inspection_widget.json_drag_drop.customContextMenuRequested.connect(
-                lambda pos: self.show_inspection_context_menu_global(
-                    self.inspection_widget.json_drag_drop.mapToGlobal(pos),
-                    self.inspection_widget.info_display
-                )
-            )
-        except Exception:
-            logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
-        inspection_layout.addWidget(self.inspection_widget)
-        # Initialize footer widgets before make_footer
-        self.lock_icon_label_inspection_tab = QLabel()
-        self.status_label_inspection_tab = QLabel()
-        self.status_label_inspection_tab.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.status_label_inspection_tab.setFont(monospaced_font)
-        self.inspection_footer = make_footer(self.lock_icon_label_inspection_tab, self.status_label_inspection_tab, self.clear_inspection_tab)
-        inspection_layout.addLayout(self.inspection_footer)
-        # If game already unlocked (system-wide), add controller icons now
-        if get_game_unlocked():
-            self.add_game_icons()
-        # Scroll wrapper for inspection tab
-        self.inspection_tab_scroll = QScrollArea()
-        self.inspection_tab_scroll.setWidgetResizable(True)
-        self.inspection_tab_scroll.setFrameShape(QFrame.NoFrame)
-        self.inspection_tab_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.inspection_tab_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.inspection_tab_scroll.setStyleSheet("""
+        self.converter_tab = QWidget()
+        converter_layout = QVBoxLayout(self.converter_tab)
+        converter_layout.setContentsMargins(0, 0, 0, 0)
+        self.converter_splitter = QSplitter(Qt.Vertical)
+        self.converter_splitter.setChildrenCollapsible(False)
+        self.converter_splitter.setHandleWidth(8)
+        self.converter_splitter.addWidget(self.converted_files_widget)
+        self.converter_splitter.addWidget(self.log_tab)
+        self.converter_splitter.setStretchFactor(0, 2)
+        self.converter_splitter.setStretchFactor(1, 3)
+        converter_layout.addWidget(self.converter_splitter, 1)
+        converter_layout.addWidget(self.log_tab_footer_widget)
+        # Scroll wrapper (scrolling enabled, scrollbar hidden)
+        self.converter_tab_scroll = QScrollArea()
+        self.converter_tab_scroll.setWidgetResizable(True)
+        self.converter_tab_scroll.setFrameShape(QFrame.NoFrame)
+        self.converter_tab_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.converter_tab_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.converter_tab_scroll.setStyleSheet("""
             QScrollArea { border: none; background: transparent; }
             QScrollBar { width: 0px; height: 0px; }
         """)
         card = LeafFrame(radius=28)
-        card.body.addWidget(self.inspection_tab)
-        self.tool_tab_cards["video_inspection"] = card
-        self.inspection_tab_scroll.setWidget(card)
-        self.tabs.addTab(self.inspection_tab_scroll, _tr("Video Inspection Tool"))
+        card.body.addWidget(self.converter_tab)
+        self.tool_tab_cards["video_converter"] = card
+        self.converter_tab_scroll.setWidget(card)
+        # Forward wheel events from the scroll area to the log text for smooth scrolling
+        self.converter_tab_scroll.wheelEvent = lambda e: self._forward_log_wheel(e)
+        self.converter_tab_scroll.installEventFilter(self)
+        self.tabs.addTab(self.converter_tab_scroll, _tr("Video Converter"))
 
         # PC Report Tab
         converting_or_monitoring = bool(self.running or getattr(self, 'is_converting', False))
@@ -755,9 +663,7 @@ class VideoConverterApp(QMainWindow):
         self.tabs.addTab(self.media_player_tab_scroll, _tr("Media Player"))
 
         self.tool_tab_widgets = {
-            "conversion_log": self.log_tab_scroll,
-            "converted_files": self.converted_tab_scroll,
-            "video_inspection": self.inspection_tab_scroll,
+            "video_converter": self.converter_tab_scroll,
             "pc_report": self.pc_report_tab_scroll,
             "lossless_editor": self.lossless_editor_tab_scroll,
             "multi_source_recorder": self.multi_source_recorder_tab_scroll,
@@ -915,6 +821,13 @@ class VideoConverterApp(QMainWindow):
 
         self.log_tab_layout = log_tab_layout
         self.log_container_index = self.log_tab_layout.indexOf(self.log_container)
+
+    def hide_files_table_for_game(self):
+        """The easter-egg game replaces the log pane; give it the whole card."""
+        self.converted_files_widget.hide()
+
+    def restore_files_table_after_game(self):
+        self.converted_files_widget.show()
 
     def layout_mode_widgets(self):
         """Tool widgets that adapt to the window mode."""
@@ -1374,8 +1287,6 @@ class VideoConverterApp(QMainWindow):
         self.set_menu_icons()
         # Update lock and broom icons in all footers
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
-        self.lock_icon_label_converted_tab.setPixmap(self.get_lock_icon_pixmap())
-        self.lock_icon_label_inspection_tab.setPixmap(self.get_lock_icon_pixmap())
         for lock_label in getattr(self, 'footer_lock_labels', []):
             lock_label.setPixmap(self.get_lock_icon_pixmap())
         # Update broom icons
@@ -1388,14 +1299,6 @@ class VideoConverterApp(QMainWindow):
             if os.path.exists(broom_icon_path):
                 broom_pixmap = QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
                 self.broom_label_log_tab.setPixmap(broom_pixmap)
-        if hasattr(self, 'broom_label_converted_tab'):
-            if os.path.exists(broom_icon_path):
-                broom_pixmap = QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-                self.broom_label_converted_tab.setPixmap(broom_pixmap)
-        if hasattr(self, 'broom_label_inspection_tab'):
-            if os.path.exists(broom_icon_path):
-                broom_pixmap = QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-                self.broom_label_inspection_tab.setPixmap(broom_pixmap)
         self.set_start_button_state(is_running=self.running)
         self.update_status_labels()
 
@@ -1488,13 +1391,7 @@ class VideoConverterApp(QMainWindow):
         if not path or not os.path.exists(path):
             return
         widget = self._ensure_media_player_widget()
-        index = self.tabs.indexOf(self.media_player_tab_scroll)
-        if index >= 0:
-            try:
-                self.tabs.setTabVisible(index, True)
-            except AttributeError:
-                self.media_player_tab_scroll.setVisible(True)
-            self.tabs.setCurrentIndex(index)
+        self.show_media_player_tab()
         panel = widget.selected_panel()
         if panel.load_media(path):
             widget.play_all()
@@ -1602,19 +1499,11 @@ class VideoConverterApp(QMainWindow):
 
     def update_status_labels(self):
         self.set_status_label(self.status_label_log_tab, self.status_running)
-        self.set_status_label(self.status_label_converted_tab, self.status_running)
-        self.set_status_label(self.status_label_inspection_tab, self.status_running)
 
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
         self.lock_icon_label_log_tab.setFixedSize(36, 36)
         self.lock_icon_label_log_tab.setAlignment(Qt.AlignCenter)
-        self.lock_icon_label_converted_tab.setPixmap(self.get_lock_icon_pixmap())
-        self.lock_icon_label_converted_tab.setFixedSize(36, 36)
-        self.lock_icon_label_converted_tab.setAlignment(Qt.AlignCenter)
-        self.lock_icon_label_inspection_tab.setPixmap(self.get_lock_icon_pixmap())
-        self.lock_icon_label_inspection_tab.setFixedSize(36, 36)
-        self.lock_icon_label_inspection_tab.setAlignment(Qt.AlignCenter)
         for lock_label in getattr(self, 'footer_lock_labels', []):
             lock_label.setPixmap(self.get_lock_icon_pixmap())
             lock_label.setFixedSize(36, 36)
@@ -1830,8 +1719,6 @@ class VideoConverterApp(QMainWindow):
         try:
             targets = list(getattr(self, 'footer_lock_labels', [])) or [
                 getattr(self, 'lock_icon_label_log_tab', None),
-                getattr(self, 'lock_icon_label_converted_tab', None),
-                getattr(self, 'lock_icon_label_inspection_tab', None),
             ]
             for target in targets:
                 if target is None or not target.isVisible():
@@ -2215,23 +2102,11 @@ class VideoConverterApp(QMainWindow):
                 broom_label.setPixmap(broom_pixmap)
         if hasattr(self, 'broom_label_log_tab') and os.path.exists(broom_icon_path):
             self.broom_label_log_tab.setPixmap(QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        # Broom (converted tab)
-        if hasattr(self, 'broom_label_converted_tab') and os.path.exists(broom_icon_path):
-            self.broom_label_converted_tab.setPixmap(QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        # Broom (inspection tab)
-        if hasattr(self, 'broom_label_inspection_tab') and os.path.exists(broom_icon_path):
-            self.broom_label_inspection_tab.setPixmap(QPixmap(broom_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
         # Lock/Unlock (log tab)
         for lock_label in getattr(self, 'footer_lock_labels', []):
             lock_label.setPixmap(self.get_lock_icon_pixmap())
         if hasattr(self, 'lock_icon_label_log_tab'):
             self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
-        # Lock/Unlock (converted tab)
-        if hasattr(self, 'lock_icon_label_converted_tab'):
-            self.lock_icon_label_converted_tab.setPixmap(self.get_lock_icon_pixmap())
-        # Lock/Unlock (inspection tab)
-        if hasattr(self, 'lock_icon_label_inspection_tab'):
-            self.lock_icon_label_inspection_tab.setPixmap(self.get_lock_icon_pixmap())
         # Update game controller icons
         self.update_game_icons()
         # File icon (normal mode footers)
@@ -2243,14 +2118,6 @@ class VideoConverterApp(QMainWindow):
             file_icon_path = self.get_icon_path('FILE')
             if os.path.exists(file_icon_path):
                 self.file_label_log_tab.setPixmap(QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        if hasattr(self, 'file_label_converted_tab'):
-            file_icon_path = self.get_icon_path('FILE')
-            if os.path.exists(file_icon_path):
-                self.file_label_converted_tab.setPixmap(QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-        if hasattr(self, 'file_label_inspection_tab'):
-            file_icon_path = self.get_icon_path('FILE')
-            if os.path.exists(file_icon_path):
-                self.file_label_inspection_tab.setPixmap(QPixmap(file_icon_path).scaled(36, 36, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
         # Menu actions (Info, Help, Settings, etc.) - all follow the same color scheme
         if hasattr(self, 'burger_button') and self.burger_button.menu():
             menu = self.burger_button.menu()
@@ -2886,21 +2753,6 @@ class VideoConverterApp(QMainWindow):
         self.preview_playing = False
         self.play_pause_btn.hide()
         self._set_preview_placeholder(text="No Preview")
-    def clear_converted_tab(self, event=None):
-        if hasattr(self.converted_files_widget, 'table_widget'):
-            self.converted_files_widget.table_widget.setRowCount(0)
-    def clear_inspection_tab(self, event=None):
-        if hasattr(self.inspection_widget, 'summary_text'):
-            self.inspection_widget.summary_text.clear()
-            self.inspection_widget.summary_text.hide()
-            self.inspection_widget.summary_drag_text.show()
-        if hasattr(self.inspection_widget, 'info_display'):
-            self.inspection_widget.info_display.clear()
-            self.inspection_widget.info_display.hide()
-            self.inspection_widget.json_drag_text.show()
-        # Also clear the sidebar preview so it doesn't persist
-        self._clear_preview_display()
-
     def clear_pc_report_tab(self, event=None):
         widget = getattr(self, 'pc_report_widget', None)
         if widget and hasattr(widget, 'output'):
@@ -2958,38 +2810,6 @@ class VideoConverterApp(QMainWindow):
                 self.console_output.selectAll()
             except Exception:
                 logger.debug("VideoConverterApp.show_log_context_menu_global: suppressed error", exc_info=True)
-
-    def show_inspection_context_menu_global(self, global_pos, text_widget=None):
-        """Context menu on inspection tab to mirror conversion log options."""
-        menu = QMenu(self)
-        lock_text = "Unlock" if getattr(self, 'locked', False) else "Lock"
-        lock_action = menu.addAction(lock_text)
-        upload_action = menu.addAction(_tr("Upload"))
-        clear_action = menu.addAction(_tr("Clear Inspection"))
-        menu.addSeparator()
-        settings_action = menu.addAction(_tr("Settings"))
-        menu.addSeparator()
-        copy_action = menu.addAction(_tr("Copy"))
-        select_all_action = menu.addAction(_tr("Select All"))
-        chosen = menu.exec_(global_pos)
-        if chosen == lock_action:
-            self.toggle_lock()
-        elif chosen == upload_action:
-            self.open_inspection_file_dialog()
-        elif chosen == clear_action:
-            self.clear_inspection_tab()
-        elif chosen == settings_action:
-            self.show_settings()
-        elif chosen == copy_action and text_widget:
-            try:
-                text_widget.copy()
-            except Exception:
-                logger.debug("VideoConverterApp.show_inspection_context_menu_global: suppressed error", exc_info=True)
-        elif chosen == select_all_action and text_widget:
-            try:
-                text_widget.selectAll()
-            except Exception:
-                logger.debug("VideoConverterApp.show_inspection_context_menu_global: suppressed error", exc_info=True)
 
     def set_menu_icons(self):
         # Update burger icon for locked/unlocked state if desired (optional)
@@ -3108,7 +2928,7 @@ class VideoConverterApp(QMainWindow):
                 return True  # Event handled after forwarding
             elif event.type() in [QEvent.MouseButtonPress, QEvent.MouseButtonRelease, QEvent.MouseMove]:
                 return False
-        elif obj in tuple(x for x in (getattr(self, 'log_tab_scroll', None), getattr(self, 'log_container', None)) if x):
+        elif obj in tuple(x for x in (getattr(self, 'converter_tab_scroll', None), getattr(self, 'log_container', None)) if x):
             if event.type() == QEvent.Wheel:
                 from PyQt5.QtWidgets import QApplication
                 QApplication.sendEvent(self.console_output, event)
@@ -3363,20 +3183,24 @@ class VideoConverterApp(QMainWindow):
                 % {"paths": unsupported_list})
             logger.info(f"Unsupported files selected:\n{unsupported_list}")
 
-    def open_inspection_file_dialog(self):
-        """Open file dialog specifically for the Video Inspection Tool."""
-        from PyQt5.QtWidgets import QFileDialog
-        files, _ = QFileDialog.getOpenFileNames(self, "Select Media Files to Inspect", "", "Media Files (*.mp4 *.avi *.wmv *.mkv *.flv *.webm *.mov *.mpeg *.mpg *.m4v *.3gp *.ts *.vob *.rm *.rmvb *.asf *.m2ts *.mts *.ogv *.divx *.dv *.f4v)")
-        if not files:
+    def inspect_in_media_player(self, path):
+        """Converted Files -> Media Player: load `path` into the selected panel with the Inspect dock open."""
+        if not path or not os.path.exists(path):
             return
-        # Inspect the first selected file
-        file_path = files[0]
-        if os.path.isfile(file_path):
-            self.inspection_widget.inspect_file(file_path)
-            # Switch to inspection tab if not already there
-            inspection_tab_index = self.tabs.indexOf(self.inspection_tab_scroll)
-            if inspection_tab_index >= 0:
-                self.tabs.setCurrentIndex(inspection_tab_index)
+        widget = self._ensure_media_player_widget()
+        self.show_media_player_tab()
+        widget.selected_panel().load_media(path)
+        widget.inspect_btn.setChecked(True)
+
+    def show_media_player_tab(self):
+        index = self.tabs.indexOf(self.media_player_tab_scroll)
+        if index < 0:
+            return
+        try:
+            self.tabs.setTabVisible(index, True)
+        except AttributeError:
+            self.media_player_tab_scroll.setVisible(True)
+        self.tabs.setCurrentIndex(index)
 
     def launch_ballbuster_game(self):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None:
@@ -3394,6 +3218,7 @@ class VideoConverterApp(QMainWindow):
         self._start_star_field()
 
         self.log_container.hide()
+        self.hide_files_table_for_game()
 
         self.ballbuster_widget = BallBusterWidget(theme=skin_name)
         self.ballbuster_widget.setAttribute(Qt.WA_DeleteOnClose)
@@ -3489,6 +3314,7 @@ class VideoConverterApp(QMainWindow):
             self.ballbuster_widget = None
 
         self.log_container.show()
+        self.restore_files_table_after_game()
         self.log_tab_footer_widget.show()
         # Restore NVC logo and tray icon
         self.update_icons()

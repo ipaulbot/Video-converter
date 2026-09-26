@@ -97,6 +97,7 @@ class ConvertedFilesWidget(QWidget):
     file_converted_signal = pyqtSignal(str, dict, str, bool)  # file_name, deletion_info, destination_folder, success
     preview_requested = pyqtSignal(str)  # emit file path when selection changes
     play_requested = pyqtSignal(str)  # file path the user wants to open in the Media Player
+    inspect_requested = pyqtSignal(str)  # file path to show in the Media Player's Inspect panel
     drop_files_signal = pyqtSignal(list)  # emit list of file paths dropped onto the table
 
     def __init__(self, parent=None, button_style=None):
@@ -224,6 +225,16 @@ class ConvertedFilesWidget(QWidget):
         self.play_button.clicked.connect(self.request_play_selected)
         self.play_button.hide()
         actions_row.addWidget(self.play_button)
+        self.inspect_button = QPushButton(_tr("Inspect"))
+        self.inspect_button.setCursor(Qt.PointingHandCursor)
+        self.inspect_button.setToolTip(
+            _tr("Show the selected file's ffprobe details in the Media Player's Inspect panel")
+        )
+        self.inspect_button.setStyleSheet(theme.compact_button_style())
+        theme.opt_out_of_button_style(self.inspect_button)
+        self.inspect_button.clicked.connect(self.request_inspect_selected)
+        self.inspect_button.hide()
+        actions_row.addWidget(self.inspect_button)
         layout.addLayout(actions_row)
         self.setLayout(layout)
         self.file_converted_signal.connect(self.add_converted_file)
@@ -467,6 +478,7 @@ class ConvertedFilesWidget(QWidget):
         dest_folder = self.table_widget.item(row, 1).text()
         menu = QMenu(self)
         play_action = menu.addAction(_tr("Play in Media Player"))
+        inspect_action = menu.addAction(_tr("Inspect in Media Player"))
         menu.addSeparator()
         open_folder_action = menu.addAction(_tr("Open Containing Folder"))
         open_log_action = menu.addAction(_tr("Open Log File"))
@@ -476,6 +488,8 @@ class ConvertedFilesWidget(QWidget):
         action = menu.exec_(self.table_widget.viewport().mapToGlobal(pos))
         if action == play_action and file_path:
             self.play_requested.emit(file_path)
+        elif action == inspect_action and file_path:
+            self.inspect_requested.emit(file_path)
         elif action == open_folder_action:
             self.open_folder(dest_folder)
         elif action == open_log_action:
@@ -562,7 +576,7 @@ class ConvertedFilesWidget(QWidget):
 
     def reskin(self):
         compact = theme.compact_button_style()
-        for button in (self.clear_button, self.play_button):
+        for button in (self.clear_button, self.play_button, self.inspect_button):
             button.setStyleSheet(compact)
 
     def clear_logs(self):
@@ -584,6 +598,7 @@ class ConvertedFilesWidget(QWidget):
         try:
             indexes = self.table_widget.selectionModel().selectedRows()
             self.play_button.setVisible(bool(indexes))
+            self.inspect_button.setVisible(bool(indexes))
             if not indexes:
                 self.preview_requested.emit("")
                 return
@@ -606,6 +621,11 @@ class ConvertedFilesWidget(QWidget):
         path = self.selected_file_path()
         if path:
             self.play_requested.emit(path)
+
+    def request_inspect_selected(self):
+        path = self.selected_file_path()
+        if path:
+            self.inspect_requested.emit(path)
 
     def _format_path_for_display(self, path, max_chars=0):
         """Return full path; kept for future custom formatting."""

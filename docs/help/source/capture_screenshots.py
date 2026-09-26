@@ -263,11 +263,11 @@ def main() -> int:
     attempt("FIG-01", lambda: settings_tab("General"), after=close_dialogs)
     attempt("FIG-02", lambda: settings_tab("Format"), after=close_dialogs)
 
-    # FIG-03: the Converted Files table with stand-in rows, so the status icons
-    # are visible without converting anything and without listing the
-    # operator's own files.
+    # FIG-03: the Video Converter tab, its Converted Files table filled with
+    # stand-in rows so the status icons are visible without converting anything
+    # and without listing the operator's own files.
     def converted_files_with_rows():
-        if show_tab("Converted Files") is None:
+        if show_tab("Video Converter") is None:
             return None
         table = window.converted_files_widget
         table.add_queued_file("Session 1.mp4", r"C:\Videos\Converted")
@@ -279,7 +279,18 @@ def main() -> int:
         return window
 
     attempt("FIG-03", converted_files_with_rows)
-    attempt("FIG-04", lambda: show_tab("Video Inspection Tool"))
+    # FIG-04: the Media Player with its Inspect panel open (the inspector moved
+    # here from its own tab on 2026-09-26).
+    def player_with_inspect_panel():
+        if show_tab("Media Player") is None:
+            return None
+        player = window._ensure_media_player_widget()
+        _pump(app, 8)
+        player.inspect_btn.setChecked(True)
+        _pump(app, 8)
+        return window
+
+    attempt("FIG-04", player_with_inspect_panel)
     attempt("FIG-05", lambda: show_tab("PC Report"))
     attempt("FIG-06", lambda: show_tab("Lossless Editor"))
 

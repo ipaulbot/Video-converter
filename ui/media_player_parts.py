@@ -15,11 +15,50 @@ from PyQt5.QtWidgets import (
 
 from ui import theme
 from ui.glyph_icons import make_icon_button
+from ui.inspection_widget import InspectionWidget
 
 
 def _tr(source: str) -> str:
     """Translate under the stable "MediaPlayer" context (plain literals only)."""
     return QCoreApplication.translate("MediaPlayer", source)
+
+
+class InspectionDock(QWidget):
+    """ffprobe details for the selected panel's clip, in the slot the Playlist dock uses.
+
+    This is where the Video Inspection Tool tab went on 2026-09-26: the same
+    `InspectionWidget` (Summary / Detailed JSON, drag-and-drop) next to the
+    video it describes instead of on a tab of its own.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.current_path = ""
+        # JSON needs more room than a playlist.
+        self.setMinimumWidth(320)
+        self.setMaximumWidth(480)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(6)
+        self.title_label = QLabel(_tr("Inspect"))
+        self.title_label.setStyleSheet(theme.group_title_style())
+        layout.addWidget(self.title_label)
+        self.inspector = InspectionWidget(self, notify_preview=False)
+        layout.addWidget(self.inspector, 1)
+
+    def set_panel_title(self, panel_title):
+        self.title_label.setText(_tr("Inspect - %(panel)s") % {"panel": panel_title})
+
+    def inspect_path(self, path):
+        """Run ffprobe for `path` unless it is already shown; an empty path clears the dock."""
+        path = path or ""
+        if path == self.current_path:
+            return
+        self.current_path = path
+        if path:
+            self.inspector.inspect_file(path)
+        else:
+            self.inspector.reset()
 
 
 class FullscreenHost(QWidget):
