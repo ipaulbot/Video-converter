@@ -3,6 +3,19 @@ PREVIEW_WIDTH = 480
 RTSP_PREVIEW_FPS = 12
 RTSP_PREVIEW_WIDTH = 360
 
+# Screen capture (gdigrab). Its default is 29.97 fps of raw full-resolution BMP
+# frames, which is heavy for a desktop that mostly does not move; 15 is a
+# comfortable recording default and the user can raise it per source.
+SCREEN_SOURCE_PREFIX = "screen="
+SCREEN_CAPTURE_FPS = 15
+SCREEN_PREVIEW_FPS = 8
+
+# Picture-in-picture canvas. The first source fills it; the others are insets
+# whose geometry comes from recording_layout_preview_rects, so the sidebar
+# schematic and the recorded file agree.
+PIP_CANVAS_W = 1280
+PIP_CANVAS_H = 720
+
 H264_QUALITY: dict[str, tuple[str, str]] = {
     "Default": ("veryfast", "18"),
     "High": ("medium", "16"),
@@ -104,6 +117,15 @@ def _normalize_itsoffset(value):
     return f"{seconds:f}".rstrip("0").rstrip(".")
 
 
+def _is_screen_source(source_text):
+    return (source_text or "").strip().lower().startswith(SCREEN_SOURCE_PREFIX)
+
+
+def _screen_target(source_text):
+    target = (source_text or "").strip()[len(SCREEN_SOURCE_PREFIX):].strip()
+    return target or "desktop"
+
+
 def _add_input(command, source_text, network_profile="preview", frame_rate="", resolution="", use_wallclock=False, itsoffset=""):
     offset_value = _normalize_itsoffset(itsoffset)
     if offset_value:
@@ -124,6 +146,15 @@ def _add_input(command, source_text, network_profile="preview", frame_rate="", r
         if resolution_value:
             command.extend(["-video_size", resolution_value])
         command.extend(["-f", "dshow", "-i", source_text])
+        return
+    if _is_screen_source(source_text):
+        # gdigrab: the whole desktop or one window by title. The requested
+        # resolution is not applied -- for gdigrab -video_size means "crop this
+        # region from the top-left", which is not what a camera-style resolution
+        # setting promises. The capture is scaled later where the layout needs it.
+        default_fps = SCREEN_PREVIEW_FPS if network_profile == "preview" else SCREEN_CAPTURE_FPS
+        fps_value = _normalize_recording_framerate(frame_rate) or str(default_fps)
+        command.extend(["-f", "gdigrab", "-framerate", fps_value, "-i", _screen_target(source_text)])
         return
     if source_text.lower().startswith("rtsp://"):
         if network_profile == "recording":
@@ -213,7 +244,8 @@ def build_record_command(
     # network stream keeps its embedded audio unless the row is muted. RTSP stream-copy stays
     # video-only as before (camera audio codecs rarely copy into MP4).
     is_network_source = source_text.lower().startswith(("rtsp://", "http://", "https://"))
-    keep_embedded_audio = not has_audio and not _silenced(mute, volume) and not is_directshow
+    is_screen = _is_screen_source(source_text)
+    keep_embedded_audio = not has_audio and not _silenced(mute, volume) and not is_directshow and not is_screen
 
     if preview_pipe:
         # Both DirectShow and RTSP/HTTP sources use a single decoded video stream that
@@ -252,7 +284,8 @@ def build_record_command(
         ])
         return command
 
-    copy_video = codec_mode == "copy" and not is_directshow
+    # Raw capture devices (DirectShow, gdigrab) have nothing to stream-copy.
+    copy_video = codec_mode == "copy" and not is_directshow and not is_screen
     if copy_video and is_network_source:
         keep_embedded_audio = False
     command.extend(["-map", "0:v"])
@@ -293,9 +326,20 @@ def build_combined_grid_record_command(
     mute=False,
     volume="100",
     quality="Default",
+    options_per_source=None,
+    layout="grid",
 ):
+    """One process, one composite MP4 from every source.
+
+    ``layout`` is ``"grid"`` (xstack tiles) or ``"pip"`` (source 1 fills the
+    frame, the others are insets). ``options_per_source`` carries each source's
+    ``frame_rate`` / ``resolution`` so a USB camera opens in its configured mode
+    here exactly as it does in Separate videos; without them a 1080p MJPEG webcam
+    fell back to the driver default (640x480 YUY2).
+    """
     source_texts = [(source or "").strip() for source in sources if (source or "").strip()]
     offsets = list(offsets_per_source or [])
+    options_list = list(options_per_source or [])
     command = [ffmpeg_path, "-hide_banner", "-y"]
 
     # Open GenICam/Basler sources first so they can bind, but remember each source's
@@ -303,10 +347,13 @@ def build_combined_grid_record_command(
     open_order = _genicam_first_open_order(source_texts)
     input_index_of = {original: opened for opened, original in enumerate(open_order)}
     for original in open_order:
+        options = options_list[original] if original < len(options_list) else {}
         _add_input(
             command,
             source_texts[original],
             network_profile="recording",
+            frame_rate=(options or {}).get("frame_rate", ""),
+            resolution=(options or {}).get("resolution", ""),
         )
 
     audio_input_index = None
@@ -328,6 +375,17 @@ def build_combined_grid_record_command(
         command.append(output_file)
         return command
 
+    pip = str(layout or "grid").lower() == "pip" and len(source_texts) > 1
+    if pip:
+        # Every rect is normalised against the PiP canvas; source 1 is the full frame.
+        rects = _pip_preview_rects(len(source_texts))
+        tile_sizes = [
+            (max(2, round(w * PIP_CANVAS_W)) // 2 * 2, max(2, round(h * PIP_CANVAS_H)) // 2 * 2)
+            for (_x, _y, w, h) in rects
+        ]
+    else:
+        tile_sizes = [(640, 360)] * len(source_texts)
+
     filters = []
     for opened_index in range(len(source_texts)):
         original = open_order[opened_index]
@@ -343,36 +401,43 @@ def build_combined_grid_record_command(
             setpts = f"setpts=PTS-STARTPTS+({offset_value})/TB"
         else:
             setpts = "setpts=PTS-STARTPTS"
+        tile_w, tile_h = tile_sizes[original]
         filters.append(
             f"[{opened_index}:v]{setpts},fps={output_fps},"
-            "scale=640:360:force_original_aspect_ratio=decrease,"
-            "pad=640:360:(ow-iw)/2:(oh-ih)/2,setsar=1"
+            f"scale={tile_w}:{tile_h}:force_original_aspect_ratio=decrease,"
+            f"pad={tile_w}:{tile_h}:(ow-iw)/2:(oh-ih)/2,setsar=1"
             f"[v{opened_index}]"
         )
 
-    # Feed xstack in ORIGINAL source order so tile positions match the user's rows,
+    # Compose in ORIGINAL source order so tile positions match the user's rows,
     # even though the inputs were opened GenICam-first.
     labels = [f"[v{input_index_of[original]}]" for original in range(len(source_texts))]
 
-    if len(source_texts) == 2:
-        layout = "0_0|w0_0"
-    elif len(source_texts) == 3:
-        layout = "0_0|w0_0|0_h0"
-    else:
-        layout = "0_0|w0_0|0_h0|w0_h0"
-
     if len(source_texts) == 1:
         base_label = labels[0]
-    elif preview_pipe:
-        base_label = "[stacked]"
-        filters.append(
-            f"{''.join(labels)}xstack=inputs={len(source_texts)}:layout={layout}:fill=black{base_label}"
-        )
     else:
-        base_label = "[v]"
-        filters.append(
-            f"{''.join(labels)}xstack=inputs={len(source_texts)}:layout={layout}:fill=black{base_label}"
-        )
+        base_label = "[stacked]" if preview_pipe else "[v]"
+        if pip:
+            # Chain one overlay per inset onto source 1.
+            current = labels[0]
+            for inset_index in range(1, len(source_texts)):
+                x, y, _w, _h = rects[inset_index]
+                out_label = base_label if inset_index == len(source_texts) - 1 else f"[pip{inset_index}]"
+                filters.append(
+                    f"{current}{labels[inset_index]}"
+                    f"overlay={round(x * PIP_CANVAS_W)}:{round(y * PIP_CANVAS_H)}{out_label}"
+                )
+                current = out_label
+        else:
+            if len(source_texts) == 2:
+                grid_layout = "0_0|w0_0"
+            elif len(source_texts) == 3:
+                grid_layout = "0_0|w0_0|0_h0"
+            else:
+                grid_layout = "0_0|w0_0|0_h0|w0_h0"
+            filters.append(
+                f"{''.join(labels)}xstack=inputs={len(source_texts)}:layout={grid_layout}:fill=black{base_label}"
+            )
 
     if preview_pipe:
         filters.append(f"{base_label}split=2[v][preview]")

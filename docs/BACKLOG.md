@@ -97,8 +97,15 @@ Out of scope in the current design, kept for later:
 - ~~DirectShow (USB) cameras are always re-encoded, even in copy mode; decide
   whether the label should say so.~~ Fixed 2026-09-25: a note under Output
   settings appears when "copy" is selected with a USB source enabled.
-- Screen capture through FFmpeg gdigrab.
-- Picture-in-picture recording.
+- ~~Screen capture through FFmpeg gdigrab.~~ Done 2026-09-25 (`screen=desktop`
+  / `screen=title=…` source type). Follow-ups: capture a region or a chosen
+  monitor (`-offset_x/-offset_y/-video_size`), and a window picker instead of
+  typing the title.
+- ~~Picture-in-picture recording.~~ Done 2026-09-25. Follow-ups: choose which
+  source is the main frame and the inset corner/size; the geometry is the
+  fixed set in `_pip_preview_rects`.
+- Combined grid / PiP canvas is fixed at 1280x720 (grid tiles 640x360); a
+  "composite resolution" setting would let 4K sources keep more detail.
 - Source type and address columns in the main grid.
 - Splitting the 2,900-line recorder widget into modules.
 - Wiring `build_multi_source_record_command` into the live recorder.

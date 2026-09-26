@@ -92,12 +92,13 @@ class RecorderSettingsTests(unittest.TestCase):
     def test_safe_preset_name_removes_path_characters(self):
         self.assertEqual(safe_preset_name("Lab / Camera: One"), "Lab_Camera_One")
 
-    def test_normalize_maps_legacy_picture_in_picture_to_separate_videos(self):
+    def test_normalize_keeps_picture_in_picture_now_that_it_records(self):
+        # Presets saved while the mode was mapped away come back as PiP again.
         settings = normalize_recorder_settings({
             "output": {"mode": "Picture-in-picture"},
         })
 
-        self.assertEqual(settings["output"]["mode"], "Separate videos")
+        self.assertEqual(settings["output"]["mode"], "Picture-in-picture")
 
 
 if __name__ == "__main__":

@@ -158,6 +158,23 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - "Video Settings" and "Show recording log" links carry gear and list glyphs;
   each camera's settings button is a camera glyph; the rescan control is a
   refresh glyph. All follow the locked/active accent like the other icons.
+- Fixed Combined grid failing to record ("Recording failed") with an Axis camera
+  that rejects the `?resolution=…&fps=…` request options. Separate videos had
+  always retried without those options; the single combined process did not.
+  It now steps down the same ladder (full options, then without the frame
+  rate, then without any requested option). The combined process also opens
+  USB cameras in their configured frame rate and resolution instead of the
+  driver default.
+- Picture-in-picture is back as an output mode and records: source 1 fills a
+  1280×720 frame and the other enabled sources are insets along the bottom
+  left, matching the layout schematic in the sidebar. Presets saved with this
+  mode load as Picture-in-picture again.
+- New Screen capture source type. Leave the address empty (or `desktop`) for
+  the whole screen, or enter a window title to capture one window. It records
+  at 15 fps by default (adjustable per source in Video Settings), is always
+  encoded to H.264, previews like a network stream, and can be mixed with
+  cameras in Combined grid or Picture-in-picture. The Video Settings device
+  list offers it as "Screen capture (desktop)".
 - Fixed "Start Recording" staying green after a recording was stopped. The
   button's style was rendered before the theme was told the recording had
   ended, so it always showed the previous state's colour. The tab underline
