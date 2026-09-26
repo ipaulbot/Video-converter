@@ -1215,6 +1215,62 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(widget.source_for_row(0), "screen=title=Spreadsheet - Budget")
         self.assertEqual(widget.source_for_row(1), "screen=region=100,200,800x600")
 
+    def test_screen_recordings_use_the_detected_hardware_encoder_and_cameras_do_not(self):
+        widget = self._two_source_widget(mode="Separate videos")
+        row_two = widget.source_rows[1]
+        row_two[2].setCurrentIndex(row_two[2].findData("screen"))
+        row_two[3].setText("desktop")
+        widget.hardware_h264_encoder = "h264_nvenc"
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+
+        self.assertEqual(len(started), 2)
+        camera, screen = started
+        self.assertIn("-i", camera.command)
+        self.assertNotIn("h264_nvenc", camera.command)          # RTSP: stream copy / libx264 as before
+        self.assertEqual(screen.command[screen.command.index("-c:v") + 1], "h264_nvenc")
+
+    def test_hardware_encoder_failure_falls_back_to_libx264_for_the_same_capture(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        row[3].setText("monitor=1")
+        widget.hardware_h264_encoder = "h264_nvenc"
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+        self.assertEqual(started[0].command[started[0].command.index("-c:v") + 1], "h264_nvenc")
+
+        started[0].recording_error_text = "[h264_nvenc @ 0x1] Cannot load nvcuda.dll\nError while opening encoder for output stream #0:0"
+        widget._process_finished(started[0], "Video_1", 1)
+
+        self.assertEqual(len(started), 2)
+        second = started[1].command
+        self.assertEqual(second[second.index("-c:v") + 1], "libx264")
+        self.assertIn("ddagrab=output_idx=0", second[second.index("-i") + 1])      # capture unchanged
+
+        started[1].recording_error_text = "Error opening input: Failed to create D3D11 device"
+        widget._process_finished(started[1], "Video_1", 1)
+        third = started[2].command
+        self.assertEqual(third[third.index("-f") + 1], "gdigrab")                      # then the GDI rung
+        self.assertEqual(third[third.index("-c:v") + 1], "libx264")
+        self.assertTrue(any("software encoder" in line for line in widget.log_lines))
+
+    def test_hardware_encoder_is_probed_with_the_device_scan(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        self.assertEqual(widget.hardware_h264_encoder, "")
+        with patch("ui.multi_source_recorder_widget.probe_hardware_h264_encoder", return_value="h264_qsv"):
+            widget._run_in_background = lambda fn: fn()
+            widget.device_discovery_running = False      # the constructor's scan thread may still be in flight
+            self.assertTrue(widget.start_device_discovery(force=True))
+            QApplication.processEvents()
+        self.assertEqual(widget.hardware_h264_encoder, "h264_qsv")
+        self.assertTrue(any("h264_qsv" in line for line in widget.log_lines))
+
     def test_monitor_capture_falls_back_to_gdi_when_desktop_duplication_fails(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         row = widget.source_rows[0]

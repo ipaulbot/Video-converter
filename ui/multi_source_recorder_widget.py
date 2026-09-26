@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from conversion.hardware_encoders import looks_like_encoder_failure, probe_hardware_h264_encoder
 from conversion.ptz_controls import (
     axis_vapix_continuous_url,
     axis_vapix_ptz_url,
@@ -1308,6 +1309,7 @@ class MultiSourceRecorderWidget(QWidget):
     audio_devices_discovered = pyqtSignal(list)
     video_devices_discovered = pyqtSignal(list)
     device_scan_started = pyqtSignal()
+    hardware_encoder_detected = pyqtSignal(str)
 
     # How long a listing stays "fresh": opening Video Settings within this
     # window reuses it instead of spinning ffmpeg up again.
@@ -1319,6 +1321,10 @@ class MultiSourceRecorderWidget(QWidget):
         self.button_style = button_style
         self.directshow_devices = directshow_devices
         self.directshow_audio_devices = []
+        # Hardware H.264 encoder that initialises on this machine ("" = libx264).
+        # Found by the device scan; used for screen captures, whose frames are large.
+        self.hardware_h264_encoder = ""
+        self.hardware_encoder_detected.connect(self._apply_hardware_encoder)
         self.device_discovery_running = False
         self.last_device_scan_ok = None
         self.last_device_scan_at = None
@@ -1848,15 +1854,36 @@ class MultiSourceRecorderWidget(QWidget):
         self.device_scan_started.emit()
 
         def discover():
+            ffmpeg = resource_path("ffmpeg.exe")
             try:
-                scan = discover_directshow_devices(resource_path("ffmpeg.exe"))
+                scan = discover_directshow_devices(ffmpeg)
             except Exception:
                 logger.warning("Device listing failed", exc_info=True)
                 scan = DeviceScan([], [], False)
             self._deliver_device_scan(scan)
+            # Same background pass: which hardware H.264 encoder starts here
+            # (cached, so only the first scan pays the ~1 s).
+            try:
+                encoder = probe_hardware_h264_encoder(ffmpeg)
+            except Exception:
+                logger.warning("Hardware encoder probe failed", exc_info=True)
+                encoder = ""
+            try:
+                self.hardware_encoder_detected.emit(encoder)
+            except RuntimeError:
+                pass
 
         self._run_in_background(discover)
         return True
+
+    def _apply_hardware_encoder(self, encoder):
+        if not encoder:
+            # The probe is cached per ffmpeg path, so an empty result arriving
+            # after a positive one is a stale scan, not a change of hardware.
+            return
+        if encoder != self.hardware_h264_encoder:
+            self._append_log(f"[encoder] screen captures will use {encoder}; cameras keep their current encoding")
+        self.hardware_h264_encoder = encoder
 
     # Alias kept for the Video Settings dialog and older call sites.
     def start_audio_device_discovery(self, force=False):
@@ -2779,6 +2806,7 @@ class MultiSourceRecorderWidget(QWidget):
         audio_device="",
         mute=False,
         volume="100",
+        software_encoder=False,
     ):
         if self.is_directshow_source(source):
             return build_directshow_record_with_preview_command(
@@ -2808,7 +2836,14 @@ class MultiSourceRecorderWidget(QWidget):
             mute=mute,
             volume=volume,
             quality=self.output_quality,
+            video_encoder=self._video_encoder_for(source, software_encoder),
         )
+
+    def _video_encoder_for(self, source, software_encoder=False):
+        """The hardware encoder for a screen capture, "" (libx264) otherwise."""
+        if software_encoder or not source.lower().startswith("screen="):
+            return ""
+        return self.hardware_h264_encoder or ""
 
     def recording_fallback_commands(
         self,
@@ -2823,22 +2858,23 @@ class MultiSourceRecorderWidget(QWidget):
         volume="100",
     ):
         commands = []
-        gdi_source = screen_gdi_fallback_source(source)
-        if gdi_source:
-            # Desktop Duplication could not start (no D3D11 device, remote session,
-            # display index gone). Dropping the frame rate would not help; grab the
-            # whole desktop through GDI at the same rate instead.
-            return [self.build_recording_command(
-                ffmpeg,
-                gdi_source,
-                output_file,
-                preview_pipe=preview_pipe,
-                frame_rate=frame_rate,
-                resolution="",
-                audio_device=audio_device,
-                mute=mute,
-                volume=volume,
-            )]
+        if source.lower().startswith("screen="):
+            common = {
+                "preview_pipe": preview_pipe, "frame_rate": frame_rate, "resolution": "",
+                "audio_device": audio_device, "mute": mute, "volume": volume,
+            }
+            if self._video_encoder_for(source):
+                # The hardware encoder passed its probe but refused this stream
+                # (driver update, GPU busy, unsupported size): same capture, libx264.
+                commands.append(self.build_recording_command(ffmpeg, source, output_file, software_encoder=True, **common))
+            gdi_source = screen_gdi_fallback_source(source)
+            if gdi_source:
+                # Desktop Duplication could not start (no D3D11 device, remote
+                # session, display index gone). Dropping the frame rate would not
+                # help; grab the whole desktop through GDI at the same rate, with
+                # the software encoder so one rung cannot fail for two reasons.
+                commands.append(self.build_recording_command(ffmpeg, gdi_source, output_file, software_encoder=True, **common))
+            return commands
         if source.lower().startswith("rtsp://") and frame_rate and resolution:
             commands.append(self.build_recording_command(
                 ffmpeg,
@@ -3518,12 +3554,16 @@ class MultiSourceRecorderWidget(QWidget):
             "error opening input",
             "i/o error",
         )
-        if not any(marker in error_text for marker in retry_markers):
+        encoder_failed = looks_like_encoder_failure(error_text)
+        if not encoder_failed and not any(marker in error_text for marker in retry_markers):
             return False
         next_command = fallback_commands[0]
         remaining_commands = fallback_commands[1:]
         preview_pipe = getattr(process, "recording_preview_pipe", False)
-        self._append_log(f"[{name}] retrying with safer input format after camera rejected requested settings")
+        if encoder_failed:
+            self._append_log(f"[{name}] retrying with the software encoder after the hardware encoder failed to start")
+        else:
+            self._append_log(f"[{name}] retrying with safer input format after camera rejected requested settings")
         self.status_label.setText(_tr("Recording"))
         self.stop_btn.setEnabled(True)
         self.start_btn.setEnabled(False)

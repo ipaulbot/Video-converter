@@ -30,8 +30,22 @@ H264_QUALITY: dict[str, tuple[str, str]] = {
 }
 
 
-def h264_encode_args(quality: str = "Default") -> list[str]:
+def h264_encode_args(quality: str = "Default", encoder: str = "") -> list[str]:
+    """libx264 by default; a hardware encoder when the caller has verified one works.
+
+    The hardware rate controls are mapped from the libx264 CRF of the tier:
+    constant-quality values on NVENC/QSV/AMF sit a few points above the CRF
+    that looks the same, so each tier stays visually in step with the software
+    encode and the tiers keep their order.
+    """
     preset, crf = H264_QUALITY.get(quality, H264_QUALITY["Default"])
+    if encoder == "h264_nvenc":
+        return ["-c:v", "h264_nvenc", "-preset", "p4", "-rc", "vbr", "-cq", str(int(crf) + 5), "-b:v", "0"]
+    if encoder == "h264_qsv":
+        return ["-c:v", "h264_qsv", "-global_quality", str(int(crf) + 5)]
+    if encoder == "h264_amf":
+        qp = str(int(crf) + 4)
+        return ["-c:v", "h264_amf", "-rc", "cqp", "-qp_i", qp, "-qp_p", qp]
     return ["-c:v", "libx264", "-preset", preset, "-crf", crf]
 
 
@@ -262,6 +276,7 @@ def build_record_command(
     mute=False,
     volume="100",
     quality="Default",
+    video_encoder="",
 ):
     command = [ffmpeg_path, "-hide_banner", "-y"]
     if duration_seconds:
@@ -310,7 +325,7 @@ def build_record_command(
             command.extend(["-map", "0:a?"])
         else:
             command.append("-an")
-        command.extend(h264_encode_args(quality))
+        command.extend(h264_encode_args(quality, video_encoder))
         if has_audio:
             _append_audio_encoding_options(command, volume)
         elif keep_embedded_audio:
@@ -343,7 +358,7 @@ def build_record_command(
     else:
         if is_screen:
             command.extend(["-vf", SCREEN_ENCODE_FILTER])
-        command.extend(h264_encode_args(quality))
+        command.extend(h264_encode_args(quality, video_encoder))
     if has_audio:
         _append_audio_encoding_options(command, volume)
     elif keep_embedded_audio:

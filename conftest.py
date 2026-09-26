@@ -96,6 +96,11 @@ def no_real_device_listing(monkeypatch):
         "ui.multi_source_recorder_widget.discover_directshow_devices",
         lambda _ffmpeg, timeout_seconds=None: DeviceScan([], [], True),
     )
+    # The same scan probes the hardware H.264 encoders (three short ffmpeg runs).
+    monkeypatch.setattr(
+        "ui.multi_source_recorder_widget.probe_hardware_h264_encoder",
+        lambda _ffmpeg, **_kwargs: "",
+    )
 
 
 @pytest.fixture(autouse=True)
