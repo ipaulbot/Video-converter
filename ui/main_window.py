@@ -1089,6 +1089,12 @@ class VideoConverterApp(QMainWindow):
                 self.drag_drop_overlay.show()
 
     def set_start_button_state(self, is_running):
+        # Every stylesheet below is rendered from theme.skin(), so the skin has
+        # to match the state we are about to draw *before* the first qss()
+        # call. It used to be synced only afterwards (through update_icons in
+        # the idle branch), which painted the button one state late: stopping
+        # a recording left "Start Recording" in the active green.
+        self._sync_theme_skin()
         if self.locked:
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Locked"))
@@ -1334,6 +1340,10 @@ class VideoConverterApp(QMainWindow):
         self._apply_recording_tab_lock()
         if hasattr(self, 'start_button'):
             self.set_start_button_state(is_running=getattr(self, 'running', False))
+        # The tab underline follows the conversion workflow (start/stop_conversion
+        # call this); the recording workflow reaches the window only through here.
+        if hasattr(self, 'tabs'):
+            self.update_highlight_colors()
 
     def _recorder_tab_is_active(self):
         recorder_scroll = getattr(self, 'multi_source_recorder_tab_scroll', None)
