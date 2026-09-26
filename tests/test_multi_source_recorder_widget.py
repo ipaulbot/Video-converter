@@ -1088,6 +1088,101 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
         self.assertEqual(widget.source_for_row(0), "screen=desktop")
 
+    def test_video_settings_dialog_offers_each_monitor_as_a_gpu_screen_capture(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            labels = [row_device.itemText(i) for i in range(row_device.count())]
+            monitor_labels = [label for label in labels if label.startswith("Screen capture (monitor ")]
+            self.assertEqual(len(monitor_labels), len(QApplication.screens()))
+            self.assertEqual(monitor_labels[0], "Screen capture (monitor 1, GPU)")
+            self.assertEqual(row_device.itemData(labels.index(monitor_labels[0])), "screen")
+            row_device.setCurrentText(monitor_labels[0])
+            dialog.accept_with_changes()
+        finally:
+            dialog.deleteLater()
+
+        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
+        self.assertEqual(widget.source_rows[0][3].text(), "monitor=1")
+        self.assertEqual(widget.source_for_row(0), "screen=monitor=1")
+
+        # Reopening the dialog shows the monitor entry again rather than "desktop".
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Screen capture (monitor 1, GPU)")
+        finally:
+            dialog.deleteLater()
+
+    def test_monitor_capture_falls_back_to_gdi_when_desktop_duplication_fails(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        row[3].setText("monitor=1")
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+        self.assertEqual(len(started), 1)
+        self.assertIn("ddagrab=output_idx=0", started[0].command[started[0].command.index("-i") + 1])
+
+        started[0].recording_error_text = "Error opening input: Failed to create D3D11 device"
+        widget._process_finished(started[0], "Video_1", 1)
+
+        self.assertEqual(len(started), 2)
+        second = started[1].command
+        self.assertEqual(second[second.index("-f") + 1], "gdigrab")
+        self.assertEqual(second[second.index("-i") + 1], "desktop")
+        self.assertEqual(widget.status_label.text(), "Recording")
+
+    def test_combined_monitor_capture_falls_back_to_gdi_at_the_end_of_the_ladder(self):
+        widget = self._two_source_widget()
+        row_two = widget.source_rows[1]
+        row_two[2].setCurrentIndex(row_two[2].findData("screen"))
+        row_two[3].setText("monitor=1")
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+        scheduled = []
+        widget.start_recording()
+        self.assertEqual(len(started), 1)
+        self.assertTrue(any(arg.startswith("ddagrab=") for arg in started[0].command))
+
+        def fail(process):
+            process.recording_error_text = "Error opening input: Failed to create D3D11 device"
+            with patch.object(widget, "_schedule", lambda delay, cb: scheduled.append(cb)):
+                widget._process_finished(process, "Combined", 1)
+            while scheduled:
+                scheduled.pop(0)()
+
+        fail(started[0])
+        fail(started[1])
+        self.assertEqual(len(started), 3)
+        self.assertFalse(any(arg.startswith("ddagrab=") for arg in started[2].command))
+        self.assertIn("desktop", started[2].command)
+        self.assertIn("gdigrab", started[2].command)
+
+    def test_presets_naming_a_licensed_capture_filter_use_the_built_in_screen_source(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False, load_saved_settings=False)
+        widget.apply_recorder_settings({
+            "channels": [
+                {"enabled": True, "source_type": "directshow", "source": "Camera A"},
+                {"enabled": False, "source_type": "directshow", "source": "Medialooks Screen Capture"},
+            ],
+        })
+
+        self.assertEqual(widget.source_rows[0][2].currentData(), "directshow")
+        self.assertEqual(widget.source_for_row(0), "video=Camera A")
+        self.assertEqual(widget.source_rows[1][2].currentData(), "screen")
+        self.assertEqual(widget.source_for_row(1), "screen=desktop")
+        self.assertTrue(any("Medialooks Screen Capture" in line and "screen capture" in line.lower() for line in widget.log_lines))
+
+    def test_screen_hint_mentions_the_monitor_option(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        self.assertIn("monitor=1", row[3].placeholderText())
+
     def test_combined_output_mode_streams_live_preview_from_recording_process(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920", "OBS Virtual Camera"], auto_preview=True)
         widget.start_stream_preview = lambda *_args: None

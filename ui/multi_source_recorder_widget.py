@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import threading
 import time
 from datetime import datetime
@@ -7,6 +8,7 @@ from datetime import datetime
 from PyQt5.QtCore import QCoreApplication, QProcess, QSize, Qt, QTimer, QUrl, pyqtSignal
 from PyQt5.QtGui import QDesktopServices, QPixmap
 from PyQt5.QtWidgets import (
+    QApplication,
     QCheckBox,
     QComboBox,
     QDialog,
@@ -51,10 +53,12 @@ from conversion.recording_commands import (
     build_preview_stream_command,
     build_record_command,
     recording_layout_preview_rects,
+    screen_gdi_fallback_source,
 )
 from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
     SCREEN_DEFAULT_TARGET,
+    SCREEN_MONITOR_PREFIX,
     DeviceScan,
     apply_axis_rtsp_recording_options,
     axis_mjpeg_preview_url,
@@ -62,8 +66,10 @@ from conversion.recording_sources import (
     build_source_text,
     discover_directshow_devices,
     discover_directshow_video_devices,
+    is_hidden_directshow_video_device,
     parse_directshow_video_options,
     parse_rtsp_url_settings,
+    screen_monitor_index,
     terminate_device_probes,
 )
 from ui import theme
@@ -146,6 +152,25 @@ VIDEO_DEVICE_PLACEHOLDERS = {
 }
 # The Video Settings device list offers the desktop next to the cameras.
 SCREEN_CAPTURE_DEVICE_LABEL = "Screen capture (desktop)"
+# ... and each display on its own through the GPU (Desktop Duplication).
+SCREEN_MONITOR_DEVICE_LABEL = "Screen capture (monitor %(number)d, GPU)"
+_SCREEN_MONITOR_LABEL_PATTERN = re.compile(r"^Screen capture \(monitor (\d+), GPU\)$")
+
+
+def screen_monitor_device_label(number):
+    return SCREEN_MONITOR_DEVICE_LABEL % {"number": number}
+
+
+def screen_monitor_device_labels():
+    """One "Screen capture (monitor N, GPU)" entry per display attached right now."""
+    app = QApplication.instance()
+    screens = app.screens() if app is not None else []
+    return [screen_monitor_device_label(number) for number in range(1, len(screens) + 1)]
+
+
+def screen_monitor_number_from_label(label):
+    match = _SCREEN_MONITOR_LABEL_PATTERN.match((label or "").strip())
+    return int(match.group(1)) if match else None
 
 
 class PreviewLabel(QLabel):
@@ -282,8 +307,14 @@ class VideoSettingsDialog(QDialog):
             row_device = SourceComboBox()
             row_device.setMinimumWidth(190)
             self.populate_video_device_combo(row_device)
+            screen_monitor = screen_monitor_index(build_source_text("screen", source_edit.text()))
             if type_combo.currentData() == "screen" and source_edit.text().strip().lower() in ("", SCREEN_DEFAULT_TARGET):
                 row_device.setCurrentText(SCREEN_CAPTURE_DEVICE_LABEL)
+            elif type_combo.currentData() == "screen" and screen_monitor is not None:
+                monitor_label = screen_monitor_device_label(screen_monitor)
+                if row_device.findText(monitor_label) < 0:
+                    row_device.addItem(monitor_label, "screen")      # a display not attached right now
+                row_device.setCurrentText(monitor_label)
             elif source_edit.text():
                 row_device.setText(source_edit.text())
             else:
@@ -714,6 +745,8 @@ class VideoSettingsDialog(QDialog):
         combo.addItem("No source selected...", "none")
         combo.addItem("RTSP/IP Camera", "rtsp_ip")
         combo.addItem(SCREEN_CAPTURE_DEVICE_LABEL, "screen")
+        for monitor_label in screen_monitor_device_labels():
+            combo.addItem(monitor_label, "screen")
         for device in self.directshow_devices:
             combo.addItem(device, "directshow")
         combo.addItem("Refresh USB devices...", "refresh_directshow")
@@ -729,7 +762,11 @@ class VideoSettingsDialog(QDialog):
             return "rtsp_ip"
         if device_text.lower().startswith(("http://", "https://")):
             return "stream_url"
-        if device_text == SCREEN_CAPTURE_DEVICE_LABEL or device_text.lower().startswith("screen="):
+        if (
+            device_text == SCREEN_CAPTURE_DEVICE_LABEL
+            or screen_monitor_number_from_label(device_text) is not None
+            or device_text.lower().startswith("screen=")
+        ):
             return "screen"
         if device_type == "none" and device_text and device_text != "No source selected...":
             device_type = None
@@ -902,6 +939,9 @@ class VideoSettingsDialog(QDialog):
                 source_edit.setText("")
             elif device_type == "screen" and row_device.currentText() == SCREEN_CAPTURE_DEVICE_LABEL:
                 source_edit.setText(SCREEN_DEFAULT_TARGET)
+            elif device_type == "screen" and screen_monitor_number_from_label(row_device.currentText()) is not None:
+                monitor_number = screen_monitor_number_from_label(row_device.currentText())
+                source_edit.setText(f"{SCREEN_MONITOR_PREFIX}{monitor_number}")
             else:
                 source_edit.setText(row_device.text())
             if source_edit.text().strip():
@@ -1488,7 +1528,7 @@ class MultiSourceRecorderWidget(QWidget):
             "directshow": "Windows camera name, e.g. Logitech Camera",
             "basler_genicam": "Basler/pylon/GenICam source string",
             "stream_url": "rtsp://, http://, https://, or mjpeg URL",
-            "screen": "desktop (default) or a window title",
+            "screen": "desktop (default), monitor=1 (GPU), or a window title",
             "file": "Local test file path",
         }
         edit.setPlaceholderText(hints.get(source_type, "FFmpeg source"))
@@ -2245,6 +2285,7 @@ class MultiSourceRecorderWidget(QWidget):
             offset_spin = source_row[10] if len(source_row) > 10 else None
             enabled.setChecked(bool(channel.get("enabled", enabled.isChecked())))
             label_edit.setText(channel.get("video_name", label_edit.text()))
+            channel = self._redirect_hidden_capture_filter(channel, index)
             type_index = type_combo.findData(channel.get("source_type"))
             if type_index >= 0:
                 type_combo.blockSignals(True)
@@ -2270,6 +2311,25 @@ class MultiSourceRecorderWidget(QWidget):
                     offset_spin.setValue(0.0)
             if refresh_previews:
                 self.update_source_placeholder(type_combo, source_edit, index)
+
+    def _redirect_hidden_capture_filter(self, channel, index):
+        """Presets that name a licensed DirectShow capture filter use the built-in screen source.
+
+        The filter is no longer listed (it pops a licence dialog inside ffmpeg and
+        blocks the recording), and a preset written by MediaRecorder or an older
+        NVC may still refer to it.
+        """
+        source = str(channel.get("source", "") or "")
+        if not is_hidden_directshow_video_device(source):
+            return channel
+        self._append_log(
+            f"[Video_{index + 1}] \"{source}\" is a licensed capture filter and is not offered; "
+            "using the built-in screen capture instead"
+        )
+        redirected = dict(channel)
+        redirected["source_type"] = "screen"
+        redirected["source"] = SCREEN_DEFAULT_TARGET
+        return redirected
 
     def recorder_settings_path(self):
         if os.name == "nt":
@@ -2527,6 +2587,22 @@ class MultiSourceRecorderWidget(QWidget):
         volume="100",
     ):
         commands = []
+        gdi_source = screen_gdi_fallback_source(source)
+        if gdi_source:
+            # Desktop Duplication could not start (no D3D11 device, remote session,
+            # display index gone). Dropping the frame rate would not help; grab the
+            # whole desktop through GDI at the same rate instead.
+            return [self.build_recording_command(
+                ffmpeg,
+                gdi_source,
+                output_file,
+                preview_pipe=preview_pipe,
+                frame_rate=frame_rate,
+                resolution="",
+                audio_device=audio_device,
+                mute=mute,
+                volume=volume,
+            )]
         if source.lower().startswith("rtsp://") and frame_rate and resolution:
             commands.append(self.build_recording_command(
                 ffmpeg,
@@ -2870,6 +2946,10 @@ class MultiSourceRecorderWidget(QWidget):
         combined_options = []
         for _row_index, _label, source, *option_items in selected:
             options = self._degrade_requested_options(option_items[0] if option_items else {}, option_tier)
+            if option_tier >= self.COMBINED_OPTION_TIERS - 1:
+                # Last rung: a GPU monitor capture that would not start becomes a
+                # GDI grab of the whole desktop, as in Separate videos.
+                source = screen_gdi_fallback_source(source) or source
             combined_sources.append(apply_axis_rtsp_recording_options(
                 source,
                 frame_rate=options.get("frame_rate", ""),

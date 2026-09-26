@@ -1,3 +1,5 @@
+from conversion.recording_sources import screen_monitor_index
+
 PREVIEW_FPS = 20
 PREVIEW_WIDTH = 480
 RTSP_PREVIEW_FPS = 12
@@ -9,6 +11,10 @@ RTSP_PREVIEW_WIDTH = 360
 SCREEN_SOURCE_PREFIX = "screen="
 SCREEN_CAPTURE_FPS = 15
 SCREEN_PREVIEW_FPS = 8
+# Both grabbers deliver BGRA. Left alone, libx264 encodes that as 4:4:4, which the
+# Windows players and hardware decoders refuse to play, and the whole virtual
+# desktop can have an odd height that yuv420p cannot represent.
+SCREEN_ENCODE_FILTER = "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p"
 
 # Picture-in-picture canvas. The first source fills it; the others are insets
 # whose geometry comes from recording_layout_preview_rects, so the sidebar
@@ -126,6 +132,22 @@ def _screen_target(source_text):
     return target or "desktop"
 
 
+def screen_gdi_fallback_source(source_text):
+    """`screen=desktop` for a `screen=monitor=N` source, else "".
+
+    Desktop Duplication needs a D3D11 device and a real console session; when it
+    cannot start, the GDI grabber of the whole desktop is the safe substitute.
+    """
+    if screen_monitor_index(source_text) is None:
+        return ""
+    return f"{SCREEN_SOURCE_PREFIX}desktop"
+
+
+def _screen_frame_rate(frame_rate, network_profile):
+    default_fps = SCREEN_PREVIEW_FPS if network_profile == "preview" else SCREEN_CAPTURE_FPS
+    return _normalize_recording_framerate(frame_rate) or str(default_fps)
+
+
 def _add_input(command, source_text, network_profile="preview", frame_rate="", resolution="", use_wallclock=False, itsoffset=""):
     offset_value = _normalize_itsoffset(itsoffset)
     if offset_value:
@@ -148,12 +170,22 @@ def _add_input(command, source_text, network_profile="preview", frame_rate="", r
         command.extend(["-f", "dshow", "-i", source_text])
         return
     if _is_screen_source(source_text):
+        fps_value = _screen_frame_rate(frame_rate, network_profile)
+        monitor = screen_monitor_index(source_text)
+        if monitor is not None:
+            # One display through the Desktop Duplication API: the GPU hands over
+            # frames, so DirectX content is captured and 4K/60 costs no CPU. The
+            # filter creates its own D3D11 device; frames are downloaded for the
+            # software encoder / layout filters that follow.
+            command.extend([
+                "-f", "lavfi",
+                "-i", f"ddagrab=output_idx={monitor - 1}:framerate={fps_value},hwdownload,format=bgra",
+            ])
+            return
         # gdigrab: the whole desktop or one window by title. The requested
         # resolution is not applied -- for gdigrab -video_size means "crop this
         # region from the top-left", which is not what a camera-style resolution
         # setting promises. The capture is scaled later where the layout needs it.
-        default_fps = SCREEN_PREVIEW_FPS if network_profile == "preview" else SCREEN_CAPTURE_FPS
-        fps_value = _normalize_recording_framerate(frame_rate) or str(default_fps)
         command.extend(["-f", "gdigrab", "-framerate", fps_value, "-i", _screen_target(source_text)])
         return
     if source_text.lower().startswith("rtsp://"):
@@ -256,9 +288,10 @@ def build_record_command(
         # the re-encode cost, but in practice FFmpeg's scheduler starves the preview
         # tap on RTSP inputs (notably Axis cameras) and the preview freezes. The CPU
         # cost of re-encoding to libx264 veryfast is small relative to that trade-off.
+        source_chain = f"{SCREEN_ENCODE_FILTER}," if is_screen else ""
         command.extend([
             "-filter_complex",
-            f"[0:v]split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
+            f"[0:v]{source_chain}split=2[v][preview];[preview]fps={PREVIEW_FPS},scale={PREVIEW_WIDTH}:-1[p]",
             "-map", "[v]",
         ])
         if has_audio:
@@ -300,6 +333,8 @@ def build_record_command(
     if copy_video:
         command.extend(["-c:v", "copy"])
     else:
+        if is_screen:
+            command.extend(["-vf", SCREEN_ENCODE_FILTER])
         command.extend(h264_encode_args(quality))
     if has_audio:
         _append_audio_encoding_options(command, volume)
@@ -367,6 +402,8 @@ def build_combined_grid_record_command(
             command.append("-an")
         else:
             command.extend(["-map", f"{audio_input_index}:a", "-shortest"])
+        if _is_screen_source(source_texts[0]):
+            command.extend(["-vf", SCREEN_ENCODE_FILTER])
         command.extend(["-r", str(output_fps), *h264_encode_args(quality)])
         if audio_input_index is not None:
             _append_audio_encoding_options(command, volume)
@@ -402,10 +439,13 @@ def build_combined_grid_record_command(
         else:
             setpts = "setpts=PTS-STARTPTS"
         tile_w, tile_h = tile_sizes[original]
+        # A BGRA screen tile is converted before stacking so xstack/overlay never
+        # negotiate a 4:4:4 or RGB output for the whole composite.
+        pixel_format = ",format=yuv420p" if _is_screen_source(source_texts[original]) else ""
         filters.append(
             f"[{opened_index}:v]{setpts},fps={output_fps},"
             f"scale={tile_w}:{tile_h}:force_original_aspect_ratio=decrease,"
-            f"pad={tile_w}:{tile_h}:(ow-iw)/2:(oh-ih)/2,setsar=1"
+            f"pad={tile_w}:{tile_h}:(ow-iw)/2:(oh-ih)/2,setsar=1{pixel_format}"
             f"[v{opened_index}]"
         )
 

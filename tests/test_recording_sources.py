@@ -11,9 +11,11 @@ from conversion.recording_sources import (
     discover_directshow_audio_devices,
     discover_directshow_devices,
     discover_directshow_video_devices,
+    is_hidden_directshow_video_device,
     parse_directshow_audio_devices,
     parse_directshow_video_devices,
     parse_rtsp_url_settings,
+    screen_monitor_index,
     terminate_device_probes,
 )
 
@@ -34,6 +36,33 @@ class RecordingSourceTests(unittest.TestCase):
         self.assertEqual(build_source_text("screen", "title=My App"), "screen=title=My App")
         self.assertEqual(build_source_text("screen", "My App"), "screen=title=My App")
         self.assertEqual(build_source_text("screen", "screen=desktop"), "screen=desktop")
+
+    def test_builds_gpu_monitor_screen_source(self):
+        # `monitor=N` (1-based, as shown to the user) selects one display through
+        # the Desktop Duplication API instead of GDI.
+        self.assertEqual(build_source_text("screen", "monitor=2"), "screen=monitor=2")
+        self.assertEqual(build_source_text("screen", "Monitor 2"), "screen=monitor=2")
+        self.assertEqual(build_source_text("screen", "screen=monitor=1"), "screen=monitor=1")
+        self.assertEqual(screen_monitor_index("screen=monitor=2"), 2)
+        self.assertIsNone(screen_monitor_index("screen=desktop"))
+        self.assertIsNone(screen_monitor_index("screen=title=monitor=2"))
+        self.assertIsNone(screen_monitor_index("screen=monitor=0"))
+
+    def test_hides_licensed_capture_filters_from_the_video_device_list(self):
+        # A third-party DirectShow filter whose licence check pops a modal dialog
+        # inside ffmpeg the moment it is instantiated; the built-in screen source
+        # replaces it, so it must not be offered as a camera.
+        output = '''
+        [dshow @ 000001] "HD Pro Webcam C920" (video)
+        [dshow @ 000001] "Medialooks Screen Capture" (video)
+        [dshow @ 000001] "OBS Virtual Camera" (video)
+        '''
+
+        self.assertEqual(parse_directshow_video_devices(output), ["HD Pro Webcam C920", "OBS Virtual Camera"])
+        self.assertTrue(is_hidden_directshow_video_device("Medialooks Screen Capture"))
+        self.assertTrue(is_hidden_directshow_video_device("video=Medialooks Screen Capture"))
+        self.assertFalse(is_hidden_directshow_video_device("OBS Virtual Camera"))
+        self.assertFalse(is_hidden_directshow_video_device(""))
 
     def test_builds_directshow_video_source(self):
         self.assertEqual(build_source_text("directshow", "Logitech Camera"), "video=Logitech Camera")
