@@ -586,18 +586,18 @@ def drop_zone_style(radius: int = 18) -> str:
     )
 
 
-def inspect_text_style(radius: int = RADIUS_MD) -> str:
+def inspect_text_style() -> str:
     """The Media Player's Inspect text: a plain panel with real scroll bars.
 
     The stand-alone inspector wraps its text in `drop_zone_style` and hides the
     scroll bar; beside the video that dashed frame read as a second, empty
-    drop target, so the dock uses this instead.
+    drop target, so the dock uses this instead. Borderless: the tab pane
+    around it (`inspect_pane_style`) is the one frame.
     """
     s = skin()
     return (
         f"QPlainTextEdit {{ background: {s.panel_bg}; color: {s.text_body}; "
-        f"border: 1px solid {s.panel_border}; border-radius: {radius}px; "
-        f"padding: 6px; font-size: {FONT_BASE}px; }}"
+        f"border: none; padding: 6px; font-size: {FONT_BASE}px; }}"
     )
 
 
@@ -877,6 +877,18 @@ def table_style() -> str:
         f"border-bottom: 1px solid {s.panel_border}; font-weight: 600; }} "
         f"QTableWidget::item:selected {{ background: {s.accent}; "
         f"color: {s.text_on_accent}; }}"
+    )
+
+
+def inspect_pane_style() -> str:
+    """The Media Player's Inspect dock: the Summary / JSON pane is a grey box
+    even while empty, so the dock does not float on white until a clip is
+    inspected. The text panels inside are borderless (one frame, not two)."""
+    s = skin()
+    return (
+        f"QTabWidget::pane {{ background: {s.panel_bg}; "
+        f"border: 1px solid {s.separator}; border-radius: {RADIUS_SM}px; "
+        f"top: -1px; }}"
     )
 
 

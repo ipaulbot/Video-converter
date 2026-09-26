@@ -36,6 +36,7 @@ from ui.glyph_icons import (
     reskin_icon_buttons,
     set_button_glyph,
 )
+from ui.elided_label import ElidedLabel
 from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
@@ -158,6 +159,7 @@ class PlayerPanel(QWidget):
         self._settle_ticks = 0
         self._settle_last_pos = None
         self._settle_retries = 0
+        self._surface_parked = False
         self._build_ui()
 
     def _build_ui(self):
@@ -185,7 +187,11 @@ class PlayerPanel(QWidget):
         controls = QHBoxLayout()
         controls.setSpacing(6)
 
-        self.name_label = QLabel(f"Panel {self.index + 1}: empty")
+        # Elided: a plain QLabel's minimum width is its whole text, and two
+        # long clip names pushed the tab wider than a compact window.
+        self.name_label = ElidedLabel(
+            _tr("Panel %(number)s: empty") % {"number": self.index + 1}
+        )
         self.name_label.setStyleSheet(theme.video_label_style())
         self.name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
@@ -238,7 +244,30 @@ class PlayerPanel(QWidget):
             self.video_widget.installEventFilter(self)
             self._video_layout.addWidget(self.video_widget)
             self.placeholder.raise_()
+            if self._surface_parked:
+                self.video_widget.hide()
         return self.video_widget
+
+    # --- the native surface hides with its panel ------------------------------
+    # The Media Foundation window has nothing to paint after a tab switch and
+    # shows whatever the screen held in that rectangle (the converter table,
+    # in the 15:32 report) until the first frame lands. Hidden, the dark tile
+    # underneath paints instead; the surface comes back with the frame.
+    def _park_surface(self):
+        self._surface_parked = True
+        if self.video_widget is not None:
+            self.video_widget.hide()
+
+    def _reveal_surface(self):
+        self._surface_parked = False
+        if self.video_widget is not None and self.video_widget.isHidden():
+            self.video_widget.show()
+            self.placeholder.raise_()
+            self.overlay.raise_()
+
+    def hideEvent(self, event):
+        self._park_surface()
+        super().hideEvent(event)
 
     def eventFilter(self, watched, event):
         if (
@@ -343,8 +372,13 @@ class PlayerPanel(QWidget):
 
     def showEvent(self, event):
         super().showEvent(event)
+        nudged = False
         if self._primed_path and self._primed_path == self._media_path:
-            self.represent_frame()
+            nudged = self.represent_frame()
+        if not nudged and not self._priming:
+            # Nothing to re-present (empty, playing, or not primed yet): the
+            # surface may show at once; a running nudge reveals it when done.
+            self._reveal_surface()
 
     def _on_position_for_prime(self, position):
         # Finish only once the pipeline has demonstrably moved past the target
@@ -364,6 +398,8 @@ class PlayerPanel(QWidget):
             self._watch_paused_seek(self._prime_target_ms)
         self.placeholder.hide()
         self.placeholder.setText(_tr("Drop a video here\nor click Load"))
+        if self.isVisible():
+            self._reveal_surface()
 
     # --- paused-seek watchdog ---------------------------------------------------
 
@@ -423,6 +459,8 @@ class PlayerPanel(QWidget):
                 self.player.setMuted(self._prime_restore_muted)
             self.placeholder.hide()
             self.placeholder.setText(_tr("Drop a video here\nor click Load"))
+        if self.isVisible():
+            self._reveal_surface()     # Play paints its own frames from here on
         self._primed_path = "" if forget else self._media_path
 
     def _on_player_error_code(self, code):
@@ -500,6 +538,11 @@ class PlayerPanel(QWidget):
             return False
         self.hide_unsupported()
         self._cancel_prime()
+        # A load is the clearest sign of which panel the user means: select it
+        # first so the playlist dock and Inspect follow (a drop on an
+        # unselected panel used to change nothing visible).
+        if callable(self.on_selected) and not self.selected:
+            self.on_selected(self)
         self._ensure_player().setMedia(QMediaContent(QUrl.fromLocalFile(path)))
         self._media_path = path
         self.name_label.setText(
@@ -783,6 +826,8 @@ class MediaPlayerWidget(QWidget):
         self.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(2))
         self.panels_combo.currentIndexChanged.connect(self._on_panel_count_changed)
 
+        # Everything hugs the left edge in three groups -- transport, view,
+        # playback settings -- so nothing hides off the right in a compact window.
         button_row.addWidget(self.play_btn)
         button_row.addWidget(self.stop_btn)
         button_row.addWidget(self.restart_btn)
@@ -790,14 +835,18 @@ class MediaPlayerWidget(QWidget):
         button_row.addWidget(self.fullscreen_btn)
         button_row.addWidget(self.playlist_btn)
         button_row.addWidget(self.inspect_btn)
-        button_row.addStretch(1)
+        button_row.addSpacing(12)
         button_row.addWidget(panels_label)
         button_row.addWidget(self.panels_combo)
+        button_row.addSpacing(8)
         button_row.addWidget(speed_label)
         button_row.addWidget(self.speed_combo)
+        button_row.addSpacing(8)
         button_row.addWidget(volume_label)
         button_row.addWidget(self.volume_slider)
         button_row.addWidget(self.mute_btn)
+        button_row.addStretch(1)
+        self.button_row = button_row
         bar.addLayout(button_row)
         return bar
 

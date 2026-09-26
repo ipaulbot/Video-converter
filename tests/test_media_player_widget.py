@@ -4,8 +4,8 @@ import tempfile
 import time
 import unittest
 
-from PyQt5.QtCore import QEvent, QObject, QPointF, Qt, pyqtSignal
-from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtCore import QEvent, QMimeData, QObject, QPointF, Qt, QUrl, pyqtSignal
+from PyQt5.QtGui import QDropEvent, QMouseEvent
 from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtWidgets import (
     QWIDGETSIZE_MAX,
@@ -610,6 +610,129 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             widget.panels[1].load_media(clip)
             self.assertEqual(widget.panels[1].playlist.items, [clip])
             self.assertEqual(widget.panels[0].playlist.items, [])
+
+    def test_loading_into_a_panel_selects_it_so_the_dock_and_inspect_follow(self):
+        # 15:32 report: a drop on panel 2 showed nothing -- the dock and Inspect
+        # follow the *selected* panel and the drop did not select it.
+        widget = self._widget()
+        widget.playlist_btn.setChecked(True)
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda path: inspected.append(path)
+        with tempfile.TemporaryDirectory() as folder:
+            clip = os.path.join(folder, "b.mp4")
+            with open(clip, "wb") as handle:
+                handle.write(b"x")
+            self.assertEqual(widget.selected_index, 0)
+            widget.panels[1].load_media(clip)
+            self.assertEqual(widget.selected_index, 1)
+            self.assertEqual(widget.playlist_dock.model, widget.panels[1].playlist)
+            self.assertEqual(widget.playlist_dock.list.count(), 1)
+            self.assertEqual(widget.playlist_dock.list.currentRow(), 0)
+            self.assertEqual(inspected[-1], clip)
+            self.assertIn("Panel 2", widget.playlist_dock.title_label.text())
+
+    def test_a_drop_on_a_panel_loads_and_selects_it(self):
+        widget = self._widget()
+        with tempfile.TemporaryDirectory() as folder:
+            clip = os.path.join(folder, "c.mp4")
+            with open(clip, "wb") as handle:
+                handle.write(b"x")
+            mime = QMimeData()
+            mime.setUrls([QUrl.fromLocalFile(clip)])
+            drop = QDropEvent(QPointF(5, 5), Qt.CopyAction, mime, Qt.LeftButton, Qt.NoModifier)
+            widget.panels[1].dropEvent(drop)
+            self.assertEqual(os.path.normpath(widget.panels[1]._media_path), os.path.normpath(clip))
+            self.assertEqual(widget.selected_index, 1)
+
+    # --- transport bar order ------------------------------------------------------
+
+    def test_view_and_playback_settings_sit_left_with_the_transport_buttons(self):
+        widget = self._widget()
+        row = widget.button_row
+        widgets = [row.itemAt(i).widget() for i in range(row.count())]
+        names = [w for w in widgets if w is not None]
+        order = [
+            widget.play_btn, widget.stop_btn, widget.restart_btn,
+            widget.fullscreen_btn, widget.playlist_btn, widget.inspect_btn,
+            widget.panels_combo, widget.speed_combo, widget.volume_slider, widget.mute_btn,
+        ]
+        positions = [names.index(w) for w in order]
+        self.assertEqual(positions, sorted(positions))
+        # The stretch is the last item: everything hugs the left edge.
+        last = row.itemAt(row.count() - 1)
+        self.assertIsNone(last.widget())
+        self.assertIsNotNone(last.spacerItem())
+        self.assertGreater(last.spacerItem().sizePolicy().horizontalPolicy() & QSizePolicy.ExpandFlag, 0)
+
+    # --- compact window: long clip names must not widen the tab ---------------------
+
+    def test_long_clip_names_do_not_widen_the_video_column(self):
+        widget = self._widget()
+        empty_min = widget.video_column.minimumSizeHint().width()
+        for panel in widget.panels[:2]:
+            panel.name_label.setText("Panel 1: " + "Video_Video_1_20260925_202215_" * 2 + ".mp4")
+        self.assertLessEqual(widget.video_column.minimumSizeHint().width(), empty_min + 40)
+        self.assertTrue(hasattr(widget.panels[0].name_label, "elided_text"))
+
+    # --- the native surface hides with its panel (no stale content on re-show) ----
+
+    def test_the_video_surface_hides_with_the_panel_and_returns_with_the_frame(self):
+        widget = self._widget()
+        widget.show()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=4200)
+        panel._adopt_player(player)
+        video = panel._ensure_video_widget()
+        self.app.processEvents()          # the layout shows a late child on a queued call
+        panel._media_path = "C:/Videos/a.mp4"
+        panel._primed_path = panel._media_path
+        self.assertFalse(video.isHidden())
+        widget.hide()
+        self.assertTrue(video.isHidden())
+        widget.show()
+        # The nudge runs against the hidden surface; the dark tile paints meanwhile.
+        self.assertTrue(panel._priming)
+        self.assertTrue(video.isHidden())
+        player.positionChanged.emit(4240)
+        self.assertFalse(panel._priming)
+        self.assertFalse(video.isHidden())
+
+    def test_the_surface_returns_at_once_when_no_nudge_is_needed(self):
+        widget = self._widget()
+        widget.show()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=10)
+        panel._adopt_player(player)
+        video = panel._ensure_video_widget()
+        self.app.processEvents()
+        panel._media_path = "C:/Videos/a.mp4"
+        widget._is_playing = True                 # playing on: nothing to nudge
+        widget.hide()
+        self.assertTrue(video.isHidden())
+        widget.show()
+        self.assertFalse(video.isHidden())
+        # Play pressed while a nudge is running also reveals it.
+        widget._is_playing = False
+        panel._primed_path = panel._media_path
+        widget.hide()
+        widget.show()
+        self.assertTrue(video.isHidden())
+        panel._cancel_prime()
+        self.assertFalse(video.isHidden())
+
+    def test_hiding_the_widget_does_not_pause_or_stop_playback(self):
+        # Workflow rule 1: switching tabs never stops anything.
+        widget = self._widget()
+        widget.show()
+        panel = widget.panels[0]
+        player = _FakePlayer(position=10)
+        panel._adopt_player(player)
+        panel._media_path = "C:/Videos/a.mp4"
+        widget._is_playing = True
+        widget.hide()
+        widget.show()
+        self.assertNotIn("pause", player.calls)
+        self.assertNotIn("stop", player.calls)
 
     # --- coming back to the tab re-presents the frame -------------------------
 
