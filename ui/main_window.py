@@ -11,12 +11,13 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QStyle, QMenu,
     QPlainTextEdit, QMessageBox, QSpacerItem, QSizePolicy, QProgressBar,
     QAction, QToolBar, QToolButton, QFrame, QStackedWidget, QGridLayout,
-    QApplication, QStackedLayout, QSlider, QScrollArea, QSplitter
+    QApplication, QStackedLayout, QSlider, QScrollArea, QSplitter, QFileDialog
 )
 from PyQt5.QtCore import (QCoreApplication, Qt, QTimer, QThreadPool, pyqtSignal,
                           QSize, QEvent, QUrl, QProcess, QPoint,
                           QPropertyAnimation, QEasingCurve)
-from PyQt5.QtGui import QPixmap, QIcon, QFont, QTextCursor, QPainter, QColor, QImage, QWheelEvent, QPen, QBrush
+from PyQt5.QtGui import (QPixmap, QIcon, QFont, QTextCursor, QPainter, QColor, QImage, QWheelEvent, QPen, QBrush,
+                         QDesktopServices)
 
 # Use native Observer; fall back to PollingObserver if needed.
 from watchdog.observers import Observer
@@ -523,6 +524,9 @@ class VideoConverterApp(QMainWindow):
             logger.debug("VideoConverterApp.__init__: suppressed error", exc_info=True)
         self.converted_files_widget.play_requested.connect(self.play_in_media_player)
         self.converted_files_widget.inspect_requested.connect(self.inspect_in_media_player)
+        self.converted_files_widget.add_files_requested.connect(lambda: self.open_file_dialog())
+        self.converted_files_widget.monitor_folder_requested.connect(self.monitor_folder_from_menu)
+        self.converted_files_widget.open_in_requested.connect(self.open_file_in)
         # Clean modern styling for converted files widget
         self.converted_files_widget.setStyleSheet(theme.qss("QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; }"))
 
@@ -3201,14 +3205,49 @@ class VideoConverterApp(QMainWindow):
         widget.inspect_btn.setChecked(True)
 
     def show_media_player_tab(self):
-        index = self.tabs.indexOf(self.media_player_tab_scroll)
+        self._show_tool_tab_for_session(self.media_player_tab_scroll)
+
+    def _show_tool_tab_for_session(self, tab_widget):
+        """Reveal and raise a tool tab without changing the saved visibility setting."""
+        index = self.tabs.indexOf(tab_widget)
         if index < 0:
             return
         try:
             self.tabs.setTabVisible(index, True)
         except AttributeError:
-            self.media_player_tab_scroll.setVisible(True)
+            tab_widget.setVisible(True)
         self.tabs.setCurrentIndex(index)
+
+    # --- Video Converter list: right-click feeds ------------------------------
+    def monitor_folder_from_menu(self, folder):
+        """Right-click "Monitor ..." on the file list; "" means ask which folder."""
+        if not folder:
+            folder = QFileDialog.getExistingDirectory(
+                self, _tr("Choose the folder to monitor"), self.source_folder or ""
+            )
+            if not folder:
+                return
+        self.set_monitored_folder(folder)
+
+    def set_monitored_folder(self, folder):
+        """Save `folder` as the source folder; a running watch moves over to it."""
+        self.update_settings({"source_folder": folder})
+        self.append_log(f"Monitoring folder set to: {folder}")
+        if self.running:
+            self.stop_conversion()
+            self.start_conversion()
+
+    def open_file_in(self, target, path):
+        """Right-click "Open in" on the file list."""
+        if not path or not os.path.exists(path):
+            return
+        if target == "media_player":
+            self.play_in_media_player(path)
+        elif target == "lossless_editor":
+            self.lossless_editor_widget.input_edit.setText(path)
+            self._show_tool_tab_for_session(self.lossless_editor_tab_scroll)
+        else:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
     def launch_ballbuster_game(self):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None:

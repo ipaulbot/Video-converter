@@ -77,3 +77,63 @@ class PlayInMediaPlayerTests(unittest.TestCase):
         self.assertEqual(previewed, [path])
         widget.selected_panel().clear_media()
         self.assertEqual(previewed, [path])          # nothing to preview: left alone
+
+
+class ConverterContextMenuWiringTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def _window(self):
+        window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        return window
+
+    def test_add_videos_opens_the_windows_file_picker(self):
+        window = self._window()
+        with mock.patch.object(window, "open_file_dialog") as picker:
+            window.converted_files_widget.add_files_requested.emit()
+        picker.assert_called_once_with()
+
+    def test_monitor_folder_saves_the_source_folder_and_restarts_a_running_watch(self):
+        window = self._window()
+        with tempfile.TemporaryDirectory() as folder:
+            with mock.patch.object(main_window_module, "save_settings"):
+                window.converted_files_widget.monitor_folder_requested.emit(folder)
+                self.assertEqual(os.path.normcase(window.source_folder), os.path.normcase(folder))
+                self.assertEqual(window.settings["source_folder"], folder)
+                # While monitoring, switching folders means stop + start on the new one.
+                window.running = True
+                calls = []
+                window.stop_conversion = lambda: calls.append("stop")
+                window.start_conversion = lambda: calls.append("start")
+                window.converted_files_widget.monitor_folder_requested.emit(folder)
+                self.assertEqual(calls, ["stop", "start"])
+
+    def test_monitor_folder_with_no_path_asks_which_folder(self):
+        window = self._window()
+        with tempfile.TemporaryDirectory() as folder, \
+                mock.patch.object(main_window_module.QFileDialog, "getExistingDirectory", return_value=folder), \
+                mock.patch.object(main_window_module, "save_settings"):
+            window.converted_files_widget.monitor_folder_requested.emit("")
+            self.assertEqual(window.settings["source_folder"], folder)
+        with mock.patch.object(main_window_module.QFileDialog, "getExistingDirectory", return_value=""), \
+                mock.patch.object(main_window_module, "save_settings") as save:
+            window.converted_files_widget.monitor_folder_requested.emit("")
+            self.assertFalse(save.called)                # cancelled: nothing changes
+
+    def test_open_in_routes_to_the_player_the_editor_or_the_system(self):
+        window = self._window()
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as handle:
+            path = handle.name
+        self.addCleanup(lambda: os.path.exists(path) and os.remove(path))
+        with mock.patch.object(window, "play_in_media_player") as play:
+            window.converted_files_widget.open_in_requested.emit("media_player", path)
+        play.assert_called_once_with(path)
+        window.converted_files_widget.open_in_requested.emit("lossless_editor", path)
+        self.assertEqual(window.lossless_editor_widget.input_edit.text(), path)
+        self.assertEqual(window.tabs.currentWidget(), window.lossless_editor_tab_scroll)
+        with mock.patch.object(main_window_module.QDesktopServices, "openUrl") as open_url:
+            window.converted_files_widget.open_in_requested.emit("system", path)
+        self.assertTrue(open_url.called)
+        self.assertEqual(open_url.call_args[0][0].toLocalFile(), path.replace("\\", "/"))
