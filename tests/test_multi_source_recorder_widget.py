@@ -1164,6 +1164,26 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         finally:
             dialog.deleteLater()
 
+    def test_region_picker_fades_both_settings_dialogs_while_it_is_open(self):
+        # Video Settings and Screen Capture Settings would otherwise sit on top of
+        # the very area the user is trying to select.
+        parent = QDialog()
+        dialog = ScreenCaptureSettingsDialog("", parent=parent, window_titles=[], monitor_count=1)
+        seen = {}
+
+        def fake_pick(fade_windows=()):
+            seen["windows"] = tuple(fade_windows)
+            return "region=0,0,100x100"
+
+        try:
+            with patch("ui.multi_source_recorder_widget.pick_screen_region_value", fake_pick):
+                dialog.pick_region_button.click()
+            self.assertEqual(seen["windows"], (dialog, parent))
+            self.assertEqual(dialog.source_value(), "region=0,0,100x100")
+        finally:
+            dialog.deleteLater()
+            parent.deleteLater()
+
     def test_camera_settings_gear_configures_the_screen_capture_row(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)

@@ -58,6 +58,19 @@ class ScreenRegionPickerTests(unittest.TestCase):
 
         self.assertEqual(cancelled, [True])
 
+    def test_picker_takes_input_even_while_settings_dialogs_are_modal(self):
+        # The picker opens from Screen Capture Settings, itself opened from Video
+        # Settings -- two modal dialogs in exec_(). Qt routes input to the newest
+        # modal window only, so a plain tool window sat unclickable until both
+        # dialogs were closed.
+        picker = self._picker()
+        self.assertEqual(picker.windowModality(), Qt.ApplicationModal)
+
+    def test_picker_paints_an_instruction_banner(self):
+        picker = self._picker()
+        self.assertIn("Esc", picker.instruction_text())
+        self.assertIn("Drag", picker.instruction_text())
+
     def test_region_source_value_keeps_absolute_virtual_screen_coordinates(self):
         # gdigrab's -offset_x/-offset_y are absolute virtual-screen coordinates
         # (verified: on a desktop spanning -2560..2560 an offset of 2600 is

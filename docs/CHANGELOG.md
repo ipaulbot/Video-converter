@@ -207,6 +207,12 @@ Use this file to track user-visible fixes, improvements, and feature work.
   inside FFmpeg the moment it is opened, leaving the recording stuck behind
   the dialog. A preset that still names it loads as the built-in screen
   capture, with a log line saying so.
+- Fixed "Select on screen..." in Screen Capture Settings showing an overlay
+  that could not be clicked until both settings dialogs were closed. The two
+  dialogs are modal and Qt sends input only to the newest modal window, so
+  the overlay is now modal itself. While it is up the two dialogs turn
+  transparent so they do not cover the area being chosen, and a banner reads
+  "Drag to select the area to record. Press Esc to cancel."
 - Fixed "Start Recording" staying green after a recording was stopped. The
   button's style was rendered before the theme was told the recording had
   ended, so it always showed the previous state's colour. The tab underline

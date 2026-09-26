@@ -31,11 +31,21 @@ class ScreenRegionPicker(QWidget):
         self._current = None
         self._done = False
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        # The picker opens on top of Video Settings and Screen Capture Settings,
+        # both modal dialogs in exec_(). Qt delivers input to the newest modal
+        # window only, so the overlay must be modal itself or it cannot be
+        # clicked until both dialogs are closed.
+        self.setWindowModality(Qt.ApplicationModal)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setCursor(Qt.CrossCursor)
         self.setMouseTracking(True)
+        self.setFocusPolicy(Qt.StrongFocus)
         self.setGeometry(self._virtual_geometry)
         self.setWindowTitle(_tr("Select a screen region"))
+
+    @staticmethod
+    def instruction_text():
+        return _tr("Drag to select the area to record. Press Esc to cancel.")
 
     # -- geometry -----------------------------------------------------------
 
@@ -88,9 +98,36 @@ class ScreenRegionPicker(QWidget):
             return
         super().keyPressEvent(event)
 
+    def _banner_anchors(self):
+        """Top-centre of every monitor covered by the overlay, in local coordinates."""
+        anchors = []
+        for screen in QGuiApplication.screens():
+            geometry = screen.geometry()
+            if geometry.intersects(self._virtual_geometry):
+                anchors.append(geometry.translated(-self._virtual_geometry.topLeft()))
+        return anchors or [self.rect()]
+
+    def _paint_banner(self, painter):
+        text = self.instruction_text()
+        font = painter.font()
+        font.setPointSize(14)
+        painter.setFont(font)
+        metrics = painter.fontMetrics()
+        text_width = metrics.horizontalAdvance(text)
+        box_height = metrics.height() + 20
+        for screen_rect in self._banner_anchors():
+            box = QRect(0, 0, text_width + 40, box_height)
+            box.moveCenter(QPoint(screen_rect.center().x(), screen_rect.top() + 60))
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(QColor(0, 0, 0, 200))
+            painter.drawRoundedRect(box, 8, 8)
+            painter.setPen(QColor("#ffffff"))
+            painter.drawText(box, Qt.AlignCenter, text)
+
     def paintEvent(self, _event):
         painter = QPainter(self)
         painter.fillRect(self.rect(), QColor(0, 0, 0, 96))
+        self._paint_banner(painter)
         if self._origin is not None and self._current is not None:
             local = self._local_selection()
             painter.setCompositionMode(QPainter.CompositionMode_Clear)
@@ -127,8 +164,14 @@ def virtual_desktop_geometry():
     return geometry
 
 
-def pick_screen_region_value():
-    """Show the overlay and return `region=X,Y,WxH`, or "" if the user cancelled."""
+def pick_screen_region_value(fade_windows=()):
+    """Show the overlay and return `region=X,Y,WxH`, or "" if the user cancelled.
+
+    `fade_windows` are the settings dialogs the picker was opened from. They
+    are made fully transparent while the overlay is up so they do not cover the
+    area being chosen; hiding them is not an option because hiding a dialog
+    that is inside exec_() ends its event loop.
+    """
     geometry = virtual_desktop_geometry()
     picker = ScreenRegionPicker(geometry)
     result = {"value": ""}
@@ -140,11 +183,18 @@ def pick_screen_region_value():
 
     picker.region_selected.connect(selected)
     picker.cancelled.connect(loop.quit)
-    picker.show()
-    picker.raise_()
-    picker.activateWindow()
-    picker.setFocus()
-    loop.exec_()
+    faded = [(window, window.windowOpacity()) for window in fade_windows if window is not None]
+    for window, _opacity in faded:
+        window.setWindowOpacity(0.0)
+    try:
+        picker.show()
+        picker.raise_()
+        picker.activateWindow()
+        picker.setFocus()
+        loop.exec_()
+    finally:
+        for window, opacity in faded:
+            window.setWindowOpacity(opacity)
     picker.setParent(None)
     picker.deleteLater()
     return result["value"]

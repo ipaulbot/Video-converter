@@ -222,7 +222,7 @@ class ScreenCaptureSettingsDialog(QDialog):
     def __init__(self, current_value="", parent=None, window_titles=None, monitor_count=None, pick_region=None):
         super().__init__(parent)
         self.setWindowTitle(_tr("Screen Capture Settings"))
-        self._pick_region = pick_region or pick_screen_region_value
+        self._pick_region = pick_region or self._pick_region_on_screen
         if monitor_count is None:
             monitor_count = len(screen_monitor_device_labels())
         if window_titles is None:
@@ -329,6 +329,17 @@ class ScreenCaptureSettingsDialog(QDialog):
         self.window_combo.addItems(list_capture_windows())
         if current:
             self.window_combo.setCurrentText(current)
+
+    def _windows_to_fade(self):
+        """This dialog and the Video Settings dialog it was opened from."""
+        windows = [self]
+        parent = self.parentWidget()
+        if parent is not None:
+            windows.append(parent.window())
+        return tuple(windows)
+
+    def _pick_region_on_screen(self):
+        return pick_screen_region_value(fade_windows=self._windows_to_fade())
 
     def pick_region(self):
         value = self._pick_region()
