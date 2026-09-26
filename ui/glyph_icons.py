@@ -34,6 +34,7 @@ GLYPHS: tuple[str, ...] = (
     "settings",
     "log",
     "camera",
+    "inspect",
 )
 
 
@@ -192,6 +193,12 @@ def _paint(name: str, painter: QPainter, s: float, color: QColor) -> None:
         painter.drawLine(P(0.40, 0.22), P(0.60, 0.22))
         painter.drawLine(P(0.60, 0.22), P(0.66, 0.32))
         painter.drawEllipse(R(0.38, 0.42, 0.24, 0.24))
+    elif name == "inspect":
+        # A magnifier: lens with a handle to the lower right.
+        painter.setBrush(Qt.NoBrush)
+        painter.drawEllipse(R(0.18, 0.18, 0.44, 0.44))
+        painter.setPen(_pen(color, max(1.8, s * 0.13)))
+        painter.drawLine(P(0.58, 0.58), P(0.82, 0.82))
     else:
         raise KeyError(name)
 

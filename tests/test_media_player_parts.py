@@ -4,8 +4,41 @@ from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QApplication, QLabel, QToolButton
 
-from ui.media_player_parts import FullscreenHost, PlaylistDock, UnsupportedOverlay
+from ui.inspection_widget import InspectionWidget
+from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import PlaylistModel
+
+
+class InspectionDockTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_dock_embeds_the_inspection_widget_without_driving_the_sidebar_preview(self):
+        dock = InspectionDock()
+        self.addCleanup(dock.close)
+        self.assertIsInstance(dock.inspector, InspectionWidget)
+        self.assertFalse(dock.inspector.notify_preview)
+        self.assertGreaterEqual(dock.minimumWidth(), 320)
+
+    def test_inspect_path_runs_ffprobe_once_per_path_and_clears_on_empty(self):
+        dock = InspectionDock()
+        self.addCleanup(dock.close)
+        runs = []
+        dock.inspector.inspect_file = lambda path: runs.append(path)
+        dock.inspect_path("C:/Videos/a.mp4")
+        dock.inspect_path("C:/Videos/a.mp4")          # same file: no second ffprobe
+        dock.inspect_path("")
+        self.assertEqual(runs, ["C:/Videos/a.mp4"])
+        self.assertEqual(dock.current_path, "")
+        self.assertTrue(dock.inspector.summary_text.isHidden())
+        self.assertFalse(dock.inspector.summary_drag_text.isHidden())
+
+    def test_title_names_the_panel(self):
+        dock = InspectionDock()
+        self.addCleanup(dock.close)
+        dock.set_panel_title("Panel 2: clip.mp4")
+        self.assertIn("Panel 2: clip.mp4", dock.title_label.text())
 
 
 class FullscreenHostTests(unittest.TestCase):
