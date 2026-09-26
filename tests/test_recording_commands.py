@@ -1204,6 +1204,31 @@ class GpuMonitorCaptureTests(unittest.TestCase):
     def test_region_source_has_no_gdi_fallback_of_its_own(self):
         self.assertEqual(rc.screen_gdi_fallback_source("screen=region=0,0,640x480"), "")
 
+    def test_hardware_encoder_replaces_libx264_for_screen_recordings(self):
+        for encoder in ("h264_nvenc", "h264_qsv", "h264_amf"):
+            command = build_record_command("ffmpeg.exe", "screen=monitor=1", "screen.mp4", video_encoder=encoder)
+            self.assertEqual(command[command.index("-c:v") + 1], encoder, encoder)
+            self.assertNotIn("libx264", command)
+            self.assertNotIn("-crf", command)
+            # The 4:2:0 conversion still precedes the encoder.
+            self.assertEqual(command[command.index("-vf") + 1], rc.SCREEN_ENCODE_FILTER)
+
+        args = rc.h264_encode_args("High", "h264_nvenc")
+        self.assertEqual(args[:2], ["-c:v", "h264_nvenc"])
+        self.assertIn("-cq", args)
+        default_args = rc.h264_encode_args("Default", "h264_nvenc")
+        # Quality tiers still order themselves: "High" asks for a lower (better) CQ.
+        self.assertLess(int(args[args.index("-cq") + 1]), int(default_args[default_args.index("-cq") + 1]))
+
+    def test_no_hardware_encoder_means_libx264_as_before(self):
+        command = build_record_command("ffmpeg.exe", "screen=desktop", "screen.mp4", video_encoder="")
+        self.assertIn("libx264", command)
+        self.assertEqual(rc.h264_encode_args("Default"), ["-c:v", "libx264", "-preset", "veryfast", "-crf", "18"])
+
+    def test_copy_mode_ignores_the_hardware_encoder(self):
+        command = build_record_command("ffmpeg.exe", "rtsp://camera/stream", "cam.mp4", codec_mode="copy", video_encoder="h264_nvenc")
+        self.assertEqual(command[command.index("-c:v") + 1], "copy")
+
     def test_gdi_fallback_source_for_a_monitor_capture(self):
         self.assertEqual(rc.screen_gdi_fallback_source("screen=monitor=2"), "screen=desktop")
         self.assertEqual(rc.screen_gdi_fallback_source("screen=desktop"), "")

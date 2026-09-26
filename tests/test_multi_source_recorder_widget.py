@@ -8,6 +8,7 @@ from PyQt5.QtCore import QEvent, QProcess, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
+    QDialog,
     QDialogButtonBox,
     QMessageBox,
     QPlainTextEdit,
@@ -19,7 +20,7 @@ from PyQt5.QtWidgets import (
 
 from conversion.recording_sources import DeviceScan
 from ui import theme
-from ui.multi_source_recorder_widget import MultiSourceRecorderWidget, VideoSettingsDialog
+from ui.multi_source_recorder_widget import MultiSourceRecorderWidget, ScreenCaptureSettingsDialog, VideoSettingsDialog
 
 
 class MultiSourceRecorderWidgetTests(unittest.TestCase):
@@ -1088,17 +1089,97 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
         self.assertEqual(widget.source_for_row(0), "screen=desktop")
 
-    def test_video_settings_dialog_offers_each_monitor_as_a_gpu_screen_capture(self):
+    def test_video_settings_dialog_offers_a_single_screen_capture_entry(self):
+        # Displays, windows and regions are chosen in the screen capture settings
+        # (the gear), the same way an RTSP camera's address is -- not as a pile
+        # of entries in the device list.
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        with patch("ui.multi_source_recorder_widget.list_capture_windows", return_value=["Notepad"]):
+            dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            labels = [row_device.itemText(i) for i in range(row_device.count())]
+            screen_labels = [label for label in labels if "creen" in label or label.startswith("Window")]
+            self.assertEqual(screen_labels, ["Screen capture"])
+            self.assertEqual(row_device.itemData(labels.index("Screen capture")), "screen")
+        finally:
+            dialog.deleteLater()
+
+    def test_screen_capture_settings_dialog_preselects_and_builds_each_mode(self):
+        titles = ["Notepad", "Spreadsheet - Budget"]
+        dialog = ScreenCaptureSettingsDialog("", window_titles=titles, monitor_count=2)
+        try:
+            self.assertTrue(dialog.desktop_radio.isChecked())
+            self.assertEqual(dialog.source_value(), "desktop")
+            self.assertEqual(dialog.monitor_combo.count(), 2)
+            self.assertEqual([dialog.window_combo.itemText(i) for i in range(dialog.window_combo.count())], titles)
+
+            dialog.monitor_radio.setChecked(True)
+            dialog.monitor_combo.setCurrentIndex(1)
+            self.assertEqual(dialog.source_value(), "monitor=2")
+
+            dialog.window_radio.setChecked(True)
+            dialog.window_combo.setCurrentText("Spreadsheet - Budget")
+            self.assertEqual(dialog.source_value(), "title=Spreadsheet - Budget")
+
+            dialog.region_radio.setChecked(True)
+            dialog.region_x.setValue(-100)
+            dialog.region_y.setValue(200)
+            dialog.region_width.setValue(801)
+            dialog.region_height.setValue(600)
+            self.assertEqual(dialog.source_value(), "region=-100,200,800x600")   # even sizes
+        finally:
+            dialog.deleteLater()
+
+        for value, radio_name, check in (
+            ("monitor=2", "monitor_radio", lambda d: d.monitor_combo.currentIndex() == 1),
+            ("region=10,20,300x200", "region_radio", lambda d: (d.region_x.value(), d.region_width.value()) == (10, 300)),
+            ("title=Notepad", "window_radio", lambda d: d.window_combo.currentText() == "Notepad"),
+            ("title=Closed App", "window_radio", lambda d: d.window_combo.currentText() == "Closed App"),
+            ("desktop", "desktop_radio", lambda d: True),
+        ):
+            dialog = ScreenCaptureSettingsDialog(value, window_titles=titles, monitor_count=2)
+            try:
+                self.assertTrue(getattr(dialog, radio_name).isChecked(), value)
+                self.assertTrue(check(dialog), value)
+                self.assertEqual(dialog.source_value(), value)
+            finally:
+                dialog.deleteLater()
+
+    def test_screen_capture_settings_dialog_region_picker_fills_the_fields(self):
+        dialog = ScreenCaptureSettingsDialog(
+            "", window_titles=[], monitor_count=1, pick_region=lambda: "region=100,200,800x600",
+        )
+        try:
+            dialog.pick_region_button.click()
+            self.assertTrue(dialog.region_radio.isChecked())
+            self.assertEqual(dialog.source_value(), "region=100,200,800x600")
+        finally:
+            dialog.deleteLater()
+
+        dialog = ScreenCaptureSettingsDialog("region=1,2,30x40", window_titles=[], monitor_count=1, pick_region=lambda: "")
+        try:
+            dialog.pick_region_button.click()               # cancelled: fields untouched
+            self.assertEqual(dialog.source_value(), "region=1,2,30x40")
+        finally:
+            dialog.deleteLater()
+
+    def test_camera_settings_gear_configures_the_screen_capture_row(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
         try:
             row_device = dialog.dialog_rows[0][3]
-            labels = [row_device.itemText(i) for i in range(row_device.count())]
-            monitor_labels = [label for label in labels if label.startswith("Screen capture (monitor ")]
-            self.assertEqual(len(monitor_labels), len(QApplication.screens()))
-            self.assertEqual(monitor_labels[0], "Screen capture (monitor 1, GPU)")
-            self.assertEqual(row_device.itemData(labels.index(monitor_labels[0])), "screen")
-            row_device.setCurrentText(monitor_labels[0])
+            row_device.setCurrentIndex(row_device.findText("Screen capture"))
+
+            def choose_monitor(settings_dialog):
+                settings_dialog.monitor_radio.setChecked(True)
+                settings_dialog.monitor_combo.setCurrentIndex(0)
+                return QDialog.Accepted
+
+            with patch.object(ScreenCaptureSettingsDialog, "exec_", choose_monitor):
+                dialog.open_camera_settings(0)
+            self.assertEqual(row_device.currentText(), "Screen capture (monitor 1, GPU)")
+            self.assertEqual(row_device.currentData(), "screen")
             dialog.accept_with_changes()
         finally:
             dialog.deleteLater()
@@ -1107,80 +1188,88 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(widget.source_rows[0][3].text(), "monitor=1")
         self.assertEqual(widget.source_for_row(0), "screen=monitor=1")
 
-        # Reopening the dialog shows the monitor entry again rather than "desktop".
+        # Reopening shows the configured capture, and cancelling the gear keeps it.
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
         try:
-            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Screen capture (monitor 1, GPU)")
+            row_device = dialog.dialog_rows[0][3]
+            self.assertEqual(row_device.currentText(), "Screen capture (monitor 1, GPU)")
+            with patch.object(ScreenCaptureSettingsDialog, "exec_", lambda _self: QDialog.Rejected):
+                dialog.open_camera_settings(0)
+            self.assertEqual(row_device.currentText(), "Screen capture (monitor 1, GPU)")
         finally:
             dialog.deleteLater()
 
-    def test_video_settings_dialog_lists_open_windows_for_screen_capture(self):
+    def test_camera_settings_gear_shows_windows_and_regions_as_screen_captures(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
-        with patch("ui.multi_source_recorder_widget.list_capture_windows", return_value=["Notepad", "Spreadsheet - Budget"]):
-            dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        widget.source_rows[0][2].setCurrentIndex(widget.source_rows[0][2].findData("screen"))
+        widget.source_rows[0][3].setText("title=Spreadsheet - Budget")
+        widget.source_rows[1][2].setCurrentIndex(widget.source_rows[1][2].findData("screen"))
+        widget.source_rows[1][3].setText("region=100,200,800x600")
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
         try:
-            row_device = dialog.dialog_rows[0][3]
-            labels = [row_device.itemText(i) for i in range(row_device.count())]
-            self.assertIn("Window: Notepad", labels)
-            self.assertIn("Window: Spreadsheet - Budget", labels)
-            self.assertEqual(row_device.itemData(labels.index("Window: Notepad")), "screen")
-            # Windows come after the screen entries and before the cameras.
-            self.assertLess(labels.index("Screen capture (desktop)"), labels.index("Window: Notepad"))
-            self.assertLess(labels.index("Window: Notepad"), labels.index("Camera A"))
-            row_device.setCurrentText("Window: Spreadsheet - Budget")
+            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Screen capture (window: Spreadsheet - Budget)")
+            self.assertEqual(dialog.dialog_rows[1][3].currentText(), "Screen capture (region 100,200 800x600)")
             dialog.accept_with_changes()
         finally:
             dialog.deleteLater()
-
-        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
-        self.assertEqual(widget.source_rows[0][3].text(), "title=Spreadsheet - Budget")
         self.assertEqual(widget.source_for_row(0), "screen=title=Spreadsheet - Budget")
+        self.assertEqual(widget.source_for_row(1), "screen=region=100,200,800x600")
 
-        # Reopening shows the window entry even if that window has since closed.
-        with patch("ui.multi_source_recorder_widget.list_capture_windows", return_value=[]):
-            dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
-        try:
-            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Window: Spreadsheet - Budget")
-        finally:
-            dialog.deleteLater()
+    def test_screen_recordings_use_the_detected_hardware_encoder_and_cameras_do_not(self):
+        widget = self._two_source_widget(mode="Separate videos")
+        row_two = widget.source_rows[1]
+        row_two[2].setCurrentIndex(row_two[2].findData("screen"))
+        row_two[3].setText("desktop")
+        widget.hardware_h264_encoder = "h264_nvenc"
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
 
-    def test_video_settings_dialog_region_entry_opens_the_picker_and_stores_the_rectangle(self):
-        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
-        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
-        try:
-            row_device = dialog.dialog_rows[0][3]
-            self.assertGreaterEqual(row_device.findText("Screen capture (select region...)"), 0)
-            with patch("ui.multi_source_recorder_widget.pick_screen_region_value", return_value="region=100,200,800x600"):
-                row_device.setCurrentIndex(row_device.findText("Screen capture (select region...)"))
-            self.assertEqual(row_device.currentText(), "Screen capture (region 100,200 800x600)")
-            self.assertEqual(row_device.currentData(), "screen")
-            dialog.accept_with_changes()
-        finally:
-            dialog.deleteLater()
+        widget.start_recording()
 
-        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
-        self.assertEqual(widget.source_rows[0][3].text(), "region=100,200,800x600")
-        self.assertEqual(widget.source_for_row(0), "screen=region=100,200,800x600")
+        self.assertEqual(len(started), 2)
+        camera, screen = started
+        self.assertIn("-i", camera.command)
+        self.assertNotIn("h264_nvenc", camera.command)          # RTSP: stream copy / libx264 as before
+        self.assertEqual(screen.command[screen.command.index("-c:v") + 1], "h264_nvenc")
 
-        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
-        try:
-            self.assertEqual(dialog.dialog_rows[0][3].currentText(), "Screen capture (region 100,200 800x600)")
-        finally:
-            dialog.deleteLater()
+    def test_hardware_encoder_failure_falls_back_to_libx264_for_the_same_capture(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        row[3].setText("monitor=1")
+        widget.hardware_h264_encoder = "h264_nvenc"
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
 
-    def test_video_settings_dialog_region_pick_cancel_restores_the_previous_choice(self):
-        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
-        widget.source_rows[0][2].setCurrentIndex(widget.source_rows[0][2].findData("directshow"))
-        widget.source_rows[0][3].setText("Camera A")
-        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
-        try:
-            row_device = dialog.dialog_rows[0][3]
-            self.assertEqual(row_device.currentText(), "Camera A")
-            with patch("ui.multi_source_recorder_widget.pick_screen_region_value", return_value=""):
-                row_device.setCurrentIndex(row_device.findText("Screen capture (select region...)"))
-            self.assertEqual(row_device.currentText(), "Camera A")
-        finally:
-            dialog.deleteLater()
+        widget.start_recording()
+        self.assertEqual(started[0].command[started[0].command.index("-c:v") + 1], "h264_nvenc")
+
+        started[0].recording_error_text = "[h264_nvenc @ 0x1] Cannot load nvcuda.dll\nError while opening encoder for output stream #0:0"
+        widget._process_finished(started[0], "Video_1", 1)
+
+        self.assertEqual(len(started), 2)
+        second = started[1].command
+        self.assertEqual(second[second.index("-c:v") + 1], "libx264")
+        self.assertIn("ddagrab=output_idx=0", second[second.index("-i") + 1])      # capture unchanged
+
+        started[1].recording_error_text = "Error opening input: Failed to create D3D11 device"
+        widget._process_finished(started[1], "Video_1", 1)
+        third = started[2].command
+        self.assertEqual(third[third.index("-f") + 1], "gdigrab")                      # then the GDI rung
+        self.assertEqual(third[third.index("-c:v") + 1], "libx264")
+        self.assertTrue(any("software encoder" in line for line in widget.log_lines))
+
+    def test_hardware_encoder_is_probed_with_the_device_scan(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        self.assertEqual(widget.hardware_h264_encoder, "")
+        with patch("ui.multi_source_recorder_widget.probe_hardware_h264_encoder", return_value="h264_qsv"):
+            widget._run_in_background = lambda fn: fn()
+            widget.device_discovery_running = False      # the constructor's scan thread may still be in flight
+            self.assertTrue(widget.start_device_discovery(force=True))
+            QApplication.processEvents()
+        self.assertEqual(widget.hardware_h264_encoder, "h264_qsv")
+        self.assertTrue(any("h264_qsv" in line for line in widget.log_lines))
 
     def test_monitor_capture_falls_back_to_gdi_when_desktop_duplication_fails(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)

@@ -25,11 +25,14 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPlainTextEdit,
     QPushButton,
+    QRadioButton,
     QSizePolicy,
+    QSpinBox,
     QVBoxLayout,
     QWidget,
 )
 
+from conversion.hardware_encoders import looks_like_encoder_failure, probe_hardware_h264_encoder
 from conversion.ptz_controls import (
     axis_vapix_continuous_url,
     axis_vapix_ptz_url,
@@ -154,18 +157,17 @@ VIDEO_DEVICE_PLACEHOLDERS = {
     "Refresh USB devices...",
     "Select video device...",
 }
-# The Video Settings device list offers the desktop next to the cameras.
-SCREEN_CAPTURE_DEVICE_LABEL = "Screen capture (desktop)"
-# ... and each display on its own through the GPU (Desktop Duplication).
+# The Video Settings device list offers one "Screen capture" entry next to the
+# cameras; what it captures is chosen in its settings (the gear), the way an RTSP
+# camera's address is. The configured capture then shows as one of these labels.
+SCREEN_CAPTURE_DEVICE_LABEL = "Screen capture"
+SCREEN_DESKTOP_DEVICE_LABEL = "Screen capture (desktop)"
 SCREEN_MONITOR_DEVICE_LABEL = "Screen capture (monitor %(number)d, GPU)"
 _SCREEN_MONITOR_LABEL_PATTERN = re.compile(r"^Screen capture \(monitor (\d+), GPU\)$")
-# ... a rectangle the user drags out on screen ...
-SCREEN_REGION_PICK_LABEL = "Screen capture (select region...)"
 SCREEN_REGION_DEVICE_LABEL = "Screen capture (region %(x)d,%(y)d %(width)dx%(height)d)"
 _SCREEN_REGION_LABEL_PATTERN = re.compile(r"^Screen capture \(region (-?\d+),(-?\d+) (\d+)x(\d+)\)$")
-# ... and every window open right now.
-SCREEN_WINDOW_DEVICE_LABEL = "Window: %(title)s"
-_SCREEN_WINDOW_LABEL_PREFIX = "Window: "
+SCREEN_WINDOW_DEVICE_LABEL = "Screen capture (window: %(title)s)"
+_SCREEN_WINDOW_LABEL_PATTERN = re.compile(r"^Screen capture \(window: (.+)\)$")
 
 
 def screen_region_device_label(region):
@@ -183,9 +185,16 @@ def screen_window_device_label(title):
 
 
 def screen_window_title_from_label(label):
-    text = (label or "").strip()
-    if text.startswith(_SCREEN_WINDOW_LABEL_PREFIX) and len(text) > len(_SCREEN_WINDOW_LABEL_PREFIX):
-        return text[len(_SCREEN_WINDOW_LABEL_PREFIX):]
+    match = _SCREEN_WINDOW_LABEL_PATTERN.match((label or "").strip())
+    return match.group(1) if match else None
+
+
+def screen_window_title(source_value):
+    """The window title of a `title=…` / `screen=title=…` value, else None."""
+    source_text = build_source_text("screen", source_value or "")
+    if source_text.lower().startswith("screen=title="):
+        title = source_text[len("screen=title="):]
+        return title or None
     return None
 
 
@@ -195,15 +204,155 @@ def screen_device_label_for_source(source_type, source_value):
         return None
     source_text = build_source_text("screen", source_value)
     if source_value.strip().lower() in ("", SCREEN_DEFAULT_TARGET):
-        return SCREEN_CAPTURE_DEVICE_LABEL
+        return SCREEN_DESKTOP_DEVICE_LABEL
     monitor = screen_monitor_index(source_text)
     if monitor is not None:
         return screen_monitor_device_label(monitor)
     region = screen_region(source_text)
     if region is not None:
         return screen_region_device_label(region)
-    title = source_text[len("screen=title="):] if source_text.lower().startswith("screen=title=") else ""
+    title = screen_window_title(source_value)
     return screen_window_device_label(title) if title else None
+
+
+class ScreenCaptureSettingsDialog(QDialog):
+    """What a "Screen capture" row records: the desktop, one display, a window or a region."""
+
+    def __init__(self, current_value="", parent=None, window_titles=None, monitor_count=None, pick_region=None):
+        super().__init__(parent)
+        self.setWindowTitle(_tr("Screen Capture Settings"))
+        self._pick_region = pick_region or pick_screen_region_value
+        if monitor_count is None:
+            monitor_count = len(screen_monitor_device_labels())
+        if window_titles is None:
+            window_titles = list_capture_windows()
+
+        layout = QVBoxLayout(self)
+        intro = QLabel(_tr("Choose what this source records. The desktop and window modes use GDI; "
+                           "a single display is captured through the GPU."))
+        intro.setWordWrap(True)
+        layout.addWidget(intro)
+
+        self.desktop_radio = QRadioButton(_tr("Whole desktop (every monitor)"))
+        layout.addWidget(self.desktop_radio)
+
+        self.monitor_radio = QRadioButton(_tr("One display (GPU)"))
+        self.monitor_combo = QComboBox()
+        for number in range(1, max(1, monitor_count) + 1):
+            self.monitor_combo.addItem(_tr("Monitor %(number)d") % {"number": number}, number)
+        layout.addLayout(self._option_row(self.monitor_radio, self.monitor_combo))
+
+        self.window_radio = QRadioButton(_tr("One window"))
+        self.window_combo = QComboBox()
+        self.window_combo.setEditable(True)
+        self.window_combo.addItems(list(window_titles))
+        self.window_combo.setMinimumWidth(260)
+        self.refresh_windows_button = QPushButton(_tr("Refresh"))
+        self.refresh_windows_button.clicked.connect(self.refresh_windows)
+        layout.addLayout(self._option_row(self.window_radio, self.window_combo, self.refresh_windows_button))
+
+        self.region_radio = QRadioButton(_tr("Part of the desktop"))
+        self.region_x = self._coordinate_spinbox(-32768, 32767)
+        self.region_y = self._coordinate_spinbox(-32768, 32767)
+        self.region_width = self._coordinate_spinbox(2, 32766, 640)
+        self.region_height = self._coordinate_spinbox(2, 32766, 480)
+        self.pick_region_button = QPushButton(_tr("Select on screen..."))
+        self.pick_region_button.clicked.connect(self.pick_region)
+        region_row = QHBoxLayout()
+        region_row.addWidget(self.region_radio)
+        for label_text, spin in (
+            (_tr("X"), self.region_x), (_tr("Y"), self.region_y),
+            (_tr("Width"), self.region_width), (_tr("Height"), self.region_height),
+        ):
+            region_row.addWidget(QLabel(label_text))
+            region_row.addWidget(spin)
+        region_row.addWidget(self.pick_region_button)
+        region_row.addStretch(1)
+        layout.addLayout(region_row)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+        self._select_from_value(current_value)
+
+    @staticmethod
+    def _option_row(radio, *widgets):
+        row = QHBoxLayout()
+        row.addWidget(radio)
+        for widget in widgets:
+            row.addWidget(widget)
+        row.addStretch(1)
+        return row
+
+    @staticmethod
+    def _coordinate_spinbox(minimum, maximum, value=0):
+        spin = QSpinBox()
+        spin.setRange(minimum, maximum)
+        spin.setValue(value)
+        spin.setMaximumWidth(80)
+        return spin
+
+    def _select_from_value(self, value):
+        value = (value or "").strip()
+        source_text = build_source_text("screen", value)
+        monitor = screen_monitor_index(source_text)
+        region = screen_region(source_text)
+        title = screen_window_title(value)
+        if monitor is not None:
+            self.monitor_radio.setChecked(True)
+            index = self.monitor_combo.findData(monitor)
+            if index < 0:
+                self.monitor_combo.addItem(_tr("Monitor %(number)d") % {"number": monitor}, monitor)
+                index = self.monitor_combo.count() - 1
+            self.monitor_combo.setCurrentIndex(index)
+        elif region is not None:
+            self.region_radio.setChecked(True)
+            x, y, width, height = region
+            self.region_x.setValue(x)
+            self.region_y.setValue(y)
+            self.region_width.setValue(width)
+            self.region_height.setValue(height)
+        elif title:
+            self.window_radio.setChecked(True)
+            if self.window_combo.findText(title) < 0:
+                self.window_combo.addItem(title)        # a window that is not open right now
+            self.window_combo.setCurrentText(title)
+        else:
+            self.desktop_radio.setChecked(True)
+
+    def refresh_windows(self):
+        current = self.window_combo.currentText()
+        self.window_combo.clear()
+        self.window_combo.addItems(list_capture_windows())
+        if current:
+            self.window_combo.setCurrentText(current)
+
+    def pick_region(self):
+        value = self._pick_region()
+        region = screen_region(build_source_text("screen", value)) if value else None
+        if region is None:
+            return
+        x, y, width, height = region
+        self.region_x.setValue(x)
+        self.region_y.setValue(y)
+        self.region_width.setValue(width)
+        self.region_height.setValue(height)
+        self.region_radio.setChecked(True)
+
+    def source_value(self):
+        """The row's screen address: "desktop", "monitor=N", "title=…" or "region=X,Y,WxH"."""
+        if self.monitor_radio.isChecked():
+            return f"{SCREEN_MONITOR_PREFIX}{self.monitor_combo.currentData()}"
+        if self.window_radio.isChecked():
+            title = self.window_combo.currentText().strip()
+            return f"title={title}" if title else SCREEN_DEFAULT_TARGET
+        if self.region_radio.isChecked():
+            width = max(2, self.region_width.value() // 2 * 2)
+            height = max(2, self.region_height.value() // 2 * 2)
+            return build_region_source_value(self.region_x.value(), self.region_y.value(), width, height)
+        return SCREEN_DEFAULT_TARGET
 
 
 def screen_monitor_device_label(number):
@@ -785,15 +934,6 @@ class VideoSettingsDialog(QDialog):
             if offset_spin is not None:
                 row_offset.setValue(offset_spin.value())
 
-    def _capture_window_titles(self):
-        # Enumerated once per dialog so every row's list agrees and opening the
-        # dialog does not walk the window list four times.
-        cached = getattr(self, "_window_titles_cache", None)
-        if cached is None:
-            cached = list_capture_windows()
-            self._window_titles_cache = cached
-        return cached
-
     def populate_video_device_combo(self, combo):
         current = combo.currentText()
         if current == "Refresh USB devices...":
@@ -803,11 +943,6 @@ class VideoSettingsDialog(QDialog):
         combo.addItem("No source selected...", "none")
         combo.addItem("RTSP/IP Camera", "rtsp_ip")
         combo.addItem(SCREEN_CAPTURE_DEVICE_LABEL, "screen")
-        for monitor_label in screen_monitor_device_labels():
-            combo.addItem(monitor_label, "screen")
-        combo.addItem(SCREEN_REGION_PICK_LABEL, "screen_region_pick")
-        for title in self._capture_window_titles():
-            combo.addItem(screen_window_device_label(title), "screen")
         for device in self.directshow_devices:
             combo.addItem(device, "directshow")
         combo.addItem("Refresh USB devices...", "refresh_directshow")
@@ -846,7 +981,6 @@ class VideoSettingsDialog(QDialog):
 
     def apply_discovered_video_devices(self, devices):
         self.directshow_devices = list(devices or [])
-        self._window_titles_cache = None      # "Refresh USB devices..." re-lists the windows too
         for dialog_row in self.dialog_rows:
             self.populate_video_device_combo(dialog_row[3])
 
@@ -893,7 +1027,7 @@ class VideoSettingsDialog(QDialog):
     def _screen_source_value_for_label(label):
         """The row's screen address ("desktop", "monitor=2", "region=…", "title=…") for a device entry."""
         text = (label or "").strip()
-        if text == SCREEN_CAPTURE_DEVICE_LABEL:
+        if text in (SCREEN_CAPTURE_DEVICE_LABEL, SCREEN_DESKTOP_DEVICE_LABEL):
             return SCREEN_DEFAULT_TARGET
         monitor = screen_monitor_number_from_label(text)
         if monitor is not None:
@@ -912,21 +1046,30 @@ class VideoSettingsDialog(QDialog):
         combo.setCurrentText(previous)
         combo.blockSignals(False)
 
-    def _pick_screen_region_for_combo(self, combo):
-        # The dialog stays where it is; the overlay covers every monitor until the
-        # user drags a rectangle or presses Escape.
-        value = pick_screen_region_value()
-        if not value:
-            self._restore_previous_device_choice(combo)
-            return
-        region = screen_region(build_source_text("screen", value))
-        label = screen_region_device_label(region)
+    def _show_screen_capture_label(self, combo, label):
+        """Show the configured capture in the device box (added as an entry when new)."""
         combo.blockSignals(True)
         if combo.findText(label) < 0:
-            combo.insertItem(combo.findText(SCREEN_REGION_PICK_LABEL) + 1, label, "screen")
+            combo.insertItem(combo.findText(SCREEN_CAPTURE_DEVICE_LABEL) + 1, label, "screen")
         combo.setCurrentIndex(combo.findText(label))     # the index, so currentData() follows
         combo.blockSignals(False)
         self._last_device_choice[combo] = label
+
+    def open_screen_capture_settings(self, row_index):
+        _enabled, _label, _type, row_device, *_rest = self.dialog_rows[row_index]
+        current_value = self._screen_source_value_for_label(row_device.currentText())
+        if current_value is None:
+            current_value = row_device.currentText()
+        dialog = ScreenCaptureSettingsDialog(current_value, parent=self)
+        try:
+            if dialog.exec_() != QDialog.Accepted:
+                return
+            value = dialog.source_value()
+        finally:
+            dialog.setParent(None)
+            dialog.deleteLater()
+        label = screen_device_label_for_source("screen", value) or SCREEN_DESKTOP_DEVICE_LABEL
+        self._show_screen_capture_label(row_device, label)
 
     def handle_video_device_choice(self, combo):
         if combo.currentData() == "refresh_directshow":
@@ -934,9 +1077,6 @@ class VideoSettingsDialog(QDialog):
             # and the row never records "Refresh USB devices..." as a camera.
             self._restore_previous_device_choice(combo)
             self.refresh_devices()
-            return
-        if combo.currentData() == "screen_region_pick":
-            self._pick_screen_region_for_combo(combo)
             return
         if combo.currentText().strip():
             self._last_device_choice[combo] = combo.currentText()
@@ -1105,6 +1245,9 @@ class VideoSettingsDialog(QDialog):
         if source_type == "rtsp_ip":
             self.open_rtsp_camera_settings(row_index)
             return
+        if source_type == "screen":
+            self.open_screen_capture_settings(row_index)
+            return
         QMessageBox.information(self, _tr("Camera Settings"), _tr("No camera-specific settings are available for this source type yet."))
 
     def apply_rtsp_settings_to_row(self, row_index, host, username="", password="", port="", path="stream"):
@@ -1166,6 +1309,7 @@ class MultiSourceRecorderWidget(QWidget):
     audio_devices_discovered = pyqtSignal(list)
     video_devices_discovered = pyqtSignal(list)
     device_scan_started = pyqtSignal()
+    hardware_encoder_detected = pyqtSignal(str)
 
     # How long a listing stays "fresh": opening Video Settings within this
     # window reuses it instead of spinning ffmpeg up again.
@@ -1177,6 +1321,10 @@ class MultiSourceRecorderWidget(QWidget):
         self.button_style = button_style
         self.directshow_devices = directshow_devices
         self.directshow_audio_devices = []
+        # Hardware H.264 encoder that initialises on this machine ("" = libx264).
+        # Found by the device scan; used for screen captures, whose frames are large.
+        self.hardware_h264_encoder = ""
+        self.hardware_encoder_detected.connect(self._apply_hardware_encoder)
         self.device_discovery_running = False
         self.last_device_scan_ok = None
         self.last_device_scan_at = None
@@ -1706,15 +1854,36 @@ class MultiSourceRecorderWidget(QWidget):
         self.device_scan_started.emit()
 
         def discover():
+            ffmpeg = resource_path("ffmpeg.exe")
             try:
-                scan = discover_directshow_devices(resource_path("ffmpeg.exe"))
+                scan = discover_directshow_devices(ffmpeg)
             except Exception:
                 logger.warning("Device listing failed", exc_info=True)
                 scan = DeviceScan([], [], False)
             self._deliver_device_scan(scan)
+            # Same background pass: which hardware H.264 encoder starts here
+            # (cached, so only the first scan pays the ~1 s).
+            try:
+                encoder = probe_hardware_h264_encoder(ffmpeg)
+            except Exception:
+                logger.warning("Hardware encoder probe failed", exc_info=True)
+                encoder = ""
+            try:
+                self.hardware_encoder_detected.emit(encoder)
+            except RuntimeError:
+                pass
 
         self._run_in_background(discover)
         return True
+
+    def _apply_hardware_encoder(self, encoder):
+        if not encoder:
+            # The probe is cached per ffmpeg path, so an empty result arriving
+            # after a positive one is a stale scan, not a change of hardware.
+            return
+        if encoder != self.hardware_h264_encoder:
+            self._append_log(f"[encoder] screen captures will use {encoder}; cameras keep their current encoding")
+        self.hardware_h264_encoder = encoder
 
     # Alias kept for the Video Settings dialog and older call sites.
     def start_audio_device_discovery(self, force=False):
@@ -2637,6 +2806,7 @@ class MultiSourceRecorderWidget(QWidget):
         audio_device="",
         mute=False,
         volume="100",
+        software_encoder=False,
     ):
         if self.is_directshow_source(source):
             return build_directshow_record_with_preview_command(
@@ -2666,7 +2836,14 @@ class MultiSourceRecorderWidget(QWidget):
             mute=mute,
             volume=volume,
             quality=self.output_quality,
+            video_encoder=self._video_encoder_for(source, software_encoder),
         )
+
+    def _video_encoder_for(self, source, software_encoder=False):
+        """The hardware encoder for a screen capture, "" (libx264) otherwise."""
+        if software_encoder or not source.lower().startswith("screen="):
+            return ""
+        return self.hardware_h264_encoder or ""
 
     def recording_fallback_commands(
         self,
@@ -2681,22 +2858,23 @@ class MultiSourceRecorderWidget(QWidget):
         volume="100",
     ):
         commands = []
-        gdi_source = screen_gdi_fallback_source(source)
-        if gdi_source:
-            # Desktop Duplication could not start (no D3D11 device, remote session,
-            # display index gone). Dropping the frame rate would not help; grab the
-            # whole desktop through GDI at the same rate instead.
-            return [self.build_recording_command(
-                ffmpeg,
-                gdi_source,
-                output_file,
-                preview_pipe=preview_pipe,
-                frame_rate=frame_rate,
-                resolution="",
-                audio_device=audio_device,
-                mute=mute,
-                volume=volume,
-            )]
+        if source.lower().startswith("screen="):
+            common = {
+                "preview_pipe": preview_pipe, "frame_rate": frame_rate, "resolution": "",
+                "audio_device": audio_device, "mute": mute, "volume": volume,
+            }
+            if self._video_encoder_for(source):
+                # The hardware encoder passed its probe but refused this stream
+                # (driver update, GPU busy, unsupported size): same capture, libx264.
+                commands.append(self.build_recording_command(ffmpeg, source, output_file, software_encoder=True, **common))
+            gdi_source = screen_gdi_fallback_source(source)
+            if gdi_source:
+                # Desktop Duplication could not start (no D3D11 device, remote
+                # session, display index gone). Dropping the frame rate would not
+                # help; grab the whole desktop through GDI at the same rate, with
+                # the software encoder so one rung cannot fail for two reasons.
+                commands.append(self.build_recording_command(ffmpeg, gdi_source, output_file, software_encoder=True, **common))
+            return commands
         if source.lower().startswith("rtsp://") and frame_rate and resolution:
             commands.append(self.build_recording_command(
                 ffmpeg,
@@ -3376,12 +3554,16 @@ class MultiSourceRecorderWidget(QWidget):
             "error opening input",
             "i/o error",
         )
-        if not any(marker in error_text for marker in retry_markers):
+        encoder_failed = looks_like_encoder_failure(error_text)
+        if not encoder_failed and not any(marker in error_text for marker in retry_markers):
             return False
         next_command = fallback_commands[0]
         remaining_commands = fallback_commands[1:]
         preview_pipe = getattr(process, "recording_preview_pipe", False)
-        self._append_log(f"[{name}] retrying with safer input format after camera rejected requested settings")
+        if encoder_failed:
+            self._append_log(f"[{name}] retrying with the software encoder after the hardware encoder failed to start")
+        else:
+            self._append_log(f"[{name}] retrying with safer input format after camera rejected requested settings")
         self.status_label.setText(_tr("Recording"))
         self.stop_btn.setEnabled(True)
         self.start_btn.setEnabled(False)
