@@ -1342,6 +1342,10 @@ class MultiSourceRecorderWidget(QWidget):
     device_scan_started = pyqtSignal()
     hardware_encoder_detected = pyqtSignal(str)
 
+    # Output settings group width cap; its fields all stretch to this so they
+    # share one width (the folder row is edit + open-folder button).
+    OUTPUT_GROUP_MAX_W = 380
+
     # How long a listing stays "fresh": opening Video Settings within this
     # window reuses it instead of spinning ffmpeg up again.
     DEVICE_SCAN_TTL_S = 45.0
@@ -1434,9 +1438,11 @@ class MultiSourceRecorderWidget(QWidget):
             preview.setText(_tr("Video %(number)s\nNo signal")
                             % {"number": index + 1})
             preview.setAlignment(Qt.AlignCenter)
+            # Tiles take whatever height the tab has left once the two groups
+            # (Fixed) have theirs; Ignored horizontally so a big pixmap never
+            # widens the window.
             preview.setMinimumHeight(74)
-            preview.setMaximumHeight(98)
-            preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+            preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Expanding)
             preview.setStyleSheet(theme.qss("""
                 QLabel {
                     background: $grey_950;
@@ -1450,7 +1456,7 @@ class MultiSourceRecorderWidget(QWidget):
             preview_grid.addWidget(preview, index // 2, index % 2)
             self.preview_boxes.append(preview)
             self.ptz_overlay_buttons.append(ptz_button)
-        layout.addLayout(preview_grid)
+        layout.addLayout(preview_grid, 1)
 
         self.groups_host = QWidget()
         self.groups_layout = None
@@ -1555,15 +1561,19 @@ class MultiSourceRecorderWidget(QWidget):
 
         output_group = QGroupBox(_tr("Output settings"))
         output_group.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        # The *group* is capped, not the fields: every field expands to the
+        # same width inside it, so the boxes line up instead of each having
+        # its own maximum.
+        output_group.setMaximumWidth(self.OUTPUT_GROUP_MAX_W)
         output_form = QFormLayout()
         output_form.setContentsMargins(6, 6, 6, 6)
         output_form.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
         output_form.setFormAlignment(Qt.AlignTop)
+        output_form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         output_form.setVerticalSpacing(3)
         self.output_folder_edit = QLineEdit(os.path.join(os.path.expanduser("~"), "Videos"))
         # Wide enough to read a path tail, never spanning the whole window.
         self.output_folder_edit.setMinimumWidth(200)
-        self.output_folder_edit.setMaximumWidth(320)
         self.output_folder_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         # Keep the folder *name* (the tail) visible when the path is set
         # programmatically; leave the caret alone while the user is typing.
@@ -1599,13 +1609,12 @@ class MultiSourceRecorderWidget(QWidget):
         self.open_output_folder_button.clicked.connect(self.open_output_folder)
         self.open_output_folder_link = self.open_output_folder_button
         folder_line = QHBoxLayout()
+        folder_line.setContentsMargins(0, 0, 0, 0)
         folder_line.addWidget(self.output_folder_edit, 1)
         folder_line.addWidget(self.open_output_folder_button, 0)
         self.base_name_edit = QLineEdit(_tr("Video"))
-        self.base_name_edit.setMaximumWidth(140)
         self.codec_combo = QComboBox()
         self.codec_combo.addItems(["copy", "h264"])
-        self.codec_combo.setMaximumWidth(120)
         self.output_mode_combo = QComboBox()
         self.output_mode_combo.addItems([
             _tr("Separate videos"),
@@ -1617,16 +1626,16 @@ class MultiSourceRecorderWidget(QWidget):
             "side by side. Picture-in-picture: one file with source 1 full frame and the "
             "others as insets."
         ))
-        self.output_mode_combo.setMaximumWidth(140)
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
         output_form.addRow("File base name:", self.base_name_edit)
         output_form.addRow("Encoding:", self.codec_combo)
         output_form.addRow("Output mode:", self.output_mode_combo)
         self.duration_edit = QLineEdit("")
-        self.duration_edit.setMaximumWidth(140)
         self.duration_edit.setPlaceholderText(_tr("blank = until stopped"))
         output_form.addRow("Timer:", self.duration_edit)
+        for field in (self.base_name_edit, self.codec_combo, self.output_mode_combo, self.duration_edit):
+            field.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.copy_mode_note = QLabel(
             _tr(
                 "USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources."
@@ -1687,8 +1696,8 @@ class MultiSourceRecorderWidget(QWidget):
 
     def apply_layout_mode(self, metrics):
         """Stack recorder groups in compact mode and place them side by side in full mode."""
-        for preview in self.preview_boxes:
-            preview.setMaximumHeight(metrics.recorder_tile_max_h)
+        # Tiles are uncapped in both modes (they fill what the groups leave);
+        # `metrics.recorder_tile_max_h` is no longer applied.
         old = self.groups_layout
         if old is not None:
             old.removeWidget(self.source_group)
@@ -1696,15 +1705,17 @@ class MultiSourceRecorderWidget(QWidget):
             QWidget().setLayout(old)
         # Output settings first (left / top); the properties table takes
         # whatever width is left so the output form keeps its natural size.
+        # Both hang from the top: a box layout centres items of unequal
+        # height, which is what left the properties table sitting lower.
         if metrics.recorder_stacked:
             new = QVBoxLayout(self.groups_host)
-            new.addWidget(self.output_group)
-            new.addWidget(self.source_group)
+            new.addWidget(self.output_group, 0, Qt.AlignTop)
+            new.addWidget(self.source_group, 0, Qt.AlignTop)
         else:
             new = QHBoxLayout(self.groups_host)
             new.setAlignment(Qt.AlignTop)
-            new.addWidget(self.output_group, 0)
-            new.addWidget(self.source_group, 1)
+            new.addWidget(self.output_group, 0, Qt.AlignTop)
+            new.addWidget(self.source_group, 1, Qt.AlignTop)
         new.setContentsMargins(0, 0, 0, 0)
         new.setSpacing(metrics.spacing * 2)
         self.groups_layout = new
