@@ -50,21 +50,104 @@ class SingleActiveWorkflowTests(unittest.TestCase):
         finally:
             window.shutdown()
 
-    def test_recorder_controls_disable_while_conversion_workflow_is_busy(self):
+    def test_conversion_blocks_only_start_recording_and_says_why(self):
+        # Rule 3: the recorder stays usable (previews, settings); only Start
+        # Recording is unavailable, and the recorder's own status line says why.
         window = self._window_on_recorder_tab()
         try:
-            window.running = True
+            window.is_converting = True
             window.update_single_workflow_availability()
 
-            self.assertFalse(window.multi_source_recorder_widget.isEnabled())
+            self.assertTrue(window.multi_source_recorder_widget.isEnabled())
             self.assertIn("conversion", window.multi_source_recorder_widget.status_label.text().lower())
+            self.assertFalse(window.start_button.isEnabled())
+            self.assertEqual(window.start_button.text(), "Converting...")
+            self.assertIn("conversion", window.start_button.toolTip().lower())
+
+            window.is_converting = False
+            window.update_single_workflow_availability()
+            self.assertEqual(window.multi_source_recorder_widget.status_label.text(), "Not recording")
+            self.assertTrue(window.start_button.isEnabled())
+        finally:
+            window.shutdown()
+
+    def test_recording_blocks_the_converter_start_button_with_a_reason(self):
+        # Rule 2: the sidebar Start on the converter tab is greyed out while recording.
+        window = self._window_on_recorder_tab()
+        try:
+            window.multi_source_recorder_widget.status_label.setText("Recording")
+            window.tabs.setCurrentIndex(window.tabs.indexOf(window.converter_tab_scroll))
+            window.on_tab_changed(window.tabs.currentIndex())
+
+            self.assertFalse(window.start_button.isEnabled())
+            self.assertEqual(window.start_button.text(), "Recording...")
+            self.assertIn("recording", window.start_button.toolTip().lower())
+            # Every tab stays reachable (rule 1).
+            for index in range(window.tabs.count()):
+                self.assertTrue(window.tabs.isTabEnabled(index))
+
+            window.multi_source_recorder_widget.status_label.setText("Not recording")
+            window.update_single_workflow_availability()
+            self.assertTrue(window.start_button.isEnabled())
+            self.assertEqual(window.start_button.text(), "Start")
+        finally:
+            window.shutdown()
+
+    def test_recording_greys_out_lossless_edits_with_a_reason(self):
+        window = self._window_on_recorder_tab()
+        try:
+            editor = window.lossless_editor_widget
+            window.multi_source_recorder_widget.status_label.setText("Recording")
+            window.update_single_workflow_availability()
+            for button in (editor.trim_btn, editor.merge_btn, editor.remux_btn):
+                self.assertFalse(button.isEnabled())
+                self.assertIn("recording", button.toolTip().lower())
+            self.assertTrue(editor.add_merge_btn.isEnabled())   # browsing is fine
+
+            window.multi_source_recorder_widget.status_label.setText("Not recording")
+            window.update_single_workflow_availability()
+            self.assertTrue(editor.trim_btn.isEnabled())
+            self.assertEqual(editor.trim_btn.toolTip(), "Cut Start to End without re-encoding")
+        finally:
+            window.shutdown()
+
+    def test_toggle_process_refuses_a_conversion_while_recording(self):
+        window = self._window_on_recorder_tab()
+        calls = {"convert": 0}
+        window.start_conversion = lambda: calls.__setitem__("convert", calls["convert"] + 1)
+        try:
+            window.multi_source_recorder_widget.status_label.setText("Recording")
+            window.tabs.setCurrentIndex(window.tabs.indexOf(window.converter_tab_scroll))
+            window.on_tab_changed(window.tabs.currentIndex())
+            window.toggle_process()
+            self.assertEqual(calls["convert"], 0)
+            self.assertIn("recording", window.console_output.toPlainText().lower())
+        finally:
+            window.shutdown()
+
+    def test_every_footer_shows_the_same_status_line(self):
+        window = self._window_on_recorder_tab()
+        try:
+            labels = window.footer_status_labels()
+            self.assertEqual(len(labels), 5)
+            self.assertTrue(all("Status: Idle" in label.text() for label in labels))
+
+            window.multi_source_recorder_widget.status_label.setText("Recording")
+            window.update_single_workflow_availability()
+            self.assertTrue(all("Recording" in label.text() for label in labels))
+            self.assertEqual(len({label.text() for label in labels}), 1)
+
+            window.multi_source_recorder_widget.status_label.setText("Not recording")
+            window.running = True
+            window.update_single_workflow_availability()
+            self.assertTrue(all("Monitoring" in label.text() for label in labels))
         finally:
             window.shutdown()
 
     def test_recorder_status_uses_standard_footer_status_label(self):
         window = self._window_on_recorder_tab()
         try:
-            self.assertIn("Not recording", window.status_label_multi_source_recorder_tab.text())
+            self.assertIn("Idle", window.status_label_multi_source_recorder_tab.text())
             window.multi_source_recorder_widget.status_label.setText("Recording")
             window.update_single_workflow_availability()
 

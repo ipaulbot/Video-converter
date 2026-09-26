@@ -51,6 +51,7 @@ from conversion.recording_commands import recording_layout_preview_rects
 from conversion.recorder_settings import load_recorder_settings
 from ui.pc_report_dialog import PCReportWidget
 from ui.tab_header import TabHeader
+from ui.workflow_rules import Activity, blocked_reason, status_markup
 from utils.update_checker import UpdateChecker, UpdateWorker
 
 
@@ -1204,6 +1205,29 @@ class VideoConverterApp(QMainWindow):
             return
         recorder_mode = self.is_recorder_tab_active() and not is_running and not getattr(self, 'is_converting', False)
         recorder_recording = recorder_mode and self.is_recorder_recording()
+        convert_block = (
+            "" if self.is_recorder_tab_active()
+            else blocked_reason(self.current_activity(), "convert")
+        )
+        if convert_block and not is_running:
+            # Rule 2: a recording is active, so conversion may not start here.
+            self.start_button.setEnabled(False)
+            self.start_button.setText(_tr("Recording..."))
+            self.start_button.setStyleSheet(theme.qss("""
+                QPushButton {
+                    background: $panel_alt_bg;
+                    color: $grey_500;
+                    border: 1px solid $separator;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    min-width: 120px;
+                    min-height: 36px;
+                    font-weight: bold;
+                    font-size: 10pt;
+                }
+            """))
+            self.start_button.setToolTip(convert_block)
+            return
         if self.is_recorder_tab_active() and getattr(self, 'is_converting', False) and not is_running and not recorder_recording:
             self.start_button.setEnabled(False)
             self.start_button.setText(_tr("Converting..."))
@@ -1367,16 +1391,50 @@ class VideoConverterApp(QMainWindow):
         self.set_start_button_state(is_running=self.running)
         self.update_status_labels()
 
-    def set_status_label(self, label, is_running):
+    def recording_phase(self):
+        """"", "starting", "recording", "stopping" or "failed" -- from the recorder."""
+        recorder = getattr(self, 'multi_source_recorder_widget', None)
+        status_text = (
+            recorder.status_label.text()
+            if recorder is not None and hasattr(recorder, 'status_label')
+            else ""
+        )
+        if status_text == "Starting recording...":
+            return "starting"
+        if status_text == "Stopping...":
+            return "stopping"
+        if self.is_recorder_recording():
+            return "recording"
+        if "failed" in status_text.lower():
+            return "failed"
+        return ""
+
+    def current_activity(self):
+        """What NVC is doing right now, for the workflow rules and the status line."""
+        converting = int(self.queue.active_count)
+        if not converting and getattr(self, 'is_converting', False):
+            converting = 1
+        return Activity(
+            locked=bool(self.locked),
+            recording_phase=self.recording_phase(),
+            converting=converting,
+            monitoring=bool(getattr(self, 'running', False)),
+        )
+
+    def footer_status_labels(self):
+        names = (
+            'status_label_log_tab',
+            'status_label_pc_report_tab',
+            'status_label_lossless_editor_tab',
+            'status_label_multi_source_recorder_tab',
+            'status_label_media_player_tab',
+        )
+        return [getattr(self, name) for name in names if getattr(self, name, None) is not None]
+
+    def set_status_label(self, label, is_running=None):
+        """Every footer shows the same line; `is_running` is kept for old callers."""
         label.setTextFormat(Qt.RichText)
-        if self.locked:
-            label.setText(_tr("Status: Locked <font color='#888888'>●</font>"))  # Gray
-        elif self.queue.active_count > 0:
-            label.setText(_tr("Status: Converting <font color='#00cc00'>●</font>"))  # Green
-        elif self.running:
-            label.setText(_tr("Status: Monitoring <font color='#FFD700'>●</font>"))  # Yellow
-        else:
-            label.setText(_tr("Status: Not monitoring <font color='#43a296'>●</font>"))  # Teal
+        label.setText(status_markup(self.current_activity()))
 
     def is_recorder_tab_active(self):
         return (
@@ -1405,17 +1463,27 @@ class VideoConverterApp(QMainWindow):
         )
 
     def update_single_workflow_availability(self):
+        """Apply the workflow rules (ui/workflow_rules.py) to every start control.
+
+        Tabs are never disabled and nothing is stopped: a job that may not
+        start now is greyed out with the reason as tooltip, that is all.
+        """
+        activity = self.current_activity()
         recorder = getattr(self, 'multi_source_recorder_widget', None)
         if recorder:
-            conversion_busy = bool(getattr(self, 'running', False) or getattr(self, 'is_converting', False))
-            recording = self.is_recorder_recording()
-            recorder.setEnabled(not conversion_busy or recording)
-            if conversion_busy and not recording and hasattr(recorder, 'status_label'):
-                recorder.status_label.setText(_tr("Unavailable while conversion is running"))
-            elif not recording and hasattr(recorder, 'status_label') and "Unavailable" in recorder.status_label.text():
-                recorder.status_label.setText(_tr("Not recording"))
-            self.update_recorder_footer_status()
-        self._apply_recording_tab_lock()
+            # The recorder stays usable (previews, settings, devices) while a
+            # conversion runs; only Start Recording is unavailable.
+            recorder.setEnabled(True)
+            record_block = blocked_reason(activity, "record")
+            if hasattr(recorder, 'status_label') and not activity.recording:
+                if record_block and not activity.locked:
+                    recorder.status_label.setText(_tr("Unavailable while conversion is running"))
+                elif "Unavailable" in recorder.status_label.text():
+                    recorder.status_label.setText(_tr("Not recording"))
+        editor = getattr(self, 'lossless_editor_widget', None)
+        if editor is not None and hasattr(editor, 'set_blocked'):
+            editor.set_blocked(blocked_reason(activity, "lossless_edit"))
+        self.update_status_labels()
         if hasattr(self, 'start_button'):
             self.set_start_button_state(is_running=getattr(self, 'running', False))
         # The tab underline follows the conversion workflow (start/stop_conversion
@@ -1536,42 +1604,14 @@ class VideoConverterApp(QMainWindow):
             painter.end()
         return pixmap
 
-    def _apply_recording_tab_lock(self):
-        # While a recording is active (or starting), gray out every other tab so the user
-        # cannot switch away and accidentally start a conversion/inspection that competes
-        # with the live capture. The Multi-Source Recorder tab stays enabled so recording
-        # can still be stopped.
-        tabs = getattr(self, 'tabs', None)
-        recorder_scroll = getattr(self, 'multi_source_recorder_tab_scroll', None)
-        if tabs is None or recorder_scroll is None:
-            return
-        recorder = getattr(self, 'multi_source_recorder_widget', None)
-        status_text = recorder.status_label.text() if recorder and hasattr(recorder, 'status_label') else ""
-        locked = self.is_recorder_recording() or status_text == "Starting recording..."
-        recorder_index = tabs.indexOf(recorder_scroll)
-        for index in range(tabs.count()):
-            if index == recorder_index:
-                tabs.setTabEnabled(index, True)
-            else:
-                tabs.setTabEnabled(index, not locked)
-
     def update_recorder_footer_status(self):
-        label = getattr(self, 'status_label_multi_source_recorder_tab', None)
-        if not label:
-            return
-        recorder = getattr(self, 'multi_source_recorder_widget', None)
-        status_text = recorder.status_label.text() if recorder and hasattr(recorder, 'status_label') else ""
-        if "failed" in status_text.lower():
-            label.setText(_tr("Status: Recording failed <font color='#dc3545'>●</font>"))
-        elif status_text == "Starting recording...":
-            label.setText(_tr("Status: Starting <font color='#ffc107'>●</font>"))
-        elif self.is_recorder_recording():
-            label.setText(_tr("Status: Recording <font color='#00cc00'>●</font>"))
-        else:
-            label.setText(_tr("Status: Not recording <font color='#43a296'>●</font>"))
+        """Kept for old callers: the recorder footer shows the shared status line."""
+        self.update_status_labels()
 
     def update_status_labels(self):
-        self.set_status_label(self.status_label_log_tab, self.status_running)
+        # One status line, the same on every tab (spec §7).
+        for label in self.footer_status_labels():
+            self.set_status_label(label)
 
         # When setting the lock icon label, always set fixed size and alignment
         self.lock_icon_label_log_tab.setPixmap(self.get_lock_icon_pixmap())
@@ -1913,6 +1953,12 @@ class VideoConverterApp(QMainWindow):
             self.stop_conversion()
             self.set_start_button_state(is_running=False)
         else:
+            reason = blocked_reason(self.current_activity(), "convert")
+            if reason:
+                logger.info("toggle_process branch=blocked reason=%s", reason)
+                self.append_log(reason, is_error=True)
+                self.set_start_button_state(is_running=False)
+                return
             logger.info("toggle_process branch=start_conversion")
             self.start_conversion()
             self.set_start_button_state(is_running=True)

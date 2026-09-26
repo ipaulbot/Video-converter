@@ -280,24 +280,19 @@ class PCReportWidgetTests(unittest.TestCase):
         finally:
             window.shutdown()
 
-    def test_recording_tab_lock_and_layout_preview(self):
+    def test_recording_keeps_every_tab_enabled_and_layout_preview(self):
         window = VideoConverterApp()
         try:
-            # Recording grays out every other tab but keeps the recorder usable.
+            # Workflow rule 1 (2026-09-26): recording never greys out tabs; the
+            # actions that may not run are blocked individually instead.
             window.multi_source_recorder_widget.status_label.setText("Recording")
-            window._apply_recording_tab_lock()
-            recorder_index = window.tabs.indexOf(window.multi_source_recorder_tab_scroll)
-            self.assertTrue(window.tabs.isTabEnabled(recorder_index))
-            other_indices = [i for i in range(window.tabs.count()) if i != recorder_index]
-            self.assertTrue(other_indices)
-            for index in other_indices:
-                self.assertFalse(window.tabs.isTabEnabled(index))
-
-            # Stopping recording re-enables everything.
-            window.multi_source_recorder_widget.status_label.setText("Not recording")
-            window._apply_recording_tab_lock()
+            window.update_single_workflow_availability()
             for index in range(window.tabs.count()):
                 self.assertTrue(window.tabs.isTabEnabled(index))
+            self.assertFalse(hasattr(window, "_apply_recording_tab_lock"))
+
+            window.multi_source_recorder_widget.status_label.setText("Not recording")
+            window.update_single_workflow_availability()
 
             # The sidebar shows a rendered layout schematic for the recorder.
             window.multi_source_recorder_widget.output_mode_combo.setCurrentText("Combined grid")
