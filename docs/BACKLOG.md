@@ -99,14 +99,18 @@ Out of scope in the current design, kept for later:
   settings appears when "copy" is selected with a USB source enabled.
 - ~~Screen capture through FFmpeg gdigrab.~~ Done 2026-09-25 (`screen=desktop`
   / `screen=title=…` source type); 2026-09-26 added `screen=monitor=N` through
-  the Desktop Duplication API with a GDI fallback. Follow-ups: capture a
-  region (`-offset_x/-offset_y/-video_size`), a window picker instead of
-  typing the title, system audio for a screen source (WASAPI loopback has no
+  the Desktop Duplication API with a GDI fallback, `screen=region=X,Y,WxH`
+  with a drag-to-select overlay, and a live window list in Video Settings.
+  Follow-ups: system audio for a screen source (WASAPI loopback has no
   DirectShow input; the open-source `virtual-audio-capturer` filter would
-  do), and encoding a GPU capture with `h264_nvenc`/`h264_amf`/`h264_qsv`
-  when the bundled ffmpeg reports one (today the frame is downloaded and
-  encoded with libx264). The monitor numbering follows DXGI output order,
-  which is normally but not always the Windows display order.
+  do), encoding a GPU capture with `h264_nvenc`/`h264_amf`/`h264_qsv` when
+  the bundled ffmpeg reports one and the encoder actually initialises on this
+  GPU (today the frame is downloaded and encoded with libx264), a region
+  picker that snaps to window edges, and a live thumbnail per window in the
+  picker. The monitor numbering follows DXGI output order, which is normally
+  but not always the Windows display order. A picked region is not
+  re-validated when the monitor layout changes; gdigrab then fails with
+  "extends outside window area" and the row needs re-picking.
 - ~~Picture-in-picture recording.~~ Done 2026-09-25. Follow-ups: choose which
   source is the main frame and the inset corner/size; the geometry is the
   fixed set in `_pip_preview_rects`.

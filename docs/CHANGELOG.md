@@ -184,6 +184,14 @@ Use this file to track user-visible fixes, improvements, and feature work.
   - Screen recordings are encoded as 4:2:0 H.264 with even dimensions. The
     grabbers deliver BGRA, which libx264 otherwise encodes as 4:4:4 — a
     file the Windows players and hardware decoders refuse to play.
+  - Pickers instead of typing: the Video Settings device list shows every
+    open window as "Window: <title>" (minimised ones included, so you can
+    pick one and restore it before recording), and "Screen capture (select
+    region...)" dims all monitors and lets you drag out a rectangle. A
+    picked region shows as "Screen capture (region X,Y WxH)" and can also
+    be typed as `region=X,Y,WxH` in the row's address (virtual-screen
+    pixels; a monitor left of the primary one has negative X). Escape or a
+    click without a drag cancels and keeps the previous device.
 - The "Medialooks Screen Capture" DirectShow filter installed by MediaRecorder
   is no longer offered as a camera. Its licence check pops a modal dialog
   inside FFmpeg the moment it is opened, leaving the recording stuck behind
