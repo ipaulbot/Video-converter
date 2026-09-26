@@ -38,3 +38,24 @@ class PlayInMediaPlayerTests(unittest.TestCase):
         self.assertIsNotNone(widget)
         self.assertEqual(widget.selected_panel()._media_path, path)
         self.assertFalse(window.settings["visible_tool_tabs"]["media_player"])
+
+    def test_inspect_requested_opens_the_players_inspect_dock_on_that_file(self):
+        window = VideoConverterApp()
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as handle:
+            path = handle.name
+
+        def cleanup():
+            window.shutdown()
+            if os.path.exists(path):
+                os.remove(path)
+
+        self.addCleanup(cleanup)
+        widget = window._ensure_media_player_widget()
+        inspected = []
+        widget.inspect_dock.inspect_path = lambda p: inspected.append(p)
+        window.converted_files_widget.inspect_requested.emit(path)
+        self.assertEqual(window.tabs.currentWidget(), window.media_player_tab_scroll)
+        self.assertTrue(widget.inspect_btn.isChecked())
+        self.assertFalse(widget.playlist_btn.isChecked())
+        self.assertEqual(inspected[-1], path)
+        self.assertEqual(widget.selected_panel()._media_path, path)

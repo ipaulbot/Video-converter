@@ -256,9 +256,12 @@ class PCReportWidgetTests(unittest.TestCase):
     def test_main_window_new_tool_tabs_have_standard_footer_icons(self):
         window = VideoConverterApp()
         try:
-            self.assertGreaterEqual(len(window.footer_lock_labels), 6)
-            self.assertGreaterEqual(len(window.footer_file_labels), 6)
-            self.assertGreaterEqual(len(window.footer_broom_labels), 6)
+            # One footer per tool tab (five since the 2026-09-26 tab merge).
+            tabs = len(window.tool_tab_widgets)
+            self.assertEqual(tabs, 5)
+            self.assertEqual(len(window.footer_lock_labels), tabs)
+            self.assertEqual(len(window.footer_file_labels), tabs)
+            self.assertEqual(len(window.footer_broom_labels), tabs)
         finally:
             window.shutdown()
 
