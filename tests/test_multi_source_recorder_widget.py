@@ -3347,6 +3347,47 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(len(scheduled), 1)
         self.assertIn("Reconnecting", widget.preview_boxes[0].text())
 
+    def test_stream_preview_with_an_unresolvable_host_says_so_and_stops_retrying(self):
+        # A mistyped IP (e.g. a four-digit octet) is not an IPv4 literal, so
+        # ffmpeg tries DNS and fails; reconnecting every few seconds only
+        # hides the real problem.
+        widget = MultiSourceRecorderWidget(auto_preview=True)
+
+        class FailedPreviewProcess:
+            preview_requested_options = False
+            preview_error_text = (
+                "[tcp @ 000001] Failed to resolve hostname 10.0.1000.5: "
+                "The name does not resolve for the supplied parameters\n"
+                "Error opening input files: I/O error")
+
+            def state(self):
+                return QProcess.NotRunning
+
+        process = FailedPreviewProcess()
+        widget.preview_processes[0] = process
+        widget.preview_sources[0] = ("stream", "rtsp://10.0.1000.5:554/axis-media/media.amp", widget.preview_source_profile)
+        scheduled = []
+
+        with patch.object(widget, "_schedule", lambda delay, callback: scheduled.append((delay, callback))):
+            widget._preview_finished(0, 1, process)
+
+        self.assertEqual(scheduled, [])
+        text = widget.preview_boxes[0].text()
+        self.assertIn("Cannot resolve the camera address", text)
+        self.assertIn("Video Settings", text)
+
+    def test_rtsp_dialog_refuses_an_address_that_is_not_an_ip(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        warnings = []
+        with patch("ui.multi_source_recorder_widget.QMessageBox.warning",
+                   lambda *args, **kwargs: warnings.append(args[2])):
+            self.assertFalse(dialog._accept_rtsp_host("10.0.1000.5"))
+            self.assertTrue(dialog._accept_rtsp_host("10.0.100.5"))
+            self.assertTrue(dialog._accept_rtsp_host("camera.local"))
+        self.assertEqual(len(warnings), 1)
+        self.assertIn("1000", warnings[0])
+
     def test_preview_retry_restarts_same_source_with_force_restart(self):
         widget = MultiSourceRecorderWidget(auto_preview=True)
         calls = []

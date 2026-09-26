@@ -77,6 +77,7 @@ from conversion.recording_sources import (
     parse_rtsp_url_settings,
     screen_monitor_index,
     screen_region,
+    stream_host_problem,
     terminate_device_probes,
 )
 from ui import theme
@@ -1297,7 +1298,13 @@ class VideoSettingsDialog(QDialog):
         form.addRow("Port:", port_edit)
         form.addRow("Stream path:", path_edit)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(dialog.accept)
+
+        def accept_if_reachable():
+            # A mistyped IP is the one mistake ffmpeg cannot report usefully.
+            if self._accept_rtsp_host(host_edit.text(), parent=dialog):
+                dialog.accept()
+
+        buttons.accepted.connect(accept_if_reachable)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
         if dialog.exec_() == QDialog.Accepted:
@@ -1309,6 +1316,18 @@ class VideoSettingsDialog(QDialog):
                 port=port_edit.text(),
                 path=path_edit.text(),
             )
+
+    def _accept_rtsp_host(self, host_text, parent=None):
+        """True when `host_text` can be used; otherwise warn and keep the dialog open."""
+        problem = stream_host_problem(host_text)
+        if not problem:
+            return True
+        QMessageBox.warning(
+            parent or self,
+            _tr("RTSP/IP Camera Settings"),
+            _tr("Check the camera address.\n\n%(problem)s") % {"problem": problem},
+        )
+        return False
 
 
 class MultiSourceRecorderWidget(QWidget):
@@ -2267,6 +2286,19 @@ class MultiSourceRecorderWidget(QWidget):
                     % {"number": row_index + 1}
                 )
                 return
+            if (
+                source_info[0] == "stream"
+                and self._unresolvable_host_error(getattr(process, "preview_error_text", ""))
+            ):
+                # DNS failed for the address itself (typically a mistyped IP).
+                # Reconnecting cannot help; editing the source restarts the preview.
+                self.preview_boxes[row_index].setText(
+                    _tr("Video %(number)s\n"
+                        "Cannot resolve the camera address\n"
+                        "Check the IP in Video Settings")
+                    % {"number": row_index + 1}
+                )
+                return
             self.preview_boxes[row_index].setText(
                 _tr("Video %(number)s\nPreview interrupted\nReconnecting...")
                 % {"number": row_index + 1})
@@ -2276,6 +2308,10 @@ class MultiSourceRecorderWidget(QWidget):
                 _tr("Video %(number)s\nPreview unavailable\nCamera may be in use")
                 % {"number": row_index + 1}
             )
+
+    @staticmethod
+    def _unresolvable_host_error(text):
+        return "failed to resolve hostname" in (text or "").lower()
 
     def _directshow_device_unavailable_error(self, text):
         error_text = (text or "").lower()
