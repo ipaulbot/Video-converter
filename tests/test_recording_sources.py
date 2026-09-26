@@ -6,16 +6,19 @@ from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
     _register_probe,
     active_device_probes,
+    build_region_source_value,
     build_rtsp_url,
     build_source_text,
     discover_directshow_audio_devices,
     discover_directshow_devices,
     discover_directshow_video_devices,
     is_hidden_directshow_video_device,
+    list_capture_windows,
     parse_directshow_audio_devices,
     parse_directshow_video_devices,
     parse_rtsp_url_settings,
     screen_monitor_index,
+    screen_region,
     terminate_device_probes,
 )
 
@@ -47,6 +50,26 @@ class RecordingSourceTests(unittest.TestCase):
         self.assertIsNone(screen_monitor_index("screen=desktop"))
         self.assertIsNone(screen_monitor_index("screen=title=monitor=2"))
         self.assertIsNone(screen_monitor_index("screen=monitor=0"))
+
+    def test_builds_region_screen_source(self):
+        # `region=X,Y,WxH` in virtual-desktop pixels, grabbed through GDI.
+        self.assertEqual(build_source_text("screen", "region=100,200,800x600"), "screen=region=100,200,800x600")
+        self.assertEqual(build_source_text("screen", "Region = 100, 200, 800 x 600"), "screen=region=100,200,800x600")
+        self.assertEqual(screen_region("screen=region=100,200,800x600"), (100, 200, 800, 600))
+        self.assertEqual(screen_region("screen=region=-1920,0,1920x1080"), (-1920, 0, 1920, 1080))
+        self.assertIsNone(screen_region("screen=desktop"))
+        self.assertIsNone(screen_region("screen=region=0,0,0x600"))
+        self.assertEqual(build_region_source_value(100, 200, 800, 600), "region=100,200,800x600")
+
+    def test_lists_capture_windows_with_titles_only(self):
+        windows = list_capture_windows(enumerate_windows=lambda: [
+            (1, "Notepad", True),
+            (2, "", True),                      # untitled: skipped
+            (3, "Hidden tool window", False),   # invisible: skipped
+            (4, "Notepad", True),               # duplicate title: once
+            (5, "Program Manager", True),       # the desktop shell window: skipped
+        ])
+        self.assertEqual(windows, ["Notepad"])
 
     def test_hides_licensed_capture_filters_from_the_video_device_list(self):
         # A third-party DirectShow filter whose licence check pops a modal dialog

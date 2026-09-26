@@ -62,18 +62,22 @@ from conversion.recording_sources import (
     DeviceScan,
     apply_axis_rtsp_recording_options,
     axis_mjpeg_preview_url,
+    build_region_source_value,
     build_rtsp_url,
     build_source_text,
     discover_directshow_devices,
     discover_directshow_video_devices,
     is_hidden_directshow_video_device,
+    list_capture_windows,
     parse_directshow_video_options,
     parse_rtsp_url_settings,
     screen_monitor_index,
+    screen_region,
     terminate_device_probes,
 )
 from ui import theme
 from ui.glyph_icons import make_icon_button, reskin_icon_buttons, set_link_glyph
+from ui.screen_region_picker import pick_screen_region_value
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 from utils.resources import resource_path
@@ -155,6 +159,51 @@ SCREEN_CAPTURE_DEVICE_LABEL = "Screen capture (desktop)"
 # ... and each display on its own through the GPU (Desktop Duplication).
 SCREEN_MONITOR_DEVICE_LABEL = "Screen capture (monitor %(number)d, GPU)"
 _SCREEN_MONITOR_LABEL_PATTERN = re.compile(r"^Screen capture \(monitor (\d+), GPU\)$")
+# ... a rectangle the user drags out on screen ...
+SCREEN_REGION_PICK_LABEL = "Screen capture (select region...)"
+SCREEN_REGION_DEVICE_LABEL = "Screen capture (region %(x)d,%(y)d %(width)dx%(height)d)"
+_SCREEN_REGION_LABEL_PATTERN = re.compile(r"^Screen capture \(region (-?\d+),(-?\d+) (\d+)x(\d+)\)$")
+# ... and every window open right now.
+SCREEN_WINDOW_DEVICE_LABEL = "Window: %(title)s"
+_SCREEN_WINDOW_LABEL_PREFIX = "Window: "
+
+
+def screen_region_device_label(region):
+    x, y, width, height = region
+    return SCREEN_REGION_DEVICE_LABEL % {"x": x, "y": y, "width": width, "height": height}
+
+
+def screen_region_from_label(label):
+    match = _SCREEN_REGION_LABEL_PATTERN.match((label or "").strip())
+    return tuple(int(match.group(i)) for i in range(1, 5)) if match else None
+
+
+def screen_window_device_label(title):
+    return SCREEN_WINDOW_DEVICE_LABEL % {"title": title}
+
+
+def screen_window_title_from_label(label):
+    text = (label or "").strip()
+    if text.startswith(_SCREEN_WINDOW_LABEL_PREFIX) and len(text) > len(_SCREEN_WINDOW_LABEL_PREFIX):
+        return text[len(_SCREEN_WINDOW_LABEL_PREFIX):]
+    return None
+
+
+def screen_device_label_for_source(source_type, source_value):
+    """The Video Settings device entry that stands for this row's screen source, or None."""
+    if source_type != "screen":
+        return None
+    source_text = build_source_text("screen", source_value)
+    if source_value.strip().lower() in ("", SCREEN_DEFAULT_TARGET):
+        return SCREEN_CAPTURE_DEVICE_LABEL
+    monitor = screen_monitor_index(source_text)
+    if monitor is not None:
+        return screen_monitor_device_label(monitor)
+    region = screen_region(source_text)
+    if region is not None:
+        return screen_region_device_label(region)
+    title = source_text[len("screen=title="):] if source_text.lower().startswith("screen=title=") else ""
+    return screen_window_device_label(title) if title else None
 
 
 def screen_monitor_device_label(number):
@@ -307,18 +356,18 @@ class VideoSettingsDialog(QDialog):
             row_device = SourceComboBox()
             row_device.setMinimumWidth(190)
             self.populate_video_device_combo(row_device)
-            screen_monitor = screen_monitor_index(build_source_text("screen", source_edit.text()))
-            if type_combo.currentData() == "screen" and source_edit.text().strip().lower() in ("", SCREEN_DEFAULT_TARGET):
-                row_device.setCurrentText(SCREEN_CAPTURE_DEVICE_LABEL)
-            elif type_combo.currentData() == "screen" and screen_monitor is not None:
-                monitor_label = screen_monitor_device_label(screen_monitor)
-                if row_device.findText(monitor_label) < 0:
-                    row_device.addItem(monitor_label, "screen")      # a display not attached right now
-                row_device.setCurrentText(monitor_label)
+            screen_label = screen_device_label_for_source(type_combo.currentData(), source_edit.text())
+            if screen_label:
+                if row_device.findText(screen_label) < 0:
+                    # A display or window that is not there right now still shows as itself.
+                    row_device.addItem(screen_label, "screen")
+                row_device.setCurrentText(screen_label)
             elif source_edit.text():
                 row_device.setText(source_edit.text())
             else:
                 row_device.setCurrentText("No source selected...")
+            if row_device.currentText().strip():
+                self._last_device_choice[row_device] = row_device.currentText()
             row_device.activated.connect(
                 lambda _index, combo=row_device: self.handle_video_device_choice(combo)
             )
@@ -736,6 +785,15 @@ class VideoSettingsDialog(QDialog):
             if offset_spin is not None:
                 row_offset.setValue(offset_spin.value())
 
+    def _capture_window_titles(self):
+        # Enumerated once per dialog so every row's list agrees and opening the
+        # dialog does not walk the window list four times.
+        cached = getattr(self, "_window_titles_cache", None)
+        if cached is None:
+            cached = list_capture_windows()
+            self._window_titles_cache = cached
+        return cached
+
     def populate_video_device_combo(self, combo):
         current = combo.currentText()
         if current == "Refresh USB devices...":
@@ -747,6 +805,9 @@ class VideoSettingsDialog(QDialog):
         combo.addItem(SCREEN_CAPTURE_DEVICE_LABEL, "screen")
         for monitor_label in screen_monitor_device_labels():
             combo.addItem(monitor_label, "screen")
+        combo.addItem(SCREEN_REGION_PICK_LABEL, "screen_region_pick")
+        for title in self._capture_window_titles():
+            combo.addItem(screen_window_device_label(title), "screen")
         for device in self.directshow_devices:
             combo.addItem(device, "directshow")
         combo.addItem("Refresh USB devices...", "refresh_directshow")
@@ -762,11 +823,7 @@ class VideoSettingsDialog(QDialog):
             return "rtsp_ip"
         if device_text.lower().startswith(("http://", "https://")):
             return "stream_url"
-        if (
-            device_text == SCREEN_CAPTURE_DEVICE_LABEL
-            or screen_monitor_number_from_label(device_text) is not None
-            or device_text.lower().startswith("screen=")
-        ):
+        if self._screen_source_value_for_label(device_text) is not None or device_text.lower().startswith("screen="):
             return "screen"
         if device_type == "none" and device_text and device_text != "No source selected...":
             device_type = None
@@ -789,6 +846,7 @@ class VideoSettingsDialog(QDialog):
 
     def apply_discovered_video_devices(self, devices):
         self.directshow_devices = list(devices or [])
+        self._window_titles_cache = None      # "Refresh USB devices..." re-lists the windows too
         for dialog_row in self.dialog_rows:
             self.populate_video_device_combo(dialog_row[3])
 
@@ -831,15 +889,54 @@ class VideoSettingsDialog(QDialog):
             % {"cameras": camera_text, "microphones": microphone_text}
         )
 
+    @staticmethod
+    def _screen_source_value_for_label(label):
+        """The row's screen address ("desktop", "monitor=2", "region=…", "title=…") for a device entry."""
+        text = (label or "").strip()
+        if text == SCREEN_CAPTURE_DEVICE_LABEL:
+            return SCREEN_DEFAULT_TARGET
+        monitor = screen_monitor_number_from_label(text)
+        if monitor is not None:
+            return f"{SCREEN_MONITOR_PREFIX}{monitor}"
+        region = screen_region_from_label(text)
+        if region is not None:
+            return build_region_source_value(*region)
+        title = screen_window_title_from_label(text)
+        if title is not None:
+            return f"title={title}"
+        return None
+
+    def _restore_previous_device_choice(self, combo):
+        previous = self._last_device_choice.get(combo, "No source selected...")
+        combo.blockSignals(True)
+        combo.setCurrentText(previous)
+        combo.blockSignals(False)
+
+    def _pick_screen_region_for_combo(self, combo):
+        # The dialog stays where it is; the overlay covers every monitor until the
+        # user drags a rectangle or presses Escape.
+        value = pick_screen_region_value()
+        if not value:
+            self._restore_previous_device_choice(combo)
+            return
+        region = screen_region(build_source_text("screen", value))
+        label = screen_region_device_label(region)
+        combo.blockSignals(True)
+        if combo.findText(label) < 0:
+            combo.insertItem(combo.findText(SCREEN_REGION_PICK_LABEL) + 1, label, "screen")
+        combo.setCurrentIndex(combo.findText(label))     # the index, so currentData() follows
+        combo.blockSignals(False)
+        self._last_device_choice[combo] = label
+
     def handle_video_device_choice(self, combo):
         if combo.currentData() == "refresh_directshow":
             # Put the previous choice back so the entry can be picked again
             # and the row never records "Refresh USB devices..." as a camera.
-            previous = self._last_device_choice.get(combo, "No source selected...")
-            combo.blockSignals(True)
-            combo.setCurrentText(previous)
-            combo.blockSignals(False)
+            self._restore_previous_device_choice(combo)
             self.refresh_devices()
+            return
+        if combo.currentData() == "screen_region_pick":
+            self._pick_screen_region_for_combo(combo)
             return
         if combo.currentText().strip():
             self._last_device_choice[combo] = combo.currentText()
@@ -937,11 +1034,8 @@ class VideoSettingsDialog(QDialog):
                 type_combo.setCurrentIndex(type_index)
             if row_device.currentText() in VIDEO_DEVICE_PLACEHOLDERS:
                 source_edit.setText("")
-            elif device_type == "screen" and row_device.currentText() == SCREEN_CAPTURE_DEVICE_LABEL:
-                source_edit.setText(SCREEN_DEFAULT_TARGET)
-            elif device_type == "screen" and screen_monitor_number_from_label(row_device.currentText()) is not None:
-                monitor_number = screen_monitor_number_from_label(row_device.currentText())
-                source_edit.setText(f"{SCREEN_MONITOR_PREFIX}{monitor_number}")
+            elif device_type == "screen" and self._screen_source_value_for_label(row_device.currentText()) is not None:
+                source_edit.setText(self._screen_source_value_for_label(row_device.currentText()))
             else:
                 source_edit.setText(row_device.text())
             if source_edit.text().strip():
@@ -1528,7 +1622,7 @@ class MultiSourceRecorderWidget(QWidget):
             "directshow": "Windows camera name, e.g. Logitech Camera",
             "basler_genicam": "Basler/pylon/GenICam source string",
             "stream_url": "rtsp://, http://, https://, or mjpeg URL",
-            "screen": "desktop (default), monitor=1 (GPU), or a window title",
+            "screen": "desktop, monitor=1 (GPU), region=X,Y,WxH, or a window title",
             "file": "Local test file path",
         }
         edit.setPlaceholderText(hints.get(source_type, "FFmpeg source"))

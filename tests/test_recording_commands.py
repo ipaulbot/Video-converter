@@ -1185,6 +1185,25 @@ class GpuMonitorCaptureTests(unittest.TestCase):
         self.assertIn("format=yuv420p[v0]", graph)
         self.assertIn("overlay=", graph)
 
+    def test_region_source_crops_the_desktop_through_gdigrab(self):
+        command = build_record_command("ffmpeg.exe", "screen=region=100,200,800x600", "screen.mp4")
+
+        i = command.index("-i")
+        self.assertEqual(command[i + 1], "desktop")
+        self.assertEqual(command[command.index("-f") + 1], "gdigrab")
+        self.assertEqual(command[command.index("-offset_x") + 1], "100")
+        self.assertEqual(command[command.index("-offset_y") + 1], "200")
+        self.assertEqual(command[command.index("-video_size") + 1], "800x600")
+        self.assertLess(command.index("-video_size"), i)
+        self.assertEqual(command[command.index("-vf") + 1], rc.SCREEN_ENCODE_FILTER)
+
+        desktop = build_record_command("ffmpeg.exe", "screen=desktop", "screen.mp4")
+        self.assertNotIn("-offset_x", desktop)
+        self.assertNotIn("-video_size", desktop)
+
+    def test_region_source_has_no_gdi_fallback_of_its_own(self):
+        self.assertEqual(rc.screen_gdi_fallback_source("screen=region=0,0,640x480"), "")
+
     def test_gdi_fallback_source_for_a_monitor_capture(self):
         self.assertEqual(rc.screen_gdi_fallback_source("screen=monitor=2"), "screen=desktop")
         self.assertEqual(rc.screen_gdi_fallback_source("screen=desktop"), "")

@@ -1,4 +1,4 @@
-from conversion.recording_sources import screen_monitor_index
+from conversion.recording_sources import screen_monitor_index, screen_region
 
 PREVIEW_FPS = 20
 PREVIEW_WIDTH = 480
@@ -182,11 +182,19 @@ def _add_input(command, source_text, network_profile="preview", frame_rate="", r
                 "-i", f"ddagrab=output_idx={monitor - 1}:framerate={fps_value},hwdownload,format=bgra",
             ])
             return
-        # gdigrab: the whole desktop or one window by title. The requested
-        # resolution is not applied -- for gdigrab -video_size means "crop this
-        # region from the top-left", which is not what a camera-style resolution
-        # setting promises. The capture is scaled later where the layout needs it.
-        command.extend(["-f", "gdigrab", "-framerate", fps_value, "-i", _screen_target(source_text)])
+        # gdigrab: the whole desktop, a region of it, or one window by title. The
+        # requested resolution is not applied -- for gdigrab -video_size means
+        # "crop this region from the top-left", which is not what a camera-style
+        # resolution setting promises; only an explicit region uses it. The
+        # capture is scaled later where the layout needs it.
+        command.extend(["-f", "gdigrab", "-framerate", fps_value])
+        region = screen_region(source_text)
+        if region:
+            x, y, width, height = region
+            command.extend(["-offset_x", str(x), "-offset_y", str(y), "-video_size", f"{width}x{height}"])
+            command.extend(["-i", "desktop"])
+            return
+        command.extend(["-i", _screen_target(source_text)])
         return
     if source_text.lower().startswith("rtsp://"):
         if network_profile == "recording":
