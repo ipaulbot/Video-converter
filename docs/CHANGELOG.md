@@ -361,3 +361,31 @@ Use this file to track user-visible fixes, improvements, and feature work.
   panel showing (the tab is shown for the session even if hidden in settings).
 - Help: Main Window Overview, Converting Files, the Converted Files and Media
   Inspection chapters, and figures FIG-03 / FIG-04 updated for the new layout.
+- Second pass the same morning: the Inspect panel is **open by default** and
+  sits in a splitter beside the video, so it keeps its share of the window
+  instead of staying a fixed strip when the window is maximised; the dashed
+  drop frame around the text is gone (plain panel, real scroll bar). The
+  **Playlist** is now a strip under the video, independent of Inspect (both
+  toggles remembered between sessions; panel count no longer opens it).
+  Fullscreen hides both and restores them on exit.
+- A clip shows its **first frame as soon as it is loaded** (the tile reads
+  "Loading..." for a moment), and the seek slider moves the picture before
+  the first Play. Previously the tile stayed black until Play and paused
+  seeks did nothing, so a dropped file did not look loaded.
+- The sidebar preview follows the player's selected clip again (it used to
+  follow the Video Inspection Tool). Whether that preview stays is a backlog
+  question.
+- Fixed a possible abort at exit: an ffprobe inspection still running when
+  the inspector was destroyed took the process down ("QThread: Destroyed
+  while thread is still running"). The probe is now killed and joined on
+  shutdown.
+
+### Multi-Source Recorder
+
+- RTSP camera "not loading": the address on this machine's saved row had a
+  four-digit octet, which ffmpeg treats as a host name and tries to resolve,
+  so the preview reconnected forever with only a log line. The RTSP/IP
+  Camera dialog now refuses an Address that looks like an IP but is not one,
+  and a stream preview that dies with "Failed to resolve hostname" reads
+  "Cannot resolve the camera address / Check the IP in Video Settings" and
+  stops retrying until the source is edited.
