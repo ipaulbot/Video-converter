@@ -1377,6 +1377,10 @@ class VideoConverterApp(QMainWindow):
         )
         if hasattr(widget, "apply_layout_mode"):
             widget.apply_layout_mode(theme.metrics())
+        # The sidebar preview follows the player's selected clip, as it used to
+        # follow the inspection tab. (Whether the sidebar preview stays at all is
+        # an open backlog question.)
+        widget.media_selected.connect(self._preview_player_selection)
         self.media_player_widget = widget
         placeholder = getattr(self, 'media_player_placeholder', None)
         if placeholder is not None:
@@ -1385,6 +1389,10 @@ class VideoConverterApp(QMainWindow):
             self.media_player_placeholder = None
         self.tool_tab_cards["media_player"].body.insertWidget(0, widget)
         return widget
+
+    def _preview_player_selection(self, path):
+        if path and os.path.exists(path):
+            self.preview_file(path)
 
     def play_in_media_player(self, path):
         """Converted Files -> Media Player: show the tab for this session and play `path`."""

@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
     QShortcut,
     QSizePolicy,
     QSlider,
+    QSplitter,
     QVBoxLayout,
     QWidget,
 )
@@ -131,6 +132,14 @@ class PlayerPanel(QWidget):
         self.on_probe_finished = None
         self.on_selected = None
         self.on_player_error = None
+        # First-frame prime (see _on_status_for_prime).
+        self._priming = False
+        self._primed_path = ""
+        self._prime_restore_muted = False
+        self._prime_timer = QTimer(self)
+        self._prime_timer.setSingleShot(True)
+        self._prime_timer.setInterval(200)
+        self._prime_timer.timeout.connect(self._finish_prime)
         self._build_ui()
 
     def _build_ui(self):
@@ -250,7 +259,79 @@ class PlayerPanel(QWidget):
         except (TypeError, KeyError):
             error_signal.connect(self._on_player_error_code)
         self.player.mediaStatusChanged.connect(self._on_status_for_errors)
+        self._wire_prime(self.player)
         return self.player
+
+    def _wire_prime(self, player):
+        player.mediaStatusChanged.connect(self._on_status_for_prime)
+        player.positionChanged.connect(self._on_position_for_prime)
+
+    def _adopt_player(self, player):
+        """Use `player` as this panel's player (tests substitute a stand-in here)."""
+        self.player = player
+        self._wire_prime(player)
+        return player
+
+    # --- first frame on load ------------------------------------------------
+    # Media Foundation shows nothing until the session has run once: a freshly
+    # loaded clip is a black tile, and dragging the timeline before the first
+    # Play moves nothing. So when a clip reaches LoadedMedia while the host is
+    # idle, run it muted for one position tick (200 ms at most), then pause at
+    # 0. The first frame is on the tile and paused seeks repaint from then on.
+    def _host_is_playing(self):
+        return bool(getattr(self.host, "_is_playing", False))
+
+    def _on_status_for_prime(self, status):
+        if status not in (QMediaPlayer.LoadedMedia, QMediaPlayer.BufferedMedia):
+            return
+        if self._priming or not self._media_path or self._primed_path == self._media_path:
+            return
+        if self._host_is_playing() or self.player is None:
+            return
+        self._begin_prime()
+
+    def _begin_prime(self):
+        self._priming = True
+        self._primed_path = self._media_path
+        self.placeholder.setText(_tr("Loading..."))
+        self.placeholder.show()
+        self.placeholder.raise_()
+        self._prime_restore_muted = bool(self.player.isMuted())
+        self.player.setMuted(True)
+        self.player.play()
+        self._prime_timer.start()
+
+    def _on_position_for_prime(self, _position):
+        if self._priming:
+            self._finish_prime()
+
+    def _finish_prime(self):
+        if not self._priming:
+            return
+        self._priming = False
+        self._prime_timer.stop()
+        if self.player is not None:
+            self.player.pause()
+            self.player.setPosition(0)
+            self.player.setMuted(self._prime_restore_muted)
+        self.placeholder.hide()
+        self.placeholder.setText(_tr("Drop a video here\nor click Load"))
+
+    def _cancel_prime(self, forget=False):
+        """Drop an in-flight prime.
+
+        `forget=True` (a new load or a clear) lets the next clip prime; the
+        default (the user pressed Play) marks this clip done so a later
+        BufferedMedia -- they arrive after seeks -- can never yank it to 0.
+        """
+        if self._priming:
+            self._priming = False
+            self._prime_timer.stop()
+            if self.player is not None:
+                self.player.setMuted(self._prime_restore_muted)
+            self.placeholder.hide()
+            self.placeholder.setText(_tr("Drop a video here\nor click Load"))
+        self._primed_path = "" if forget else self._media_path
 
     def _on_player_error_code(self, code):
         if callable(self.on_player_error):
@@ -285,7 +366,11 @@ class PlayerPanel(QWidget):
     def apply_audio(self, volume, muted):
         if self.player is not None:
             self.player.setVolume(int(volume))
-            self.player.setMuted(bool(muted))
+            if self._priming:
+                # Stay silent for the rest of the prime; honour the choice after.
+                self._prime_restore_muted = bool(muted)
+            else:
+                self.player.setMuted(bool(muted))
 
     def fps(self):
         return float(self.probe_info.get("fps") or 0.0)
@@ -319,6 +404,7 @@ class PlayerPanel(QWidget):
         if not path or not os.path.exists(path):
             return False
         self.hide_unsupported()
+        self._cancel_prime()
         self._ensure_player().setMedia(QMediaContent(QUrl.fromLocalFile(path)))
         self._media_path = path
         self.name_label.setText(
@@ -338,6 +424,7 @@ class PlayerPanel(QWidget):
 
     def clear_media(self):
         self.hide_unsupported()
+        self._cancel_prime()
         if self.player is not None:
             self.player.stop()
             self.player.setMedia(QMediaContent())
@@ -382,6 +469,8 @@ class MediaPlayerWidget(QWidget):
 
     probe_finished = pyqtSignal(int, dict)
     probe_finished_for_error = pyqtSignal(int, dict)
+    # The selected panel's clip path ("" when empty): load, clear or panel switch.
+    media_selected = pyqtSignal(str)
     UNSUPPORTED_ERRORS = (
         QMediaPlayer.FormatError,
         QMediaPlayer.ResourceError,
@@ -422,10 +511,26 @@ class MediaPlayerWidget(QWidget):
             self.mute_btn.setChecked(group["muted"])
             self.panels_combo.setCurrentIndex(PANEL_COUNT_OPTIONS.index(group["panel_count"]))
             self.set_visible_panel_count(group["panel_count"])
-            self.playlist_btn.setChecked(group["panel_count"] == 1)
+            self.playlist_btn.setChecked(group["playlist_visible"])
+            self.inspect_btn.setChecked(group["inspect_visible"])
             self._apply_audio_to_panels()
         finally:
             self._restoring = False
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._apply_initial_splitter_sizes()
+
+    def _apply_initial_splitter_sizes(self):
+        """Give the video about three quarters of the stage the first time it is shown."""
+        if self._splitter_sized or self.is_fullscreen():
+            return
+        total = self.stage.width() or self.width()
+        if total <= 0:
+            return
+        dock = max(self.inspect_dock.minimumWidth(), int(total * 0.28))
+        self.stage.setSizes([max(1, total - dock), dock])
+        self._splitter_sized = True
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
@@ -464,24 +569,33 @@ class MediaPlayerWidget(QWidget):
         for panel, (row, col) in zip(self.panels, positions, strict=True):
             self.grid.addWidget(panel, row, col)
 
-        self.stage = QWidget(self)
-        stage_layout = QHBoxLayout(self.stage)
-        stage_layout.setContentsMargins(0, 0, 0, 0)
-        stage_layout.setSpacing(8)
-        stage_layout.addLayout(self.grid, 1)
-        self.playlist_dock = PlaylistDock(self.stage)
+        # Stage: [ video column (grid over the playlist strip) | Inspect dock ]
+        # in a splitter, so the dock scales with the window instead of sitting
+        # at a fixed width beside an ever-larger picture.
+        self.stage = QSplitter(Qt.Horizontal, self)
+        self.stage.setChildrenCollapsible(False)
+        self.stage.setHandleWidth(8)
+        self.video_column = QWidget(self.stage)
+        column_layout = QVBoxLayout(self.video_column)
+        column_layout.setContentsMargins(0, 0, 0, 0)
+        column_layout.setSpacing(8)
+        column_layout.addLayout(self.grid, 1)
+        self.playlist_dock = PlaylistDock(self.video_column, horizontal=True)
         self.playlist_dock.activate_requested.connect(self._play_from_playlist)
         self.playlist_dock.files_requested.connect(self.add_playlist_files)
         self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
-        stage_layout.addWidget(self.playlist_dock)
+        column_layout.addWidget(self.playlist_dock)
         self.playlist_dock.hide()
-        # Same slot as the playlist: ffprobe details for the selected panel.
+        self.stage.addWidget(self.video_column)
+        # ffprobe details for the selected panel, beside the video.
         self.inspect_dock = InspectionDock(self.stage)
-        stage_layout.addWidget(self.inspect_dock)
+        self.stage.addWidget(self.inspect_dock)
         self.inspect_dock.hide()
+        self.stage.setStretchFactor(0, 3)
+        self.stage.setStretchFactor(1, 1)
+        self._splitter_sized = False
         self.selected_index = 0
         self.select_panel(0)
-        self._stage_layout = stage_layout
         layout.addWidget(self.stage, 1)
 
         self.transport_widget = QWidget(self)
@@ -663,6 +777,11 @@ class MediaPlayerWidget(QWidget):
         self._stage_index = self._main_layout.indexOf(self.stage)
         self._main_layout.removeWidget(self.stage)
         self._main_layout.removeWidget(self.transport_widget)
+        # Fullscreen is for the picture: the docks step aside and come back on exit.
+        self._docks_before_fullscreen = (
+            self.inspect_dock.isVisibleTo(self), self.playlist_dock.isVisibleTo(self))
+        self.inspect_dock.hide()
+        self.playlist_dock.hide()
         host.take(self.stage)
         host.take(self.transport_widget)
         self._fullscreen_host = host
@@ -679,6 +798,10 @@ class MediaPlayerWidget(QWidget):
         self._fullscreen_host = None
         self._main_layout.insertWidget(self._stage_index, self.stage, 1)
         self._main_layout.insertWidget(self._stage_index + 1, self.transport_widget)
+        inspect_was_open, playlist_was_open = getattr(
+            self, "_docks_before_fullscreen", (self.inspect_btn.isChecked(), self.playlist_btn.isChecked()))
+        self.inspect_dock.setVisible(inspect_was_open)
+        self.playlist_dock.setVisible(playlist_was_open)
         self.stage.show()
         self.transport_widget.show()
         host.close()
@@ -777,6 +900,11 @@ class MediaPlayerWidget(QWidget):
         )
         self.playlist_dock.select_path(panel._media_path)
         self._refresh_inspection()
+        self._announce_selected_media()
+
+    def _announce_selected_media(self):
+        """Tell listeners (the main window's sidebar preview) which clip is current."""
+        self.media_selected.emit(self.selected_panel()._media_path or "")
 
     def selected_panel(self):
         panel = self.panels[self.selected_index]
@@ -791,22 +919,23 @@ class MediaPlayerWidget(QWidget):
         self.playlist_btn.setChecked(not self.playlist_btn.isChecked())
 
     def _on_playlist_toggled(self, checked):
-        if checked:
-            self.inspect_btn.setChecked(False)
-        self.playlist_dock.setVisible(bool(checked))
+        if not self.is_fullscreen():
+            self.playlist_dock.setVisible(bool(checked))
+        self._persist(playlist_visible=bool(checked))
 
     # --- inspect dock ------------------------------------------------------
     def _on_inspect_toggled(self, checked):
-        if checked:
-            self.playlist_btn.setChecked(False)
-        self.inspect_dock.setVisible(bool(checked))
+        if not self.is_fullscreen():
+            self.inspect_dock.setVisible(bool(checked))
         if checked:
             self._refresh_inspection()
+        self._persist(inspect_visible=bool(checked))
 
     def _on_panel_media_changed(self, panel):
-        """A panel loaded or cleared media; the dock follows the selected one."""
+        """A panel loaded or cleared media; the dock and sidebar follow the selected one."""
         if panel is self.selected_panel():
             self._refresh_inspection()
+            self._announce_selected_media()
 
     def _refresh_inspection(self):
         # select_panel(0) runs from _build_ui before the transport bar exists.
@@ -873,7 +1002,6 @@ class MediaPlayerWidget(QWidget):
     def _on_panel_count_changed(self, _index):
         count = self.panels_combo.currentData()
         self.set_visible_panel_count(count)
-        self.playlist_btn.setChecked(int(count) == 1)
         self._persist(panel_count=int(count))
 
     # --- active players ---------------------------------------------------
@@ -1014,6 +1142,8 @@ class MediaPlayerWidget(QWidget):
         rate = self.speed_combo.currentData() or 1.0
         master = self.position_slider.value()
         for panel in panels:
+            # A prime still running would pause this panel again a moment later.
+            panel._cancel_prime()
             panel.player.setPlaybackRate(rate)
             panel.player.setPosition(
                 panel_seek_position_ms(master, panel.offset_ms(), panel.duration_ms())
@@ -1131,6 +1261,8 @@ class MediaPlayerWidget(QWidget):
     def shutdown(self):
         self.exit_fullscreen()
         self._bar_hide_timer.stop()
+        # A probe thread still running when the dock is destroyed aborts the process.
+        self.inspect_dock.inspector.stop_inspection()
         for timer in self._timers:
             timer.stop()
         try:
