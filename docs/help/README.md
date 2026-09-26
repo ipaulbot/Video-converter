@@ -10,12 +10,24 @@ pip install -r docs/help/source/requirements-help.txt
 python docs/help/source/build_help_docs.py
 ```
 
-That writes every manual, in every supported locale, as both PDF and DOCX:
+That writes every manual, in every supported locale (`en`, `nl`, `zh-CN`), as
+both PDF and DOCX:
 
 | Manual | Filename |
 |---|---|
-| Help | `NVC 2.3.0 - Help - en.pdf` / `.docx` |
-| Quick Start Guide | `NVC 2.3.0 - Quick Start Guide - en.pdf` / `.docx` |
+| Help | `NVC 2.3.0 - Help - en.pdf` / `.docx`, `- nl.`, `- zh-CN.` |
+| Quick Start Guide | `NVC 2.3.0 - Quick Start Guide - en.pdf` / `.docx`, `- nl.`, `- zh-CN.` |
+
+The filename keeps the English title in every locale — the app's Help menu
+looks the manual up by it (`utils/help_resolution.py`) and picks the file for
+the saved UI language, falling back to `en`. The cover and headings carry the
+translated title.
+
+The zh-CN PDF embeds a TrueType face with Chinese glyphs: a font dropped into
+`source/fonts/` first (Noto Sans SC), then the Windows system fonts (Microsoft
+YaHei, SimHei, SimSun). With none of those present it falls back to ReportLab's
+STSong-Light CID font, which renders in every mainstream viewer without
+embedding. The build prints which one it used.
 
 Narrower builds:
 
@@ -31,6 +43,8 @@ python docs/help/source/build_help_docs.py --manual quickstart --format pdf
 | `source/content_loader.py` | Loads bundles; validates structure and cross-locale parity |
 | `source/document_navigation.py` | Anchors, Word bookmark names, the appended glossary chapter |
 | `source/figures.py` | The figure catalog; figure numbers are derived from ids |
+| `source/doc_strings.py` | The builders' own words per locale ("Contents", "Note", figure captions, cover titles) |
+| `source/manual_fonts.py` | Fonts per locale; finds and registers a CJK face for zh-CN |
 | `source/pdf_builder.py` | PDF via ReportLab, two-pass for real TOC page numbers |
 | `source/docx_builder.py` | DOCX via python-docx, with a live Word TOC field |
 | `source/build_help_docs.py` | Entry point |
@@ -91,8 +105,11 @@ shot is framed.
    `_LOCALE_PACKAGES` in `content_loader.py`. Use `zh_CN` as the directory when
    the tag is `zh-CN` — hyphens are not legal in package names.
 2. Copy `locales/en/` to `locales/<dir>/` and translate the strings, leaving
-   every `id`, `fig_id` and block `type` untouched.
-3. Rebuild. `validate_bundle_parity` compares chapter ids and per-block shape
+   every `id`, `fig_id` and block `type` untouched. Keep `code` lines and the
+   glossary's term keys in English; translate `strings.py` too (same keys).
+3. If the script needs glyphs Helvetica lacks, teach `manual_fonts.pdf_fonts`
+   which face to register for the tag.
+4. Rebuild. `validate_bundle_parity` compares chapter ids and per-block shape
    signatures against English and **fails the build** on any drift.
 
 There is deliberately no per-string fallback to English. A bundle is

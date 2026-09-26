@@ -629,7 +629,7 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             self.assertEqual(widget.playlist_dock.list.count(), 1)
             self.assertEqual(widget.playlist_dock.list.currentRow(), 0)
             self.assertEqual(inspected[-1], clip)
-            self.assertIn("Panel 2", widget.playlist_dock.title_label.text())
+            self.assertEqual(widget.playlist_dock.panel_title(), "Panel 2")
 
     def test_a_drop_on_a_panel_loads_and_selects_it(self):
         widget = self._widget()

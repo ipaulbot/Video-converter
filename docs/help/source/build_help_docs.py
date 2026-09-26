@@ -20,7 +20,9 @@ SOURCE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SOURCE_DIR))
 
 import content_loader  # noqa: E402
+import doc_strings  # noqa: E402
 import document_registry as registry  # noqa: E402
+import manual_fonts  # noqa: E402
 from docx_builder import build_docx  # noqa: E402
 from pdf_builder import build_pdf  # noqa: E402
 
@@ -53,7 +55,9 @@ def build(locales, manuals, formats, *, version=registry.DOC_VERSION) -> list[Pa
     written: list[Path] = []
     for document_tag in locales:
         for manual_key in manuals:
-            doc_title = registry.manual_title(manual_key)
+            # The filename keeps the English title (the app looks manuals up by
+            # it); the cover and heading carry the translated one.
+            doc_title = doc_strings.strings(document_tag)["titles"][manual_key]
             chapters = content_loader.load_manual(manual_key, document_tag)
             shared = {
                 "doc_title": doc_title,
@@ -103,6 +107,8 @@ def main(argv=None) -> int:
           f"{len(manuals)} manual(s) x {len(locales)} locale(s) x {len(formats)} format(s)")
     written = build(locales, manuals, formats, version=args.version)
     print(f"\n{len(written)} file(s) written to {OUTPUT_DIR}")
+    if manual_fonts.cjk_font_source():
+        print(f"zh-CN PDF font: {manual_fonts.cjk_font_source()}")
 
     uncaptured = _uncaptured_figures()
     if uncaptured:

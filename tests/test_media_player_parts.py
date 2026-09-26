@@ -192,7 +192,7 @@ class PlaylistDockTests(unittest.TestCase):
         self.assertLessEqual(dock.maximumHeight(), 160)
         self.assertEqual(dock.maximumWidth(), QWIDGETSIZE_MAX)
         self.assertEqual(dock.minimumWidth(), 0)
-        row = dock.layout().itemAt(1).layout()          # title above; list + buttons below
+        row = dock.layout().itemAt(0).layout()          # no title row: list + buttons only
         self.assertIs(row.itemAt(0).widget(), dock.list)
         self.assertIsInstance(row.itemAt(1).layout(), QVBoxLayout)
 
@@ -203,7 +203,13 @@ class PlaylistDockTests(unittest.TestCase):
         self.assertEqual(dock.list.count(), 2)
         self.assertEqual(dock.list.item(0).text(), "a.mp4")
         self.assertEqual(dock.list.item(0).toolTip(), "C:\\Videos\\a.mp4")
-        self.assertIn("Panel 1", dock.title_label.text())
+        # 16:14 review: no "Playlist - Panel 1" row above the list; the Panel
+        # column and the selected tile's accent border already say which.
+        self.assertFalse(hasattr(dock, "title_label"))
+        self.assertEqual(dock.panel_title(), "Panel 1")
+        self.assertFalse(any(
+            isinstance(w, QLabel) and "Playlist" in w.text() for w in dock.findChildren(QLabel)
+        ))
 
     def test_remove_selected_and_clear_update_model(self):
         dock, model = self._dock()
@@ -235,7 +241,7 @@ class PlaylistDockTests(unittest.TestCase):
         self.assertEqual(dock.list.columnCount(), 3)
         self.assertEqual(
             [dock.list.horizontalHeaderItem(c).text() for c in range(3)],
-            ["Clip", "Panel", "Offset"],
+            ["File Name", "Panel", "Offset"],
         )
         dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
         model.set_offset("C:\\Videos\\b.mp4", -1.25)
@@ -290,7 +296,7 @@ class PlaylistDockTests(unittest.TestCase):
         dock.add_paths(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
         self.assertEqual(
             [dock.list.horizontalHeaderItem(c).text() for c in range(3)],
-            ["Clip", "Panel", "Offset"],
+            ["File Name", "Panel", "Offset"],
         )
         self.assertEqual(dock.list.item(0, PlaylistTable.PANEL).text(), "1, 3")
         self.assertEqual(dock.list.item(1, PlaylistTable.PANEL).text(), "")

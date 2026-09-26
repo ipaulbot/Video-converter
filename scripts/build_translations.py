@@ -23,7 +23,6 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from xml.dom import minidom
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -247,8 +246,12 @@ def write_ts(path: Path, catalogue, existing, language: str) -> dict[str, int]:
                 translation.set("type", "vanished")
                 stats["vanished"] += 1
 
-    pretty = minidom.parseString(ET.tostring(ts, encoding="unicode")).toprettyxml(indent="    ")
-    body = "\n".join(line for line in pretty.splitlines()[1:] if line.strip())
+    # ET.indent only touches whitespace between elements, so a "\n\n"
+    # paragraph break inside a source or translation survives untouched
+    # (the old minidom pretty-print dropped every blank line, which silently
+    # broke matching for every multi-paragraph dialog text).
+    ET.indent(ts, space="    ")
+    body = ET.tostring(ts, encoding="unicode")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text('<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE TS>\n'
                     + body + "\n", encoding="utf-8")

@@ -229,6 +229,22 @@ class ExtractorTests(unittest.TestCase):
             self.assertEqual(stats["vanished"], 1)
             self.assertIn("Oude tekst", ts.read_text(encoding="utf-8"))
 
+    def test_blank_lines_inside_a_string_survive_the_round_trip(self):
+        """Dialog texts use "\\n\\n" paragraphs; the .ts writer used to drop
+        the blank line, so those strings could never match at runtime."""
+        import tempfile
+        source = "Locked.\n\nUnlock first."
+        with tempfile.TemporaryDirectory() as tmp:
+            ts = Path(tmp) / "probe.ts"
+            catalogue = {"Probe": {source: ["a.py:1"]}}
+            existing = {("Probe", source): ("Vergrendeld.\n\nOntgrendel eerst.", "")}
+            stats = self.bt.write_ts(ts, catalogue, existing, "nl_NL")
+            self.assertEqual((stats["translated"], stats["vanished"]), (1, 0))
+            again = self.bt.read_ts(ts)
+            self.assertEqual(again[("Probe", source)][0], "Vergrendeld.\n\nOntgrendel eerst.")
+            stats = self.bt.write_ts(ts, catalogue, again, "nl_NL")
+            self.assertEqual((stats["translated"], stats["vanished"]), (1, 0))
+
     def test_ts_orders_location_before_source(self):
         """Qt's DTD requires it; Linguist refuses a file with them swapped."""
         import tempfile

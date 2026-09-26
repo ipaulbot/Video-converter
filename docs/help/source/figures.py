@@ -64,16 +64,22 @@ FIGURES: Final[list[dict[str, str]]] = [
         "id": "FIG-07",
         "filename": "fig-07-multi-source-recorder.png",
         "caption": "The Multi-Source Recorder tab with two sources enabled.",
-        "capture_steps": "Recorder tab, fill rows 1-2, enable both, do not start recording.",
+        "capture_steps": ("Recorder tab, rows 1-2 enabled, do not start recording. Live "
+                          "previews stay off (the script builds the recorder with "
+                          "auto_preview=False) so no real camera or desktop is shown; the "
+                          "tiles are filled with ffmpeg test patterns through the widget's "
+                          "own frame path. File location shows C:\\Videos."),
     },
     {
         "id": "FIG-08",
         "filename": "fig-08-media-player.png",
         "caption": "The Media Player tab with a clip loaded in a single panel.",
-        "capture_steps": ("Media Player tab, Panels set to 1, a short test clip loaded and "
-                          "paused at about one second. Needs a real display: the video "
-                          "surface is native, so the script grabs the screen region "
-                          "under the window (widget.grab() sees black)."),
+        "capture_steps": ("Media Player tab, Panels set to 1, a short colour-bar test clip "
+                          "(Session 1.mp4 under the Public Videos folder, removed afterwards) "
+                          "loaded and paused at about one second. The video surface is "
+                          "native and grab() sees it black, so the script composites the "
+                          "frame ffmpeg extracts at the paused position into the tile; no "
+                          "screen read and no real display needed."),
     },
     {
         "id": "FIG-09",
@@ -109,8 +115,11 @@ def figure_number(fig_id: str) -> int:
     return int(m.group(1))
 
 
-def figure_label(fig_id: str) -> str:
-    return f"Figure {figure_number(fig_id)}. {figure(fig_id)['caption']}"
+def figure_label(fig_id: str, locale: str = "en") -> str:
+    """The printed caption line, e.g. "Figure 3. The Video Converter tab..."."""
+    import doc_strings
+    caption = doc_strings.strings(locale)["figure_captions"][fig_id]
+    return doc_strings.text(locale, "figure_label", n=figure_number(fig_id), caption=caption)
 
 
 def resolve_figure_path(fig_id: str, screenshots_dir: Path | None = None) -> Path | None:

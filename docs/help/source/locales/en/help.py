@@ -169,8 +169,9 @@ CHAPTERS: list[dict] = [
                 ("Destination Folder", "Click Change to select where converted files are written."),
                 ("Backup Folder", "Click Change to select where backed-up originals are moved."),
                 ("Log Folder",
-                 r"Shows the log location. NVC currently always writes logs to "
-                 r"%APPDATA%\NVC\logs; changing this field has no effect in this version."),
+                 r"Where the per-file conversion logs are written. Leave it empty for the "
+                 r"default, %APPDATA%\NVC\logs. The main application log always stays in the "
+                 r"default folder because it opens before settings are read."),
             ]},
             {"type": "para", "text": (
                 "The Deletion tab controls original files. See the Original File Handling "
@@ -487,15 +488,17 @@ CHAPTERS: list[dict] = [
                 ("Mute", "Records the row without sound."),
                 ("Volume", "Sets the audio level to 100, 75, 50, 25 or 0 %."),
                 ("Encoding", "copy keeps the source's own compressed video only for RTSP, "
-                 "stream and file sources. USB (DirectShow) cameras are always re-encoded "
-                 "with H.264 regardless of the Encoding choice."),
+                 "stream and file sources. USB (DirectShow) cameras and screen captures are "
+                 "always re-encoded with H.264 regardless of the Encoding choice."),
                 ("Output mode", "Separate videos writes one file per row; Combined grid writes "
-                 "one file with all sources tiled."),
+                 "one file with all sources tiled side by side; Picture-in-picture writes one "
+                 "file with source 1 filling the frame and the other enabled sources as "
+                 "insets along the bottom left, as the sidebar schematic shows."),
                 ("File location", "Sets the recording folder. The default is your Videos folder."),
                 ("File base name", "The default is Video. Separate videos, and Combined grid "
-                 "with one enabled source, use <base>_<Video name>_<timestamp>.mp4. Combined "
-                 "grid with more than one enabled source uses "
-                 "<base>_Combined_<timestamp>.mp4."),
+                 "or Picture-in-picture with one enabled source, use "
+                 "<base>_<Video name>_<timestamp>.mp4. Combined grid and Picture-in-picture "
+                 "with more than one enabled source use <base>_Combined_<timestamp>.mp4."),
                 ("Timer", 'The field shows "blank = until stopped"; leave it blank to record '
                  "until you press Stop Recording."),
                 ("Show recording log", "Opens the recording log."),
@@ -515,6 +518,15 @@ CHAPTERS: list[dict] = [
                 "(a number over 255, or three or five numbers); if a saved address is wrong, "
                 "the preview tile reads \"Cannot resolve the camera address\" instead of "
                 "reconnecting -- open Video Settings and correct it.",
+                "To record the screen, choose Screen capture in Video device and click the "
+                "camera button to open Screen Capture Settings: the whole desktop (every "
+                "monitor), one display through the GPU, one window chosen from a live list "
+                "of open windows, or part of the desktop entered as X, Y, width and height or "
+                "drawn with Select on screen... (Escape cancels). The device box then reads "
+                "Screen capture (desktop | monitor N, GPU | window: title | region X,Y WxH). "
+                "Screen captures record at the row's frame rate (15 fps when set to Auto), "
+                "are always encoded to H.264, preview like a network stream and can be mixed "
+                "with cameras in Combined grid or Picture-in-picture.",
                 "The default Frame rate list is 30.00, 25.00 and 15.00; the default Resolution "
                 "list is 1920 x 1080, 1280 x 720, 640 x 480 and Auto. When a USB camera is "
                 "selected, NVC replaces both lists with the modes the driver reports and adds "
@@ -525,8 +537,9 @@ CHAPTERS: list[dict] = [
                 "in the list to keep the dialog narrow; hover the box to read the full name. "
                 "Refresh devices rescans microphones. Mute or Volume 0 on the tab records that "
                 "row without sound.",
-                "Sync offset shifts a source earlier or later in a Combined grid recording so "
-                "clips that started at slightly different times line up.",
+                "Sync offset shifts a source earlier or later in a Combined grid or "
+                "Picture-in-picture recording so clips that started at slightly different "
+                "times line up.",
                 "Apply keeps the dialog open; OK applies and closes.",
             ]},
             {"type": "para", "text": "Presets"},
@@ -637,7 +650,7 @@ CHAPTERS: list[dict] = [
                 "Playlist opens a strip under the video for the selected panel with Add "
                 "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
                 "panel is added to that panel's playlist, so the strip always shows what the "
-                "panel has seen. The strip has columns Clip, Panel and Offset; Panel lists "
+                "panel has seen. The strip has columns File Name, Panel and Offset; Panel lists "
                 "the panels showing that clip right now and only appears when more than one "
                 "panel is on screen. Highlighting a row shows that clip's details in the "
                 "Inspect panel without loading it; clicking a panel does the same for its "
@@ -672,8 +685,10 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": (
                 "Menu -- Language lists English, Nederlands and Simplified Chinese; the last "
                 "entry appears in the menu in Chinese characters. NVC saves the choice and "
-                "says \"NVC will show <language> the next time it starts.\" The manuals are "
-                "in English.")},
+                "says \"NVC will show <language> the next time it starts.\" The Help and the "
+                "Quick Start Guide exist in all three languages; Menu -- Help opens the "
+                "manual for the chosen language and falls back to English when that file is "
+                "missing.")},
         ],
     },
     {
@@ -686,8 +701,9 @@ CHAPTERS: list[dict] = [
                  "\"Updates Not Configured\". When an address is configured and a newer "
                  "version exists, \"Update v<version> Available!\" appears in the sidebar."),
                 ("Log file",
-                 r"All logs are under %APPDATA%\NVC\logs. The rotating application log is "
-                 r"conversion_log.txt, and each conversion has an <output file name>.txt log."),
+                 r"The rotating application log, conversion_log.txt, is under "
+                 r"%APPDATA%\NVC\logs. Each conversion has an <output file name>.txt log in "
+                 r"the same folder, or in the Log Folder chosen under Settings -- Folders."),
                 ("NVC_LOG_LEVEL",
                  "Set this environment variable to DEBUG to record full tracebacks."),
                 ("Settings file", r"%APPDATA%\NVC\config.json."),
@@ -749,7 +765,8 @@ CHAPTERS: list[dict] = [
             {"type": "para", "text": (
                 r"NVC stores logs under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
                 "application log, and each conversion has an <output file name>.txt log that "
-                "Converted Files -- Open Log File opens.")},
+                "Converted Files -- Open Log File opens (per-conversion logs move to the Log "
+                "Folder if one is set under Settings -- Folders).")},
         ],
     },
     {
@@ -784,8 +801,9 @@ CHAPTERS: list[dict] = [
                  "HEVC is efficient but less universally supported than H.264. If compatibility "
                  "matters, use H.264."),
                 ("Where are logs stored?",
-                 r"Every log is under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
-                 "application log, with one <output file name>.txt log per conversion."),
+                 r"By default under %APPDATA%\NVC\logs: conversion_log.txt is the rotating "
+                 "application log, with one <output file name>.txt log per conversion. "
+                 "Settings -- Folders -- Log Folder moves the per-conversion logs elsewhere."),
                 ("Can I run two copies of NVC at once?",
                  "No. NVC allows a single instance, so two copies cannot process the same "
                  "source folder."),

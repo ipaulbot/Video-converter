@@ -128,7 +128,7 @@ class _OffsetDelegate(QStyledItemDelegate):
 
 
 class PlaylistTable(PlaceholderTableWidget):
-    """Columns Clip, Panel, Offset with drag-to-reorder rows.
+    """Columns File Name, Panel, Offset with drag-to-reorder rows.
 
     The path rides on the clip cell's UserRole, the offset (seconds) on the
     offset cell's. Panel lists the panels currently showing the clip and is
@@ -143,7 +143,7 @@ class PlaylistTable(PlaceholderTableWidget):
 
     def __init__(self, parent=None):
         super().__init__(0, 3, parent)
-        self.setHorizontalHeaderLabels([_tr("Clip"), _tr("Panel"), _tr("Offset")])
+        self.setHorizontalHeaderLabels([_tr("File Name"), _tr("Panel"), _tr("Offset")])
         header = self.horizontalHeader()
         header.setSectionResizeMode(self.CLIP, QHeaderView.Stretch)
         header.setSectionResizeMode(self.PANEL, QHeaderView.Fixed)
@@ -262,10 +262,10 @@ class PlaylistDock(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
-        self.title_label = QLabel(_tr("Playlist"))
-        self.title_label.setStyleSheet(theme.group_title_style())
-        layout.addWidget(self.title_label)
-        self.list = PlaylistTable(self)      # Clip | Offset, faint rows while empty
+        # No "Playlist - Panel N" row (16:14 review): the selected tile's
+        # accent border and the Panel column already say which list this is.
+        self._panel_title = ""
+        self.list = PlaylistTable(self)      # File Name | Panel | Offset, faint rows while empty
         self.list.itemDoubleClicked.connect(self._on_item_double_clicked)
         self.list.rows_moved.connect(self._on_row_moved)
         self.list.offset_edited.connect(self._on_offset_edited)
@@ -314,10 +314,13 @@ class PlaylistDock(QWidget):
 
     def set_model(self, model, title):
         self.model = model
-        self.title_label.setText(
-            _tr("Playlist - %(panel)s") % {"panel": title}
-        )
+        self._panel_title = title
+        self.list.setToolTip(_tr("Playlist - %(panel)s") % {"panel": title})
         self.refresh()
+
+    def panel_title(self):
+        """Which panel's list is on show (kept for callers and tests; not drawn)."""
+        return self._panel_title
 
     def set_panel_lookup(self, lookup):
         """`lookup(path)` -> panel numbers showing that clip; fills the Panel column."""

@@ -9,8 +9,11 @@ numbers -- because a TOC cannot know its own page numbers before layout.
 from __future__ import annotations
 
 import io
+import re
 from pathlib import Path
 
+import doc_strings
+import manual_fonts
 from document_navigation import chapter_destination, chapters_with_glossary
 from figures import figure_label, resolve_figure_path
 from reportlab.lib.colors import Color, HexColor
@@ -22,10 +25,12 @@ PAGE_W, PAGE_H = A4
 MARGIN = 25 * 72 / 25.4          # 25 mm
 CONTENT_W = PAGE_W - 2 * MARGIN
 
-BODY_FONT = "Helvetica"
-BOLD_FONT = "Helvetica-Bold"
-ITALIC_FONT = "Helvetica-Oblique"
-MONO_FONT = "Courier"
+# The Latin defaults. A build for zh-CN swaps in a CJK face per document
+# (see manual_fonts); these module names stay for the Latin locales and tests.
+BODY_FONT = manual_fonts.LATIN.body
+BOLD_FONT = manual_fonts.LATIN.bold
+ITALIC_FONT = manual_fonts.LATIN.italic
+MONO_FONT = manual_fonts.LATIN.mono
 
 BODY_SIZE = 10.5
 HEADING_SIZE = 17
@@ -67,32 +72,66 @@ CODE_BG = Color(0.94, 0.96, 0.96)
 PLACEHOLDER_BG = Color(0.92, 0.92, 0.92)
 
 
-def _wrap(text: str, font: str, size: float, width: float) -> list[str]:
-    """Greedy word wrap, splitting any single word too wide to fit.
+_CJK = re.compile(r"[\u2E80-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u3000-\u303F]")
+# Punctuation that must not start a line in Chinese typesetting (kinsoku).
+_NO_LINE_START = set("。,、;:!?”’)》」』】〕〉…—,.;:!?)")
 
-    The per-character split matters for long paths and identifiers, and is
-    what would let a non-spaced script wrap at all once one is added.
+
+def _tokens(text: str) -> list[tuple[str, bool]]:
+    """Break text into (unit, space_before) pairs.
+
+    Latin words are units separated by spaces. Every CJK character is its own
+    unit with no space around it, so a Chinese sentence -- which has no
+    spaces -- can break after any character instead of being one giant word.
     """
-    words = str(text).split()
-    if not words:
+    out: list[tuple[str, bool]] = []
+    for word in str(text).split():
+        space_before = bool(out)
+        latin = ""
+        for char in word:
+            if _CJK.match(char):
+                if latin:
+                    out.append((latin, space_before))
+                    latin, space_before = "", False
+                out.append((char, space_before))
+                space_before = False
+            else:
+                latin += char
+        if latin:
+            out.append((latin, space_before))
+    return out
+
+
+def _wrap(text: str, font: str, size: float, width: float) -> list[str]:
+    """Greedy wrap over words (Latin) and characters (CJK).
+
+    A single unit wider than the measure -- a long path or identifier -- is
+    split per character so nothing runs off the page.
+    """
+    tokens = _tokens(text)
+    if not tokens:
         return [""]
     lines: list[str] = []
     current = ""
-    for word in words:
-        candidate = f"{current} {word}".strip()
+    for unit, space_before in tokens:
+        candidate = current + (" " if space_before and current else "") + unit
         if stringWidth(candidate, font, size) <= width:
             current = candidate
             continue
+        if current and unit in _NO_LINE_START:
+            current = candidate          # let the comma hang rather than lead
+            continue
         if current:
             lines.append(current)
-        # The word alone may still be too wide.
-        while stringWidth(word, font, size) > width and len(word) > 1:
-            cut = len(word)
-            while cut > 1 and stringWidth(word[:cut], font, size) > width:
-                cut -= 1
-            lines.append(word[:cut])
-            word = word[cut:]
-        current = word
+        if stringWidth(unit, font, size) > width:
+            piece = ""
+            for char in unit:
+                if piece and stringWidth(piece + char, font, size) > width:
+                    lines.append(piece)
+                    piece = ""
+                piece += char
+            unit = piece
+        current = unit
     if current:
         lines.append(current)
     return lines
@@ -102,9 +141,12 @@ class _Layout:
     """A y-cursor over a ReportLab canvas, with page breaks and footers."""
 
     def __init__(self, c, doc_title: str, page_map: dict, create_destinations: bool,
-                 start_page: int):
+                 start_page: int, *, locale: str = "en",
+                 fonts: manual_fonts.FontSet = manual_fonts.LATIN):
         self.c = c
         self.doc_title = doc_title
+        self.locale = locale
+        self.f = fonts
         self.page_map = page_map
         self.create_destinations = create_destinations
         # The canvas is already sitting on this physical page: the cover and the
@@ -118,7 +160,7 @@ class _Layout:
 
     # -- page mechanics -------------------------------------------------
     def _footer(self) -> None:
-        self.c.setFont(BODY_FONT, 8)
+        self.c.setFont(self.f.body, 8)
         self.c.setFillColor(MUTED)
         if self.chapter_title:
             self.c.drawString(MARGIN, FOOTER_Y, self.chapter_title)
@@ -151,7 +193,7 @@ class _Layout:
             self.c.bookmarkHorizontalAbsolute(chapter_destination(chapter), self.y + 4)
             self.c.addOutlineEntry(chapter["title"], chapter_destination(chapter), 0)
 
-        self.c.setFont(BOLD_FONT, HEADING_SIZE)
+        self.c.setFont(self.f.bold, HEADING_SIZE)
         self.c.setFillColor(ACCENT)
         self.c.drawString(MARGIN, self.y - HEADING_SIZE, chapter["title"])
         self.y -= HEADING_SIZE + 6
@@ -161,8 +203,9 @@ class _Layout:
         self.y -= LINE_H
         self.c.setFillColor(INK)
 
-    def para(self, text: str, *, font: str = BODY_FONT, size: float = BODY_SIZE,
+    def para(self, text: str, *, font: str | None = None, size: float = BODY_SIZE,
              indent: float = 0.0, color=None) -> None:
+        font = font or self.f.body
         lines = _wrap(text, font, size, CONTENT_W - indent)
         for line in lines:
             self.ensure(LINE_H)
@@ -176,15 +219,15 @@ class _Layout:
     def steps(self, items) -> None:
         for n, item in enumerate(items, start=1):
             marker = f"{n}."
-            marker_w = stringWidth("00. ", BODY_FONT, BODY_SIZE)
-            lines = _wrap(item, BODY_FONT, BODY_SIZE, CONTENT_W - marker_w)
+            marker_w = stringWidth("00. ", self.f.body, BODY_SIZE)
+            lines = _wrap(item, self.f.body, BODY_SIZE, CONTENT_W - marker_w)
             for i, line in enumerate(lines):
                 self.ensure(LINE_H)
-                self.c.setFont(BOLD_FONT if i == 0 else BODY_FONT, BODY_SIZE)
+                self.c.setFont(self.f.bold if i == 0 else self.f.body, BODY_SIZE)
                 if i == 0:
                     self.c.setFillColor(ACCENT)
                     self.c.drawString(MARGIN, self.y - BODY_SIZE, marker)
-                self.c.setFont(BODY_FONT, BODY_SIZE)
+                self.c.setFont(self.f.body, BODY_SIZE)
                 self.c.setFillColor(INK)
                 self.c.drawString(MARGIN + marker_w, self.y - BODY_SIZE, line)
                 self.y -= LINE_H
@@ -193,16 +236,16 @@ class _Layout:
 
     def note(self, items) -> None:
         self.ensure(LINE_H * 2)
-        self.c.setFont(BOLD_FONT, BODY_SIZE)
+        self.c.setFont(self.f.bold, BODY_SIZE)
         self.c.setFillColor(ACCENT)
-        self.c.drawString(MARGIN, self.y - BODY_SIZE, "Note")
+        self.c.drawString(MARGIN, self.y - BODY_SIZE, doc_strings.text(self.locale, "note"))
         self.y -= LINE_H
-        bullet_w = stringWidth("-  ", BODY_FONT, BODY_SIZE)
+        bullet_w = stringWidth("-  ", self.f.body, BODY_SIZE)
         for item in items:
-            lines = _wrap(item, BODY_FONT, BODY_SIZE, CONTENT_W - bullet_w - 6)
+            lines = _wrap(item, self.f.body, BODY_SIZE, CONTENT_W - bullet_w - 6)
             for i, line in enumerate(lines):
                 self.ensure(LINE_H)
-                self.c.setFont(BODY_FONT, BODY_SIZE)
+                self.c.setFont(self.f.body, BODY_SIZE)
                 self.c.setFillColor(ACCENT if i == 0 else INK)
                 if i == 0:
                     self.c.drawString(MARGIN + 6, self.y - BODY_SIZE, "-")
@@ -221,7 +264,7 @@ class _Layout:
         y = self.y - 4
         for line in lines:
             y -= CODE_SIZE + 3
-            self.c.setFont(MONO_FONT, CODE_SIZE)
+            self.c.setFont(self.f.mono, CODE_SIZE)
             self.c.drawString(MARGIN + 6, y, str(line))
         self.y -= height + 4
 
@@ -234,17 +277,17 @@ class _Layout:
             b = _wrap(cells[1], font, size, col2 - 8)
             return max(len(a), len(b)) * (size + 3) + 6, a, b
 
-        header_h, ha, hb = row_height(headers, BOLD_FONT, BODY_SIZE - 1)
+        header_h, ha, hb = row_height(headers, self.f.bold, BODY_SIZE - 1)
         self.ensure(header_h + LINE_H)
         self.c.setFillColor(CODE_BG)
         self.c.rect(MARGIN, self.y - header_h, CONTENT_W, header_h, stroke=0, fill=1)
         self.c.setFillColor(INK)
-        self._table_row(ha, hb, col1, BOLD_FONT, BODY_SIZE - 1, header_h)
+        self._table_row(ha, hb, col1, self.f.bold, BODY_SIZE - 1, header_h)
 
         for row in rows:
-            h, a, b = row_height(row, BODY_FONT, BODY_SIZE - 1)
+            h, a, b = row_height(row, self.f.body, BODY_SIZE - 1)
             self.ensure(h + 4)
-            self._table_row(a, b, col1, BODY_FONT, BODY_SIZE - 1, h)
+            self._table_row(a, b, col1, self.f.body, BODY_SIZE - 1, h)
             self.c.setStrokeColor(RULE)
             self.c.setLineWidth(0.5)
             self.c.line(MARGIN, self.y, PAGE_W - MARGIN, self.y)
@@ -283,14 +326,15 @@ class _Layout:
             self.c.rect(MARGIN, box_top - FIGURE_BOX_H, CONTENT_W, FIGURE_BOX_H,
                         stroke=0, fill=1)
             self.c.setFillColor(MUTED)
-            self.c.setFont(ITALIC_FONT, BODY_SIZE - 1)
-            msg = f"{fig_id} -- screenshot not captured (see SHOTLIST.md)"
+            self.c.setFont(self.f.italic, BODY_SIZE - 1)
+            msg = doc_strings.text(self.locale, "missing_figure", fig_id=fig_id)
             self.c.drawCentredString(PAGE_W / 2, box_top - FIGURE_BOX_H / 2, msg)
             self.y = box_top - FIGURE_BOX_H - 4
             self.c.setFillColor(INK)
 
-        for line in _wrap(figure_label(fig_id), ITALIC_FONT, CAPTION_SIZE, CONTENT_W):
-            self.c.setFont(ITALIC_FONT, CAPTION_SIZE)
+        label = figure_label(fig_id, self.locale)
+        for line in _wrap(label, self.f.italic, CAPTION_SIZE, CONTENT_W):
+            self.c.setFont(self.f.italic, CAPTION_SIZE)
             self.c.setFillColor(MUTED)
             self.c.drawCentredString(PAGE_W / 2, self.y - CAPTION_SIZE, line)
             self.y -= CAPTION_SIZE + 3
@@ -298,33 +342,37 @@ class _Layout:
         self.y -= 6
 
 
-def _draw_cover(c, product_name: str, doc_title: str, version: str, tag: str) -> None:
+def _draw_cover(c, product_name: str, doc_title: str, version: str, tag: str,
+                fonts: manual_fonts.FontSet) -> None:
     c.setFillColor(ACCENT)
-    c.setFont(BOLD_FONT, 40)
+    c.setFont(fonts.bold, 40)
     c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62, product_name)
     c.setFillColor(INK)
-    c.setFont(BODY_FONT, 22)
+    c.setFont(fonts.body, 22)
     c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62 - 38, doc_title)
     c.setStrokeColor(RULE)
     c.setLineWidth(2)
     c.line(PAGE_W * 0.3, PAGE_H * 0.62 - 60, PAGE_W * 0.7, PAGE_H * 0.62 - 60)
     c.setFillColor(MUTED)
-    c.setFont(BODY_FONT, 12)
-    c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62 - 84, f"Version {version}")
-    c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62 - 102, f"Language: {tag}")
+    c.setFont(fonts.body, 12)
+    c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62 - 84,
+                        doc_strings.text(tag, "version", version=version))
+    c.drawCentredString(PAGE_W / 2, PAGE_H * 0.62 - 102,
+                        doc_strings.text(tag, "language", tag=tag))
     c.showPage()
 
 
-def _draw_toc(c, chapters, page_map, create_destinations) -> int:
+def _draw_toc(c, chapters, page_map, create_destinations, *, locale: str,
+              fonts: manual_fonts.FontSet) -> int:
     """Draw the contents list. Returns the number of pages it used."""
     pages_used = 1
     c.setFillColor(ACCENT)
-    c.setFont(BOLD_FONT, HEADING_SIZE)
-    c.drawString(MARGIN, PAGE_H - MARGIN - HEADING_SIZE, "Contents")
+    c.setFont(fonts.bold, HEADING_SIZE)
+    c.drawString(MARGIN, PAGE_H - MARGIN - HEADING_SIZE, doc_strings.text(locale, "contents"))
     c.setFillColor(INK)
     y = PAGE_H - MARGIN - HEADING_SIZE - LINE_H * 1.6
 
-    dot_w = stringWidth(".", BODY_FONT, BODY_SIZE)
+    dot_w = stringWidth(".", fonts.body, BODY_SIZE)
     for chapter in chapters:
         destination = chapter_destination(chapter)
         if create_destinations and destination not in page_map:
@@ -334,10 +382,10 @@ def _draw_toc(c, chapters, page_map, create_destinations) -> int:
             )
         page_no = str(page_map.get(destination, ""))
         title = chapter["title"]
-        c.setFont(BODY_FONT, BODY_SIZE)
+        c.setFont(fonts.body, BODY_SIZE)
         c.drawString(MARGIN, y, title)
-        title_w = stringWidth(title, BODY_FONT, BODY_SIZE)
-        page_w = stringWidth(page_no, BODY_FONT, BODY_SIZE)
+        title_w = stringWidth(title, fonts.body, BODY_SIZE)
+        page_w = stringWidth(page_no, fonts.body, BODY_SIZE)
         gap = CONTENT_W - title_w - page_w - 8
         if gap > dot_w:
             dots = "." * int(gap / dot_w)
@@ -360,13 +408,15 @@ def _draw_toc(c, chapters, page_map, create_destinations) -> int:
 
 def _render(c, *, product_name, doc_title, chapters, version, document_tag,
             page_map, create_destinations, screenshots_dir) -> dict[str, int]:
-    _draw_cover(c, product_name, doc_title, version, document_tag)
-    toc_pages = _draw_toc(c, chapters, page_map, create_destinations)
+    fonts = manual_fonts.pdf_fonts(document_tag)
+    _draw_cover(c, product_name, doc_title, version, document_tag, fonts)
+    toc_pages = _draw_toc(c, chapters, page_map, create_destinations,
+                          locale=document_tag, fonts=fonts)
 
     # Cover is page 1, the contents take toc_pages after it, so the body's
     # first chapter lands on the page right after those.
     layout = _Layout(c, doc_title, page_map, create_destinations,
-                     start_page=1 + toc_pages + 1)
+                     start_page=1 + toc_pages + 1, locale=document_tag, fonts=fonts)
     for chapter in chapters:
         layout.chapter_heading(chapter)
         for block in chapter.get("blocks", ()):
