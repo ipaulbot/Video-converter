@@ -71,6 +71,9 @@ default_settings = {
         "panel_count": 2,
         "volume": 100,
         "muted": False,
+        # Docks around the video: ffprobe details on the right, playlist strip below.
+        "inspect_visible": True,
+        "playlist_visible": False,
     },
 }
 
@@ -105,6 +108,8 @@ def normalize_media_player_settings(group):
         "panel_count": panel_count,
         "volume": max(0, min(100, volume)),
         "muted": bool(group.get("muted", False)),
+        "inspect_visible": bool(group.get("inspect_visible", defaults["inspect_visible"])),
+        "playlist_visible": bool(group.get("playlist_visible", defaults["playlist_visible"])),
     }
 
 

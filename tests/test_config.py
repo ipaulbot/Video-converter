@@ -70,8 +70,14 @@ class ConfigTests(unittest.TestCase):
         normalized = normalize_settings({})
         self.assertEqual(
             normalized["media_player"],
-            {"last_folder": "", "panel_count": 2, "volume": 100, "muted": False},
+            {"last_folder": "", "panel_count": 2, "volume": 100, "muted": False,
+             "inspect_visible": True, "playlist_visible": False},
         )
+
+    def test_media_player_dock_flags_are_booleans(self):
+        normalized = normalize_settings({"media_player": {"inspect_visible": 0, "playlist_visible": "yes"}})
+        self.assertIs(normalized["media_player"]["inspect_visible"], False)
+        self.assertIs(normalized["media_player"]["playlist_visible"], True)
 
     def test_media_player_group_is_normalized(self):
         normalized = normalize_settings({"media_player": {

@@ -1,6 +1,7 @@
 import os
 import json
 import subprocess
+import threading
 
 from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QVBoxLayout, QTabWidget, QLabel
 from PyQt5.QtCore import QCoreApplication, Qt, QThread, pyqtSignal
@@ -24,95 +25,9 @@ def _tr(source: str) -> str:
     """
     return QCoreApplication.translate("Inspection", source)
 
-class InspectionWorker(QThread):
-    finished = pyqtSignal(str, str, str)
-
-    def __init__(self, file_path, parent=None):
-        super().__init__(parent)
-        self.file_path = file_path
-
-    def run(self):
-        ffprobe_path = resource_path('ffprobe.exe')
-        command = [ffprobe_path, '-v', 'error', '-show_format', '-show_streams', '-print_format', 'json', self.file_path]
-        keyframe_command = [
-            ffprobe_path,
-            '-v', 'error',
-            '-select_streams', 'v:0',
-            '-show_entries', 'packet=pts_time,flags',
-            '-of', 'csv=print_section=0',
-            '-read_intervals', '%+30',
-            self.file_path,
-        ]
-        startupinfo, creationflags = get_subprocess_startupinfo()
-        try:
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                                    timeout=FFPROBE_TIMEOUT,
-                                    startupinfo=startupinfo, creationflags=creationflags, check=True)
-            try:
-                gop_result = subprocess.run(keyframe_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                                            timeout=FFMPEG_RENDER_TIMEOUT,
-                                            startupinfo=startupinfo, creationflags=creationflags)
-                keyframe_csv = gop_result.stdout or ''
-            except Exception:
-                keyframe_csv = ''
-            self.finished.emit(result.stdout or '', keyframe_csv, '')
-        except subprocess.CalledProcessError as e:
-            self.finished.emit('', '', f"Error inspecting file:\n{e.stderr}")
-        except Exception as e:
-            self.finished.emit('', '', f"Error inspecting file:\n{e}")
-
-class InspectionWidget(QWidget):
-    def __init__(self, parent=None, notify_preview=True):
-        super().__init__(parent)
-        # The main window's sidebar preview follows inspected files; inside the
-        # Media Player the clip is already on screen, so the dock turns this off.
-        self.notify_preview = notify_preview
-        self.init_ui()
-        self.setAcceptDrops(True)
-
-    def reset(self):
-        """Back to the empty drop zones."""
-        self.summary_text.clear()
-        self.summary_text.hide()
-        self.summary_drag_text.show()
-        self.info_display.clear()
-        self.info_display.hide()
-        self.json_drag_text.show()
-
-    def init_ui(self):
-        layout = QVBoxLayout()
-        self.tabs = QTabWidget()
-
-        # Summary tab with drag and drop area
-        self.summary_tab = QWidget()
-        self.summary_layout = QVBoxLayout(self.summary_tab)
-        # No margins - they are set at the tab level
-        self.summary_layout.setContentsMargins(0, 0, 0, 0)
-
-        # Create drag and drop area for summary
-        self.summary_drag_drop = QWidget()
-        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.summary_drag_drop.setMinimumHeight(120)
-        self.summary_drag_drop.setAcceptDrops(True)
-
-        summary_drag_layout = QVBoxLayout(self.summary_drag_drop)
-        summary_drag_layout.setAlignment(Qt.AlignCenter)
-
-        # Drag and drop text
-        self.summary_drag_text = QLabel(_tr("Drag and drop media files here to see summary"))
-        self.summary_drag_text.setAlignment(Qt.AlignCenter)
-        self.summary_drag_text.setObjectName("dragDropLabel")
-        self.summary_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabel"))
-        self.summary_drag_text.setWordWrap(True)
-
-        summary_drag_layout.addWidget(self.summary_drag_text)
-
-        # Create summary text widget and add it to the drag drop area
-        self.summary_text = QPlainTextEdit()
-        self.summary_text.setReadOnly(True)
-        self.summary_text.hide()  # Initially hidden
-        self.summary_text.setFrameStyle(0)  # Remove frame completely
-        self.summary_text.setStyleSheet("""
+# The stand-alone widget's text sits inside a dashed drop zone and hides its
+# own frame and scroll bar so the zone reads as one surface.
+_TRANSPARENT_TEXT_STYLE = """
             QPlainTextEdit {
                 background: transparent;
                 border: none;
@@ -133,48 +48,9 @@ class InspectionWidget(QWidget):
                 background: transparent;
                 border: none;
             }
-        """)
-        summary_drag_layout.addWidget(self.summary_text)
+        """
 
-        # Connect drag and drop events
-        self.summary_drag_drop.dragEnterEvent = self.summary_drag_enter
-        self.summary_drag_drop.dragLeaveEvent = self.summary_drag_leave
-        self.summary_drag_drop.dropEvent = self.summary_drop
-
-        self.summary_layout.addWidget(self.summary_drag_drop)
-        self.summary_tab.setLayout(self.summary_layout)
-
-        # JSON tab with drag and drop area
-        self.json_tab = QWidget()
-        self.json_layout = QVBoxLayout(self.json_tab)
-        # No margins - they are set at the tab level
-        self.json_layout.setContentsMargins(0, 0, 0, 0)
-
-        # Create drag and drop area for JSON
-        self.json_drag_drop = QWidget()
-        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.json_drag_drop.setMinimumHeight(120)
-        self.json_drag_drop.setAcceptDrops(True)
-
-        json_drag_layout = QVBoxLayout(self.json_drag_drop)
-        json_drag_layout.setAlignment(Qt.AlignCenter)
-
-        # Drag and drop text
-        self.json_drag_text = QLabel(_tr("Drag and drop media files here for detailed JSON"))
-        self.json_drag_text.setAlignment(Qt.AlignCenter)
-        self.json_drag_text.setObjectName("dragDropLabelJSON")
-        self.json_drag_text.setStyleSheet(theme.drop_zone_label_style("dragDropLabelJSON"))
-        self.json_drag_text.setWordWrap(True)
-
-        json_drag_layout.addWidget(self.json_drag_text)
-
-        # Create info display widget and add it to the drag drop area
-        self.info_display = QPlainTextEdit()
-        self.info_display.setReadOnly(True)
-        self.info_display.setToolTip(_tr("Raw JSON data from ffprobe."))
-        self.info_display.hide()  # Initially hidden
-        self.info_display.setFrameStyle(0)  # Remove frame completely
-        self.info_display.setStyleSheet("""
+_TRANSPARENT_JSON_TEXT_STYLE = """
             QPlainTextEdit {
                 background: transparent;
                 border: none;
@@ -203,7 +79,215 @@ class InspectionWidget(QWidget):
                 border: none;
                 height: 0px;
             }
-        """)
+        """
+
+
+class InspectionWorker(QThread):
+    finished = pyqtSignal(str, str, str)
+
+    def __init__(self, file_path, parent=None):
+        super().__init__(parent)
+        self.file_path = file_path
+        self._process = None
+        self._lock = threading.Lock()
+
+    def _run_probe(self, command, timeout):
+        """Run one ffprobe, keeping the handle so stop() can kill it mid-way."""
+        startupinfo, creationflags = get_subprocess_startupinfo()
+        with self._lock:
+            if self.isInterruptionRequested():
+                raise InterruptedError
+            self._process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                startupinfo=startupinfo, creationflags=creationflags)
+        try:
+            stdout, stderr = self._process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            self._process.kill()
+            self._process.communicate()
+            raise
+        finally:
+            with self._lock:
+                returncode = self._process.returncode
+                self._process = None
+        if self.isInterruptionRequested():
+            raise InterruptedError
+        return returncode, stdout or '', stderr or ''
+
+    def stop(self, wait_ms=2000):
+        """Abandon the probe: kill ffprobe if it is running and wait for the thread."""
+        self.requestInterruption()
+        with self._lock:
+            process = self._process
+        if process is not None:
+            try:
+                process.kill()
+            except OSError:
+                pass
+        self.wait(wait_ms)
+
+    def run(self):
+        ffprobe_path = resource_path('ffprobe.exe')
+        command = [ffprobe_path, '-v', 'error', '-show_format', '-show_streams', '-print_format', 'json', self.file_path]
+        keyframe_command = [
+            ffprobe_path,
+            '-v', 'error',
+            '-select_streams', 'v:0',
+            '-show_entries', 'packet=pts_time,flags',
+            '-of', 'csv=print_section=0',
+            '-read_intervals', '%+30',
+            self.file_path,
+        ]
+        try:
+            returncode, stdout, stderr = self._run_probe(command, FFPROBE_TIMEOUT)
+            if returncode:
+                self.finished.emit('', '', f"Error inspecting file:\n{stderr}")
+                return
+            try:
+                _code, keyframe_csv, _err = self._run_probe(keyframe_command, FFMPEG_RENDER_TIMEOUT)
+            except InterruptedError:
+                return
+            except Exception:
+                keyframe_csv = ''
+            self.finished.emit(stdout, keyframe_csv, '')
+        except InterruptedError:
+            return
+        except Exception as e:
+            if not self.isInterruptionRequested():
+                self.finished.emit('', '', f"Error inspecting file:\n{e}")
+
+class InspectionWidget(QWidget):
+    def __init__(self, parent=None, notify_preview=True, compact=False):
+        super().__init__(parent)
+        # The main window's sidebar preview follows inspected files; inside the
+        # Media Player the clip is already on screen, so the dock turns this off.
+        self.notify_preview = notify_preview
+        # compact: the Media Player's Inspect dock. No dashed drop frames (the
+        # video beside it is the obvious target), plain text panels with real
+        # scroll bars, and empty-state text that mentions the panels.
+        self.compact = bool(compact)
+        self.init_ui()
+        self.setAcceptDrops(True)
+
+    # --- looks ---------------------------------------------------------------
+    def _zone_style(self, zone, active=False):
+        if self.compact:
+            return theme.plain_drop_target_style(zone.objectName(), active=active)
+        return theme.drop_zone_active_style() if active else theme.drop_zone_style()
+
+    def _text_style(self):
+        if self.compact:
+            return theme.inspect_text_style()
+        return _TRANSPARENT_TEXT_STYLE
+
+    def _hint_style(self, object_name):
+        if self.compact:
+            return f"QLabel#{object_name} {{ {theme.muted_label_style()} }}"
+        return theme.drop_zone_label_style(object_name)
+
+    def _summary_hint(self):
+        if self.compact:
+            return _tr("Select a panel with a clip, or drop a file here.")
+        return _tr("Drag and drop media files here to see summary")
+
+    def _json_hint(self):
+        if self.compact:
+            return _tr("Select a panel with a clip, or drop a file here.")
+        return _tr("Drag and drop media files here for detailed JSON")
+
+    def reset(self):
+        """Back to the empty drop zones."""
+        self.summary_text.clear()
+        self.summary_text.hide()
+        self.summary_drag_text.show()
+        self.info_display.clear()
+        self.info_display.hide()
+        self.json_drag_text.show()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+        self.tabs = QTabWidget()
+
+        # Summary tab with drag and drop area
+        self.summary_tab = QWidget()
+        self.summary_layout = QVBoxLayout(self.summary_tab)
+        # No margins - they are set at the tab level
+        self.summary_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Create drag and drop area for summary
+        self.summary_drag_drop = QWidget()
+        self.summary_drag_drop.setObjectName("inspectSummaryZone")
+        self.summary_drag_drop.setStyleSheet(self._zone_style(self.summary_drag_drop))
+        self.summary_drag_drop.setMinimumHeight(120)
+        self.summary_drag_drop.setAcceptDrops(True)
+
+        summary_drag_layout = QVBoxLayout(self.summary_drag_drop)
+        summary_drag_layout.setAlignment(Qt.AlignCenter)
+        if self.compact:
+            summary_drag_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Drag and drop text
+        self.summary_drag_text = QLabel(self._summary_hint())
+        self.summary_drag_text.setAlignment(Qt.AlignCenter)
+        self.summary_drag_text.setObjectName("dragDropLabel")
+        self.summary_drag_text.setStyleSheet(self._hint_style("dragDropLabel"))
+        self.summary_drag_text.setWordWrap(True)
+
+        summary_drag_layout.addWidget(self.summary_drag_text)
+
+        # Create summary text widget and add it to the drag drop area
+        self.summary_text = QPlainTextEdit()
+        self.summary_text.setReadOnly(True)
+        self.summary_text.hide()  # Initially hidden
+        if not self.compact:
+            self.summary_text.setFrameStyle(0)  # Remove frame completely
+        self.summary_text.setStyleSheet(self._text_style())
+        summary_drag_layout.addWidget(self.summary_text)
+
+        # Connect drag and drop events
+        self.summary_drag_drop.dragEnterEvent = self.summary_drag_enter
+        self.summary_drag_drop.dragLeaveEvent = self.summary_drag_leave
+        self.summary_drag_drop.dropEvent = self.summary_drop
+
+        self.summary_layout.addWidget(self.summary_drag_drop)
+        self.summary_tab.setLayout(self.summary_layout)
+
+        # JSON tab with drag and drop area
+        self.json_tab = QWidget()
+        self.json_layout = QVBoxLayout(self.json_tab)
+        # No margins - they are set at the tab level
+        self.json_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Create drag and drop area for JSON
+        self.json_drag_drop = QWidget()
+        self.json_drag_drop.setObjectName("inspectJsonZone")
+        self.json_drag_drop.setStyleSheet(self._zone_style(self.json_drag_drop))
+        self.json_drag_drop.setMinimumHeight(120)
+        self.json_drag_drop.setAcceptDrops(True)
+
+        json_drag_layout = QVBoxLayout(self.json_drag_drop)
+        json_drag_layout.setAlignment(Qt.AlignCenter)
+        if self.compact:
+            json_drag_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Drag and drop text
+        self.json_drag_text = QLabel(self._json_hint())
+        self.json_drag_text.setAlignment(Qt.AlignCenter)
+        self.json_drag_text.setObjectName("dragDropLabelJSON")
+        self.json_drag_text.setStyleSheet(self._hint_style("dragDropLabelJSON"))
+        self.json_drag_text.setWordWrap(True)
+
+        json_drag_layout.addWidget(self.json_drag_text)
+
+        # Create info display widget and add it to the drag drop area
+        self.info_display = QPlainTextEdit()
+        self.info_display.setReadOnly(True)
+        self.info_display.setToolTip(_tr("Raw JSON data from ffprobe."))
+        self.info_display.hide()  # Initially hidden
+        if not self.compact:
+            self.info_display.setFrameStyle(0)  # Remove frame completely
+        self.info_display.setStyleSheet(
+            self._text_style() if self.compact else _TRANSPARENT_JSON_TEXT_STYLE)
         json_drag_layout.addWidget(self.info_display)
 
         # Connect drag and drop events
@@ -222,19 +306,19 @@ class InspectionWidget(QWidget):
     def summary_drag_enter(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-            self.summary_drag_drop.setStyleSheet(theme.drop_zone_active_style())
+            self.summary_drag_drop.setStyleSheet(self._zone_style(self.summary_drag_drop, active=True))
             # Keep instruction consistent
-            self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
+            self.summary_drag_text.setText(self._summary_hint())
         else:
             event.ignore()
 
     def summary_drag_leave(self, event):
-        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
+        self.summary_drag_drop.setStyleSheet(self._zone_style(self.summary_drag_drop))
+        self.summary_drag_text.setText(self._summary_hint())
 
     def summary_drop(self, event):
-        self.summary_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.summary_drag_text.setText(_tr("Drag and drop media files here to see summary"))
+        self.summary_drag_drop.setStyleSheet(self._zone_style(self.summary_drag_drop))
+        self.summary_drag_text.setText(self._summary_hint())
 
         urls = event.mimeData().urls()
         if urls:
@@ -245,18 +329,18 @@ class InspectionWidget(QWidget):
     def json_drag_enter(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-            self.json_drag_drop.setStyleSheet(theme.drop_zone_active_style())
-            self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
+            self.json_drag_drop.setStyleSheet(self._zone_style(self.json_drag_drop, active=True))
+            self.json_drag_text.setText(self._json_hint())
         else:
             event.ignore()
 
     def json_drag_leave(self, event):
-        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
+        self.json_drag_drop.setStyleSheet(self._zone_style(self.json_drag_drop))
+        self.json_drag_text.setText(self._json_hint())
 
     def json_drop(self, event):
-        self.json_drag_drop.setStyleSheet(theme.drop_zone_style())
-        self.json_drag_text.setText(_tr("Drag and drop media files here for detailed JSON"))
+        self.json_drag_drop.setStyleSheet(self._zone_style(self.json_drag_drop))
+        self.json_drag_text.setText(self._json_hint())
 
         urls = event.mimeData().urls()
         if urls:
@@ -426,12 +510,31 @@ class InspectionWidget(QWidget):
             self.info_display.setPlainText("ffprobe.exe not found.")
             return
 
-        if hasattr(self, '_inspection_worker') and self._inspection_worker and self._inspection_worker.isRunning():
-            self._inspection_worker.requestInterruption()
-            self._inspection_worker.wait(250)
+        self.stop_inspection()
         self._inspection_worker = InspectionWorker(file_path, self)
         self._inspection_worker.finished.connect(self._inspection_finished)
         self._inspection_worker.start()
+
+    def stop_inspection(self):
+        """Abandon a running probe. Call before this widget goes away.
+
+        A QThread destroyed while running aborts the whole process, so the
+        Media Player calls this from shutdown() and closeEvent covers the rest.
+        """
+        worker = getattr(self, '_inspection_worker', None)
+        if worker is None:
+            return
+        try:
+            if worker.isRunning():
+                worker.finished.disconnect(self._inspection_finished)
+                worker.stop()
+        except (RuntimeError, TypeError):
+            pass
+        self._inspection_worker = None
+
+    def closeEvent(self, event):
+        self.stop_inspection()
+        super().closeEvent(event)
 
     def _inspection_finished(self, raw_json, keyframe_csv, error):
         if error:
