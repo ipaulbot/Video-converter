@@ -17,7 +17,7 @@ DOC_VERSION: Final[str] = "2.3.0"
 # Locale tags the manuals can be built for. "en" is the reference locale that
 # every other bundle is validated against.
 REFERENCE_TAG: Final[str] = "en"
-SUPPORTED_DOCUMENT_TAGS: Final[tuple[str, ...]] = ("en",)
+SUPPORTED_DOCUMENT_TAGS: Final[tuple[str, ...]] = ("en", "nl", "zh-CN")
 
 # Tags that have a content bundle but are not yet complete enough to ship.
 # Kept separate so a draft translation can be built and reviewed without

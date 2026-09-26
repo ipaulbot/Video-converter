@@ -116,6 +116,86 @@ class FigureTests(unittest.TestCase):
             self.assertIn(entry["filename"], shotlist)
 
 
+class LocaleTests(unittest.TestCase):
+    """Dutch and Simplified Chinese manuals ship alongside English."""
+
+    def test_dutch_and_chinese_are_supported_locales(self):
+        self.assertEqual(registry.SUPPORTED_DOCUMENT_TAGS, ("en", "nl", "zh-CN"))
+        for tag in registry.SUPPORTED_DOCUMENT_TAGS:
+            self.assertTrue(cl.locale_package(tag))
+
+    def test_every_locale_has_the_english_string_keys(self):
+        import doc_strings
+        reference = doc_strings.strings("en")
+        for tag in registry.SUPPORTED_DOCUMENT_TAGS:
+            found = doc_strings.strings(tag)
+            self.assertEqual(set(found), set(reference), tag)
+            self.assertEqual(set(found["titles"]), set(cl.manual_keys()), tag)
+            self.assertEqual(set(found["figure_captions"]), set(figures.KNOWN_FIGURE_IDS), tag)
+            for key, value in found.items():
+                self.assertTrue(value, f"{tag}: {key} is empty")
+        # The placeholders the builders fill in must survive translation.
+        for tag in registry.SUPPORTED_DOCUMENT_TAGS:
+            found = doc_strings.strings(tag)
+            self.assertIn("%(n)d", found["figure_label"])
+            self.assertIn("%(caption)s", found["figure_label"])
+            self.assertIn("%(version)s", found["version"])
+            self.assertIn("%(tag)s", found["language"])
+            self.assertIn("%(fig_id)s", found["missing_figure"])
+
+    def test_english_captions_are_the_figure_catalog(self):
+        import doc_strings
+        for entry in figures.FIGURES:
+            self.assertEqual(doc_strings.strings("en")["figure_captions"][entry["id"]],
+                             entry["caption"])
+
+    def test_figure_labels_are_localised(self):
+        self.assertTrue(figures.figure_label("FIG-00").startswith("Figure 0. "))
+        self.assertTrue(figures.figure_label("FIG-00", "nl").startswith("Figuur 0. "))
+        self.assertTrue(figures.figure_label("FIG-00", "zh-CN").startswith("图 0"))
+
+    def test_translated_bundles_keep_code_blocks_and_paths_verbatim(self):
+        """Code lines are commands and file names; they are not translated."""
+        for manual_key in cl.manual_keys():
+            reference = cl.load_manual(manual_key, "en")
+            for tag in registry.SUPPORTED_DOCUMENT_TAGS[1:]:
+                translated = cl.load_manual(manual_key, tag)
+                for ref_chapter, loc_chapter in zip(reference, translated, strict=True):
+                    for ref_block, loc_block in zip(ref_chapter["blocks"], loc_chapter["blocks"],
+                                                    strict=True):
+                        if ref_block["type"] == "code":
+                            self.assertEqual(loc_block["lines"], ref_block["lines"],
+                                             f"{manual_key}/{tag}/{ref_chapter['id']}")
+
+    def test_glossary_terms_stay_in_english_in_every_locale(self):
+        import importlib
+        reference = importlib.import_module("locales.en.glossary")
+        for tag in registry.SUPPORTED_DOCUMENT_TAGS[1:]:
+            module = importlib.import_module(f"locales.{cl.locale_package(tag)}.glossary")
+            self.assertEqual([r[0] for r in module.GLOSSARY_ROWS],
+                             [r[0] for r in reference.GLOSSARY_ROWS], tag)
+            self.assertNotEqual([r[1] for r in module.GLOSSARY_ROWS],
+                                [r[1] for r in reference.GLOSSARY_ROWS], tag)
+
+    @unittest.skipUnless(HAS_REPORTLAB, "reportlab not installed")
+    def test_chinese_pdf_fonts_can_draw_cjk(self):
+        import manual_fonts
+        from reportlab.pdfbase.pdfmetrics import getFont
+        fonts = manual_fonts.pdf_fonts("zh-CN")
+        self.assertNotEqual(fonts.body, "Helvetica")
+        font = getFont(fonts.body)
+        # A Type-1 Helvetica has no glyph here; a CJK face (TrueType or CID) does.
+        self.assertGreater(font.stringWidth("媒体播放器", 10), 0)
+        self.assertEqual(manual_fonts.pdf_fonts("en").body, "Helvetica")
+        self.assertEqual(manual_fonts.pdf_fonts("nl").body, "Helvetica")
+
+    def test_docx_uses_an_east_asian_font_only_for_chinese(self):
+        import manual_fonts
+        self.assertTrue(manual_fonts.docx_east_asian_font("zh-CN"))
+        self.assertIsNone(manual_fonts.docx_east_asian_font("nl"))
+        self.assertIsNone(manual_fonts.docx_east_asian_font("en"))
+
+
 class ContentTests(unittest.TestCase):
     TOOL_TAB_LABELS = (
         "Video Converter", "PC Report",
@@ -429,6 +509,54 @@ class PdfBuildTests(unittest.TestCase):
         lines = _wrap("x" * 400, BODY_FONT, BODY_SIZE, 200)
         self.assertGreater(len(lines), 1)
         self.assertTrue(all(lines))
+
+    def test_spaceless_script_wraps_at_the_measure_without_losing_text(self):
+        import manual_fonts
+        from pdf_builder import BODY_SIZE, _wrap
+        from reportlab.pdfbase.pdfmetrics import stringWidth
+        font = manual_fonts.pdf_fonts("zh-CN").body
+        text = "媒体播放器最多可加载四个片段以进行同步查看" * 6
+        lines = _wrap(text, font, BODY_SIZE, 150)
+        self.assertGreater(len(lines), 3)
+        self.assertEqual("".join(lines), text)
+        for line in lines:
+            self.assertLessEqual(stringWidth(line, font, BODY_SIZE), 150)
+        # Mixed script: a Latin word inside Chinese keeps its surrounding
+        # spaces, the Chinese around it still breaks per character, and the
+        # first line is filled rather than ending at the Latin word.
+        mixed = "监视处于活动状态时 NVC 会在源文件夹中留意新的受支持视频以及其他内容和更多的文字"
+        lines = _wrap(mixed, font, BODY_SIZE, 150)
+        self.assertIn(" NVC ", lines[0])
+        self.assertGreater(stringWidth(lines[0], font, BODY_SIZE), 120)
+        self.assertEqual("".join(lines).replace(" ", ""), mixed.replace(" ", ""))
+        # A comma never starts a line.
+        for line in lines:
+            self.assertNotIn(line[0], "。,、")
+
+    @unittest.skipUnless(HAS_PDF_READER, "no PDF reader installed")
+    def test_chinese_manual_renders_readable_text(self):
+        import tempfile
+
+        from pdf_builder import build_pdf
+        try:
+            from pypdf import PdfReader
+        except ImportError:  # pragma: no cover - older environments
+            from PyPDF2 import PdfReader
+
+        chapters = [{"id": "intro", "title": "简介", "blocks": [
+            {"type": "para", "text": "NVC 是一款基于 FFmpeg 的 Windows 视频转换器。"},
+            {"type": "note", "items": ["请先解锁应用程序。"]},
+            {"type": "table", "headers": ("区域", "作用"), "rows": [("菜单", "打开设置。")]},
+        ]}]
+        with tempfile.TemporaryDirectory() as tmp:
+            out = build_pdf(Path(tmp) / "h.pdf", doc_title="帮助", chapters=chapters,
+                            version="9.9.9", document_tag="zh-CN")
+            reader = PdfReader(str(out))
+            text = "".join(page.extract_text() for page in reader.pages)
+            self.assertIn("简介", text)
+            self.assertIn("视频转换器", text)
+            self.assertIn("目录", text)       # localised "Contents"
+            self.assertIn("术语表", text)     # the appended glossary, in Chinese
 
 
 class BrandColourTests(unittest.TestCase):

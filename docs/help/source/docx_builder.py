@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import doc_strings
+import manual_fonts
 from document_navigation import chapter_destination, chapters_with_glossary, word_bookmark_name
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -72,6 +74,48 @@ def _set_run_font(run, name: str) -> None:
         rfonts.set(qn(slot), name)
 
 
+def _set_style_east_asian_font(style, name: str) -> None:
+    """Name an East Asian font on a paragraph style (w:eastAsia slot).
+
+    Word does not embed fonts, so a zh-CN document just has to name a face
+    Word can find; without this Word falls back to whatever the reader's
+    default East Asian font is, which is fine on Chinese Windows and ugly on
+    a Western install.
+    """
+    rpr = style.element.get_or_add_rPr()
+    rfonts = rpr.find(qn("w:rFonts"))
+    if rfonts is None:
+        rfonts = OxmlElement("w:rFonts")
+        rpr.append(rfonts)
+    rfonts.set(qn("w:eastAsia"), name)
+
+
+def _add_toc(doc, locale: str) -> None:
+    """Insert a real Word TOC field, restricted to Heading 1.
+
+    Word populates this on open because _enable_field_updates sets
+    updateFields in settings.xml. The placeholder text is what a reader sees if
+    they open the file in something that does not evaluate fields.
+    """
+    paragraph = doc.add_paragraph()
+    run = paragraph.add_run()
+
+    begin = OxmlElement("w:fldChar")
+    begin.set(qn("w:fldCharType"), "begin")
+    instr = OxmlElement("w:instrText")
+    instr.set(qn("xml:space"), "preserve")
+    instr.text = r'TOC \o "1-1" \h \z \u'
+    separate = OxmlElement("w:fldChar")
+    separate.set(qn("w:fldCharType"), "separate")
+    placeholder = OxmlElement("w:t")
+    placeholder.text = doc_strings.text(locale, "toc_placeholder")
+    end = OxmlElement("w:fldChar")
+    end.set(qn("w:fldCharType"), "end")
+
+    for node in (begin, instr, separate, placeholder, end):
+        run._r.append(node)
+
+
 def _ensure_hyperlink_style(doc) -> None:
     """Make sure a 'Hyperlink' character style exists and is the built-in one."""
     styles = doc.styles
@@ -104,32 +148,6 @@ def _add_bookmark(paragraph, name: str, bookmark_id: int) -> None:
     paragraph._p.append(end)
 
 
-def _add_toc(doc) -> None:
-    """Insert a real Word TOC field, restricted to Heading 1.
-
-    Word populates this on open because _enable_field_updates sets
-    updateFields in settings.xml. The placeholder text is what a reader sees if
-    they open the file in something that does not evaluate fields.
-    """
-    paragraph = doc.add_paragraph()
-    run = paragraph.add_run()
-
-    begin = OxmlElement("w:fldChar")
-    begin.set(qn("w:fldCharType"), "begin")
-    instr = OxmlElement("w:instrText")
-    instr.set(qn("xml:space"), "preserve")
-    instr.text = r'TOC \o "1-1" \h \z \u'
-    separate = OxmlElement("w:fldChar")
-    separate.set(qn("w:fldCharType"), "separate")
-    placeholder = OxmlElement("w:t")
-    placeholder.text = "Open this document in Word to build the table of contents."
-    end = OxmlElement("w:fldChar")
-    end.set(qn("w:fldCharType"), "end")
-
-    for node in (begin, instr, separate, placeholder, end):
-        run._r.append(node)
-
-
 def _enable_field_updates(doc) -> None:
     settings = doc.settings.element
     update = settings.find(qn("w:updateFields"))
@@ -154,10 +172,10 @@ def _add_steps(doc, items) -> None:
         run.font.size = Pt(BODY_PT)
 
 
-def _add_note(doc, items) -> None:
+def _add_note(doc, items, locale: str) -> None:
     heading = doc.add_paragraph()
     heading.paragraph_format.space_after = Pt(2)
-    run = heading.add_run("Note")
+    run = heading.add_run(doc_strings.text(locale, "note"))
     run.bold = True
     run.font.size = Pt(BODY_PT)
     run.font.color.rgb = ACCENT
@@ -196,7 +214,7 @@ def _add_table(doc, headers, rows) -> None:
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
-def _add_figure(doc, fig_id: str, screenshots_dir: Path | None) -> None:
+def _add_figure(doc, fig_id: str, screenshots_dir: Path | None, locale: str) -> None:
     """Insert the screenshot, or a visible placeholder naming the shot list."""
     path = resolve_figure_path(fig_id, screenshots_dir)
     if path is not None:
@@ -206,8 +224,7 @@ def _add_figure(doc, fig_id: str, screenshots_dir: Path | None) -> None:
         placeholder = doc.add_paragraph()
         placeholder.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run = placeholder.add_run(
-            f"[{fig_id} -- screenshot not captured; see "
-            f"docs/help/screenshots/SHOTLIST.md]"
+            "[" + doc_strings.text(locale, "missing_figure", fig_id=fig_id) + "]"
         )
         run.italic = True
         run.font.size = Pt(BODY_PT - 1)
@@ -216,7 +233,7 @@ def _add_figure(doc, fig_id: str, screenshots_dir: Path | None) -> None:
     caption = doc.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     caption.paragraph_format.space_after = Pt(8)
-    caption_run = caption.add_run(figure_label(fig_id))
+    caption_run = caption.add_run(figure_label(fig_id, locale))
     caption_run.italic = True
     caption_run.font.size = Pt(BODY_PT - 2)
     caption_run.font.color.rgb = MUTED
@@ -237,6 +254,10 @@ def build_docx(output_path, *, doc_title: str, chapters: list[dict], version: st
 
     normal = doc.styles["Normal"]
     normal.font.size = Pt(BODY_PT)
+    east_asian = manual_fonts.docx_east_asian_font(document_tag)
+    if east_asian:
+        for style_name in ("Normal", "Title", "Heading 1", "List Number", "List Bullet"):
+            _set_style_east_asian_font(doc.styles[style_name], east_asian)
 
     doc.add_heading(f"{product_name} {doc_title}", level=0)
     subtitle = doc.add_paragraph()
@@ -247,11 +268,11 @@ def build_docx(output_path, *, doc_title: str, chapters: list[dict], version: st
     # "Contents" is deliberately not a Heading 1: the TOC field is scoped to
     # \o "1-1", so a Heading 1 here would list the contents inside itself.
     contents = doc.add_paragraph()
-    contents_run = contents.add_run("Contents")
+    contents_run = contents.add_run(doc_strings.text(document_tag, "contents"))
     contents_run.bold = True
     contents_run.font.size = Pt(BODY_PT + 3)
     contents_run.font.color.rgb = ACCENT
-    _add_toc(doc)
+    _add_toc(doc, document_tag)
     doc.add_page_break()
 
     all_chapters = chapters_with_glossary(chapters, document_tag)
@@ -274,9 +295,9 @@ def build_docx(output_path, *, doc_title: str, chapters: list[dict], version: st
             elif btype == "steps":
                 _add_steps(doc, block["items"])
             elif btype == "note":
-                _add_note(doc, block["items"])
+                _add_note(doc, block["items"], document_tag)
             elif btype == "figure":
-                _add_figure(doc, block["fig_id"], screenshots_dir)
+                _add_figure(doc, block["fig_id"], screenshots_dir, document_tag)
             elif btype == "code":
                 _add_code(doc, block["lines"])
             elif btype == "table":

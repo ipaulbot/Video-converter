@@ -22,6 +22,8 @@ MANUAL_SPECS: Final[dict[str, tuple[str, str]]] = {
 # hyphen, which is not legal in a Python package name (zh-CN -> zh_CN).
 _LOCALE_PACKAGES: Final[dict[str, str]] = {
     "en": "en",
+    "nl": "nl",
+    "zh-CN": "zh_CN",
 }
 
 VALID_BLOCK_TYPES: Final[frozenset[str]] = frozenset(

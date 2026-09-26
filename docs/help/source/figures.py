@@ -109,8 +109,11 @@ def figure_number(fig_id: str) -> int:
     return int(m.group(1))
 
 
-def figure_label(fig_id: str) -> str:
-    return f"Figure {figure_number(fig_id)}. {figure(fig_id)['caption']}"
+def figure_label(fig_id: str, locale: str = "en") -> str:
+    """The printed caption line, e.g. "Figure 3. The Video Converter tab..."."""
+    import doc_strings
+    caption = doc_strings.strings(locale)["figure_captions"][fig_id]
+    return doc_strings.text(locale, "figure_label", n=figure_number(fig_id), caption=caption)
 
 
 def resolve_figure_path(fig_id: str, screenshots_dir: Path | None = None) -> Path | None:

@@ -68,7 +68,13 @@ GLOSSARY_ROWS: list[tuple[str, str]] = [
      r"Public\Documents\Noldus\NVC\MediaRecorder\Presets."),
     ("Sync offset",
      "A time adjustment that shifts one source earlier or later in a Combined "
-     "grid recording so sources line up."),
+     "grid or Picture-in-picture recording so sources line up."),
+    ("Picture-in-picture",
+     "A recorder output mode: source 1 fills the frame and the other enabled "
+     "sources appear as small insets along the bottom left, in one file."),
+    ("Screen capture",
+     "A recorder source type that records the whole desktop, one display, one "
+     "window or a region of the screen instead of a camera."),
     ("Frame step",
      "Moving exactly one frame forward or backward using the clip's frame rate."),
     ("Playlist",
