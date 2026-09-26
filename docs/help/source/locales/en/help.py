@@ -308,11 +308,12 @@ CHAPTERS: list[dict] = [
                 "log; drag the divider between them to change the split. The table has File "
                 "Name, Destination Folder and Date Modified columns. Status icons identify "
                 "queued, processing, successful and failed conversions. Play and Inspect are "
-                "buttons below the table; they appear once a row is selected. The remaining "
-                "actions are on the row's right-click menu. Right-clicking the empty part of "
-                "the table offers Add videos to convert... and Monitor a folder.... While the "
-                "table is empty, thin grey rules mark where the rows will appear. The broom in "
-                "the footer clears the log; Clear empties the table.")},
+                "small glyph buttons under the table's right edge; they appear once a row is "
+                "selected. The remaining actions are on the row's right-click menu. "
+                "Right-clicking the empty part of the table offers Add videos to convert... "
+                "and Monitor a folder.... While the table is empty, thin grey rules mark where "
+                "the rows will appear. The footer's file button adds videos to convert and its "
+                "broom clears the table together with the log.")},
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Play", "Opens the selected file in the Media Player tab."),
                 ("Inspect", "Opens the selected file in the Media Player with the Inspect panel showing its ffprobe details."),
