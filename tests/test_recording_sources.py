@@ -26,6 +26,14 @@ class RecordingSourceTests(unittest.TestCase):
         self.assertIn("directshow", ids)
         self.assertIn("basler_genicam", ids)
         self.assertIn("stream_url", ids)
+        self.assertIn("screen", ids)
+
+    def test_builds_screen_capture_source(self):
+        self.assertEqual(build_source_text("screen", ""), "screen=desktop")
+        self.assertEqual(build_source_text("screen", "desktop"), "screen=desktop")
+        self.assertEqual(build_source_text("screen", "title=My App"), "screen=title=My App")
+        self.assertEqual(build_source_text("screen", "My App"), "screen=title=My App")
+        self.assertEqual(build_source_text("screen", "screen=desktop"), "screen=desktop")
 
     def test_builds_directshow_video_source(self):
         self.assertEqual(build_source_text("directshow", "Logitech Camera"), "video=Logitech Camera")

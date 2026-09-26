@@ -985,6 +985,148 @@ class MultiSourceRecordCommandTests(unittest.TestCase):
         self.assertEqual(command[command.index("-c:a") + 1], "aac")
 
 
+class CombinedInputOptionTests(unittest.TestCase):
+    """The combined process must open a USB camera the way separate mode does.
+
+    A 1080p MJPEG webcam opened without -framerate/-video_size falls back to the
+    driver default (640x480 YUY2 on the reference machine), so the combined
+    recording silently lost the configured mode.
+    """
+
+    def test_combined_grid_passes_each_directshow_source_its_own_options(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["video=Camera A", "video=Camera B"],
+            "combined.mp4",
+            options_per_source=[
+                {"frame_rate": "30", "resolution": "1920x1080"},
+                {"frame_rate": "", "resolution": "1280 x 720"},
+            ],
+        )
+
+        first = command.index("video=Camera A")
+        second = command.index("video=Camera B")
+        self.assertEqual(
+            command[first - 9:first],
+            ["-rtbufsize", "512M", "-framerate", "30", "-video_size", "1920x1080", "-f", "dshow", "-i"],
+        )
+        # Second source: no frame rate, resolution normalised.
+        between = command[first + 1:second]
+        self.assertNotIn("-framerate", between)
+        self.assertEqual(between[-5:], ["-video_size", "1280x720", "-f", "dshow", "-i"])
+
+    def test_combined_grid_without_options_is_unchanged(self):
+        with_options = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A", "rtsp://camera/stream"], "combined.mp4",
+            options_per_source=[{}, {}],
+        )
+        without = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A", "rtsp://camera/stream"], "combined.mp4",
+        )
+        self.assertEqual(with_options, without)
+
+
+class PictureInPictureTests(unittest.TestCase):
+    def _graph(self, command):
+        return command[command.index("-filter_complex") + 1]
+
+    def test_pip_layout_overlays_insets_on_the_first_source(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["rtsp://camera/stream", "video=Camera B"],
+            "combined.mp4",
+            layout="pip",
+        )
+        graph = self._graph(command)
+
+        self.assertNotIn("xstack", graph)
+        self.assertIn("scale=1280:720", graph)               # source 1 fills the frame
+        self.assertIn("overlay=", graph)
+        # Inset geometry comes from the same rects the sidebar schematic draws.
+        rects = recording_layout_preview_rects("Picture-in-picture", 2)
+        x, y, w, h = rects[1]
+        self.assertIn(f"scale={round(w * 1280)}:{round(h * 720)}", graph)
+        self.assertIn(f"overlay={round(x * 1280)}:{round(y * 720)}", graph)
+        self.assertEqual(command[command.index("-map") + 1], "[v]")
+        self.assertEqual(command[-1], "combined.mp4")
+
+    def test_pip_with_three_sources_chains_two_overlays_and_keeps_preview_tap(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["video=Camera A", "video=Camera B", "video=Camera C"],
+            "combined.mp4",
+            layout="pip",
+            preview_pipe=True,
+        )
+        graph = self._graph(command)
+
+        self.assertEqual(graph.count("overlay="), 2)
+        self.assertIn("split=2[v][preview]", graph)
+        self.assertIn("pipe:1", command)
+
+    def test_pip_keeps_tiles_in_source_order_even_when_genicam_opens_first(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe",
+            ["video=Camera A", "video=Basler GenICam Source"],
+            "combined.mp4",
+            layout="pip",
+        )
+        graph = self._graph(command)
+        # GenICam is opened first (input 0) but is source 2, so it must be the inset
+        # and Camera A (input 1) the full frame.
+        self.assertEqual(command[command.index("-i") + 1], "video=Basler GenICam Source")
+        base_chain = [chain for chain in graph.split(";") if "scale=1280:720" in chain][0]
+        self.assertTrue(base_chain.startswith("[1:v]"), base_chain)
+        inset_chain = [chain for chain in graph.split(";") if chain.startswith("[0:v]")][0]
+        self.assertIn("scale=358:202", inset_chain)
+
+    def test_grid_layout_is_still_the_default(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["video=Camera A", "video=Camera B"], "combined.mp4",
+        )
+        self.assertIn("xstack", self._graph(command))
+
+
+class ScreenCaptureTests(unittest.TestCase):
+    def test_screen_source_records_the_desktop_through_gdigrab(self):
+        command = build_record_command(
+            "ffmpeg.exe", "screen=desktop", "screen.mp4", codec_mode="copy", frame_rate="20",
+        )
+
+        i = command.index("-i")
+        self.assertEqual(command[i + 1], "desktop")
+        self.assertEqual(command[command.index("-f") + 1], "gdigrab")
+        self.assertEqual(command[command.index("-framerate") + 1], "20")
+        # gdigrab delivers raw frames: "copy" cannot apply, so it is encoded.
+        self.assertNotIn("copy", command)
+        self.assertIn("libx264", command)
+        self.assertIn("-an", command)
+
+    def test_screen_source_defaults_to_a_modest_frame_rate(self):
+        command = build_record_command("ffmpeg.exe", "screen=desktop", "screen.mp4")
+        self.assertEqual(command[command.index("-framerate") + 1], str(rc.SCREEN_CAPTURE_FPS))
+
+    def test_screen_source_can_target_a_window_title(self):
+        command = build_record_command("ffmpeg.exe", "screen=title=My App", "screen.mp4")
+        self.assertEqual(command[command.index("-i") + 1], "title=My App")
+
+    def test_screen_preview_uses_gdigrab_at_preview_rate(self):
+        command = build_preview_stream_command("ffmpeg.exe", "screen=desktop")
+        self.assertEqual(command[command.index("-f") + 1], "gdigrab")
+        self.assertEqual(command[command.index("-i") + 1], "desktop")
+        self.assertEqual(command[command.index("-framerate") + 1], str(rc.SCREEN_PREVIEW_FPS))
+        self.assertIn("image2pipe", command)
+
+    def test_screen_source_in_a_combined_grid(self):
+        command = build_combined_grid_record_command(
+            "ffmpeg.exe", ["screen=desktop", "video=Camera A"], "combined.mp4",
+            options_per_source=[{"frame_rate": "15"}, {}],
+        )
+        self.assertEqual(command[command.index("-f") + 1], "gdigrab")
+        self.assertEqual(command[command.index("-framerate") + 1], "15")
+        self.assertIn("xstack=inputs=2", command[command.index("-filter_complex") + 1])
+
+
 class OutputQualityTests(unittest.TestCase):
     def test_quality_table_and_default(self):
         self.assertEqual(

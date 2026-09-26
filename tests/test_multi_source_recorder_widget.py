@@ -743,7 +743,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
 
-        expected = ["Separate videos", "Combined grid"]
+        expected = ["Separate videos", "Combined grid", "Picture-in-picture"]
         self.assertEqual(
             [
                 widget.output_mode_combo.itemText(index)
@@ -758,16 +758,6 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
             ],
             expected,
         )
-
-    def test_apply_settings_maps_legacy_picture_in_picture(self):
-        widget = MultiSourceRecorderWidget(auto_preview=False)
-        settings = widget.capture_recorder_settings()
-        settings["output"]["mode"] = "Picture-in-picture"
-
-        widget.apply_recorder_settings(settings, refresh_previews=False)
-
-        self.assertEqual(widget.output_mode_combo.currentText(), "Separate videos")
-        self.assertIn("Picture-in-picture", "\n".join(widget.log_lines))
 
     def test_video_settings_apply_refreshes_main_preview_without_closing(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=False)
@@ -921,6 +911,182 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertEqual(len(widget.processes), 1)
         self.assertIn("Combined", process.started[1][-1])
+
+    def _two_source_widget(self, mode="Combined grid", auto_preview=False):
+        """Row 1: Axis RTSP camera, row 2: USB camera, both 30 fps 1080p."""
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera B"], auto_preview=auto_preview)
+        widget.output_mode_combo.setCurrentText(mode)
+        row_one, row_two = widget.source_rows[0], widget.source_rows[1]
+        row_one[0].setChecked(True)
+        row_two[0].setChecked(True)
+        row_one[2].setCurrentIndex(row_one[2].findData("rtsp_ip"))
+        row_one[3].setText("rtsp://camera/axis-media/media.amp")
+        row_two[2].setCurrentIndex(row_two[2].findData("directshow"))
+        row_two[3].setText("Camera B")
+        for row in (row_one, row_two):
+            row[8].setCurrentText("30.00")
+            row[9].setCurrentText("1920 x 1080")
+        return widget
+
+    @staticmethod
+    def _capturing_process_factory():
+        class Signal:
+            def connect(self, _callback):
+                pass
+
+        class FakeProcess:
+            def __init__(self):
+                self.errorOccurred = Signal()
+                self.finished = Signal()
+                self.readyReadStandardOutput = Signal()
+                self.readyReadStandardError = Signal()
+                self.command = None
+
+            def setProcessChannelMode(self, _mode):
+                pass
+
+            def start(self, program, arguments):
+                self.command = [program] + list(arguments)
+
+            def state(self):
+                return QProcess.Running
+
+        started = []
+
+        def factory():
+            process = FakeProcess()
+            started.append(process)
+            return process
+
+        return factory, started
+
+    def test_combined_grid_opens_usb_sources_with_their_configured_mode(self):
+        widget = self._two_source_widget()
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+
+        command = started[0].command
+        usb = command.index("video=Camera B")
+        self.assertEqual(command[usb - 7:usb], ["-framerate", "30", "-video_size", "1920x1080", "-f", "dshow", "-i"])
+        rtsp = [arg for arg in command if arg.startswith("rtsp://")][0]
+        self.assertIn("resolution=1920x1080", rtsp)
+        self.assertIn("fps=30", rtsp)
+
+    def test_combined_grid_backs_off_requested_options_when_a_camera_rejects_them(self):
+        # Separate mode has always retried an Axis camera without ?fps, then without
+        # ?resolution; the single combined process had no such ladder and simply
+        # failed with "Server returned 400 Bad Request".
+        widget = self._two_source_widget()
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+        scheduled = []
+        widget.start_recording()
+        self.assertEqual(len(started), 1)
+
+        def fail(process):
+            process.recording_error_text = "Error opening input: Server returned 400 Bad Request"
+            with patch.object(widget, "_schedule", lambda delay, cb: scheduled.append(cb)):
+                widget._process_finished(process, "Combined", 1)
+            while scheduled:
+                scheduled.pop(0)()
+
+        fail(started[0])
+        self.assertEqual(len(started), 2)
+        self.assertEqual(widget.status_label.text(), "Recording")
+        second = [arg for arg in started[1].command if arg.startswith("rtsp://")][0]
+        self.assertIn("resolution=1920x1080", second)
+        self.assertNotIn("fps=", second)
+        self.assertIn("-video_size", started[1].command)
+        self.assertNotIn("-framerate", started[1].command)
+
+        fail(started[1])
+        self.assertEqual(len(started), 3)
+        third = [arg for arg in started[2].command if arg.startswith("rtsp://")][0]
+        self.assertEqual(third, "rtsp://camera/axis-media/media.amp")
+        self.assertNotIn("-video_size", started[2].command)
+
+        fail(started[2])
+        self.assertEqual(len(started), 3)                 # ladder exhausted
+        self.assertIn("failed", widget.status_label.text().lower())
+        self.assertIn("safer input format", "\n".join(widget.log_lines))
+
+    def test_combined_grid_does_not_back_off_for_an_unrelated_failure(self):
+        widget = self._two_source_widget()
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+        widget.start_recording()
+
+        started[0].recording_error_text = "Conversion failed!"
+        widget._process_finished(started[0], "Combined", 1)
+
+        self.assertEqual(len(started), 1)
+        self.assertIn("failed", widget.status_label.text().lower())
+
+    def test_picture_in_picture_is_an_output_mode_that_records_one_composite(self):
+        widget = self._two_source_widget(mode="Picture-in-picture")
+        self.assertEqual(widget.output_mode_combo.currentText(), "Picture-in-picture")
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+
+        self.assertEqual(len(started), 1)
+        command = started[0].command
+        graph = command[command.index("-filter_complex") + 1]
+        self.assertIn("overlay=", graph)
+        self.assertNotIn("xstack", graph)
+        self.assertIn("Combined", command[-1])
+
+    def test_legacy_picture_in_picture_setting_is_kept(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False, load_saved_settings=False)
+        widget.apply_recorder_settings({"output": {"mode": "Picture-in-picture"}})
+        self.assertEqual(widget.output_mode_combo.currentText(), "Picture-in-picture")
+
+    def test_screen_capture_is_a_source_type_that_records_the_desktop(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        self.assertGreaterEqual(row[2].findData("screen"), 0)
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        self.assertEqual(widget.source_for_row(0), "screen=desktop")
+        self.assertIn("Screen", widget.preview_boxes[0].text())
+        factory, started = self._capturing_process_factory()
+        widget.create_recording_process = factory
+
+        widget.start_recording()
+
+        command = started[0].command
+        self.assertEqual(command[command.index("-f") + 1], "gdigrab")
+        self.assertEqual(command[command.index("-i") + 1], "desktop")
+        self.assertIn("libx264", command)
+
+    def test_screen_capture_previews_like_a_stream_and_keeps_previewing_while_recording(self):
+        widget = MultiSourceRecorderWidget(auto_preview=True)
+        starts = []
+        widget.start_stream_preview = lambda row, source, force=False: starts.append((row, source))
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        row[2].setCurrentIndex(row[2].findData("screen"))
+        widget.update_source_placeholder(row[2], row[3], 0)
+
+        self.assertIn((0, "screen=desktop"), starts)
+        self.assertTrue(widget.can_preview_separately_while_recording("screen=desktop"))
+
+    def test_video_settings_dialog_offers_screen_capture_as_a_device(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
+        dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
+        try:
+            row_device = dialog.dialog_rows[0][3]
+            self.assertGreaterEqual(row_device.findData("screen"), 0)
+            row_device.setCurrentIndex(row_device.findData("screen"))
+            dialog.accept_with_changes()
+        finally:
+            dialog.deleteLater()
+
+        self.assertEqual(widget.source_rows[0][2].currentData(), "screen")
+        self.assertEqual(widget.source_for_row(0), "screen=desktop")
 
     def test_combined_output_mode_streams_live_preview_from_recording_process(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920", "OBS Virtual Camera"], auto_preview=True)
@@ -3722,7 +3888,7 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertFalse(widget.copy_mode_note.isHidden())
         self.assertEqual(
             widget.copy_mode_note.text(),
-            "USB cameras are always re-encoded to H.264; copy applies to RTSP and file sources.",
+            "USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources.",
         )
         widget.codec_combo.setCurrentText("h264")
         self.assertTrue(widget.copy_mode_note.isHidden())

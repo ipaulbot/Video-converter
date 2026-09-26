@@ -29,11 +29,31 @@ CAMERA_SOURCE_TYPES = [
         "hint": "RTSP, HTTP, HTTPS, MJPEG, or other FFmpeg-readable URL.",
     },
     {
+        "id": "screen",
+        "label": "Screen capture",
+        "hint": "Leave empty (or 'desktop') for the whole screen, or a window title to capture one window.",
+    },
+    {
         "id": "file",
         "label": "File / Test Source",
         "hint": "Local file path for testing the recorder pipeline.",
     },
 ]
+
+SCREEN_SOURCE_PREFIX = "screen="
+SCREEN_DEFAULT_TARGET = "desktop"      # gdigrab's name for the whole screen
+
+
+def build_screen_source_text(value):
+    """`screen=desktop` or `screen=title=<window>`; both are gdigrab targets."""
+    text = (value or "").strip()
+    if text.lower().startswith(SCREEN_SOURCE_PREFIX):
+        text = text[len(SCREEN_SOURCE_PREFIX):].strip()
+    if not text or text.lower() == SCREEN_DEFAULT_TARGET:
+        return f"{SCREEN_SOURCE_PREFIX}{SCREEN_DEFAULT_TARGET}"
+    if text.lower().startswith("title="):
+        return f"{SCREEN_SOURCE_PREFIX}{text}"
+    return f"{SCREEN_SOURCE_PREFIX}title={text}"
 
 
 def build_source_text(source_type, value, port="", username="", password=""):
@@ -43,6 +63,8 @@ def build_source_text(source_type, value, port="", username="", password=""):
         if text.lower().startswith(("video=", "audio=")):
             return text
         return f"video={text}" if text else ""
+    if source_type == "screen":
+        return build_screen_source_text(text)
     if source_type == "rtsp_ip":
         if text.lower().startswith("rtsp://"):
             return text

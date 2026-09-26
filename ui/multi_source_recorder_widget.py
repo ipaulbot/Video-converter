@@ -54,6 +54,7 @@ from conversion.recording_commands import (
 )
 from conversion.recording_sources import (
     CAMERA_SOURCE_TYPES,
+    SCREEN_DEFAULT_TARGET,
     DeviceScan,
     apply_axis_rtsp_recording_options,
     axis_mjpeg_preview_url,
@@ -93,8 +94,8 @@ def make_sync_offset_spinbox():
     spin.setSuffix(_tr(" s"))
     spin.setMaximumWidth(74)
     spin.setToolTip(
-        _tr("Sync offset for Combined grid: shift this source earlier (negative) or later "
-        "(positive) to line it up with the others.")
+        _tr("Sync offset for Combined grid and Picture-in-picture: shift this source earlier "
+        "(negative) or later (positive) to line it up with the others.")
     )
     return spin
 
@@ -143,6 +144,8 @@ VIDEO_DEVICE_PLACEHOLDERS = {
     "Refresh USB devices...",
     "Select video device...",
 }
+# The Video Settings device list offers the desktop next to the cameras.
+SCREEN_CAPTURE_DEVICE_LABEL = "Screen capture (desktop)"
 
 
 class PreviewLabel(QLabel):
@@ -279,7 +282,9 @@ class VideoSettingsDialog(QDialog):
             row_device = SourceComboBox()
             row_device.setMinimumWidth(190)
             self.populate_video_device_combo(row_device)
-            if source_edit.text():
+            if type_combo.currentData() == "screen" and source_edit.text().strip().lower() in ("", SCREEN_DEFAULT_TARGET):
+                row_device.setCurrentText(SCREEN_CAPTURE_DEVICE_LABEL)
+            elif source_edit.text():
                 row_device.setText(source_edit.text())
             else:
                 row_device.setCurrentText("No source selected...")
@@ -450,6 +455,7 @@ class VideoSettingsDialog(QDialog):
         self.output_mode_combo.addItems([
             _tr("Separate videos"),
             _tr("Combined grid"),
+            _tr("Picture-in-picture"),
         ])
         quality_control = self.output_controls.get("quality")
         if quality_control:
@@ -707,6 +713,7 @@ class VideoSettingsDialog(QDialog):
         combo.clear()
         combo.addItem("No source selected...", "none")
         combo.addItem("RTSP/IP Camera", "rtsp_ip")
+        combo.addItem(SCREEN_CAPTURE_DEVICE_LABEL, "screen")
         for device in self.directshow_devices:
             combo.addItem(device, "directshow")
         combo.addItem("Refresh USB devices...", "refresh_directshow")
@@ -722,6 +729,8 @@ class VideoSettingsDialog(QDialog):
             return "rtsp_ip"
         if device_text.lower().startswith(("http://", "https://")):
             return "stream_url"
+        if device_text == SCREEN_CAPTURE_DEVICE_LABEL or device_text.lower().startswith("screen="):
+            return "screen"
         if device_type == "none" and device_text and device_text != "No source selected...":
             device_type = None
         if device_text in (getattr(self.parent(), "directshow_devices", None) or []):
@@ -891,6 +900,8 @@ class VideoSettingsDialog(QDialog):
                 type_combo.setCurrentIndex(type_index)
             if row_device.currentText() in VIDEO_DEVICE_PLACEHOLDERS:
                 source_edit.setText("")
+            elif device_type == "screen" and row_device.currentText() == SCREEN_CAPTURE_DEVICE_LABEL:
+                source_edit.setText(SCREEN_DEFAULT_TARGET)
             else:
                 source_edit.setText(row_device.text())
             if source_edit.text().strip():
@@ -1089,6 +1100,7 @@ class MultiSourceRecorderWidget(QWidget):
             "directshow": "USB",
             "basler_genicam": "Basler",
             "stream_url": "Stream",
+            "screen": "Screen",
             "file": "File",
         }.get(source_type_id, source_type_id)
 
@@ -1285,7 +1297,13 @@ class MultiSourceRecorderWidget(QWidget):
         self.output_mode_combo.addItems([
             _tr("Separate videos"),
             _tr("Combined grid"),
+            _tr("Picture-in-picture"),
         ])
+        self.output_mode_combo.setToolTip(_tr(
+            "Separate videos: one file per source. Combined grid: one file with the sources "
+            "side by side. Picture-in-picture: one file with source 1 full frame and the "
+            "others as insets."
+        ))
         self.output_mode_combo.setMaximumWidth(140)
         self.output_mode_combo.currentTextChanged.connect(lambda _text: self.layout_preview_changed.emit())
         output_form.addRow("File location:", folder_line)
@@ -1298,7 +1316,7 @@ class MultiSourceRecorderWidget(QWidget):
         output_form.addRow("Timer:", self.duration_edit)
         self.copy_mode_note = QLabel(
             _tr(
-                "USB cameras are always re-encoded to H.264; copy applies to RTSP and file sources."
+                "USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources."
             )
         )
         self.copy_mode_note.setWordWrap(True)
@@ -1383,7 +1401,7 @@ class MultiSourceRecorderWidget(QWidget):
     def update_copy_mode_note(self):
         usb_enabled = any(
             enabled.isChecked()
-            and self._source_type_id(type_combo) == "directshow"
+            and self._source_type_id(type_combo) in ("directshow", "screen")
             for enabled, _label, type_combo, *_rest in self.source_rows
         )
         self.copy_mode_note.setVisible(
@@ -1470,6 +1488,7 @@ class MultiSourceRecorderWidget(QWidget):
             "directshow": "Windows camera name, e.g. Logitech Camera",
             "basler_genicam": "Basler/pylon/GenICam source string",
             "stream_url": "rtsp://, http://, https://, or mjpeg URL",
+            "screen": "desktop (default) or a window title",
             "file": "Local test file path",
         }
         edit.setPlaceholderText(hints.get(source_type, "FFmpeg source"))
@@ -1483,12 +1502,20 @@ class MultiSourceRecorderWidget(QWidget):
                 build_source_text(source_type, edit.text()),
                 force_preview_restart,
             )
+        elif source_type == "screen" and row_index is not None:
+            # No address needed: an empty field means the whole desktop.
+            self.start_stream_preview(
+                row_index,
+                build_source_text(source_type, edit.text()),
+                force_preview_restart,
+            )
         if row_index is not None and 0 <= row_index < len(self.preview_boxes):
             labels = {
                 "rtsp_ip": "RTSP/IP",
                 "directshow": "USB / DirectShow",
                 "basler_genicam": "Basler / GenICam",
                 "stream_url": "Stream URL",
+                "screen": "Screen capture",
                 "file": "File / Test",
             }
             self.preview_boxes[row_index].setText(
@@ -1502,6 +1529,10 @@ class MultiSourceRecorderWidget(QWidget):
             elif source_type == "rtsp_ip" and edit.text():
                 self.preview_boxes[row_index].setText(
                     _tr("Video %(number)s\nRTSP/IP\nOpening preview...")
+                    % {"number": row_index + 1})
+            elif source_type == "screen":
+                self.preview_boxes[row_index].setText(
+                    _tr("Video %(number)s\nScreen capture\nOpening preview...")
                     % {"number": row_index + 1})
             self.update_ptz_overlay_for_row(row_index)
 
@@ -1732,8 +1763,10 @@ class MultiSourceRecorderWidget(QWidget):
         return (source or "").strip().lower().startswith(("video=", "audio="))
 
     def can_preview_separately_while_recording(self, source):
+        # Network streams and the desktop have no exclusive-device lock, so the idle
+        # preview process can keep running next to the recording process.
         source_text = (source or "").strip().lower()
-        return source_text.startswith(("rtsp://", "http://", "https://"))
+        return source_text.startswith(("rtsp://", "http://", "https://", "screen="))
 
     def source_for_row(self, row_index):
         if row_index < 0 or row_index >= len(self.source_rows):
@@ -2193,15 +2226,8 @@ class MultiSourceRecorderWidget(QWidget):
         })
 
     def apply_recorder_settings(self, settings, refresh_previews=True):
-        legacy_output_mode = (settings or {}).get("output", {}).get("mode")
         normalized = normalize_recorder_settings(settings)
         output = normalized.get("output", {})
-        if legacy_output_mode == "Picture-in-picture":
-            self._append_log(
-                _tr(
-                    "[recorder] legacy Picture-in-picture mode mapped to Separate videos"
-                )
-            )
         timer = normalized.get("timer", {})
         self.output_folder_edit.setText(output.get("folder", self.output_folder_edit.text()))
         self.base_name_edit.setText(output.get("base_name", self.base_name_edit.text()))
@@ -2643,7 +2669,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.stop_btn.setEnabled(True)
         self.status_label.setText(_tr("Recording"))
         self._notify_workflow_availability_change()
-        if self.output_mode_combo.currentText() == "Combined grid" and len(selected) > 1:
+        if self.composite_layout() and len(selected) > 1:
             self._start_combined_grid_process(ffmpeg, selected, output_folder, timestamp)
             return
         for row_index, label, source, *option_items in selected:
@@ -2786,6 +2812,25 @@ class MultiSourceRecorderWidget(QWidget):
                 _tr("Video %(number)s\nOpening combined preview...")
                 % {"number": row_index + 1})
 
+    COMPOSITE_LAYOUTS = {"Combined grid": "grid", "Picture-in-picture": "pip"}
+    # Requested-option ladder for the single composite process, mirroring
+    # recording_fallback_commands for separate files: full options, then without
+    # the frame rate, then without any requested option at all.
+    COMBINED_OPTION_TIERS = 3
+
+    def composite_layout(self):
+        """'grid' / 'pip' when the output mode records one composite file, else None."""
+        return self.COMPOSITE_LAYOUTS.get(self.output_mode_combo.currentText())
+
+    @staticmethod
+    def _degrade_requested_options(options, tier):
+        options = dict(options or {})
+        if tier >= 1:
+            options["frame_rate"] = ""
+        if tier >= 2:
+            options["resolution"] = ""
+        return options
+
     def _start_combined_grid_process(
         self,
         ffmpeg,
@@ -2794,6 +2839,7 @@ class MultiSourceRecorderWidget(QWidget):
         timestamp,
         attempt=0,
         force_video_only=False,
+        option_tier=0,
     ):
         self._prepare_combined_preview_placeholders(selected)
         output_file = get_unique_path(os.path.join(output_folder, f"{self.base_name_edit.text().strip()}_Combined_{timestamp}.mp4"))
@@ -2818,27 +2864,38 @@ class MultiSourceRecorderWidget(QWidget):
                 _tr("[Combined] using audio from %(row)s")
                 % {"row": audio_row_label}
             )
+        layout = self.composite_layout() or "grid"
         combined_sources = []
         combined_offsets = []
+        combined_options = []
         for _row_index, _label, source, *option_items in selected:
-            options = option_items[0] if option_items else {}
+            options = self._degrade_requested_options(option_items[0] if option_items else {}, option_tier)
             combined_sources.append(apply_axis_rtsp_recording_options(
                 source,
-                frame_rate=(options or {}).get("frame_rate", ""),
-                resolution=(options or {}).get("resolution", ""),
+                frame_rate=options.get("frame_rate", ""),
+                resolution=options.get("resolution", ""),
             ))
-            combined_offsets.append((options or {}).get("offset", ""))
+            combined_offsets.append(options.get("offset", ""))
+            combined_options.append({
+                "frame_rate": options.get("frame_rate", ""),
+                "resolution": options.get("resolution", ""),
+            })
+        command_kwargs = {
+            "preview_pipe": self.auto_preview,
+            "offsets_per_source": combined_offsets,
+            "options_per_source": combined_options,
+            "layout": layout,
+            "quality": self.output_quality,
+        }
         command = build_combined_grid_record_command(
             ffmpeg,
             combined_sources,
             output_file,
             self.duration_edit.text().strip(),
-            preview_pipe=self.auto_preview,
-            offsets_per_source=combined_offsets,
             audio_device=audio_device,
             mute=not bool(audio_device),
             volume=audio_volume,
-            quality=self.output_quality,
+            **command_kwargs,
         )
         audio_fallback_command = None
         if audio_device:
@@ -2847,12 +2904,10 @@ class MultiSourceRecorderWidget(QWidget):
                 combined_sources,
                 output_file,
                 self.duration_edit.text().strip(),
-                preview_pipe=self.auto_preview,
-                offsets_per_source=combined_offsets,
                 audio_device="",
                 mute=True,
                 volume="0",
-                quality=self.output_quality,
+                **command_kwargs,
             )
         process = self.create_recording_process()
         # A Basler/GenICam device can briefly report "Unable to BindToObject" / I/O error
@@ -2871,6 +2926,7 @@ class MultiSourceRecorderWidget(QWidget):
         )
         process.combined_recording_context = (ffmpeg, selected, output_folder, timestamp)
         process.combined_recording_attempt = attempt
+        process.combined_option_tier = option_tier
         process.combined_can_retry = has_genicam_source and attempt < 2
         process.combined_retry_delay_ms = self.basler_record_start_delay_ms
         if self.auto_preview:
@@ -2929,6 +2985,8 @@ class MultiSourceRecorderWidget(QWidget):
         self.processes = [p for p in self.processes if p is not process and p.state() != QProcess.NotRunning]
         if exit_code and self._retry_recording_without_audio(process, name):
             return
+        if exit_code and self._retry_combined_without_requested_options(process, name):
+            return
         if exit_code and self._retry_combined_recording(process, name):
             return
         if exit_code and self._retry_recording_without_requested_options(process, name):
@@ -2965,6 +3023,56 @@ class MultiSourceRecorderWidget(QWidget):
         self.refresh_previews_from_sources(force_restart=False)
         self.preview_paused_rows = set()
 
+    def _retry_combined_without_requested_options(self, process, name):
+        """Step the composite process down the requested-option ladder.
+
+        Separate videos has always retried an Axis camera without ``?fps``, then
+        without ``?resolution``, and a USB camera without ``-framerate`` /
+        ``-video_size``; the single combined process had no such ladder, so a
+        camera that rejected the requested settings ("Server returned 400 Bad
+        Request") failed the whole recording.
+        """
+        context = getattr(process, "combined_recording_context", None)
+        if not context:
+            return False
+        tier = getattr(process, "combined_option_tier", 0)
+        if tier >= self.COMBINED_OPTION_TIERS - 1:
+            return False
+        error_text = getattr(process, "recording_error_text", "").lower()
+        if "bindtoobject" in error_text:
+            return False          # a busy GenICam device: _retry_combined_recording's job
+        retry_markers = (
+            "bad request",
+            "could not set video options",
+            "error opening input",
+            "i/o error",
+        )
+        if not any(marker in error_text for marker in retry_markers):
+            return False
+        ffmpeg, selected, output_folder, timestamp = context
+        attempt = getattr(process, "combined_recording_attempt", 0)
+        self._append_log(
+            f"[{name}] retrying with safer input format after camera rejected requested settings"
+        )
+        self.status_label.setText(_tr("Recording"))
+        self.stop_btn.setEnabled(True)
+        self.start_btn.setEnabled(False)
+
+        def start_retry():
+            if self.status_label.text() not in ("Recording", "Starting recording..."):
+                return
+            self._start_combined_grid_process(
+                ffmpeg, selected, output_folder, timestamp,
+                attempt=attempt,
+                force_video_only=getattr(process, "recording_audio_retry_attempted", False),
+                option_tier=tier + 1,
+            )
+
+        # A USB camera needs a moment to release before it can be reopened.
+        self._schedule(self.record_start_delay_ms if self.auto_preview else 0, start_retry)
+        self._notify_workflow_availability_change()
+        return True
+
     def _retry_combined_recording(self, process, name):
         # Retry the whole combined command once if the only failure was a GenICam/Basler
         # device that had not finished releasing from its idle preview when we opened it.
@@ -2995,7 +3103,10 @@ class MultiSourceRecorderWidget(QWidget):
         def start_retry():
             if self.status_label.text() not in ("Recording", "Starting recording..."):
                 return
-            self._start_combined_grid_process(ffmpeg, selected, output_folder, timestamp, attempt=attempt)
+            self._start_combined_grid_process(
+                ffmpeg, selected, output_folder, timestamp, attempt=attempt,
+                option_tier=getattr(process, "combined_option_tier", 0),
+            )
 
         self._schedule(delay_ms, start_retry)
         self._notify_workflow_availability_change()
@@ -3056,6 +3167,7 @@ class MultiSourceRecorderWidget(QWidget):
                         0,
                     ),
                     force_video_only=True,
+                    option_tier=getattr(process, "combined_option_tier", 0),
                 )
                 return
             replacement = self.create_recording_process()
