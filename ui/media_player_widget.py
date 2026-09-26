@@ -14,7 +14,6 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (
     QComboBox,
-    QDoubleSpinBox,
     QFileDialog,
     QFrame,
     QGridLayout,
@@ -173,18 +172,6 @@ class PlayerPanel(QWidget):
         self.name_label.setStyleSheet(theme.video_label_style())
         self.name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
-        self.offset_spin = QDoubleSpinBox()
-        self.offset_spin.setRange(-600.0, 600.0)
-        self.offset_spin.setSingleStep(0.1)
-        self.offset_spin.setDecimals(1)
-        self.offset_spin.setValue(0.0)
-        self.offset_spin.setSuffix(_tr(" s"))
-        self.offset_spin.setMaximumWidth(78)
-        self.offset_spin.setToolTip(
-            _tr("Sync offset for this panel. Shift this clip earlier (negative) or later "
-            "(positive) so its action lines up with the other panels.")
-        )
-
         accent = theme.skin().accent
         self.load_btn = make_icon_button(
             "folder_open",
@@ -203,8 +190,6 @@ class PlayerPanel(QWidget):
         self.clear_btn.clicked.connect(self.clear_media)
 
         controls.addWidget(self.name_label)
-        controls.addWidget(QLabel(_tr("offset")))
-        controls.addWidget(self.offset_spin)
         controls.addWidget(self.load_btn)
         controls.addWidget(self.clear_btn)
 
@@ -411,7 +396,10 @@ class PlayerPanel(QWidget):
         return bool(self._media_path)
 
     def offset_ms(self):
-        return int(round(self.offset_spin.value() * 1000))
+        """Sync offset of the clip on screen, from its playlist's Offset column."""
+        if not self._media_path:
+            return 0
+        return int(round(self.playlist.offset_for(self._media_path) * 1000))
 
     def duration_ms(self):
         return self.player.duration() if self.player is not None else 0
@@ -607,6 +595,7 @@ class MediaPlayerWidget(QWidget):
         self.playlist_dock.activate_requested.connect(self._play_from_playlist)
         self.playlist_dock.files_requested.connect(self.add_playlist_files)
         self.playlist_dock.folder_requested.connect(self.add_playlist_folder)
+        self.playlist_dock.offset_changed.connect(self._on_playlist_offset_changed)
         column_layout.addWidget(self.playlist_dock)
         self.playlist_dock.hide()
         self.stage.addWidget(self.video_column)
@@ -1195,6 +1184,17 @@ class MediaPlayerWidget(QWidget):
     def restart_all(self):
         self.seek_all(0)
         self.play_all()
+
+    def _on_playlist_offset_changed(self, path, _seconds):
+        """An Offset cell changed: re-seat every paused panel showing that clip."""
+        master = self.position_slider.value()
+        for panel in self.active_panels():
+            if panel._media_path != path or panel.player is None:
+                continue
+            if panel.player.state() != QMediaPlayer.PlayingState:
+                panel.player.setPosition(
+                    panel_seek_position_ms(master, panel.offset_ms(), panel.duration_ms())
+                )
 
     def seek_all(self, master_ms):
         self._set_slider_value(master_ms)

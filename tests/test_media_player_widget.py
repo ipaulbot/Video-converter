@@ -155,6 +155,42 @@ class MediaPlayerWidgetTests(unittest.TestCase):
         try:
             for panel in widget.panels:
                 self.assertEqual(panel.offset_ms(), 0)
+                self.assertFalse(hasattr(panel, "offset_spin"))   # lives in the playlist now
+        finally:
+            widget.shutdown()
+
+    def test_panel_offset_comes_from_the_current_clips_playlist_row(self):
+        widget = MediaPlayerWidget()
+        try:
+            panel = widget.panels[0]
+            panel.player = _FakePlayer()
+            panel._media_path = "C:\\Videos\\a.mp4"
+            panel.playlist.add(["C:\\Videos\\a.mp4", "C:\\Videos\\b.mp4"])
+            panel.playlist.set_offset("C:\\Videos\\a.mp4", 1.5)
+            panel.playlist.set_offset("C:\\Videos\\b.mp4", -2.0)
+            self.assertEqual(panel.offset_ms(), 1500)
+            panel._media_path = "C:\\Videos\\b.mp4"
+            self.assertEqual(panel.offset_ms(), -2000)
+            panel._media_path = ""
+            self.assertEqual(panel.offset_ms(), 0)
+        finally:
+            widget.shutdown()
+
+    def test_editing_an_offset_in_the_playlist_reseats_the_paused_panel(self):
+        widget = MediaPlayerWidget()
+        try:
+            panel = widget.panels[0]
+            panel.player = _FakePlayer(duration=60000)
+            panel._media_path = "C:\\Videos\\a.mp4"
+            panel.playlist.add(["C:\\Videos\\a.mp4"])
+            widget.select_panel(0)
+            widget.playlist_dock.refresh()
+            widget.position_slider.setRange(0, 60000)
+            widget._set_slider_value(4000)
+            panel.player.calls.clear()
+            widget.playlist_dock.list.item(0, 1).setData(Qt.UserRole, 1.5)
+            self.assertEqual(panel.offset_ms(), 1500)
+            self.assertIn("setPosition(5500)", panel.player.calls)
         finally:
             widget.shutdown()
 
@@ -778,11 +814,12 @@ class _FakePlayer(QObject):
     positionChanged = pyqtSignal(int)
     mediaStatusChanged = pyqtSignal(int)
 
-    def __init__(self, muted=False, position=0):
+    def __init__(self, muted=False, position=0, duration=0):
         super().__init__()
         self.calls = []
         self._muted = muted
         self._position = position
+        self._duration = duration
 
     # shutdown() calls these on every created player.
     def stop(self):
@@ -823,7 +860,7 @@ class _FakePlayer(QObject):
         return self._position
 
     def duration(self):
-        return 0
+        return self._duration
 
 
 class MediaPlayerRealFileSmokeTests(unittest.TestCase):

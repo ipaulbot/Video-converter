@@ -204,6 +204,33 @@ class PlaylistModelTests(unittest.TestCase):
         self.assertEqual(model.index_of("c"), 2)
         self.assertEqual(model.index_of("zzz"), -1)
 
+    def test_offsets_default_to_zero_and_follow_their_clip(self):
+        model = PlaylistModel()
+        model.add(["a", "b"])
+        self.assertEqual(model.offset_for("a"), 0.0)
+        model.set_offset("a", 1.5)
+        model.set_offset("b", "-0.4")
+        self.assertEqual(model.offset_for("a"), 1.5)
+        self.assertEqual(model.offset_for("b"), -0.4)
+        model.set_offset("zzz", 9.0)            # unknown clip: ignored
+        self.assertEqual(model.offsets, {"a": 1.5, "b": -0.4})
+        model.set_offset("a", 0)                # back to zero drops the entry
+        self.assertEqual(model.offsets, {"b": -0.4})
+        model.remove(1)                         # removing the clip removes its offset
+        self.assertEqual(model.offsets, {})
+
+    def test_offsets_are_clamped_and_cleared_with_the_playlist(self):
+        model = PlaylistModel()
+        model.add(["a"])
+        model.set_offset("a", 5000)
+        self.assertEqual(model.offset_for("a"), PlaylistModel.OFFSET_LIMIT_S)
+        model.set_offset("a", "not a number")
+        self.assertEqual(model.offset_for("a"), 0.0)
+        model.set_offset("a", -2.0)
+        model.clear()
+        self.assertEqual(model.offsets, {})
+        self.assertEqual(model.offset_for("a"), 0.0)
+
     def test_collect_video_files_filters_and_sorts(self):
         tree = [
             ("root", ["sub"], ["B.MP4", "notes.txt", "a.mkv"]),

@@ -74,7 +74,8 @@ class PlaceholderViewTests(unittest.TestCase):
         self.assertIsInstance(widget.table_widget, PlaceholderTableWidget)
         dock = PlaylistDock()
         self.addCleanup(dock.close)
-        self.assertIsInstance(dock.list, PlaceholderListWidget)
+        self.assertIsInstance(dock.list, PlaceholderTableWidget)   # Clip | Offset columns
         self.assertEqual(dock.list.selectionMode(), dock.list.ExtendedSelection)
+        self.assertEqual(dock.list.selectionBehavior(), dock.list.SelectRows)
         self.assertEqual(dock.list.dragDropMode(), dock.list.InternalMove)
         self.assertEqual(int(dock.list.focusPolicy()) & int(Qt.ClickFocus), int(Qt.ClickFocus))
