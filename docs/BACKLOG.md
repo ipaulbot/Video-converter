@@ -200,6 +200,22 @@ Deferred from UI iteration 2 (2026-09-25) until the feature set settles:
 - `ui/settings_dialog.py` carries six pre-existing unused imports (ruff F401 /
   I001); clean up in a dedicated commit.
 
+Tab merge follow-ups (2026-09-26):
+
+- Remember the Video Converter splitter position (files table vs log) between
+  sessions; today it starts at the 2:3 default every launch.
+- Inspect panel: remember whether it was open, and its width, per session, as
+  the playlist already does for panel count and volume.
+- Inspect from a playlist row (right-click) without loading the clip into the
+  panel first.
+- The Inspect panel re-runs ffprobe when the selected panel changes; cache the
+  last few results per path so switching between four loaded panels is instant.
+- Media Player replaces the standalone Video Inspection Tool; if anyone still
+  wants a full-width inspector, a "Pop out" on the Inspect panel would be
+  cheaper than bringing the tab back.
+- Translations: the new strings (Video Converter, Inspect, Inspect in Media
+  Player, Inspect - %(panel)s, the Inspect tooltip) need nl / zh-CN entries.
+
 ## Done
 
 - Help documentation is now generated from `docs/help/source/` rather than

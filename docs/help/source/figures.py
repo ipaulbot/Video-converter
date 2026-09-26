@@ -38,14 +38,14 @@ FIGURES: Final[list[dict[str, str]]] = [
     {
         "id": "FIG-03",
         "filename": "fig-03-converted-files.png",
-        "caption": "The Converted Files tab tracking queued and finished jobs.",
-        "capture_steps": "Convert two short clips first so the list has rows.",
+        "caption": "The Video Converter tab: the Converted Files table above the conversion log.",
+        "capture_steps": "Video Converter tab; convert two short clips first so the table has rows.",
     },
     {
         "id": "FIG-04",
         "filename": "fig-04-inspection.png",
-        "caption": "The Video Inspection Tool tab, ready for a file to be dropped.",
-        "capture_steps": "Video Inspection Tool tab, Summary sub-tab, no file loaded.",
+        "caption": "The Media Player's Inspect panel beside the video, Summary sub-tab.",
+        "capture_steps": "Media Player tab, Inspect button on the transport bar, no file loaded.",
     },
     {
         "id": "FIG-05",

@@ -330,3 +330,34 @@ Use this file to track user-visible fixes, improvements, and feature work.
 - Media Player: leaving fullscreen no longer leaves the tab sized to the clip's
   native resolution (a 1080p clip grew the video area past the window).
 - The layout tests no longer write `window_mode` into the real config.json.
+
+## 2026-09-26
+
+### Main window
+
+- Fewer tabs. Conversion Log and Converted Files are now one **Video Converter**
+  tab: the files table sits above the conversion log with a draggable divider,
+  and the tab has a single footer (the broom clears the log; Clear empties the
+  table). The Video Inspection Tool tab is gone; its inspector lives in the
+  Media Player (below). Settings -- Tools shows one toggle per remaining tab
+  (Video Converter, Media Player, Multi-Source Recorder, Lossless Editor, PC
+  Report); Video Converter, Media Player and the recorder are on by default.
+- Existing settings migrate: `conversion_log` / `converted_files` collapse into
+  `video_converter` (on if either was on); a visible `video_inspection` turns
+  the Media Player on. Unknown keys are dropped as before.
+- The BallBuster easter egg hides the files table while it plays and restores
+  it afterwards, so the game gets the whole tab.
+
+### Media Player
+
+- **Inspect** panel: a magnifier button on the transport bar (next to Playlist)
+  opens the ffprobe inspector beside the video, in the space the playlist uses.
+  It shows the Summary and Detailed JSON for the selected panel's clip and
+  follows panel selection and loads; dropping a file on it inspects that file
+  without loading it. Playlist and Inspect share the slot, so one closes the
+  other.
+- Converted Files gains an **Inspect** button and an "Inspect in Media Player"
+  context-menu action, which open the player on that file with the Inspect
+  panel showing (the tab is shown for the session even if hidden in settings).
+- Help: Main Window Overview, Converting Files, the Converted Files and Media
+  Inspection chapters, and figures FIG-03 / FIG-04 updated for the new layout.
