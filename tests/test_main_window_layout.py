@@ -110,6 +110,43 @@ class TabCardTests(unittest.TestCase):
         self.assertFalse(self.window.isMaximized())
         self.assertEqual(self.window.size().width(), theme.COMPACT.window_size[0])
 
+    def test_mode_switch_holds_repaints_until_the_relayout_and_resize_are_done(self):
+        # Full -> compact used to paint the re-flowed tabs at the old size,
+        # then the restored window, then the resized one: half a second of
+        # jitter. The whole switch now happens with updates off.
+        window = self.window
+        seen = []
+        real_apply = window.multi_source_recorder_widget.apply_layout_mode
+        real_center = window.center_on_screen
+
+        def spy_apply(metrics):
+            seen.append(("relayout", window.updatesEnabled()))
+            return real_apply(metrics)
+
+        def spy_center():
+            seen.append(("center", window.updatesEnabled()))
+            return real_center()
+
+        try:
+            window.set_window_mode("full", persist=False)
+            with patch.object(window.multi_source_recorder_widget, "apply_layout_mode", spy_apply), \
+                    patch.object(window, "center_on_screen", spy_center):
+                window.set_window_mode("compact", persist=False)
+        finally:
+            window.set_window_mode("compact", persist=False)
+        self.assertEqual(seen, [("relayout", False), ("center", False)])
+        self.assertTrue(window.updatesEnabled())
+
+    def test_mode_switch_re_enables_repaints_even_if_a_tab_relayout_fails(self):
+        window = self.window
+        with patch.object(
+            window.multi_source_recorder_widget, "apply_layout_mode", side_effect=RuntimeError("boom")
+        ):
+            with self.assertRaises(RuntimeError):
+                window.set_window_mode("compact", persist=False)
+        self.assertTrue(window.updatesEnabled())
+        window.set_window_mode("compact", persist=False)
+
     def test_title_bar_offers_maximize(self):
         self.assertTrue(self.window.windowFlags() & Qt.WindowMaximizeButtonHint)
 

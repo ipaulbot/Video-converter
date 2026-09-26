@@ -903,30 +903,39 @@ class VideoConverterApp(QMainWindow):
         self.settings["window_mode"] = metrics.name
         for mode, action in getattr(self, "window_mode_actions", {}).items():
             action.setChecked(mode == metrics.name)
-        central = self.centralWidget()
-        if central is not None and central.layout() is not None:
-            m = metrics.margin
-            central.layout().setContentsMargins(m, m, m, m)
-        for widget in self.layout_mode_widgets():
-            widget.apply_layout_mode(metrics)
-        if hasattr(self, "tabs"):
-            self.apply_tab_style(theme.highlight_color())
-            self._fit_burger_button()
-        # Before the first show() (i.e. from __init__) only record the window
-        # state; main.py's show() honours it. Showing here would pop the window
-        # up mid-construction, and in every test that builds the main window.
-        if resize and metrics.name == "full":
-            if self.isVisible():
-                self.showMaximized()
-            else:
-                self.setWindowState(self.windowState() | Qt.WindowMaximized)
-        elif resize:
-            if self.isVisible():
-                self.showNormal()
-            else:
-                self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
-            self.resize(*metrics.window_size)
-            self.center_on_screen()
+        # One frame, not five: the re-flow (margins, every tab's layout mode,
+        # tab restyle) and the geometry change (restore, resize, centre) each
+        # used to paint on their own, so full -> compact flickered through
+        # half-laid-out panels for about half a second. Hold repaints until
+        # everything is in place, then let a single paint show the result.
+        self.setUpdatesEnabled(False)
+        try:
+            central = self.centralWidget()
+            if central is not None and central.layout() is not None:
+                m = metrics.margin
+                central.layout().setContentsMargins(m, m, m, m)
+            for widget in self.layout_mode_widgets():
+                widget.apply_layout_mode(metrics)
+            if hasattr(self, "tabs"):
+                self.apply_tab_style(theme.highlight_color())
+                self._fit_burger_button()
+            # Before the first show() (i.e. from __init__) only record the window
+            # state; main.py's show() honours it. Showing here would pop the window
+            # up mid-construction, and in every test that builds the main window.
+            if resize and metrics.name == "full":
+                if self.isVisible():
+                    self.showMaximized()
+                else:
+                    self.setWindowState(self.windowState() | Qt.WindowMaximized)
+            elif resize:
+                if self.isVisible():
+                    self.showNormal()
+                else:
+                    self.setWindowState(self.windowState() & ~Qt.WindowMaximized)
+                self.resize(*metrics.window_size)
+                self.center_on_screen()
+        finally:
+            self.setUpdatesEnabled(True)
         if persist:
             save_settings(self.settings)
 
