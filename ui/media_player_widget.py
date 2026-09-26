@@ -30,13 +30,13 @@ from PyQt5.QtWidgets import (
 
 from conversion.worker import ConversionWorker, WorkerSignals
 from ui import theme
+from ui.elided_label import ElidedLabel
 from ui.glyph_icons import (
     glyph_icon,
     make_icon_button,
     reskin_icon_buttons,
     set_button_glyph,
 )
-from ui.elided_label import ElidedLabel
 from ui.media_player_parts import FullscreenHost, InspectionDock, PlaylistDock, UnsupportedOverlay
 from ui.media_player_support import (
     MEDIA_PLAYER_DEFAULTS,
