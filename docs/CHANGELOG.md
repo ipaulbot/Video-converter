@@ -184,14 +184,24 @@ Use this file to track user-visible fixes, improvements, and feature work.
   - Screen recordings are encoded as 4:2:0 H.264 with even dimensions. The
     grabbers deliver BGRA, which libx264 otherwise encodes as 4:4:4 — a
     file the Windows players and hardware decoders refuse to play.
-  - Pickers instead of typing: the Video Settings device list shows every
-    open window as "Window: <title>" (minimised ones included, so you can
-    pick one and restore it before recording), and "Screen capture (select
-    region...)" dims all monitors and lets you drag out a rectangle. A
-    picked region shows as "Screen capture (region X,Y WxH)" and can also
-    be typed as `region=X,Y,WxH` in the row's address (virtual-screen
-    pixels; a monitor left of the primary one has negative X). Escape or a
-    click without a drag cancels and keeps the previous device.
+  - Configured like an RTSP camera: pick the single "Screen capture" entry
+    in the Video Settings device list, then the gear opens Screen Capture
+    Settings — whole desktop, one display (GPU), one window (a live list of
+    open windows, minimised ones included, with Refresh — or type a title),
+    or part of the desktop (X/Y/W/H, or "Select on screen..." which dims
+    every monitor and lets you drag out a rectangle; Escape cancels). The
+    device box then reads "Screen capture (desktop | monitor N, GPU |
+    window: title | region X,Y WxH)". Regions are virtual-screen pixels; a
+    monitor left of the primary one has negative X. The row's address
+    accepts the same by hand: `desktop`, `monitor=2`, `region=X,Y,WxH`, or
+    a window title.
+  - Screen captures use the GPU's H.264 encoder when one works here. While
+    listing devices, NVC tries NVENC, Quick Sync and AMF in turn on a
+    two-frame synthetic clip and remembers the first that starts (the log
+    shows "[encoder] screen captures will use h264_nvenc"). Cameras keep
+    their current encoding. If the encoder refuses a real recording (Quick
+    Sync, for one, will not take a 5120-pixel-wide desktop) the recording
+    restarts with libx264 on the same capture.
 - The "Medialooks Screen Capture" DirectShow filter installed by MediaRecorder
   is no longer offered as a camera. Its licence check pops a modal dialog
   inside FFmpeg the moment it is opened, leaving the recording stuck behind

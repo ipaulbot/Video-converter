@@ -100,12 +100,14 @@ Out of scope in the current design, kept for later:
 - ~~Screen capture through FFmpeg gdigrab.~~ Done 2026-09-25 (`screen=desktop`
   / `screen=title=…` source type); 2026-09-26 added `screen=monitor=N` through
   the Desktop Duplication API with a GDI fallback, `screen=region=X,Y,WxH`
-  with a drag-to-select overlay, and a live window list in Video Settings.
+  with a drag-to-select overlay, a live window list, all behind the camera
+  settings gear of one "Screen capture" device entry, and NVENC/QSV/AMF
+  encoding for screen rows (probed at scan time, libx264 rung on failure).
   Follow-ups: system audio for a screen source (WASAPI loopback has no
   DirectShow input; the open-source `virtual-audio-capturer` filter would
-  do), encoding a GPU capture with `h264_nvenc`/`h264_amf`/`h264_qsv` when
-  the bundled ffmpeg reports one and the encoder actually initialises on this
-  GPU (today the frame is downloaded and encoded with libx264), a region
+  do), hardware encoding for camera rows and composites (only screen rows use
+  it today; the probe is a 256x256 clip so large frames can still be refused
+  — QSV refuses a 5120-wide desktop — hence the software rung), a region
   picker that snaps to window edges, and a live thumbnail per window in the
   picker. The monitor numbering follows DXGI output order, which is normally
   but not always the Windows display order. A picked region is not
