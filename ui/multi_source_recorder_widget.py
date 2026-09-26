@@ -1868,6 +1868,16 @@ class MultiSourceRecorderWidget(QWidget):
             return "stream_url"
         return self._source_type_id(combo)
 
+    @staticmethod
+    def _row_wants_preview(source_type, source_text):
+        """True when a row of this type/text would start a live preview tile."""
+        text = (source_text or "").strip()
+        if source_type == "screen":
+            return True  # empty text means the whole desktop
+        if source_type in ("directshow", "rtsp_ip"):
+            return bool(text)
+        return False
+
     def update_source_placeholder(self, combo, edit, row_index=None, force_preview_restart=False):
         source_type = self._source_type_for_text(combo, edit.text())
         hints = {
@@ -1879,6 +1889,13 @@ class MultiSourceRecorderWidget(QWidget):
             "file": "Local test file path",
         }
         edit.setPlaceholderText(hints.get(source_type, "FFmpeg source"))
+        if row_index is not None and not self._row_wants_preview(source_type, edit.text()):
+            # The row no longer describes anything previewable ("No source
+            # selected...", a file, a plain stream URL). Whatever it was
+            # previewing before -- a camera, the desktop -- must stop now, or
+            # the old ffmpeg keeps the camera open (light on) and the tile
+            # keeps showing the old picture.
+            self.stop_preview_for_row(row_index)
         if source_type == "directshow":
             self.populate_directshow_devices(edit)
             if row_index is not None:
@@ -1929,9 +1946,13 @@ class MultiSourceRecorderWidget(QWidget):
         Never scans inline: a listing takes several seconds on a machine with
         a few virtual cameras, and this runs while the user is picking a
         source type or while saved settings load at startup.
+
+        Never fills an empty field either. "No source selected..." in Video
+        Settings arrives here as "", and auto-picking the first known camera
+        would switch that camera straight back on.
         """
         if hasattr(source_edit, "set_options"):
-            source_edit.set_options(list(self.directshow_devices or []))
+            source_edit.set_options(list(self.directshow_devices or []), auto_select=False)
         self.start_device_discovery()
 
     def discover_directshow_devices(self):
@@ -2334,6 +2355,10 @@ class MultiSourceRecorderWidget(QWidget):
         if row_index < 0 or row_index >= len(self.preview_boxes):
             return
         if process is not None and self.preview_processes.get(row_index) is not process:
+            # A preview we already dropped (stop_preview_for_row pops it before
+            # killing) has now actually exited: that consumes its "stopping"
+            # mark, otherwise the row's next preview would skip one retry.
+            self.preview_stopping_rows.discard(row_index)
             return
         self.clear_preview_backlog([row_index])
         if row_index in self.preview_stopping_rows:
@@ -2420,20 +2445,25 @@ class MultiSourceRecorderWidget(QWidget):
         elif source_kind == "stream":
             self.start_stream_preview(row_index, source_value, force_restart=True)
 
+    def _kill_preview_process(self, row_index, process):
+        """End a preview ffmpeg for good.
+
+        QProcess.terminate() posts WM_CLOSE to the process's windows on
+        Windows; ffmpeg.exe has none, so a terminated preview simply keeps
+        running -- camera light on, tile still updating -- while we have
+        already forgotten about it. A preview writes JPEGs to a pipe and has
+        nothing to flush, so kill() is the right call, not an escalation.
+        """
+        try:
+            if process.state() != QProcess.NotRunning:
+                self.preview_stopping_rows.add(row_index)
+                process.kill()
+        except RuntimeError:
+            pass
+
     def stop_preview_processes(self):
         for row_index, process in list(self.preview_processes.items()):
-            try:
-                if process.state() != QProcess.NotRunning:
-                    self.preview_stopping_rows.add(row_index)
-                    if hasattr(process, "terminate"):
-                        process.terminate()
-                        finished = process.waitForFinished(1500) if hasattr(process, "waitForFinished") else True
-                        if not finished and process.state() != QProcess.NotRunning:
-                            process.kill()
-                    else:
-                        process.kill()
-            except RuntimeError:
-                continue
+            self._kill_preview_process(row_index, process)
         self.preview_processes = {}
         self.preview_buffers = {}
         self.preview_pending_frames = {}
@@ -2860,15 +2890,7 @@ class MultiSourceRecorderWidget(QWidget):
     def stop_preview_for_row(self, row_index):
         process = self.preview_processes.pop(row_index, None)
         if process is not None:
-            try:
-                if process.state() != QProcess.NotRunning:
-                    self.preview_stopping_rows.add(row_index)
-                    if hasattr(process, "terminate"):
-                        process.terminate()
-                    else:
-                        process.kill()
-            except RuntimeError:
-                pass
+            self._kill_preview_process(row_index, process)
         self.preview_buffers.pop(row_index, None)
         self.preview_pending_frames.pop(row_index, None)
         self.preview_sources.pop(row_index, None)

@@ -259,8 +259,8 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         terminate.assert_called_once()
 
     def test_selecting_usb_directshow_updates_preview_guidance(self):
-        # "Opening preview" only appears once a camera name is filled in, so
-        # supply one rather than depending on whatever is plugged in today.
+        # Picking the type offers the known cameras but does not switch one on;
+        # "Opening preview" only appears once the user picks a camera name.
         widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=False)
         row = widget.source_rows[0]
         source_type = row[2]
@@ -269,8 +269,13 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         source_type.setCurrentIndex(index)
 
-        self.assertIn("Opening preview", widget.preview_boxes[0].text())
+        self.assertIn("Configure the source", widget.preview_boxes[0].text())
         self.assertIn("Windows camera name", source.placeholderText())
+
+        source.setCurrentText("Camera A")
+        widget.refresh_previews_from_sources()  # what Video Settings > OK does
+
+        self.assertIn("Opening preview", widget.preview_boxes[0].text())
 
     def test_selecting_usb_directshow_populates_detected_camera_names(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=False)
@@ -280,14 +285,19 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         source_type.setCurrentIndex(source_type.findData("directshow"))
 
-        self.assertEqual(source.text(), "HD Pro Webcam C920")
+        # Offered in the drop-down, never filled in on the user's behalf: a
+        # camera the user did not choose must not come on.
+        self.assertEqual(source.text(), "")
         self.assertIn("HD Pro Webcam C920", [source.itemText(i) for i in range(source.count())])
 
     def test_selecting_usb_directshow_marks_preview_as_opening(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=False)
         source_type = widget.source_rows[0][2]
+        source = widget.source_rows[0][3]
 
         source_type.setCurrentIndex(source_type.findData("directshow"))
+        source.setCurrentText("HD Pro Webcam C920")
+        widget.refresh_previews_from_sources()
 
         self.assertIn("HD Pro Webcam C920", widget.preview_boxes[0].text())
 
@@ -2171,6 +2181,121 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(len(starts), 1)
         self.assertIn("-fflags", starts[0][1])
 
+    def _stubborn_preview_process(self):
+        # ffmpeg.exe has no window, so QProcess.terminate() (WM_CLOSE on
+        # Windows) leaves it running with the camera open. Only kill() works.
+        class StubbornProcess:
+            def __init__(self):
+                self.terminated = False
+                self.killed = False
+
+            def state(self):
+                return QProcess.NotRunning if self.killed else QProcess.Running
+
+            def terminate(self):
+                self.terminated = True
+
+            def waitForFinished(self, _timeout):
+                return self.killed
+
+            def kill(self):
+                self.killed = True
+
+        return StubbornProcess()
+
+    def test_unchecking_a_row_kills_a_preview_that_ignores_terminate(self):
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=True)
+        row = widget.source_rows[1]  # row 1 can never be unchecked
+        widget.start_directshow_preview = lambda *_args, **_kwargs: None  # no real ffmpeg while configuring
+        row[0].setChecked(True)
+        row[2].setCurrentIndex(row[2].findData("directshow"))
+        row[3].setText("Camera A")
+        del widget.start_directshow_preview
+        process = self._stubborn_preview_process()
+        widget.preview_processes[1] = process
+        widget.preview_sources[1] = ("directshow", "Camera A", widget.preview_source_profile)
+
+        row[0].setChecked(False)
+        widget.refresh_previews_from_sources()
+
+        self.assertTrue(process.killed)
+        self.assertNotIn(1, widget.preview_processes)
+        self.assertNotIn(1, widget.preview_sources)
+
+    def test_clearing_a_rows_device_stops_its_old_preview(self):
+        # Row 1 was previewing the desktop; the user switches it to a camera type
+        # with "No source selected..." -> nothing to preview, so the desktop
+        # preview must not keep running underneath.
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=True)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        process = self._stubborn_preview_process()
+        widget.preview_processes[0] = process
+        widget.preview_sources[0] = ("stream", "screen=desktop", widget.preview_source_profile)
+        with patch("ui.multi_source_recorder_widget.QProcess.start", lambda *_args, **_kwargs: None):
+            row[2].setCurrentIndex(row[2].findData("directshow"))
+            row[3].setText("")
+            widget.refresh_previews_from_sources()
+
+        self.assertTrue(process.killed)
+        self.assertNotIn(0, widget.preview_processes)
+
+    def test_no_source_selected_is_not_replaced_by_the_first_known_camera(self):
+        # Video Settings writes "" for "No source selected...". The row must stay
+        # empty (and preview nothing) rather than quietly adopting the first
+        # camera the last scan found -- that is how a deselected webcam came
+        # back on with its light lit.
+        widget = MultiSourceRecorderWidget(directshow_devices=["Camera A"], auto_preview=True)
+        row = widget.source_rows[0]
+        started = []
+        widget.start_directshow_preview = lambda _row, device, *_args: started.append(device)
+
+        row[2].setCurrentIndex(row[2].findData("directshow"))
+        row[3].setText("")
+        widget.refresh_previews_from_sources()
+
+        self.assertEqual(row[3].text(), "")
+        self.assertEqual(row[3].options(), ["Camera A"])
+        self.assertEqual([device for device in started if device], [])
+        self.assertNotIn(0, widget.preview_processes)
+
+    def test_switching_a_row_to_a_type_without_preview_stops_its_old_preview(self):
+        widget = MultiSourceRecorderWidget(auto_preview=True)
+        row = widget.source_rows[0]
+        row[0].setChecked(True)
+        process = self._stubborn_preview_process()
+        widget.preview_processes[0] = process
+        widget.preview_sources[0] = ("stream", "screen=desktop", widget.preview_source_profile)
+        row[2].setCurrentIndex(row[2].findData("file"))
+        row[3].setText(r"C:\Videos\clip.mp4")
+
+        widget.refresh_previews_from_sources()
+
+        self.assertTrue(process.killed)
+        self.assertNotIn(0, widget.preview_processes)
+
+    def test_killed_preview_exiting_clears_the_rows_stopping_mark(self):
+        widget = MultiSourceRecorderWidget(auto_preview=True)
+        process = self._stubborn_preview_process()
+        widget.preview_processes[0] = process
+        widget.preview_sources[0] = ("stream", "screen=desktop", widget.preview_source_profile)
+
+        widget.stop_preview_for_row(0)
+        self.assertIn(0, widget.preview_stopping_rows)
+        widget._preview_finished(0, 0, process)  # the kill lands a moment later
+
+        self.assertNotIn(0, widget.preview_stopping_rows)
+
+    def test_stop_preview_processes_does_not_block_on_terminate(self):
+        widget = MultiSourceRecorderWidget(auto_preview=True)
+        process = self._stubborn_preview_process()
+        widget.preview_processes[0] = process
+
+        widget.stop_preview_processes()
+
+        self.assertTrue(process.killed)
+        self.assertEqual(widget.preview_processes, {})
+
     def test_combined_output_keeps_each_source_in_its_own_preview_box(self):
         widget = MultiSourceRecorderWidget(directshow_devices=["HD Pro Webcam C920"], auto_preview=True)
         widget.start_stream_preview = lambda *_args: None
@@ -2535,13 +2660,18 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertTrue(preview.killed)
 
-    def test_stopping_preview_waits_for_camera_release_before_recording(self):
+    def test_stopping_previews_kills_instead_of_terminating(self):
+        # terminate() is WM_CLOSE on Windows and ffmpeg.exe has no window: a
+        # "terminated" preview kept running with the camera light on. Previews
+        # write to a pipe and have nothing to flush, so kill() is used directly
+        # and nothing blocks on waitForFinished().
         widget = MultiSourceRecorderWidget(auto_preview=False)
 
         class FakePreviewProcess:
             def __init__(self):
                 self.terminated = False
                 self.waited = False
+                self.killed = False
 
             def state(self):
                 return QProcess.Running
@@ -2551,18 +2681,19 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
             def waitForFinished(self, _timeout):
                 self.waited = True
-                return True
+                return False
 
             def kill(self):
-                pass
+                self.killed = True
 
         preview = FakePreviewProcess()
         widget.preview_processes[0] = preview
 
         widget.stop_preview_processes()
 
-        self.assertTrue(preview.terminated)
-        self.assertTrue(preview.waited)
+        self.assertTrue(preview.killed)
+        self.assertFalse(preview.terminated)
+        self.assertFalse(preview.waited)
 
     def test_start_recording_waits_briefly_for_preview_camera_release(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
