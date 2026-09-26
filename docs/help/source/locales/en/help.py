@@ -311,7 +311,7 @@ CHAPTERS: list[dict] = [
                 "buttons below the table; they appear once a row is selected. The remaining "
                 "actions are on the row's right-click menu. Right-clicking the empty part of "
                 "the table offers Add videos to convert... and Monitor a folder.... While the "
-                "table is empty, faint grey bars mark where the rows will appear. The broom in "
+                "table is empty, thin grey rules mark where the rows will appear. The broom in "
                 "the footer clears the log; Clear empties the table.")},
             {"type": "table", "headers": ("Control", "What it does"), "rows": [
                 ("Play", "Opens the selected file in the Media Player tab."),
@@ -613,10 +613,13 @@ CHAPTERS: list[dict] = [
                 "Playlist opens a strip under the video for the selected panel with Add "
                 "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
                 "panel is added to that panel's playlist, so the strip always shows what the "
-                "panel has seen. The strip has two columns: Clip and Offset. Drag rows to "
-                "reorder them, or drop files from Explorer into the strip. N and P move "
-                "through the playlist. With Panels set to 1, the next item starts automatically "
-                "when a clip ends.")},
+                "panel has seen. The strip has columns Clip, Panel and Offset; Panel lists "
+                "the panels showing that clip right now and only appears when more than one "
+                "panel is on screen. Highlighting a row shows that clip's details in the "
+                "Inspect panel without loading it; clicking a panel does the same for its "
+                "clip. Drag rows to reorder them, or drop files from Explorer into the strip. "
+                "N and P move through the playlist. With Panels set to 1, the next item starts "
+                "automatically when a clip ends.")},
             {"type": "para", "text": (
                 "Offset is a per-clip sync shift in seconds: a negative value plays that clip "
                 "earlier than the others, a positive value later, so recordings of the same "
