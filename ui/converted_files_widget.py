@@ -14,7 +14,6 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
-    QTableWidget,
     QTableWidgetItem,
     QTextEdit,
     QVBoxLayout,
@@ -22,6 +21,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.list_placeholder import PlaceholderTableWidget
 from utils.logger import logger
 
 
@@ -143,7 +143,7 @@ class ConvertedFilesWidget(QWidget):
         clear_button.clicked.connect(self.clear_table)
         theme.opt_out_of_button_style(clear_button)
 
-        self.table_widget = QTableWidget(0, 3)
+        self.table_widget = PlaceholderTableWidget(0, 3)   # faint rows while empty
         self.table_widget.setHorizontalHeaderLabels(["File Name", "Destination Folder", "Date Modified"])
         self.table_widget.setSelectionBehavior(self.table_widget.SelectRows)
         self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)

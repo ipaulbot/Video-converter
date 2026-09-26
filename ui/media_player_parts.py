@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import (
     QAbstractItemView,
     QHBoxLayout,
     QLabel,
-    QListWidget,
     QListWidgetItem,
     QPushButton,
     QVBoxLayout,
@@ -16,6 +15,7 @@ from PyQt5.QtWidgets import (
 from ui import theme
 from ui.glyph_icons import make_icon_button
 from ui.inspection_widget import InspectionWidget
+from ui.list_placeholder import PlaceholderListWidget
 
 
 def _tr(source: str) -> str:
@@ -133,7 +133,7 @@ class PlaylistDock(QWidget):
         self.title_label = QLabel(_tr("Playlist"))
         self.title_label.setStyleSheet(theme.group_title_style())
         layout.addWidget(self.title_label)
-        self.list = QListWidget(self)
+        self.list = PlaceholderListWidget(self)      # faint rows while empty
         self.list.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.list.setDragDropMode(QAbstractItemView.InternalMove)
         self.list.setDefaultDropAction(Qt.MoveAction)
