@@ -389,6 +389,34 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertTrue(widget.start_btn.isEnabled())
         self.assertEqual(widget.status_label.text(), "Not recording")
 
+    def test_empty_source_list_keeps_a_black_placeholder_tile_in_the_grid(self):
+        # Unticking every row must not collapse the video area and shove the
+        # groups below it upwards -- one blank tile stays put with a hint.
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        widget.resize(900, 600)
+        widget.show()
+        QApplication.processEvents()
+        groups_y_before = widget.groups_host.y()
+
+        for row in widget.source_rows:
+            row[0].setChecked(False)
+        QApplication.processEvents()
+
+        self.assertTrue(all(tile.isHidden() for tile in widget.preview_boxes))
+        self.assertFalse(widget.no_source_tile.isHidden())
+        self.assertEqual(widget.no_source_tile.text(), "No source enabled\nTick Use on a source to preview it")
+        self.assertEqual(widget.preview_grid.getItemPosition(0), (0, 0, 1, 2))
+        self.assertEqual(widget.preview_grid.count(), 1)
+        self.assertEqual(widget.groups_host.y(), groups_y_before)
+
+        widget.source_rows[1][0].setChecked(True)
+        QApplication.processEvents()
+
+        self.assertTrue(widget.no_source_tile.isHidden())
+        self.assertFalse(widget.preview_boxes[1].isHidden())
+        self.assertEqual(widget.preview_grid.count(), 1)
+        widget.close()
+
     def test_preview_grid_uses_two_by_two_layout_for_four_sources(self):
         widget = MultiSourceRecorderWidget()
         for row in widget.source_rows:

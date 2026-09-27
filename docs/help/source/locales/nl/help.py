@@ -52,9 +52,10 @@ CHAPTERS: list[dict] = [
                 "statusvoettekst. Onder het logo benoemt de zijbalk het huidige tabblad: een "
                 "pictogram voor het hulpmiddel (een vergrootglas met een oog voor de Mediaspeler, "
                 "een pijlencirkel rond een afspeelsymbool voor de Videoconverter, een camera voor "
-                "de Recorder, een schaar voor de Verliesvrije editor, een monitor voor PC-rapport), "
-                "de titel van het tabblad en een beschrijving van één regel, daarna het "
-                "voorbeeldvak en de knop Start. Sleep een tabblad langs de tabbladbalk om de "
+                "de Recorder, een schaar voor de Verliesvrije editor, een monitor voor PC-rapport) "
+                "naast de titel van het tabblad, daaronder een korte beschrijving, daarna het "
+                "voorbeeldvak en de knop Start. De kop houdt altijd dezelfde hoogte, welk tabblad "
+                "ook open is, zodat het voorbeeldvak nooit verschuift. Sleep een tabblad langs de tabbladbalk om de "
                 "tabbladen in de gewenste volgorde te zetten; klik met de rechtermuisknop op een "
                 "tabblad om dat hulpmiddel te verbergen en haal het terug via Menu -- "
                 "Hulpmiddelen. NVC onthoudt beide.")},
@@ -573,7 +574,8 @@ CHAPTERS: list[dict] = [
                 "met Gecombineerd raster of Beeld-in-beeld, zodat clips die op iets "
                 "verschillende momenten zijn gestart gelijk lopen.",
                 "Vink Gebruik uit om een rij over te slaan -- elke rij, ook de eerste. Als geen "
-                "rij in gebruik is, is de knop Start uitgeschakeld en meldt het tabblad "
+                "rij in gebruik is, blijft het videovak op zijn plaats als één zwarte tegel met "
+                "\"Geen bron ingeschakeld\", is de knop Start uitgeschakeld en meldt het tabblad "
                 "\"Schakel minstens één bron in\". Toepassen houdt het venster open; OK past "
                 "toe en sluit.",
             ]},

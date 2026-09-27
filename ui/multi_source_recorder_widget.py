@@ -1481,6 +1481,14 @@ class MultiSourceRecorderWidget(QWidget):
         preview_grid.setSpacing(3)
         self.preview_grid = preview_grid
         self.preview_boxes = []
+        tile_style = theme.qss("""
+            QLabel {
+                background: $grey_950;
+                color: $grey_100;
+                border: 1px solid $grey_260;
+                font-size: 9pt;
+            }
+        """)
         for index in range(4):
             preview = PreviewLabel(self, index)
             preview.setText(_tr("Video %(number)s\nNo signal")
@@ -1491,19 +1499,21 @@ class MultiSourceRecorderWidget(QWidget):
             # widens the window.
             preview.setMinimumHeight(74)
             preview.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Expanding)
-            preview.setStyleSheet(theme.qss("""
-                QLabel {
-                    background: $grey_950;
-                    color: $grey_100;
-                    border: 1px solid $grey_260;
-                    font-size: 9pt;
-                }
-            """))
+            preview.setStyleSheet(tile_style)
             ptz_button = PTZOverlayButton(self, index, preview)
             ptz_button.move((preview.width() - ptz_button.width()) // 2, (preview.minimumHeight() - ptz_button.height()) // 2)
             preview_grid.addWidget(preview, index // 2, index % 2)
             self.preview_boxes.append(preview)
             self.ptz_overlay_buttons.append(ptz_button)
+        # With every row unticked the live tiles all hide; this blank tile
+        # takes the whole grid so the video area keeps its height and the
+        # groups below do not jump up. Same look as an idle tile.
+        self.no_source_tile = QLabel(_tr("No source enabled\nTick Use on a source to preview it"))
+        self.no_source_tile.setAlignment(Qt.AlignCenter)
+        self.no_source_tile.setMinimumHeight(74)
+        self.no_source_tile.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Expanding)
+        self.no_source_tile.setStyleSheet(tile_style)
+        self.no_source_tile.hide()
         layout.addLayout(preview_grid, 1)
 
         self.groups_host = QWidget()
@@ -1825,6 +1835,10 @@ class MultiSourceRecorderWidget(QWidget):
                     row_index in active_rows and self.ptz_overlay_buttons[row_index].isVisible()
                 )
         total = len(active_rows)
+        self.preview_grid.removeWidget(self.no_source_tile)
+        self.no_source_tile.setVisible(total == 0)
+        if total == 0:
+            self.preview_grid.addWidget(self.no_source_tile, 0, 0, 1, 2)
         for display_index, row_index in enumerate(active_rows):
             preview = self.preview_boxes[row_index]
             if total == 1:

@@ -730,6 +730,7 @@ class VideoConverterApp(QMainWindow):
         # tool tab (one header here since 2026-09-27, instead of one per tab).
         glyph, title, description = self.tool_headings()["video_converter"]
         self.context_header = TabHeader(glyph, title, description, compact=True)
+        self._reserve_context_header()
         left_layout.addWidget(self.context_header, alignment=Qt.AlignHCenter)
         self.tabs.currentChanged.connect(self._update_context_header)
 
@@ -2744,6 +2745,14 @@ class VideoConverterApp(QMainWindow):
             if widget is current:
                 return key
         return None
+
+    def _reserve_context_header(self):
+        """Size the sidebar header for the longest heading it can show (every
+        tool plus BallBuster's) so the preview leaf never shifts between tabs."""
+        headings = [(title, description) for _glyph, title, description in self.tool_headings().values()]
+        _glyph, title, description = self._game_heading()
+        headings.append((title, description))
+        self.context_header.reserve_for(headings)
 
     def _update_context_header(self, _index=None):
         header = getattr(self, "context_header", None)

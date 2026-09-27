@@ -77,28 +77,74 @@ class TabHeaderTests(unittest.TestCase):
         self.assertEqual(header.glyph_label.pixmap().toImage(), before)
         self.assertEqual(header.title_label.text(), "Video Converter")
 
-    def test_compact_variant_stacks_glyph_over_centred_text_at_sidebar_width(self):
-        # The sidebar context panel: 180 px wide, glyph above title above
-        # description, everything centred.
+    def test_compact_variant_puts_glyph_beside_title_and_left_aligns_the_description(self):
+        # The sidebar context panel: 180 px wide, glyph and title on one line,
+        # the wrapped description left-aligned underneath (not centred).
         header = TabHeader("record", "Multi-Source Recorder", "Record up to four sources.", compact=True)
         self.addCleanup(header.close)
         self.assertTrue(header.compact)
         self.assertEqual(header.width(), 180)
         self.assertEqual(header.minimumWidth(), header.maximumWidth())
-        self.assertEqual(header.title_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignHCenter)
-        self.assertEqual(header.description_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignHCenter)
+        self.assertEqual(header.title_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignLeft)
+        self.assertEqual(header.description_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignLeft)
+        self.assertEqual(header.description_label.alignment() & Qt.AlignVertical_Mask, Qt.AlignTop)
         self.assertTrue(header.title_label.wordWrap())
+        self.assertTrue(header.description_label.wordWrap())
+        self.assertIn("font-size: 16px", header.title_label.styleSheet())
         header.show()
         try:
             for _ in range(4):
                 self.app.processEvents()
-            self.assertLess(header.glyph_label.geometry().bottom(), header.title_label.geometry().top())
-            self.assertLess(header.title_label.geometry().bottom(), header.description_label.geometry().top())
+            glyph = header.glyph_label.geometry()
+            title = header.title_label.geometry()
+            self.assertLess(glyph.right(), title.left())
+            self.assertLess(abs(glyph.center().y() - title.center().y()), glyph.height())
+            self.assertLess(title.bottom(), header.description_label.geometry().top())
+            self.assertEqual(header.description_label.geometry().left(), 0)
         finally:
             header.hide()
         # Swapping headings keeps the compact geometry.
         header.set_heading("balls", "BallBuster XT", "Pop balls.")
         self.assertEqual(header.width(), 180)
+
+    def test_compact_header_reserves_room_for_the_longest_heading(self):
+        # Whatever tab is current, the header keeps one height so the preview
+        # leaf under it never moves.
+        header = TabHeader("pc", "PC Report", "Short.", compact=True)
+        self.addCleanup(header.close)
+        headings = [
+            ("PC Report", "Short."),
+            ("Multi-Source Recorder",
+             "Record up to four cameras, streams or screens at once, as separate files or one combined picture."),
+            ("Media Player", "Review up to four clips side by side with one transport."),
+        ]
+        header.reserve_for(headings)
+        header.show()
+        try:
+            for _ in range(4):
+                self.app.processEvents()
+            reserved = header.height()
+            self.assertEqual(header.minimumHeight(), header.maximumHeight())
+            description_h = header.description_label.height()
+            metrics = header.description_label.fontMetrics()
+            self.assertGreaterEqual(description_h, metrics.lineSpacing() * 3)
+            for title, description in headings:
+                header.set_heading("record", title, description)
+                for _ in range(4):
+                    self.app.processEvents()
+                self.assertEqual(header.height(), reserved)
+                self.assertEqual(header.description_label.height(), description_h)
+        finally:
+            header.hide()
+
+    def test_compact_header_hides_nothing_when_a_reserved_description_is_blank(self):
+        header = TabHeader("pc", "PC Report", "Short.", compact=True)
+        self.addCleanup(header.close)
+        header.reserve_for([("PC Report", "Short."), ("Other", "")])
+        header.set_heading("pc", "Other", "")
+        # The description label keeps its slot (hidden labels collapse the layout).
+        self.assertFalse(header.description_label.isHidden())
+        self.assertEqual(header.description_label.text(), "")
 
     def test_a_layer_can_sit_under_the_glyph(self):
         header = TabHeader("pc", "PC Report")
