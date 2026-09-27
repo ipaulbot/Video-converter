@@ -48,20 +48,24 @@ CHAPTERS: list[dict] = [
         "title": "Overzicht van het hoofdvenster",
         "blocks": [
             {"type": "para", "text": (
-                "Het hoofdvenster is ingedeeld in tabbladen, met een gedeeld voorbeeldpaneel en "
-                "een statusvoettekst. Elk tabblad opent met dezelfde kop: een pictogram voor het "
-                "hulpmiddel (een vergrootglas met een oog voor de Mediaspeler, een pijlencirkel "
-                "rond een afspeelsymbool voor de Videoconverter, een camera voor de Recorder, "
-                "een schaar voor de Verliesvrije editor, een monitor voor PC-rapport), de titel "
-                "van het tabblad en een beschrijving van één regel. Sleep een tabblad langs de "
-                "tabbladbalk om de tabbladen in de gewenste volgorde te zetten; NVC onthoudt "
-                "de volgorde.")},
+                "Het hoofdvenster is ingedeeld in tabbladen, met een zijbalk links en een "
+                "statusvoettekst. Onder het logo benoemt de zijbalk het huidige tabblad: een "
+                "pictogram voor het hulpmiddel (een vergrootglas met een oog voor de Mediaspeler, "
+                "een pijlencirkel rond een afspeelsymbool voor de Videoconverter, een camera voor "
+                "de Recorder, een schaar voor de Verliesvrije editor, een monitor voor PC-rapport), "
+                "de titel van het tabblad en een beschrijving van één regel, daarna het "
+                "voorbeeldvak en de knop Start. Sleep een tabblad langs de tabbladbalk om de "
+                "tabbladen in de gewenste volgorde te zetten; klik met de rechtermuisknop op een "
+                "tabblad om dat hulpmiddel te verbergen en haal het terug via Menu -- "
+                "Hulpmiddelen. NVC onthoudt beide.")},
             {"type": "table", "headers": ("Onderdeel", "Wat het doet"), "rows": [
                 ("Videoconverter",
                  "De tabel Geconverteerde bestanden (conversies in de wachtrij, in "
                  "verwerking, geslaagd en mislukt) boven het conversielogboek met zijn "
                  "meldingen, voortgang, waarschuwingen en resultaten. Sleep de scheidingsbalk "
-                 "ertussen."),
+                 "ertussen. De tabel Huidige video-instellingen naast het logboek vat formaat, "
+                 "codecs, resolutie, bitrate en framesnelheid samen; klik erop om de "
+                 "Formaat-instellingen te openen."),
                 ("PC-rapport",
                  "Genereert een PC-rapport voor ondersteuning en probleemoplossing."),
                 ("Verliesvrije editor",
@@ -73,16 +77,20 @@ CHAPTERS: list[dict] = [
                  "Speelt media af in één, twee of vier panelen, met een Inspecteren-paneel dat "
                  "de ffprobe-samenvatting en JSON van de geselecteerde clip toont."),
                 ("Voorbeeldpaneel",
-                 "Toont een voorbeeld van het huidige bestand of de recorderindeling."),
+                 "Het bladvormige vak in de zijbalk toont een voorbeeld van het huidige bestand "
+                 "of de recorderindeling, en een kloppend hart terwijl een PC-rapport wordt "
+                 "gemaakt. Het is leeg als er niets te tonen is."),
                 ("Menu",
-                 "Opent Info, Help, mappen, Instellingen, Taal, updates en Afsluiten."),
+                 "Opent Info, Help, mappen, Instellingen, Venster, Hulpmiddelen, Taal, updates "
+                 "en Afsluiten."),
             ]},
             {"type": "note", "items": [
                 "PC-rapport en Verliesvrije editor zijn standaard verborgen. Schakel ze in via "
-                "Instellingen -- Hulpmiddelen. Afspelen of Inspecteren in Mediaspeler toont het "
-                "tabblad Mediaspeler voor de huidige sessie, ook als het is uitgeschakeld.",
+                "Menu -- Hulpmiddelen of Instellingen -- Hulpmiddelen. Afspelen of Inspecteren in "
+                "Mediaspeler toont het tabblad Mediaspeler voor de huidige sessie, ook als het is "
+                "uitgeschakeld. Het laatste zichtbare hulpmiddel kan niet worden verborgen.",
                 "Het Menu bevat Info, Help, Bronmap openen, Doelmap openen, Back-upmap openen, "
-                "Instellingen, Taal, Controleren op updates en Afsluiten.",
+                "Instellingen, Venster, Hulpmiddelen, Taal, Controleren op updates en Afsluiten.",
                 "De voettekst heeft de knop Start/Stop, een slotpictogram, een bestandskiezer, "
                 "een bezem en een statuslabel. Op het recordertabblad heet de knop Opname "
                 "starten of Opname stoppen. Het slotpictogram vergrendelt de instellingen en de "
@@ -221,7 +229,9 @@ CHAPTERS: list[dict] = [
             {"type": "table", "headers": ("Instelling", "Toelichting"), "rows": [
                 ("Selectievakjes voor hulpmiddelen",
                  "Er is één selectievakje per tabblad. Niet-aangevinkte tabbladen worden in het "
-                 "hoofdvenster verborgen."),
+                 "hoofdvenster verborgen. Dezelfde lijst staat in Menu -- Hulpmiddelen, en met "
+                 "de rechtermuisknop op een tabblad verbergt u het; het laatste zichtbare "
+                 "hulpmiddel blijft altijd staan."),
             ]},
         ],
     },
@@ -562,7 +572,10 @@ CHAPTERS: list[dict] = [
                 "Synchronisatieverschuiving verschuift een bron eerder of later in een opname "
                 "met Gecombineerd raster of Beeld-in-beeld, zodat clips die op iets "
                 "verschillende momenten zijn gestart gelijk lopen.",
-                "Toepassen houdt het venster open; OK past toe en sluit.",
+                "Vink Gebruik uit om een rij over te slaan -- elke rij, ook de eerste. Als geen "
+                "rij in gebruik is, is de knop Start uitgeschakeld en meldt het tabblad "
+                "\"Schakel minstens één bron in\". Toepassen houdt het venster open; OK past "
+                "toe en sluit.",
             ]},
             {"type": "para", "text": "Voorinstellingen"},
             {"type": "steps", "items": [
@@ -638,7 +651,7 @@ CHAPTERS: list[dict] = [
                 ("Volume", "Stelt het volume voor elk paneel in van 0 tot 100."),
                 ("Dempen", "Dempt elk paneel en heet Dempen opheffen zolang het gedempt is."),
                 ("Volledig scherm", "Toont de panelen en de bedieningsbalk op volledig scherm; de panelen Inspecteren en Afspeellijst wijken tot u het volledig scherm verlaat."),
-                ("Afspeellijst", "Toont of verbergt de afspeellijststrook onder de video voor het geselecteerde paneel."),
+                ("Afspeellijst", "Toont of verbergt de afspeellijststrook onder de video; alle panelen delen één lijst."),
                 ("Inspecteren", "Toont of verbergt het Inspecteren-paneel naast de video (zie Media-inspectie)."),
             ]},
             {"type": "para", "text": (
@@ -674,21 +687,23 @@ CHAPTERS: list[dict] = [
                 "muis erop voor de volledige naam).")},
             {"type": "para", "text": (
                 "Een clip in een paneel laden -- door slepen, de knop Laden of de afspeellijst "
-                "-- selecteert dat paneel ook: de Afspeellijst-strook schakelt naar de lijst "
-                "van dat paneel en het Inspecteren-paneel toont de gegevens van de clip, zodat "
-                "een bestand dat op het tweede paneel wordt neergezet meteen zichtbaar is.")},
+                "-- selecteert dat paneel ook: de afspeellijst markeert die clip en het "
+                "Inspecteren-paneel toont de gegevens ervan, zodat een bestand dat op het "
+                "tweede paneel wordt neergezet meteen zichtbaar is.")},
             {"type": "para", "text": (
-                "Afspeellijst opent een strook onder de video voor het geselecteerde paneel met "
-                "Bestanden toevoegen..., Map toevoegen..., Verwijderen en Leegmaken. Elke clip "
-                "die u laadt of op een paneel neerzet, wordt aan de afspeellijst van dat paneel "
-                "toegevoegd, zodat de strook altijd toont wat het paneel heeft gezien. De strook "
-                "heeft de kolommen Bestandsnaam, Paneel en Verschuiving; Paneel vermeldt de "
-                "panelen die de clip nu tonen en verschijnt alleen als er meer dan één paneel "
-                "op het scherm staat. Een rij markeren toont de gegevens van die clip in het "
-                "Inspecteren-paneel zonder hem te laden; op een paneel klikken doet hetzelfde "
-                "voor zijn clip. Sleep rijen om ze te herordenen, of zet bestanden uit de "
-                "Verkenner in de strook neer. N en P lopen door de afspeellijst. Met Panelen op "
-                "1 start het volgende item automatisch als een clip eindigt.")},
+                "Afspeellijst opent een strook onder de video met Bestanden toevoegen..., Map "
+                "toevoegen..., Verwijderen en Leegmaken. Er is één lijst voor het hele tabblad: "
+                "elke clip die u laadt of op een paneel neerzet, wordt eraan toegevoegd, zodat "
+                "de strook alles toont wat de speler heeft gezien. De strook heeft de kolommen "
+                "Bestandsnaam, Paneel en Verschuiving; Paneel vermeldt de panelen die de clip nu "
+                "tonen en verschijnt alleen als er meer dan één paneel op het scherm staat. "
+                "Dubbelklik op een rij om hem in het geselecteerde paneel te laden. Een rij "
+                "markeren toont de gegevens van die clip in het Inspecteren-paneel zonder hem te "
+                "laden; op een paneel klikken doet hetzelfde voor zijn clip. Sleep rijen om ze "
+                "te herordenen, of zet bestanden uit de Verkenner in de strook neer. N en P "
+                "lopen met het geselecteerde paneel door de lijst. Met Panelen op 1 start het "
+                "volgende item automatisch als een clip eindigt. In de compacte modus blijft de "
+                "strook enkele rijen hoog en scrolt hij zelf.")},
             {"type": "para", "text": (
                 "Verschuiving is een synchronisatieverschuiving per clip in seconden: een "
                 "negatieve waarde speelt die clip eerder dan de andere, een positieve later, "
