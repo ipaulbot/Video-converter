@@ -521,10 +521,6 @@ class VideoSettingsDialog(QDialog):
             offset_spin = source_row[10] if len(source_row) > 10 else None
             row_enabled = QCheckBox()
             row_enabled.setChecked(enabled.isChecked())
-            if index == 0:
-                row_enabled.setChecked(True)
-                row_enabled.setEnabled(False)
-                row_enabled.toggled.connect(lambda checked, box=row_enabled: box.setChecked(True) if not checked else None)
             row_label = QLineEdit(label_edit.text())
             row_label.setMinimumWidth(58)
             row_label.setMaximumWidth(82)
@@ -1232,7 +1228,7 @@ class VideoSettingsDialog(QDialog):
             offset_spin = source_row[10] if len(source_row) > 10 else None
             (row_enabled, row_label, row_type, row_device, row_frame_rate,
              row_resolution, row_audio_name, row_audio_device, row_offset) = dialog_row
-            enabled.setChecked(True if row_index == 0 else row_enabled.isChecked())
+            enabled.setChecked(row_enabled.isChecked())
             label_edit.setText(row_label.text())
             device_type = self.effective_video_device_type(row_type, row_device)
             type_index = type_combo.findData(device_type)
@@ -1244,10 +1240,9 @@ class VideoSettingsDialog(QDialog):
                 source_edit.setText(self._screen_source_value_for_label(row_device.currentText()))
             else:
                 source_edit.setText(row_device.text())
-            if source_edit.text().strip():
-                enabled.setChecked(True)
-            elif row_index != 0:
-                enabled.setChecked(False)
+            # A row with a source is worth recording; a row without one is not,
+            # row 1 included -- it has no special claim to the first tile.
+            enabled.setChecked(bool(source_edit.text().strip()))
             if audio_name_edit:
                 audio_name_edit.setText(row_audio_name.text())
             if audio_device_combo:
@@ -1539,10 +1534,8 @@ class MultiSourceRecorderWidget(QWidget):
             number = QLabel(str(index + 1))
             enabled = QCheckBox()
             enabled.setChecked(index == 0)
-            if index == 0:
-                enabled.setEnabled(False)
-                enabled.toggled.connect(lambda checked, box=enabled: box.setChecked(True) if not checked else None)
             enabled.toggled.connect(lambda _checked: self.update_preview_panel_visibility())
+            enabled.toggled.connect(lambda _checked: self.update_start_availability())
             enabled.toggled.connect(lambda _checked: self.layout_preview_changed.emit())
             label = QLineEdit(f"Video {index + 1}")
             label.setMinimumWidth(60)
@@ -1747,6 +1740,26 @@ class MultiSourceRecorderWidget(QWidget):
         self.update_button_style(self.button_style)
         self.apply_layout_mode(theme.metrics())
         self.update_copy_mode_note()
+        self.update_start_availability()
+
+    def any_row_enabled(self):
+        return any(row[0].isChecked() for row in self.source_rows)
+
+    def update_start_availability(self):
+        """Start needs at least one enabled row; say so instead of failing later.
+
+        Only touches the idle state: while recording (or stopping) the buttons
+        and status line belong to the recording state machine.
+        """
+        if not hasattr(self, "start_btn") or self.processes or self.stop_btn.isEnabled():
+            return
+        if self.any_row_enabled():
+            self.start_btn.setEnabled(True)
+            if self.status_label.text() == _tr("Enable at least one source"):
+                self.status_label.setText(_tr("Not recording"))
+        else:
+            self.start_btn.setEnabled(False)
+            self.status_label.setText(_tr("Enable at least one source"))
 
     def _show_output_path_tail(self, _text=None):
         edit = self.output_folder_edit

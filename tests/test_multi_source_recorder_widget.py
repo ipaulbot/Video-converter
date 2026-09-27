@@ -351,26 +351,43 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
         self.assertEqual(len(widget.preview_boxes), 4)
         self.assertEqual(len(widget.ptz_overlay_buttons), 4)
 
-    def test_first_recording_row_cannot_be_unchecked(self):
+    def test_first_recording_row_can_be_unchecked_like_the_others(self):
+        # "Unassign" and "uncheck" both have to mean nothing shows -- a saved
+        # screen-capture source on row 1 must not be pinned on for ever.
         widget = MultiSourceRecorderWidget()
         first_enabled = widget.source_rows[0][0]
+        self.assertTrue(first_enabled.isEnabled())
 
         first_enabled.setChecked(False)
 
-        self.assertTrue(first_enabled.isChecked())
-        self.assertFalse(first_enabled.isEnabled())
+        self.assertFalse(first_enabled.isChecked())
+        self.assertTrue(widget.preview_boxes[0].isHidden())
 
-    def test_video_settings_keeps_first_recording_row_enabled(self):
+    def test_video_settings_can_disable_the_first_row(self):
         widget = MultiSourceRecorderWidget(auto_preview=False)
         dialog = VideoSettingsDialog(widget.source_rows, widget.output_controls(), parent=widget)
         first_enabled = dialog.dialog_rows[0][0]
+        self.assertTrue(first_enabled.isEnabled())
 
+        dialog.dialog_rows[0][3].setCurrentText("No source selected...")
         first_enabled.setChecked(False)
         dialog.apply_to_sources()
 
-        self.assertTrue(first_enabled.isChecked())
-        self.assertTrue(widget.source_rows[0][0].isChecked())
-        self.assertFalse(first_enabled.isEnabled())
+        self.assertFalse(first_enabled.isChecked())
+        self.assertFalse(widget.source_rows[0][0].isChecked())
+
+    def test_start_is_disabled_with_a_hint_when_no_row_is_enabled(self):
+        widget = MultiSourceRecorderWidget(auto_preview=False)
+        for row in widget.source_rows:
+            row[0].setChecked(False)
+
+        self.assertFalse(widget.start_btn.isEnabled())
+        self.assertEqual(widget.status_label.text(), "Enable at least one source")
+
+        widget.source_rows[1][0].setChecked(True)
+
+        self.assertTrue(widget.start_btn.isEnabled())
+        self.assertEqual(widget.status_label.text(), "Not recording")
 
     def test_preview_grid_uses_two_by_two_layout_for_four_sources(self):
         widget = MultiSourceRecorderWidget()
