@@ -604,3 +604,49 @@ Use this file to track user-visible fixes, improvements, and feature work.
   facts are placeholders the build lists until filled in. Design note:
   `docs/superpowers/specs/2026-09-26-portfolio-site-design.md`.
 - The 2.3.0 exe build is deferred to tomorrow at the owner's request.
+
+## 2026-09-27
+
+### Follow-up pass (18:20)
+
+Design note: `docs/superpowers/specs/2026-09-27-sidebar-context-panel-and-tools-design.md`.
+
+- **Sidebar is a context panel.** The per-tab headers are gone; one compact
+  header under the logo shows the current tab's glyph, title and one-line
+  description (three lines are reserved so the preview box below does not
+  hop between tabs). BallBuster borrows it while the game runs. The
+  "Current Video Settings" text is gone from the sidebar.
+- **Current Video Settings is a table in the Video Converter tab**, beside
+  the log under the files list: Format, Video codec, Audio codec,
+  Resolution, Bitrate, Frame rate, plus Time window and Mode (Copy only)
+  when set. Clicking it opens Settings -- Format, as the old text did. The
+  game hides it with the files table; the game's score, high score, level
+  and best level now run in the converter status line.
+- **Hide and show tools.** Right-click a tab for "Hide <tool>"; Menu -- Tools
+  lists every tool with a check mark and a "Show all" entry. Both write the
+  same `visible_tool_tabs` setting the Settings -- Tools tab uses. Hiding the
+  current tab selects the nearest visible one; the last visible tool cannot
+  be hidden (its entries are greyed).
+- **Leaf-shaped preview stays leaf-shaped.** The sidebar preview label paints
+  its pixmap (thumbnail, decoded frame, recorder schematic, star field)
+  clipped to the leaf outline, so a loaded or playing video no longer
+  squares off the rounded corners. The idle box is blank instead of reading
+  "No Preview".
+- **PC Report heartbeat.** While a report runs, a red heart pulses in the
+  sidebar leaf (0.9-1.1x on a 900 ms cycle), only while the PC Report tab is
+  current; the header heart layer is removed with the header. `PCReportWidget`
+  announces `report_running(bool)`; the main window relays it to
+  `PreviewController.show_heartbeat`.
+- **Media Player: one playlist for all panels.** Every panel's loads land in
+  one shared list; the Panel column says where each clip is showing;
+  double-click loads into the selected panel; N / P walk the shared list from
+  the selected panel's clip. The strip is capped per window mode
+  (`playlist_strip_h`: 92 px compact, 150 full) and compact panels are 136 px
+  (16:9 at their width), so compact mode no longer scrolls with the playlist
+  open.
+- **Recorder: row 1 is an ordinary row.** Its Use box can be unticked in the
+  Video Settings dialog and on the tab. With no row enabled the recorder's
+  Start is disabled and the status reads "Enable at least one source".
+- i18n: 23 new strings translated in nl and zh-CN (catalogues 474/474, .qm
+  rebuilt). Help: Main Window Overview, Settings -- Tools, Media Player
+  playlist and recorder Video Settings updated in all three languages.

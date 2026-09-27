@@ -99,6 +99,12 @@ Out of scope in the current design, kept for later:
   Windows that wait always expires, so Start Recording could be ~0.75 s
   faster per USB row by killing directly. Document in Help that the tile
   says "Configure the source" until a camera is chosen.
+- ~~Row 1's Use box could not be unticked, so a saved desktop capture in row
+  1 always came back.~~ Fixed 2026-09-27: every row is ordinary; Start is
+  disabled with "Enable at least one source" when no row is enabled.
+- The recorder's status label ("Enable at least one source", "Not
+  recording") is on the widget's hidden internal status row; the footer
+  status line the user actually sees does not carry it yet.
 - ~~Timer-dialog fields: time format, decimals, maximum time not read
   anywhere.~~ Fixed 2026-09-25: Time format / Decimals removed; "Use maximum
   recording time" is bound to the tab's Timer field. Document it.
@@ -158,7 +164,12 @@ Out of scope in the current design, kept for later:
 - Snapshot current frame to PNG.
 - Subtitle tracks and audio track selection.
 - Per-panel independent transport (today every panel shares one timeline).
-- Persist playlists between sessions.
+- Persist playlists between sessions (one shared list since 2026-09-27, so a
+  single `media_player.playlist` key with `items` and `offsets` suffices).
+- ~~The playlist strip showed only the selected panel's clips, and with it
+  open compact mode had to scroll.~~ Fixed 2026-09-27: one list shared by
+  every panel (Panel column says where each clip shows); strip capped per
+  window mode and compact panels at 136 px.
 - Turning the Media Player tab on by default.
 - ~~Playlist dock buttons overflow the dock width and are clipped.~~ Fixed
   2026-09-25: the dock uses four 24 px glyph buttons.
@@ -222,14 +233,16 @@ Tab merge follow-ups (2026-09-26):
 - Inspect panel: remember its splitter width per session (open/closed is
   remembered since the second pass on 2026-09-26; the width still starts at
   28 % of the stage).
-- Sidebar preview: with the Media Player showing the clip, its Inspect panel
-  showing the ffprobe data, and the recorder tab drawing its own layout
-  schematic, the left-hand preview box mostly duplicates what is on screen.
-  It still earns its place on the Video Converter tab (a frame of the file
-  being converted) and it is the drop target under the logo. Options: keep
-  it only on the Video Converter tab; fold it into the Converted Files row
-  (a thumbnail column); or drop it and reclaim the sidebar for settings. Ask
-  before removing -- the user said "for now have the preview work".
+- ~~Sidebar preview: the left-hand box mostly duplicates what is on screen;
+  reclaim the sidebar or drop it.~~ Resolved 2026-09-27 (option A): the
+  sidebar is a context panel (current tab's glyph, title, description over
+  the preview leaf); the settings text moved into the Video Converter tab
+  as a table; the leaf is blank when idle and pulses a heart for PC Report.
+  Still open: the Lossless Editor leaves the leaf blank (its input clip
+  could show there like the player's selected clip does).
+- Sidebar context header: the tab-bar right-click "Hide" menu closes
+  BallBuster only if the Video Converter is at index 0 (`on_tab_changed`
+  still hard-codes index 0 for the game check); make it key-based.
 - Inspect from a playlist row (right-click) without loading the clip into the
   panel first.
 - The Inspect panel re-runs ffprobe when the selected panel changes; cache the
