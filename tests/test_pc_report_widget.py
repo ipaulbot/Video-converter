@@ -239,16 +239,13 @@ class PCReportWidgetTests(unittest.TestCase):
         fake_ctypes.windll.shell32.ShellExecuteW.assert_not_called()
         self.assertIn("Stop the current conversion or recording", widget.status_label.text())
 
-    def test_header_is_the_shared_tab_header(self):
+    def test_widget_has_no_header_of_its_own(self):
+        # Since 2026-09-27 the sidebar context header names the current tab.
         widget = PCReportWidget()
-        self.assertIsInstance(widget.header, TabHeader)
-        self.assertEqual(widget.header.glyph_name, "pc")
-        self.assertEqual(widget.header.title_label.text(), "PC Report")
-        self.assertIs(widget.logo_label, widget.header.glyph_label)
-        # One glyph size in both modes.
+        self.assertIsNone(widget.findChild(TabHeader))
+        self.assertFalse(hasattr(widget, "header"))
         for metrics in (theme.FULL, theme.COMPACT):
-            widget.apply_layout_mode(metrics)
-            self.assertEqual(widget.logo_label.pixmap().width(), TabHeader.GLYPH_PX, metrics.name)
+            widget.apply_layout_mode(metrics)   # still callable like every tool
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)

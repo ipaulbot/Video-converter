@@ -1,8 +1,10 @@
 """The merged Video Converter tab: Converted Files table above the conversion log."""
 
 import unittest
+from unittest.mock import patch
 
-from PyQt5.QtWidgets import QApplication, QSplitter
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QAbstractItemView, QApplication, QSplitter
 
 from ui.main_window import VideoConverterApp
 
@@ -55,19 +57,84 @@ class VideoConverterTabTests(unittest.TestCase):
         window.restore_files_table_after_game()
         self.assertFalse(window.converted_files_widget.isHidden())
 
-    def test_game_borrows_the_tab_header_and_returns_it(self):
+    def test_game_borrows_the_sidebar_context_header_and_returns_it(self):
         window = self._window()
-        header = window.converter_header
+        header = window.context_header
+        window.tabs.setCurrentWidget(window.converter_tab_scroll)
         window.launch_ballbuster_game()
         try:
             self.assertEqual(header.glyph_name, "balls")
             self.assertEqual(header.title_label.text(), "BallBuster XT")
             self.assertIn("balls", header.description_label.text().lower())
+            # The game also takes the settings table's spot in the card.
+            self.assertTrue(window.settings_table_box.isHidden())
         finally:
             window.restore_log_view()
         self.assertEqual(header.glyph_name, "convert")
         self.assertEqual(header.title_label.text(), "Video Converter")
         self.assertTrue(header.description_label.text().startswith("Drop files"))
+        self.assertFalse(window.settings_table_box.isHidden())
+
+    def test_game_progress_is_reported_in_the_converter_status_line(self):
+        window = self._window()
+        window.tabs.setCurrentWidget(window.converter_tab_scroll)
+        window.launch_ballbuster_game()
+        try:
+            window.ballbuster_widget.score = 1234
+            window.update_game_progress()
+            text = window.status_label_log_tab.text()
+            self.assertIn("1234", text)
+            self.assertIn("Level", text)
+        finally:
+            window.restore_log_view()
+        self.assertNotIn("1234", window.status_label_log_tab.text())
+
+    # -- Current Video Settings table ------------------------------------
+    def test_current_video_settings_is_a_table_beside_the_log(self):
+        window = self._window()
+        table = window.settings_table
+        self.assertTrue(window.converter_tab.isAncestorOf(table))
+        lower = window.converter_lower_splitter
+        self.assertIsInstance(lower, QSplitter)
+        self.assertEqual(lower.orientation(), Qt.Horizontal)
+        self.assertTrue(lower.widget(0).isAncestorOf(window.log_container))
+        self.assertTrue(lower.widget(1).isAncestorOf(table))
+        self.assertIs(window.converter_splitter.widget(1), lower)
+        self.assertEqual(table.columnCount(), 2)
+        labels = [table.item(r, 0).text() for r in range(table.rowCount())]
+        self.assertEqual(labels[:6], ["Format", "Video codec", "Audio codec", "Resolution", "Bitrate", "Frame rate"])
+        self.assertEqual(table.editTriggers(), QAbstractItemView.NoEditTriggers)
+
+    def test_settings_table_reflects_the_current_settings(self):
+        window = self._window()
+        window.settings.update({
+            "output_format": "mkv", "video_codec": "H.265", "audio_codec": "Opus",
+            "video_size": "1280x720", "video_bitrate": "3500k", "framerate": "30",
+            "no_time_restrictions": False, "start_time": "08:00", "end_time": "17:00",
+            "copy_only": True,
+        })
+        window.update_settings_display()
+        table = window.settings_table
+        values = {table.item(r, 0).text(): table.item(r, 1).text() for r in range(table.rowCount())}
+        self.assertEqual(values["Format"], "MKV")
+        self.assertEqual(values["Video codec"], "H.265")
+        self.assertEqual(values["Audio codec"], "Opus")
+        self.assertEqual(values["Resolution"], "1280x720")
+        self.assertEqual(values["Bitrate"], "3500k")
+        self.assertEqual(values["Frame rate"], "30 fps")
+        self.assertEqual(values["Time window"], "08:00 - 17:00")
+        self.assertEqual(values["Mode"], "Copy only")
+        window.settings.update({"no_time_restrictions": True, "copy_only": False})
+        window.update_settings_display()
+        labels = [table.item(r, 0).text() for r in range(table.rowCount())]
+        self.assertNotIn("Time window", labels)
+        self.assertNotIn("Mode", labels)
+
+    def test_clicking_the_settings_table_opens_the_format_settings(self):
+        window = self._window()
+        with patch.object(window, "show_settings") as show:
+            window._settings_table_clicked(0, 1)
+        show.assert_called_once_with(tab_index=3)
 
 
 if __name__ == "__main__":

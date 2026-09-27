@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QLabel
 
 from ui import theme
@@ -75,6 +76,29 @@ class TabHeaderTests(unittest.TestCase):
         header.set_heading("convert", "Video Converter", "Watches a folder.")
         self.assertEqual(header.glyph_label.pixmap().toImage(), before)
         self.assertEqual(header.title_label.text(), "Video Converter")
+
+    def test_compact_variant_stacks_glyph_over_centred_text_at_sidebar_width(self):
+        # The sidebar context panel: 180 px wide, glyph above title above
+        # description, everything centred.
+        header = TabHeader("record", "Multi-Source Recorder", "Record up to four sources.", compact=True)
+        self.addCleanup(header.close)
+        self.assertTrue(header.compact)
+        self.assertEqual(header.width(), 180)
+        self.assertEqual(header.minimumWidth(), header.maximumWidth())
+        self.assertEqual(header.title_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignHCenter)
+        self.assertEqual(header.description_label.alignment() & Qt.AlignHorizontal_Mask, Qt.AlignHCenter)
+        self.assertTrue(header.title_label.wordWrap())
+        header.show()
+        try:
+            for _ in range(4):
+                self.app.processEvents()
+            self.assertLess(header.glyph_label.geometry().bottom(), header.title_label.geometry().top())
+            self.assertLess(header.title_label.geometry().bottom(), header.description_label.geometry().top())
+        finally:
+            header.hide()
+        # Swapping headings keeps the compact geometry.
+        header.set_heading("balls", "BallBuster XT", "Pop balls.")
+        self.assertEqual(header.width(), 180)
 
     def test_a_layer_can_sit_under_the_glyph(self):
         header = TabHeader("pc", "PC Report")

@@ -28,7 +28,6 @@ from conversion.lossless_commands import (
 )
 from ui import theme
 from ui.glyph_icons import make_icon_button, reskin_icon_buttons
-from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.resources import resource_path
 from utils.subprocess_helpers import get_subprocess_startupinfo
@@ -83,13 +82,7 @@ class LosslessEditorWidget(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
-
-        self.header = TabHeader(
-            "scissors",
-            _tr("Lossless Editor"),
-            _tr("Trim, remux, extract or remove audio, and merge clips without re-encoding."),
-        )
-        layout.addWidget(self.header)
+        # No header of its own: the sidebar context header names the current tab.
 
         file_row = QHBoxLayout()
         file_row.setSpacing(6)
@@ -223,7 +216,6 @@ class LosslessEditorWidget(QWidget):
 
     def reskin(self):
         """Called by the main window on skin change; re-derive tiers from the skin."""
-        self.header.reskin()
         self._apply_tier_styles()
 
     def update_button_style(self, button_style):

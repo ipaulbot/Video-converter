@@ -48,7 +48,6 @@ from ui.media_player_support import (
     prefer_windows_media_foundation,
     probe_media_info,
 )
-from ui.tab_header import TabHeader
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
 
@@ -679,14 +678,7 @@ class MediaPlayerWidget(QWidget):
         # way; 16 px here put this header below and right of the others'.
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
-
-        self.header = TabHeader(
-            "player",
-            _tr("Media Player"),
-            _tr("Review up to four clips side by side with one transport; Inspect shows "
-                "the selected clip's ffprobe details."),
-        )
-        layout.addWidget(self.header)
+        # No header of its own: the sidebar context header names the current tab.
 
         self.grid = QGridLayout()
         self.grid.setSpacing(8)
@@ -857,7 +849,6 @@ class MediaPlayerWidget(QWidget):
     def reskin(self):
         """Repaint every glyph (transport, panels, playlist dock) in the current skin."""
         self._icon_color = theme.skin().accent
-        self.header.reskin()
         reskin_icon_buttons(self, self._icon_color)
         self._set_play_glyph(self._is_playing)
         set_button_glyph(

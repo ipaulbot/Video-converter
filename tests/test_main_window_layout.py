@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 
 from ui import theme
@@ -254,13 +254,24 @@ class TabHeaderUnityTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
-    def test_every_tool_tab_opens_with_the_same_header_glyph_and_its_title(self):
+    def _window(self):
         with patch("ui.main_window.save_settings"):
             window = VideoConverterApp()
         self.addCleanup(window.shutdown)
+        window.settings["visible_tool_tabs"] = dict.fromkeys(
+            window.settings.get("visible_tool_tabs", {}), True)
+        window.apply_tool_tab_visibility()
         window._ensure_media_player_widget()
-        headers = window.tab_headers()
-        self.assertEqual(set(headers), set(window.tool_tab_widgets))
+        return window
+
+    def test_the_sidebar_context_header_follows_the_current_tab(self):
+        # Since 2026-09-27 the one TabHeader lives in the sidebar under the
+        # logo and describes whichever tool tab is current.
+        window = self._window()
+        header = window.context_header
+        self.assertIsInstance(header, TabHeader)
+        self.assertTrue(header.compact)
+        self.assertEqual(header.width(), 180)
         expected = {
             "video_converter": ("convert", "Video Converter"),
             "pc_report": ("pc", "PC Report"),
@@ -269,39 +280,43 @@ class TabHeaderUnityTests(unittest.TestCase):
             "media_player": ("player", "Media Player"),
         }
         for key, (glyph, title) in expected.items():
-            header = headers[key]
-            self.assertIsInstance(header, TabHeader, key)
+            window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
             self.assertEqual(header.glyph_name, glyph, key)
             self.assertEqual(header.title_label.text(), title, key)
             self.assertEqual(header.title_label.text(), window.tabs.tabText(
                 window.tabs.indexOf(window.tool_tab_widgets[key])), key)
-            self.assertEqual(header.glyph_label.width(), TabHeader.GLYPH_PX, key)
-            self.assertFalse(header.description_label.isHidden(), key)
-        self.assertIn(window.converter_header, window.reskin_widgets())
+            self.assertTrue(header.description_label.text(), key)
+        self.assertIn(header, window.reskin_widgets())
+        self.assertEqual(set(window.tab_headers()), set(window.tool_tab_widgets))
+        self.assertTrue(all(h is header for h in window.tab_headers().values()))
 
-    def test_every_tool_tab_header_sits_at_the_same_spot_in_the_window(self):
-        # The recorder's and the player's headers sat 6 / 16 px lower and
-        # further right than the others: their widgets kept their own outer
-        # layout margins while the other tabs use none.
-        with patch("ui.main_window.save_settings"):
-            window = VideoConverterApp()
-        self.addCleanup(window.shutdown)
-        window.settings["visible_tool_tabs"] = dict.fromkeys(
-            window.settings.get("visible_tool_tabs", {}), True)
-        window.apply_tool_tab_visibility()
-        window._ensure_media_player_widget()
+    def test_the_context_header_sits_between_the_logo_and_the_preview(self):
+        window = self._window()
+        left = window.left_layout
+        self.assertLess(left.indexOf(window.logo_label), left.indexOf(window.context_header))
+        self.assertLess(left.indexOf(window.context_header), left.indexOf(window.preview_container))
+
+    def test_tool_tabs_carry_no_header_of_their_own(self):
+        window = self._window()
+        for key, widget in window.tool_tab_widgets.items():
+            self.assertIsNone(widget.findChild(TabHeader), key)
+
+    def test_the_sidebar_no_longer_carries_the_settings_text(self):
+        window = self._window()
+        self.assertFalse(hasattr(window, "settings_display"))
+
+    def test_the_glyph_of_the_context_header_is_centred_over_its_title(self):
+        window = self._window()
         window.move(-7000, -7000)
         window.show()
         try:
-            spots = {}
-            for key, header in window.tab_headers().items():
-                window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
-                for _ in range(6):
-                    self.app.processEvents()
-                origin = header.mapTo(window, QPoint(0, 0))
-                glyph = header.glyph_label.mapTo(window, QPoint(0, 0))
-                spots[key] = (origin.x(), origin.y(), glyph.y() - origin.y())
-            self.assertEqual(len(set(spots.values())), 1, spots)
+            for _ in range(6):
+                self.app.processEvents()
+            header = window.context_header
+            glyph = header.glyph_label.geometry()
+            title = header.title_label.geometry()
+            self.assertLess(glyph.bottom(), title.top())
+            self.assertAlmostEqual(glyph.center().x(), header.width() // 2, delta=2)
         finally:
             window.hide()
 

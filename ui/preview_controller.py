@@ -69,7 +69,7 @@ class PreviewController(QObject):
         self.preview_container = QFrame()
         self.preview_container.setStyleSheet(theme.preview_box_style())
         # Keep aspect ratio 16:9 and match sidebar content width for clean alignment
-        # (settings_display is fixedWidth(180) below)
+        # (the context header and Start button are fixedWidth(180) too)
         self.preview_container.setFixedSize(180, 101)
         self.preview_container.setMouseTracking(True)  # Enable mouse tracking for hover events
         self.preview_container.setAttribute(Qt.WA_Hover, True)  # Enable hover events

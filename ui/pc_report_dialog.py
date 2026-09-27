@@ -31,7 +31,6 @@ from pc_report.render_json import render as render_json
 from pc_report.section import esc
 from ui import theme
 from ui.glyph_icons import set_link_glyph
-from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 
@@ -110,18 +109,9 @@ class PCReportWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
 
-        # The shared tab header: a monitor glyph, title, description. While a
-        # report runs the sidebar leaf pulses a red heart (see report_running).
-        self.header = TabHeader(
-            "pc",
-            _tr("PC Report"),
-            _tr("Collects system details for support. Redaction is always on."),
-        )
-        self.logo_label = self.header.glyph_label
-        self.logo_width = TabHeader.GLYPH_PX
-        self._set_logo()
-        layout.addWidget(self.header)
-
+        # No header of its own: the sidebar context header names the current
+        # tab, and while a report runs the sidebar leaf pulses a red heart
+        # (see report_running).
         actions = QHBoxLayout()
         actions.setSpacing(14)
         self.btn_run = QPushButton(_tr("Generate PC Report"))
@@ -173,11 +163,6 @@ class PCReportWidget(QWidget):
         self.btn_folder.clicked.connect(self.open_report_folder)
         self.btn_admin.clicked.connect(self.relaunch_elevated)
 
-    def _set_logo(self):
-        """Paint the monitor glyph for the current state."""
-        accent = theme.skin_for_state(locked=self.locked, active=self.converting).accent
-        self.header.reskin(accent)
-
     _LINK_GLYPHS = {"btn_open": "report", "btn_folder": "folder_open", "btn_admin": "shield"}
 
     def _apply_tier_styles(self):
@@ -189,9 +174,8 @@ class PCReportWidget(QWidget):
             set_link_glyph(link, glyph, accent)
 
     def apply_layout_mode(self, metrics):
-        # The header glyph has one size in both modes (metrics.pc_report_logo_w
-        # is no longer applied); the heart keeps in step with it.
-        self._set_logo()
+        """Nothing here depends on the window mode (metrics.pc_report_logo_w is
+        no longer applied); kept so the main window can treat every tool alike."""
 
     @staticmethod
     def is_elevated():
@@ -350,7 +334,6 @@ class PCReportWidget(QWidget):
         self.button_style = button_style or self.button_style
         self.converting = converting
         self.locked = locked
-        self._set_logo()
         self._apply_tier_styles()
         self._set_progress_color(theme.skin_for_state(locked=locked, active=converting).accent)
 
