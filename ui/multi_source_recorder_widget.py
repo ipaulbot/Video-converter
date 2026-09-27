@@ -1217,9 +1217,7 @@ class VideoSettingsDialog(QDialog):
         row_resolution.setToolTip(_tr("Supported resolutions detected from the camera driver."))
 
     def apply_to_sources(self):
-        for row_index, (source_row, dialog_row) in enumerate(
-            zip(self.source_rows, self.dialog_rows, strict=False)
-        ):
+        for source_row, dialog_row in zip(self.source_rows, self.dialog_rows, strict=False):
             enabled, label_edit, type_combo, source_edit = source_row[:4]
             audio_name_edit = source_row[4] if len(source_row) > 4 else None
             audio_device_combo = source_row[7] if len(source_row) > 7 else None
