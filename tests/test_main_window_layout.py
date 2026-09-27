@@ -391,7 +391,7 @@ class ToolVisibilityTests(unittest.TestCase):
         self.assertFalse(window.tool_visibility_actions[order[0]].isEnabled())
         menu = window.tab_context_menu_for(window.tabs.indexOf(window.tool_tab_widgets[order[0]]))
         hide = menu.actions()[0]
-        self.assertEqual(hide.text(), "Hide %s" % window.tabs.tabText(0))
+        self.assertEqual(hide.text(), f"Hide {window.tabs.tabText(0)}")
         self.assertFalse(hide.isEnabled())
 
     def test_right_click_menu_hides_that_tab(self):
