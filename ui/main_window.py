@@ -782,6 +782,7 @@ class VideoConverterApp(QMainWindow):
             mode_group.addAction(action)
             action.triggered.connect(lambda _checked, m=mode: self.set_window_mode(m))
             self.window_mode_actions[mode] = action
+        self._build_tools_menu(burger_menu)
         self._add_language_menu(burger_menu)
         burger_menu.addAction(_tr("Check for Updates"), self.check_for_updates)
         burger_menu.addSeparator()
@@ -1095,6 +1096,97 @@ class VideoConverterApp(QMainWindow):
                 self.tabs.setTabVisible(index, bool(visible_tabs.get(key, False)))
             except AttributeError:
                 widget.setVisible(bool(visible_tabs.get(key, False)))
+        self._sync_tool_visibility_actions()
+
+    # -- hiding and showing tools ----------------------------------------
+    def _build_tools_menu(self, parent_menu):
+        """Burger > Tools: one checkable action per tool tab, plus Show all."""
+        self.tools_menu = parent_menu.addMenu(_tr("Tools"))
+        self.tool_visibility_actions = {}
+        for key in self.tool_tab_widgets:
+            action = self.tools_menu.addAction(self.tabs.tabText(self.tabs.indexOf(self.tool_tab_widgets[key])))
+            action.setCheckable(True)
+            action.triggered.connect(lambda checked, k=key: self.set_tool_visible(k, checked))
+            self.tool_visibility_actions[key] = action
+        self.tools_menu.addSeparator()
+        self.show_all_tools_action = self.tools_menu.addAction(_tr("Show all"))
+        self.show_all_tools_action.triggered.connect(self.show_all_tools)
+        # Right-click on a tab hides that tool.
+        bar = self.tabs.tabBar()
+        bar.setContextMenuPolicy(Qt.CustomContextMenu)
+        bar.customContextMenuRequested.connect(self._on_tab_bar_context_menu)
+        self._sync_tool_visibility_actions()
+
+    def visible_tool_keys(self):
+        visible = self.settings.get('visible_tool_tabs', {})
+        return [key for key in self.tool_tab_widgets if visible.get(key, False)]
+
+    def _sync_tool_visibility_actions(self):
+        actions = getattr(self, 'tool_visibility_actions', None)
+        if not actions:
+            return
+        visible = self.visible_tool_keys()
+        for key, action in actions.items():
+            action.blockSignals(True)
+            action.setChecked(key in visible)
+            # The last visible tool stays: an empty window has no way back.
+            action.setEnabled(not (len(visible) == 1 and visible[0] == key))
+            action.blockSignals(False)
+
+    def set_tool_visible(self, key, visible):
+        """Show or hide one tool tab, persisting settings["visible_tool_tabs"].
+
+        Refuses to hide the last visible tool. Hiding the current tab selects
+        the nearest visible one so the window never shows an empty pane.
+        """
+        visible = bool(visible)
+        table = dict(self.settings.get('visible_tool_tabs', {}))
+        if not visible and self.visible_tool_keys() == [key]:
+            self._sync_tool_visibility_actions()
+            return False
+        if table.get(key, False) == visible:
+            self._sync_tool_visibility_actions()
+            return True
+        if not visible and self.current_tool_key() == key:
+            order = self.current_tool_tab_order()
+            shown = [k for k in order if table.get(k, False) and k != key]
+            position = order.index(key)
+            nearest = min(shown, key=lambda k: (abs(order.index(k) - position), order.index(k) < position))
+            self.tabs.setCurrentWidget(self.tool_tab_widgets[nearest])
+        table[key] = visible
+        self.settings['visible_tool_tabs'] = table
+        save_settings(self.settings)
+        self.apply_tool_tab_visibility()
+        return True
+
+    def show_all_tools(self):
+        self.settings['visible_tool_tabs'] = dict.fromkeys(self.tool_tab_widgets, True)
+        save_settings(self.settings)
+        self.apply_tool_tab_visibility()
+
+    def tab_context_menu_for(self, index):
+        """The right-click menu for the tab at `index` (None if it is not a tool tab)."""
+        from PyQt5.QtWidgets import QMenu
+        widget = self.tabs.widget(index)
+        key = next((k for k, w in self.tool_tab_widgets.items() if w is widget), None)
+        if key is None:
+            return None
+        menu = QMenu(self)
+        hide = menu.addAction(_tr("Hide %(tool)s") % {"tool": self.tabs.tabText(index)})
+        hide.setEnabled(self.visible_tool_keys() != [key])
+        hide.triggered.connect(lambda _checked=False, k=key: self.set_tool_visible(k, False))
+        menu.addSeparator()
+        menu.addAction(_tr("Show all tools"), self.show_all_tools)
+        return menu
+
+    def _on_tab_bar_context_menu(self, pos):
+        bar = self.tabs.tabBar()
+        index = bar.tabAt(pos)
+        if index < 0:
+            return
+        menu = self.tab_context_menu_for(index)
+        if menu is not None:
+            menu.exec_(bar.mapToGlobal(pos))
 
     def lock_icon_clicked(self, event):
         self.toggle_lock()

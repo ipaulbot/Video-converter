@@ -321,6 +321,99 @@ class TabHeaderUnityTests(unittest.TestCase):
             window.hide()
 
 
+class ToolVisibilityTests(unittest.TestCase):
+    """Right-click a tab to hide it; the burger's Tools submenu shows/hides any tool."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def _window(self):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        window.settings["visible_tool_tabs"] = dict.fromkeys(window.tool_tab_widgets, True)
+        window.apply_tool_tab_visibility()
+        return window
+
+    def _visible(self, window, key):
+        return window.tabs.isTabVisible(window.tabs.indexOf(window.tool_tab_widgets[key]))
+
+    def test_burger_tools_submenu_lists_every_tool_with_a_check_mark(self):
+        window = self._window()
+        actions = window.tool_visibility_actions
+        self.assertEqual(set(actions), set(window.tool_tab_widgets))
+        for key, action in actions.items():
+            self.assertTrue(action.isCheckable(), key)
+            self.assertTrue(action.isChecked(), key)
+            self.assertEqual(action.text(), window.tabs.tabText(
+                window.tabs.indexOf(window.tool_tab_widgets[key])), key)
+        self.assertIn(window.show_all_tools_action, window.tools_menu.actions())
+
+    def test_unchecking_a_tool_hides_its_tab_and_is_saved(self):
+        window = self._window()
+        with patch("ui.main_window.save_settings") as save:
+            window.tool_visibility_actions["pc_report"].trigger()
+        save.assert_called_once()
+        self.assertFalse(window.settings["visible_tool_tabs"]["pc_report"])
+        self.assertFalse(self._visible(window, "pc_report"))
+        with patch("ui.main_window.save_settings"):
+            window.tool_visibility_actions["pc_report"].trigger()
+        self.assertTrue(self._visible(window, "pc_report"))
+
+    def test_show_all_brings_every_tool_back(self):
+        window = self._window()
+        with patch("ui.main_window.save_settings"):
+            window.set_tool_visible("pc_report", False)
+            window.set_tool_visible("media_player", False)
+            window.show_all_tools_action.trigger()
+        self.assertTrue(all(window.settings["visible_tool_tabs"].values()))
+        self.assertTrue(all(self._visible(window, k) for k in window.tool_tab_widgets))
+        self.assertTrue(all(a.isChecked() for a in window.tool_visibility_actions.values()))
+
+    def test_hiding_the_current_tab_moves_to_the_nearest_visible_one(self):
+        window = self._window()
+        order = window.current_tool_tab_order()
+        window.tabs.setCurrentWidget(window.tool_tab_widgets[order[1]])
+        with patch("ui.main_window.save_settings"):
+            window.set_tool_visible(order[1], False)
+        self.assertEqual(window.current_tool_key(), order[2])
+
+    def test_the_last_visible_tool_cannot_be_hidden(self):
+        window = self._window()
+        order = window.current_tool_tab_order()
+        with patch("ui.main_window.save_settings"):
+            for key in order[1:]:
+                window.set_tool_visible(key, False)
+            window.set_tool_visible(order[0], False)      # refused
+        self.assertTrue(window.settings["visible_tool_tabs"][order[0]])
+        self.assertTrue(self._visible(window, order[0]))
+        self.assertFalse(window.tool_visibility_actions[order[0]].isEnabled())
+        menu = window.tab_context_menu_for(window.tabs.indexOf(window.tool_tab_widgets[order[0]]))
+        hide = menu.actions()[0]
+        self.assertEqual(hide.text(), "Hide %s" % window.tabs.tabText(0))
+        self.assertFalse(hide.isEnabled())
+
+    def test_right_click_menu_hides_that_tab(self):
+        window = self._window()
+        index = window.tabs.indexOf(window.tool_tab_widgets["lossless_editor"])
+        self.assertEqual(window.tabs.tabBar().contextMenuPolicy(), Qt.CustomContextMenu)
+        menu = window.tab_context_menu_for(index)
+        hide = menu.actions()[0]
+        self.assertEqual(hide.text(), "Hide Lossless Editor")
+        with patch("ui.main_window.save_settings"):
+            hide.trigger()
+        self.assertFalse(self._visible(window, "lossless_editor"))
+        self.assertFalse(window.tool_visibility_actions["lossless_editor"].isChecked())
+
+    def test_settings_written_elsewhere_refresh_the_check_marks(self):
+        window = self._window()
+        window.settings["visible_tool_tabs"]["media_player"] = False
+        window.apply_tool_tab_visibility()
+        self.assertFalse(window.tool_visibility_actions["media_player"].isChecked())
+        self.assertFalse(self._visible(window, "media_player"))
+
+
 class MovableTabTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
