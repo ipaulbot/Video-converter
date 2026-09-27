@@ -23,7 +23,6 @@ from PyQt5.QtCore import QCoreApplication, QEvent, QObject, QProcess, QSize, Qt,
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
     QFrame,
-    QLabel,
     QPushButton,
     QSlider,
     QStackedLayout,
@@ -33,6 +32,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.leaf_frame import LeafPixmapLabel
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.subprocess_helpers import (
@@ -40,7 +40,6 @@ from utils.subprocess_helpers import (
     FFPROBE_TIMEOUT,
     get_subprocess_startupinfo,
 )
-
 
 
 def _tr(source: str) -> str:
@@ -81,8 +80,11 @@ class PreviewController(QObject):
         self.preview_layout.setStackingMode(QStackedLayout.StackAll)
         self.preview_layout.setContentsMargins(0,0,0,0)
 
-        # 1. Preview Label (thumbnail + decoded frames)
-        self.preview_label = QLabel(_tr("No Preview"))
+        # 1. Preview Label (thumbnail + decoded frames), painted inside the leaf
+        # outline so a frame never squares off the container's rounded corners.
+        # Idle is a blank leaf: a caption would read as an error on tabs that
+        # simply have nothing to preview.
+        self.preview_label = LeafPixmapLabel("", radius=18)
         self.preview_label.setAlignment(Qt.AlignCenter)
         self.preview_label.setStyleSheet(theme.preview_placeholder_style())
         self.preview_label.setMouseTracking(True)  # Enable mouse tracking
@@ -228,10 +230,9 @@ class PreviewController(QObject):
         self._start_preview_process(self.preview_source_path, seek_seconds=self.preview_seek_seconds)
 
     def _set_preview_placeholder(self, text=None):
-        # Resolved here rather than as a default argument: a default is
-        # evaluated once at import, which would freeze the startup language.
+        """Show `text` in the empty leaf; None (the idle state) shows nothing."""
         if text is None:
-            text = _tr("No Preview")
+            text = ""
         try:
             # Was a fourth copy of the locked/active/idle colour chain.
             self._host._sync_theme_skin()
@@ -270,7 +271,7 @@ class PreviewController(QObject):
             self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
         except Exception:
             logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
-        self._set_preview_placeholder(_tr("No Preview"))
+        self._set_preview_placeholder()
 
     def _start_star_field(self, theme_name=None):
         """Start animated star field in preview box."""
@@ -390,7 +391,7 @@ class PreviewController(QObject):
         """Generate and show a thumbnail for the given file."""
         try:
             if not file_path or not os.path.exists(file_path):
-                self._set_preview_placeholder(_tr("No Preview"))
+                self._set_preview_placeholder()
                 return
 
             import tempfile
@@ -430,10 +431,10 @@ class PreviewController(QObject):
                 self.preview_label.setText("")
                 self.preview_label.setPixmap(pix)
             else:
-                self._set_preview_placeholder(_tr("No Preview"))
+                self._set_preview_placeholder()
         except Exception as e:
             logger.error(f"Thumbnail generation failed: {e}")
-            self._set_preview_placeholder(_tr("No Preview"))
+            self._set_preview_placeholder()
 
     def _stop_preview_process(self):
         try:

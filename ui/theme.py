@@ -624,7 +624,7 @@ def preview_box_style(radius: int = 18) -> str:
 
 
 def preview_placeholder_style(color: str | None = None) -> str:
-    """The 'No Preview' text inside the preview box."""
+    """A caption inside the (otherwise blank) preview box."""
     return (
         f"QLabel {{ color: {color or skin().accent}; font-size: 14px; "
         f"font-weight: normal; background-color: transparent; border: none; }}"

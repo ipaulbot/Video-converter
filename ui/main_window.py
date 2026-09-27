@@ -1546,7 +1546,7 @@ class VideoConverterApp(QMainWindow):
         elif self._showing_recorder_layout_preview:
             # Leaving the recorder tab: drop the schematic so a later file preview is clean.
             self._showing_recorder_layout_preview = False
-            self._set_preview_placeholder("No Preview")
+            self._set_preview_placeholder()
 
     def _refresh_recorder_layout_preview_if_active(self):
         if self._recorder_tab_is_active():
@@ -2875,7 +2875,7 @@ class VideoConverterApp(QMainWindow):
         self.preview_frame_index = 0
         self.preview_playing = False
         self.play_pause_btn.hide()
-        self._set_preview_placeholder(text="No Preview")
+        self._set_preview_placeholder()
     def clear_pc_report_tab(self, event=None):
         widget = getattr(self, 'pc_report_widget', None)
         if widget and hasattr(widget, 'output'):
@@ -3167,7 +3167,7 @@ class VideoConverterApp(QMainWindow):
     def update_preview_controls_style(self):
         return self.preview.update_preview_controls_style()
 
-    def _set_preview_placeholder(self, text="No Preview"):
+    def _set_preview_placeholder(self, text=None):
         return self.preview._set_preview_placeholder(text)
 
     def _clear_preview_display(self):
