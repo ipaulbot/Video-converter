@@ -105,6 +105,46 @@ class PreviewControllerTests(unittest.TestCase):
         self.assertEqual(at(g.left() + 1, g.bottom() - 1), red)        # bottom-left: square
         self.assertEqual(at(g.center().x(), g.center().y()), red)      # middle: painted
 
+    # -- heartbeat (PC Report) -------------------------------------------
+    def test_heartbeat_paints_a_pulsing_red_heart_into_the_blank_leaf(self):
+        from PyQt5.QtGui import QColor
+        self.assertFalse(self.pc.heartbeat_active)
+        self.pc.show_heartbeat(True)
+        self.assertTrue(self.pc.heartbeat_active)
+        self.assertTrue(self.pc._heartbeat_timer.isActive())
+        self.assertEqual(self.pc.preview_label.text(), "")
+        frame = self.pc.preview_label.pixmap()
+        self.assertFalse(frame.isNull())
+        centre = QColor(frame.toImage().pixel(frame.width() // 2, frame.height() // 2))
+        self.assertGreater(centre.red(), 200)
+        self.assertLess(centre.green(), 120)
+        # The pulse changes the heart's size from tick to tick.
+        first = self.pc._heartbeat_scale
+        self.pc._tick_heartbeat()
+        self.assertNotEqual(self.pc._heartbeat_scale, first)
+        self.assertTrue(0.85 <= self.pc._heartbeat_scale <= 1.15)
+
+    def test_stopping_the_heartbeat_returns_to_the_blank_leaf(self):
+        self.pc.show_heartbeat(True)
+        self.pc.show_heartbeat(False)
+        self.assertFalse(self.pc.heartbeat_active)
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
+        self.assertTrue(self.pc.preview_label.pixmap() is None or self.pc.preview_label.pixmap().isNull())
+        self.assertEqual(self.pc.preview_label.text(), "")
+
+    def test_heartbeat_is_idempotent(self):
+        self.pc.show_heartbeat(True)
+        self.pc.show_heartbeat(True)
+        self.assertTrue(self.pc._heartbeat_timer.isActive())
+        self.pc.show_heartbeat(False)
+        self.pc.show_heartbeat(False)
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
+
+    def test_shutdown_stops_the_heartbeat(self):
+        self.pc.show_heartbeat(True)
+        self.pc.shutdown()
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
+
     # -- theming --------------------------------------------------------
     def test_widgets_take_their_colours_from_the_theme(self):
         accent = theme.skin().accent

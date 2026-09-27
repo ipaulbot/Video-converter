@@ -56,6 +56,25 @@ class TabCardTests(unittest.TestCase):
         for key, card in self.window.tool_tab_cards.items():
             self.assertIsInstance(card, LeafFrame, key)
 
+    def test_pc_report_heartbeat_shows_only_while_its_tab_is_current(self):
+        w = self.window
+        tabs = w.tabs
+        pc_index = tabs.indexOf(w.tool_tab_widgets["pc_report"])
+        conv_index = tabs.indexOf(w.tool_tab_widgets["video_converter"])
+        try:
+            tabs.setCurrentIndex(pc_index)
+            w.pc_report_widget.report_running.emit(True)
+            self.assertTrue(w.preview.heartbeat_active)
+            tabs.setCurrentIndex(conv_index)
+            self.assertFalse(w.preview.heartbeat_active)
+            tabs.setCurrentIndex(pc_index)
+            self.assertTrue(w.preview.heartbeat_active)
+            w.pc_report_widget.report_running.emit(False)
+            self.assertFalse(w.preview.heartbeat_active)
+        finally:
+            w.pc_report_widget.report_running.emit(False)
+            tabs.setCurrentIndex(conv_index)
+
     def test_tab_pane_has_no_border_of_its_own(self):
         self.assertIn(
             "QTabWidget::pane { border: none; background: transparent;",

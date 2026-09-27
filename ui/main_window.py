@@ -584,6 +584,8 @@ class VideoConverterApp(QMainWindow):
             converting=converting_or_monitoring,
             locked=bool(getattr(self, 'locked', False))
         )
+        self._pc_report_running = False
+        self.pc_report_widget.report_running.connect(self._on_pc_report_running)
         self.pc_report_tab = QWidget()
         pc_report_layout = QVBoxLayout(self.pc_report_tab)
         pc_report_layout.setContentsMargins(0, 0, 0, 0)
@@ -3537,6 +3539,22 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget and index != 0:
             self.ballbuster_widget.close()
         self.update_single_workflow_availability()
+        self._sync_pc_report_heartbeat()
+
+    def _on_pc_report_running(self, running):
+        self._pc_report_running = bool(running)
+        self._sync_pc_report_heartbeat()
+
+    def _pc_report_tab_is_active(self):
+        scroll = getattr(self, "pc_report_tab_scroll", None)
+        return scroll is not None and self.tabs.currentWidget() is scroll
+
+    def _sync_pc_report_heartbeat(self):
+        """The heart pulses in the sidebar leaf only while PC Report is the current tab."""
+        preview = getattr(self, "preview", None)
+        if preview is None:
+            return
+        preview.show_heartbeat(self._pc_report_running and self._pc_report_tab_is_active())
 
     def exit_game(self):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget:

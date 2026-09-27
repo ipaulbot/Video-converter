@@ -171,8 +171,75 @@ class PreviewController(QObject):
         self.preview_ui_timer.setInterval(100)
         self.preview_ui_timer.timeout.connect(self._tick_preview_ui)
         self.preview_ui_timer.start()
+
+        # PC Report heartbeat: a red heart pulsing in the otherwise blank leaf
+        # while a report runs. Painted here, not in the PC Report tab, so the
+        # sidebar shows the work of the tool that owns it.
+        self.heartbeat_active = False
+        self._heartbeat_scale = 1.0
+        self._heartbeat_tick = 0
+        self._heartbeat_timer = QTimer(self)
+        self._heartbeat_timer.setInterval(self.HEARTBEAT_TICK_MS)
+        self._heartbeat_timer.timeout.connect(self._tick_heartbeat)
         self.update_preview_controls_style()
 
+    # -- heartbeat ------------------------------------------------------
+    HEARTBEAT_PERIOD_MS = 900
+    HEARTBEAT_TICK_MS = 50
+    HEARTBEAT_COLOR = "#f75f5f"
+
+    def show_heartbeat(self, active):
+        """Pulse a red heart in the leaf (True) or return to the idle state (False)."""
+        active = bool(active)
+        if active == self.heartbeat_active:
+            return
+        self.heartbeat_active = active
+        if active:
+            self.play_pause_btn.hide()
+            self.preview_scrubber.hide()
+            self._heartbeat_tick = 0
+            self._paint_heartbeat()
+            self._heartbeat_timer.start()
+            return
+        self._heartbeat_timer.stop()
+        self._heartbeat_scale = 1.0
+        if self.preview_source_path and not self.preview_playing:
+            # Hand the leaf back to the file that was being previewed.
+            self._generate_and_show_thumbnail(self.preview_source_path)
+        elif not self.preview_source_path:
+            self._set_preview_placeholder()
+
+    def _tick_heartbeat(self):
+        self._heartbeat_tick += 1
+        self._paint_heartbeat()
+
+    def _paint_heartbeat(self):
+        import math
+
+        from PyQt5.QtGui import QColor, QPainter, QPainterPath
+
+        phase = (self._heartbeat_tick * self.HEARTBEAT_TICK_MS % self.HEARTBEAT_PERIOD_MS) / self.HEARTBEAT_PERIOD_MS
+        self._heartbeat_scale = 1.0 + 0.1 * math.sin(2 * math.pi * phase)
+        w, h = self.preview_w, self.preview_h
+        pixmap = QPixmap(w, h)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QColor(self.HEARTBEAT_COLOR))
+        size = h * 0.55 * self._heartbeat_scale
+        painter.translate(w / 2, h / 2 + size * 0.05)
+        painter.scale(size / 100.0, size / 100.0)
+        # A heart on a 100-unit canvas centred on the origin.
+        heart = QPainterPath()
+        heart.moveTo(0, 45)
+        heart.cubicTo(-70, 0, -40, -55, 0, -25)
+        heart.cubicTo(40, -55, 70, 0, 0, 45)
+        heart.closeSubpath()
+        painter.drawPath(heart)
+        painter.end()
+        self.preview_label.setText("")
+        self.preview_label.setPixmap(pixmap)
 
     def eventFilter(self, obj, event):
         """Show the play button and scrubber while the pointer is over the box.
@@ -203,6 +270,7 @@ class PreviewController(QObject):
         self._stop_star_field()
         try:
             self.preview_ui_timer.stop()
+            self._heartbeat_timer.stop()
         except RuntimeError:
             logger.debug("PreviewController.shutdown: timer already gone", exc_info=True)
 
