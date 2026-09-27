@@ -305,7 +305,7 @@ class TabHeaderUnityTests(unittest.TestCase):
         window = self._window()
         self.assertFalse(hasattr(window, "settings_display"))
 
-    def test_the_glyph_of_the_context_header_is_centred_over_its_title(self):
+    def test_the_glyph_of_the_context_header_sits_beside_its_title(self):
         window = self._window()
         window.move(-7000, -7000)
         window.show()
@@ -315,8 +315,32 @@ class TabHeaderUnityTests(unittest.TestCase):
             header = window.context_header
             glyph = header.glyph_label.geometry()
             title = header.title_label.geometry()
-            self.assertLess(glyph.bottom(), title.top())
-            self.assertAlmostEqual(glyph.center().x(), header.width() // 2, delta=2)
+            self.assertLess(glyph.right(), title.left())
+            self.assertLess(abs(glyph.center().y() - title.center().y()), glyph.height())
+        finally:
+            window.hide()
+
+    def test_the_preview_leaf_stays_put_whatever_tab_is_current(self):
+        # The header reserves the height of the longest heading (BallBuster's
+        # included), so switching tabs never moves the leaf under it.
+        window = self._window()
+        window.move(-7000, -7000)
+        window.show()
+        try:
+            for _ in range(6):
+                self.app.processEvents()
+            header = window.context_header
+            self.assertEqual(header.minimumHeight(), header.maximumHeight())
+            positions = set()
+            heights = set()
+            for key in window.tool_tab_widgets:
+                window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
+                for _ in range(6):
+                    self.app.processEvents()
+                positions.add(window.preview_container.y())
+                heights.add(header.height())
+            self.assertEqual(len(positions), 1, positions)
+            self.assertEqual(len(heights), 1, heights)
         finally:
             window.hide()
 

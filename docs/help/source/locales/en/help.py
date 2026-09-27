@@ -59,8 +59,9 @@ CHAPTERS: list[dict] = [
                 "status footer. Under the logo the sidebar names the current tab: a glyph for "
                 "the tool (a magnifier with an eye for the Media Player, an arrow cycle around "
                 "a play symbol for the Video Converter, a camera for the Recorder, scissors for "
-                "the Lossless Editor, a monitor for PC Report), the tab's title and a one-line "
-                "description, then the preview box and the Start button. Drag a tab along the "
+                "the Lossless Editor, a monitor for PC Report) beside the tab's title, a short "
+                "description under them, then the preview box and the Start button. The header "
+                "keeps one height whatever the tab, so the preview box never moves. Drag a tab along the "
                 "tab bar to put the tabs in the order you prefer; right-click a tab to hide "
                 "that tool, and bring it back from Menu -- Tools. NVC remembers both.")},
             {"type": "table", "headers": ("Area", "What it does"), "rows": [
@@ -548,7 +549,8 @@ CHAPTERS: list[dict] = [
                 "Picture-in-picture recording so clips that started at slightly different "
                 "times line up.",
                 "Untick Use to leave a row out -- any row, including the first. With no row in "
-                "use the Start button is disabled and the tab reads \"Enable at least one "
+                "use the video area stays put as one black tile reading \"No source enabled\", "
+                "the Start button is disabled and the tab reads \"Enable at least one "
                 "source\". Apply keeps the dialog open; OK applies and closes.",
             ]},
             {"type": "para", "text": "Presets"},

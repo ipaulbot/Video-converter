@@ -650,3 +650,21 @@ Design note: `docs/superpowers/specs/2026-09-27-sidebar-context-panel-and-tools-
 - i18n: 23 new strings translated in nl and zh-CN (catalogues 474/474, .qm
   rebuilt). Help: Main Window Overview, Settings -- Tools, Media Player
   playlist and recorder Video Settings updated in all three languages.
+
+### Follow-up pass (19:10)
+
+- **Recorder keeps its video area with no source enabled.** Unticking every
+  row used to collapse the preview grid and shove the Output settings and
+  Recording properties groups up the tab. One black tile now spans the grid
+  reading "No source enabled / Tick Use on a source to preview it"; the
+  groups stay where they were.
+- **Sidebar header: glyph beside the title, description left-aligned.** The
+  compact `TabHeader` puts the glyph and title on one line (title at 16 px so
+  most fit beside the glyph) and wraps the description underneath, ragged
+  right instead of centred. `TabHeader.reserve_for()` measures every heading
+  the sidebar can show (all five tools plus BallBuster's) and fixes the
+  title and description heights to the tallest, so switching tabs never
+  moves the preview leaf (verified: same leaf y on every tab).
+- i18n: the recorder tile string translated in nl and zh-CN (475/475, .qm
+  rebuilt); help Main Window Overview and recorder Video Settings updated in
+  all three languages.
