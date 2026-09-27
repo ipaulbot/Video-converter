@@ -667,11 +667,17 @@ class LayoutMetrics:
     tab_padding: str = "10px 16px"
     tab_font_pt: int = 9
     window_size: tuple[int, int] = (0, 0)  # (0, 0) = leave the window size alone
+    # The Media Player's playlist strip under the grid. Compact must leave
+    # room for four panels and the transport without the tab scrolling.
+    playlist_strip_h: int = 150
 
 
+# Compact player panels: 136 px is 16:9 at the ~240 px a 2x2 grid gives each
+# tile; the old 160 px plus the playlist strip made the tab scroll.
 COMPACT: Final[LayoutMetrics] = LayoutMetrics(
-    "compact", 6, 4, 230, False, 160, 96,
+    "compact", 6, 4, 230, False, 136, 96,
     tab_min_w=0, tab_padding="7px 6px", tab_font_pt=8, window_size=(1024, 640),
+    playlist_strip_h=92,
 )
 FULL: Final[LayoutMetrics] = LayoutMetrics("full", 12, 8, 420, False, 240, 140)
 LAYOUT_MODES: Final[tuple[str, ...]] = (COMPACT.name, FULL.name)

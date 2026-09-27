@@ -152,6 +152,17 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             theme.COMPACT.player_panel_min_h,
         )
 
+    def test_layout_mode_caps_the_playlist_strip_so_compact_mode_does_not_scroll(self):
+        # 2026-09-27: with the 150 px strip open, four 160 px panels plus the
+        # transport overflowed the 640 px compact window and the tab scrolled.
+        widget = self._widget()
+        widget.apply_layout_mode(theme.COMPACT)
+        self.assertEqual(widget.playlist_dock.maximumHeight(), theme.COMPACT.playlist_strip_h)
+        self.assertLessEqual(theme.COMPACT.playlist_strip_h, 96)
+        widget.apply_layout_mode(theme.FULL)
+        self.assertEqual(widget.playlist_dock.maximumHeight(), theme.FULL.playlist_strip_h)
+        self.assertGreater(theme.FULL.playlist_strip_h, theme.COMPACT.playlist_strip_h)
+
     def test_each_panel_offset_defaults_to_zero(self):
         widget = MediaPlayerWidget()
         try:
@@ -586,7 +597,7 @@ class MediaPlayerWidgetTests(unittest.TestCase):
 
     # --- loading feeds the playlist ---------------------------------------------
 
-    def test_loading_a_clip_adds_it_to_that_panels_playlist_and_selects_it(self):
+    def test_loading_a_clip_adds_it_to_the_playlist_and_selects_it(self):
         widget = self._widget()
         widget.playlist_btn.setChecked(True)
         panel = widget.panels[0]
@@ -595,21 +606,57 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             with open(clip, "wb") as handle:
                 handle.write(b"x")
             panel.load_media(clip)
-            self.assertEqual(panel.playlist.items, [clip])
+            self.assertEqual(widget.playlist.items, [clip])
             self.assertEqual(widget.playlist_dock.list.currentRow(), 0)
             # Loading it again does not duplicate the entry.
             panel.load_media(clip)
-            self.assertEqual(panel.playlist.items, [clip])
+            self.assertEqual(widget.playlist.items, [clip])
 
-    def test_loading_into_an_unselected_panel_fills_that_panels_list_only(self):
+    def test_one_playlist_is_shared_by_every_panel(self):
+        # 2026-09-27 (17:08 report): the list showed only the selected panel's
+        # clips. Now every panel feeds one list and the Panel column says
+        # where each clip is showing.
         widget = self._widget()
+        widget.playlist_btn.setChecked(True)
         with tempfile.TemporaryDirectory() as folder:
-            clip = os.path.join(folder, "b.mp4")
-            with open(clip, "wb") as handle:
-                handle.write(b"x")
-            widget.panels[1].load_media(clip)
-            self.assertEqual(widget.panels[1].playlist.items, [clip])
-            self.assertEqual(widget.panels[0].playlist.items, [])
+            clips = []
+            for name in ("a.mp4", "b.mp4"):
+                clip = os.path.join(folder, name)
+                with open(clip, "wb") as handle:
+                    handle.write(b"x")
+                clips.append(clip)
+            widget.panels[0].load_media(clips[0])
+            widget.panels[1].load_media(clips[1])
+            for panel in widget.panels:
+                self.assertIs(panel.playlist, widget.playlist)
+            self.assertEqual(widget.playlist.items, clips)
+            self.assertEqual(widget.playlist_dock.list.count(), 2)
+            table = widget.playlist_dock.list
+            self.assertEqual(table.item(0, PlaylistTable.PANEL).text(), "1")
+            self.assertEqual(table.item(1, PlaylistTable.PANEL).text(), "2")
+            # Selecting another panel keeps the same list on show.
+            widget.select_panel(1)
+            self.assertIs(widget.playlist_dock.model, widget.playlist)
+            self.assertEqual(widget.playlist_dock.list.count(), 2)
+            self.assertEqual(widget.playlist_dock.panel_title(), "Playlist")
+
+    def test_next_and_previous_walk_the_shared_list_from_the_selected_panels_clip(self):
+        widget = self._widget()
+        widget.playlist.add(["a.mp4", "b.mp4", "c.mp4"])
+        widget.select_panel(1)
+        panel = widget.panels[1]
+        panel._media_path = "b.mp4"
+        loaded = []
+        panel.load_media = lambda path: loaded.append(path) or True
+        widget.playlist_next()
+        self.assertEqual(loaded, ["c.mp4"])
+        widget.playlist_previous()
+        self.assertEqual(loaded, ["c.mp4", "b.mp4"])
+        # Panel 1 has nothing loaded: next starts at the top of the shared list.
+        widget.select_panel(0)
+        widget.panels[0].load_media = lambda path: loaded.append(path) or True
+        widget.playlist_next()
+        self.assertEqual(loaded[-1], "a.mp4")
 
     def test_loading_into_a_panel_selects_it_so_the_dock_and_inspect_follow(self):
         # 15:32 report: a drop on panel 2 showed nothing -- the dock and Inspect
@@ -625,11 +672,10 @@ class MediaPlayerWidgetTests(unittest.TestCase):
             self.assertEqual(widget.selected_index, 0)
             widget.panels[1].load_media(clip)
             self.assertEqual(widget.selected_index, 1)
-            self.assertEqual(widget.playlist_dock.model, widget.panels[1].playlist)
+            self.assertEqual(widget.playlist_dock.model, widget.playlist)
             self.assertEqual(widget.playlist_dock.list.count(), 1)
             self.assertEqual(widget.playlist_dock.list.currentRow(), 0)
             self.assertEqual(inspected[-1], clip)
-            self.assertEqual(widget.playlist_dock.panel_title(), "Panel 2")
 
     def test_a_drop_on_a_panel_loads_and_selects_it(self):
         widget = self._widget()
