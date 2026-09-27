@@ -48,7 +48,6 @@ from ui.media_player_support import (
     prefer_windows_media_foundation,
     probe_media_info,
 )
-from ui.tab_header import TabHeader
 from utils.config import normalize_media_player_settings
 from utils.logger import logger
 
@@ -122,7 +121,7 @@ class PlayerPanel(QWidget):
     SETTLE_DRIFT_MS = 60      # position growth per tick that means "it is playing"
     SETTLE_MAX_RETRIES = 3
 
-    def __init__(self, index, parent=None):
+    def __init__(self, index, parent=None, playlist=None):
         super().__init__(parent)
         self.index = index
         self.host = parent
@@ -130,7 +129,8 @@ class PlayerPanel(QWidget):
         self._media_path = ""
         self.player = None
         self.probe_info = {}
-        self.playlist = PlaylistModel()
+        # Shared with the other panels when the host passes one in.
+        self.playlist = playlist if playlist is not None else PlaylistModel()
         self.selected = False
         # The host wires these so the player can drive the shared timeline once created.
         self.on_duration_changed = None
@@ -679,19 +679,15 @@ class MediaPlayerWidget(QWidget):
         # way; 16 px here put this header below and right of the others'.
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
+        # No header of its own: the sidebar context header names the current tab.
 
-        self.header = TabHeader(
-            "player",
-            _tr("Media Player"),
-            _tr("Review up to four clips side by side with one transport; Inspect shows "
-                "the selected clip's ffprobe details."),
-        )
-        layout.addWidget(self.header)
-
+        # One playlist for the whole tab (2026-09-27): every panel's loads land
+        # in it and the Panel column says where each clip is showing.
+        self.playlist = PlaylistModel()
         self.grid = QGridLayout()
         self.grid.setSpacing(8)
         for index in range(MAX_PANELS):
-            panel = PlayerPanel(index, self)
+            panel = PlayerPanel(index, self, playlist=self.playlist)
             panel.on_duration_changed = self._on_any_duration_changed
             panel.on_media_status_changed = self._on_media_status_changed
             panel.on_player_created = self._on_player_created
@@ -853,11 +849,12 @@ class MediaPlayerWidget(QWidget):
     def apply_layout_mode(self, metrics):
         for panel in self.panels:
             panel.video_container.setMinimumHeight(metrics.player_panel_min_h)
+        # The strip keeps its own scrollbar; the tab must not grow one.
+        self.playlist_dock.setMaximumHeight(metrics.playlist_strip_h)
 
     def reskin(self):
         """Repaint every glyph (transport, panels, playlist dock) in the current skin."""
         self._icon_color = theme.skin().accent
-        self.header.reskin()
         reskin_icon_buttons(self, self._icon_color)
         self._set_play_glyph(self._is_playing)
         set_button_glyph(
@@ -1042,10 +1039,7 @@ class MediaPlayerWidget(QWidget):
         for panel in self.panels:
             panel.set_selected(panel.index == index)
         panel = self.panels[index]
-        self.playlist_dock.set_model(
-            panel.playlist,
-            _tr("Panel %(number)s") % {"number": index + 1},
-        )
+        self.playlist_dock.set_model(self.playlist, _tr("Playlist"))
         self.playlist_dock.select_path(panel._media_path)
         self._refresh_inspection()
         self._announce_selected_media()
@@ -1142,8 +1136,9 @@ class MediaPlayerWidget(QWidget):
             self.play_all()
 
     def _advance_playlist(self, step):
+        """Load the next/previous clip of the shared list into the selected panel."""
         panel = self.selected_panel()
-        model = panel.playlist
+        model = self.playlist
         current = model.index_of(panel._media_path)
         target = (
             model.next_index(current)
@@ -1408,7 +1403,7 @@ class MediaPlayerWidget(QWidget):
         if (
             self.visible_panel_count() == 1
             and panel is selected
-            and len(selected.playlist.items) > 1
+            and len(self.playlist.items) > 1
             and self._advance_playlist(1)
         ):
             self.play_all()

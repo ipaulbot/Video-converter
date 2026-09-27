@@ -55,18 +55,21 @@ CHAPTERS: list[dict] = [
         "title": "Main Window Overview",
         "blocks": [
             {"type": "para", "text": (
-                "The main window is organised into tabs, with a shared preview panel and a "
-                "status footer. Every tab opens with the same header: a glyph for the tool "
-                "(a magnifier with an eye for the Media Player, an arrow cycle around a play "
-                "symbol for the Video Converter, a camera for the Recorder, scissors for the "
-                "Lossless Editor, a monitor for PC Report), the tab's title and a one-line "
-                "description. Drag a tab along the tab bar to put the tabs in the order you "
-                "prefer; NVC remembers the order.")},
+                "The main window is organised into tabs, with a sidebar on the left and a "
+                "status footer. Under the logo the sidebar names the current tab: a glyph for "
+                "the tool (a magnifier with an eye for the Media Player, an arrow cycle around "
+                "a play symbol for the Video Converter, a camera for the Recorder, scissors for "
+                "the Lossless Editor, a monitor for PC Report), the tab's title and a one-line "
+                "description, then the preview box and the Start button. Drag a tab along the "
+                "tab bar to put the tabs in the order you prefer; right-click a tab to hide "
+                "that tool, and bring it back from Menu -- Tools. NVC remembers both.")},
             {"type": "table", "headers": ("Area", "What it does"), "rows": [
                 ("Video Converter",
                  "The Converted Files table (queued, processing, successful and failed "
                  "conversions) above the conversion log with its messages, progress, "
-                 "warnings and results. Drag the divider between them."),
+                 "warnings and results. Drag the divider between them. The Current Video "
+                 "Settings table beside the log summarises the format, codecs, resolution, "
+                 "bitrate and frame rate; click it to open the Format settings."),
                 ("PC Report",
                  "Generates a PC report for support and troubleshooting."),
                 ("Lossless Editor",
@@ -77,16 +80,19 @@ CHAPTERS: list[dict] = [
                  "Plays media in one, two or four panels, with an Inspect panel showing "
                  "the selected clip's ffprobe summary and JSON."),
                 ("Preview Panel",
-                 "Shows a preview of the current file or recorder layout."),
+                 "The leaf-shaped box in the sidebar shows a preview of the current file or "
+                 "the recorder layout, and a pulsing heart while a PC report runs. It is "
+                 "blank when there is nothing to preview."),
                 ("Menu",
-                 "Opens Info, Help, folders, Settings, Language, updates and Quit."),
+                 "Opens Info, Help, folders, Settings, Window, Tools, Language, updates and Quit."),
             ]},
             {"type": "note", "items": [
                 "PC Report and Lossless Editor are hidden by default. Turn them on in "
-                "Settings -- Tools. Play or Inspect in Media Player shows the Media Player "
-                "tab for the current session even when it is switched off.",
+                "Menu -- Tools or Settings -- Tools. Play or Inspect in Media Player shows the "
+                "Media Player tab for the current session even when it is switched off. The "
+                "last visible tool cannot be hidden.",
                 "The Menu contains Info, Help, Open Source Folder, Open Destination Folder, "
-                "Open Backup Folder, Settings, Language, Check for Updates and Quit.",
+                "Open Backup Folder, Settings, Window, Tools, Language, Check for Updates and Quit.",
                 "The footer has the Start/Stop button, a lock icon, a file picker, a broom and "
                 "a status label. On the recorder tab the button reads Start Recording or Stop "
                 "Recording. The lock icon locks settings, and the Start button then reads "
@@ -218,7 +224,8 @@ CHAPTERS: list[dict] = [
             {"type": "table", "headers": ("Setting", "Guidance"), "rows": [
                 ("Tool checkboxes",
                  "There is one checkbox for each tool tab. Unticked tabs are hidden from the "
-                 "main window."),
+                 "main window. The same list is in Menu -- Tools, and right-clicking a tab "
+                 "hides it; the last visible tool always stays."),
             ]},
         ],
     },
@@ -540,7 +547,9 @@ CHAPTERS: list[dict] = [
                 "Sync offset shifts a source earlier or later in a Combined grid or "
                 "Picture-in-picture recording so clips that started at slightly different "
                 "times line up.",
-                "Apply keeps the dialog open; OK applies and closes.",
+                "Untick Use to leave a row out -- any row, including the first. With no row in "
+                "use the Start button is disabled and the tab reads \"Enable at least one "
+                "source\". Apply keeps the dialog open; OK applies and closes.",
             ]},
             {"type": "para", "text": "Presets"},
             {"type": "steps", "items": [
@@ -609,7 +618,7 @@ CHAPTERS: list[dict] = [
                 ("Volume", "Sets the volume for every panel from 0 to 100."),
                 ("Mute", "Mutes every panel and reads Unmute while muted."),
                 ("Fullscreen", "Shows the panels and transport bar fullscreen; the Inspect and Playlist panels step aside until you leave."),
-                ("Playlist", "Shows or hides the playlist strip under the video for the selected panel."),
+                ("Playlist", "Shows or hides the playlist strip under the video; one list is shared by every panel."),
                 ("Inspect", "Shows or hides the Inspect panel beside the video (see Media Inspection)."),
             ]},
             {"type": "para", "text": (
@@ -643,20 +652,21 @@ CHAPTERS: list[dict] = [
                 "middle when the name is long (hover for the full name).")},
             {"type": "para", "text": (
                 "Loading a clip into a panel -- by drop, its Load button or the playlist -- "
-                "also selects that panel: the Playlist strip switches to that panel's list and "
-                "the Inspect panel shows the clip's details, so a drop on the second panel is "
-                "visible at once.")},
+                "also selects that panel: the playlist highlights that clip and the Inspect "
+                "panel shows its details, so a drop on the second panel is visible at once.")},
             {"type": "para", "text": (
-                "Playlist opens a strip under the video for the selected panel with Add "
-                "files..., Add folder..., Remove and Clear. Every clip you load or drop onto a "
-                "panel is added to that panel's playlist, so the strip always shows what the "
-                "panel has seen. The strip has columns File Name, Panel and Offset; Panel lists "
-                "the panels showing that clip right now and only appears when more than one "
-                "panel is on screen. Highlighting a row shows that clip's details in the "
-                "Inspect panel without loading it; clicking a panel does the same for its "
-                "clip. Drag rows to reorder them, or drop files from Explorer into the strip. "
-                "N and P move through the playlist. With Panels set to 1, the next item starts "
-                "automatically when a clip ends.")},
+                "Playlist opens a strip under the video with Add files..., Add folder..., "
+                "Remove and Clear. There is one list for the whole tab: every clip you load "
+                "or drop onto any panel is added to it, so the strip shows everything the "
+                "player has seen. The strip has columns File Name, Panel and Offset; Panel "
+                "lists the panels showing that clip right now and only appears when more than "
+                "one panel is on screen. Double-click a row to load it into the selected "
+                "panel. Highlighting a row shows that clip's details in the Inspect panel "
+                "without loading it; clicking a panel does the same for its clip. Drag rows "
+                "to reorder them, or drop files from Explorer into the strip. N and P move "
+                "the selected panel through the list. With Panels set to 1, the next item "
+                "starts automatically when a clip ends. In compact mode the strip keeps to a "
+                "few rows and scrolls on its own.")},
             {"type": "para", "text": (
                 "Offset is a per-clip sync shift in seconds: a negative value plays that clip "
                 "earlier than the others, a positive value later, so recordings of the same "

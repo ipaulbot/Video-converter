@@ -14,15 +14,18 @@ class TabHeader(QWidget):
     """Callers pass already-translated title / description strings."""
 
     GLYPH_PX = 36
+    COMPACT_WIDTH = 180
+    COMPACT_DESCRIPTION_MIN_H = 42  # three lines of the 9 pt description
 
-    def __init__(self, glyph: str, title: str, description: str = "", parent=None):
+    def __init__(self, glyph: str, title: str, description: str = "", parent=None,
+                 compact: bool = False):
+        """`compact` is the sidebar variant: glyph stacked over centred text at
+        the sidebar's 180 px width (since 2026-09-27 the one header lives there
+        and describes the current tab, instead of one per tab)."""
         super().__init__(parent)
         self.glyph_name = glyph
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(12)
-        # A stack so a tab can slide something under the glyph (the PC
-        # Report's pulsing heart shows through the monitor's screen).
+        self.compact = compact
+        # A stack so something can slide under the glyph (drawn first).
         self.glyph_stack = QGridLayout()
         self.glyph_stack.setContentsMargins(0, 0, 0, 0)
         self.glyph_label = QLabel()
@@ -30,21 +33,41 @@ class TabHeader(QWidget):
         self.glyph_label.setAlignment(Qt.AlignCenter)
         self.glyph_label.setStyleSheet("QLabel { background: transparent; border: none; }")
         self.glyph_stack.addWidget(self.glyph_label, 0, 0, Qt.AlignCenter)
-        # Top-aligned, not centred: a description that wraps to two lines
-        # must not push this tab's glyph lower than the other tabs'.
-        layout.addLayout(self.glyph_stack, 0)
-        layout.setAlignment(self.glyph_stack, Qt.AlignTop)
 
-        text = QVBoxLayout()
-        text.setContentsMargins(0, 0, 0, 0)
-        text.setSpacing(1)
         self.title_label = QLabel(title)
-        text.addWidget(self.title_label)
         self.description_label = QLabel(description)
         self.description_label.setWordWrap(True)
         self.description_label.setVisible(bool(description))
-        text.addWidget(self.description_label)
-        layout.addLayout(text, 1)
+
+        if compact:
+            layout = QVBoxLayout(self)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(4)
+            layout.addLayout(self.glyph_stack)
+            layout.setAlignment(self.glyph_stack, Qt.AlignHCenter)
+            self.title_label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+            self.title_label.setWordWrap(True)
+            self.description_label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+            # Room for three lines whatever the tab says, so the preview box
+            # below does not hop up and down as the user changes tabs.
+            self.description_label.setMinimumHeight(self.COMPACT_DESCRIPTION_MIN_H)
+            layout.addWidget(self.title_label)
+            layout.addWidget(self.description_label)
+            self.setFixedWidth(self.COMPACT_WIDTH)
+        else:
+            layout = QHBoxLayout(self)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(12)
+            # Top-aligned, not centred: a description that wraps to two lines
+            # must not push the glyph lower.
+            layout.addLayout(self.glyph_stack, 0)
+            layout.setAlignment(self.glyph_stack, Qt.AlignTop)
+            text = QVBoxLayout()
+            text.setContentsMargins(0, 0, 0, 0)
+            text.setSpacing(1)
+            text.addWidget(self.title_label)
+            text.addWidget(self.description_label)
+            layout.addLayout(text, 1)
         self.reskin()
 
     def reskin(self, accent: str | None = None):

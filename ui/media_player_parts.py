@@ -234,11 +234,15 @@ def format_offset_seconds(seconds):
 
 
 class PlaylistDock(QWidget):
-    """Playlist for one panel: a reorderable list plus Add/Remove/Clear controls.
+    """The playlist: a reorderable list plus Add/Remove/Clear controls.
+
+    Since 2026-09-27 the Media Player shares one list across its panels; the
+    Panel column says where each clip is showing.
 
     Vertical (default): a side column with the buttons in a row underneath.
-    `horizontal=True`: a short strip for under the video -- title on top, the
-    list beside a column of buttons -- with no width limits.
+    `horizontal=True`: a short strip for under the video -- the list beside a
+    column of buttons -- with no width limits. The host caps its height per
+    window mode (theme.LayoutMetrics.playlist_strip_h).
     """
 
     activate_requested = pyqtSignal(str)
@@ -315,7 +319,7 @@ class PlaylistDock(QWidget):
     def set_model(self, model, title):
         self.model = model
         self._panel_title = title
-        self.list.setToolTip(_tr("Playlist - %(panel)s") % {"panel": title})
+        self.list.setToolTip(title)
         self.refresh()
 
     def panel_title(self):

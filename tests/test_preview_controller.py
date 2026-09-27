@@ -69,8 +69,81 @@ class PreviewControllerTests(unittest.TestCase):
         self.assertTrue(self.pc.play_pause_btn.isHidden())
         self.assertTrue(self.pc.preview_scrubber.isHidden())
 
-    def test_placeholder_text_is_shown_initially(self):
-        self.assertEqual(self.pc.preview_label.text(), "No Preview")
+    def test_idle_box_is_blank_not_captioned(self):
+        # An empty leaf reads as "nothing here"; a "No Preview" caption reads
+        # as an error on tabs that never had a preview (PC Report).
+        self.assertEqual(self.pc.preview_label.text(), "")
+        self.pc._clear_preview_display()
+        self.assertEqual(self.pc.preview_label.text(), "")
+
+    def test_explicit_placeholder_text_still_shows(self):
+        self.pc._set_preview_placeholder("Loading...")
+        self.assertEqual(self.pc.preview_label.text(), "Loading...")
+
+    def test_pixmaps_are_painted_inside_the_leaf_shape(self):
+        # The frame is leaf-shaped by stylesheet; a plain QLabel would paint a
+        # rectangular thumbnail over its rounded corners.
+        from PyQt5.QtGui import QColor, QImage, QPixmap
+        box = self.pc.preview_container
+        box.layout().activate()
+        label = self.pc.preview_label
+        solid = QPixmap(180, 101)
+        solid.fill(QColor("red"))
+        label.setPixmap(solid)
+        canvas = QImage(box.width(), box.height(), QImage.Format_ARGB32)
+        canvas.fill(QColor(0, 0, 0, 0))
+        box.render(canvas)
+        g = label.geometry()   # inside the frame's border
+        red = QColor("red").rgb() & 0xFFFFFF
+
+        def at(x, y):
+            return canvas.pixel(x, y) & 0xFFFFFF
+
+        self.assertNotEqual(at(g.left() + 1, g.top() + 1), red)        # top-left: rounded away
+        self.assertNotEqual(at(g.right() - 1, g.bottom() - 1), red)    # bottom-right: rounded away
+        self.assertEqual(at(g.right() - 1, g.top() + 1), red)          # top-right: square
+        self.assertEqual(at(g.left() + 1, g.bottom() - 1), red)        # bottom-left: square
+        self.assertEqual(at(g.center().x(), g.center().y()), red)      # middle: painted
+
+    # -- heartbeat (PC Report) -------------------------------------------
+    def test_heartbeat_paints_a_pulsing_red_heart_into_the_blank_leaf(self):
+        from PyQt5.QtGui import QColor
+        self.assertFalse(self.pc.heartbeat_active)
+        self.pc.show_heartbeat(True)
+        self.assertTrue(self.pc.heartbeat_active)
+        self.assertTrue(self.pc._heartbeat_timer.isActive())
+        self.assertEqual(self.pc.preview_label.text(), "")
+        frame = self.pc.preview_label.pixmap()
+        self.assertFalse(frame.isNull())
+        centre = QColor(frame.toImage().pixel(frame.width() // 2, frame.height() // 2))
+        self.assertGreater(centre.red(), 200)
+        self.assertLess(centre.green(), 120)
+        # The pulse changes the heart's size from tick to tick.
+        first = self.pc._heartbeat_scale
+        self.pc._tick_heartbeat()
+        self.assertNotEqual(self.pc._heartbeat_scale, first)
+        self.assertTrue(0.85 <= self.pc._heartbeat_scale <= 1.15)
+
+    def test_stopping_the_heartbeat_returns_to_the_blank_leaf(self):
+        self.pc.show_heartbeat(True)
+        self.pc.show_heartbeat(False)
+        self.assertFalse(self.pc.heartbeat_active)
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
+        self.assertTrue(self.pc.preview_label.pixmap() is None or self.pc.preview_label.pixmap().isNull())
+        self.assertEqual(self.pc.preview_label.text(), "")
+
+    def test_heartbeat_is_idempotent(self):
+        self.pc.show_heartbeat(True)
+        self.pc.show_heartbeat(True)
+        self.assertTrue(self.pc._heartbeat_timer.isActive())
+        self.pc.show_heartbeat(False)
+        self.pc.show_heartbeat(False)
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
+
+    def test_shutdown_stops_the_heartbeat(self):
+        self.pc.show_heartbeat(True)
+        self.pc.shutdown()
+        self.assertFalse(self.pc._heartbeat_timer.isActive())
 
     # -- theming --------------------------------------------------------
     def test_widgets_take_their_colours_from_the_theme(self):
@@ -116,7 +189,7 @@ class PreviewControllerTests(unittest.TestCase):
         self.assertEqual(self.pc.preview_frame_index, 0)
         self.assertEqual(self.pc.preview_duration_sec, 0.0)
         self.assertTrue(self.pc.play_pause_btn.isHidden())
-        self.assertEqual(self.pc.preview_label.text(), "No Preview")
+        self.assertEqual(self.pc.preview_label.text(), "")
 
     def test_stopping_the_process_clears_the_frame_buffer(self):
         # A stale partial frame would desynchronise the next stream.
@@ -145,11 +218,11 @@ class PreviewControllerTests(unittest.TestCase):
     # Ruff caught it; nothing in the suite reached them. Now something does.
     def test_thumbnail_generation_handles_a_missing_file(self):
         self.pc._generate_and_show_thumbnail("Z:/gone/missing.mp4")
-        self.assertEqual(self.pc.preview_label.text(), "No Preview")
+        self.assertEqual(self.pc.preview_label.text(), "")
 
     def test_thumbnail_generation_handles_an_empty_path(self):
         self.pc._generate_and_show_thumbnail("")
-        self.assertEqual(self.pc.preview_label.text(), "No Preview")
+        self.assertEqual(self.pc.preview_label.text(), "")
 
     def test_render_frame_at_handles_a_missing_file(self):
         # Must not raise: it runs from the scrub handler, on the UI thread.

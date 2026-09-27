@@ -243,147 +243,137 @@ Unlock the application first to make changes.</source>
     <context>
         <name>LosslessEditor</name>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="109" />
+            <location filename="ui/lossless_editor_widget.py" line="102" />
             <source>00:00:00</source>
             <translation>00:00:00</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="317" />
+            <location filename="ui/lossless_editor_widget.py" line="309" />
             <source>Add at least two valid files to merge.</source>
             <translation>请至少添加两个有效文件以合并。</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="158" />
+            <location filename="ui/lossless_editor_widget.py" line="151" />
             <source>Add files to the merge list</source>
             <translation>将文件添加到合并列表</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="99" />
+            <location filename="ui/lossless_editor_widget.py" line="92" />
             <source>Choose a source media file</source>
             <translation>选择源媒体文件</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="161" />
+            <location filename="ui/lossless_editor_widget.py" line="154" />
             <source>Clear the merge list</source>
             <translation>清空合并列表</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="164" />
+            <location filename="ui/lossless_editor_widget.py" line="157" />
             <source>Concatenate the listed clips losslessly</source>
             <translation>无损拼接列出的片段</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="130" />
+            <location filename="ui/lossless_editor_widget.py" line="123" />
             <source>Copy every stream into the chosen container</source>
             <translation>将所有流复制到所选容器中</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="128" />
+            <location filename="ui/lossless_editor_widget.py" line="121" />
             <source>Cut Start to End without re-encoding</source>
             <translation>从起点到终点剪切,无需重新编码</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="118" />
+            <location filename="ui/lossless_editor_widget.py" line="111" />
             <source>End:</source>
             <translation>结束：</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="131" />
+            <location filename="ui/lossless_editor_widget.py" line="124" />
             <source>Extract audio</source>
             <translation>提取音频</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="176" />
+            <location filename="ui/lossless_editor_widget.py" line="169" />
             <source>FFmpeg output appears here.</source>
             <translation>FFmpeg 输出显示在此处。</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="102" />
+            <location filename="ui/lossless_editor_widget.py" line="95" />
             <source>Input:</source>
             <translation>输入：</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="89" />
-            <source>Lossless Editor</source>
-            <translation>无损编辑器</translation>
-        </message>
-        <message>
-            <location filename="ui/lossless_editor_widget.py" line="163" />
+            <location filename="ui/lossless_editor_widget.py" line="156" />
             <source>Merge</source>
             <translation>合并</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="329" />
+            <location filename="ui/lossless_editor_widget.py" line="321" />
             <source>Merge Error</source>
             <translation>合并错误</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="317" />
+            <location filename="ui/lossless_editor_widget.py" line="309" />
             <source>Merge Files</source>
             <translation>合并文件</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="152" />
+            <location filename="ui/lossless_editor_widget.py" line="145" />
             <source>Merge list</source>
             <translation>合并列表</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="246" />
+            <location filename="ui/lossless_editor_widget.py" line="238" />
             <source>Missing FFmpeg</source>
             <translation>缺少 FFmpeg</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="253" />
+            <location filename="ui/lossless_editor_widget.py" line="245" />
             <source>Missing Input</source>
             <translation>缺少输入</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="121" />
+            <location filename="ui/lossless_editor_widget.py" line="114" />
             <source>Output:</source>
             <translation>输出：</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="132" />
+            <location filename="ui/lossless_editor_widget.py" line="125" />
             <source>Remove audio</source>
             <translation>移除音频</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="129" />
+            <location filename="ui/lossless_editor_widget.py" line="122" />
             <source>Remux</source>
             <translation>重新封装</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="97" />
+            <location filename="ui/lossless_editor_widget.py" line="90" />
             <source>Select a source media file</source>
             <translation>选择源媒体文件</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="253" />
+            <location filename="ui/lossless_editor_widget.py" line="245" />
             <source>Select a valid input media file first.</source>
             <translation>请先选择有效的输入媒体文件。</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="116" />
+            <location filename="ui/lossless_editor_widget.py" line="109" />
             <source>Start:</source>
             <translation>开始：</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="127" />
+            <location filename="ui/lossless_editor_widget.py" line="120" />
             <source>Trim</source>
             <translation>剪辑</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="90" />
-            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
-            <translation>剪辑、重新封装、提取或移除音频,以及合并片段,均无需重新编码。</translation>
-        </message>
-        <message>
-            <location filename="ui/lossless_editor_widget.py" line="113" />
+            <location filename="ui/lossless_editor_widget.py" line="106" />
             <source>end of file</source>
             <translation>文件末尾</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="246" />
+            <location filename="ui/lossless_editor_widget.py" line="238" />
             <source>ffmpeg.exe could not be found.</source>
             <translation>找不到 ffmpeg.exe。</translation>
         </message>
@@ -391,12 +381,17 @@ Unlock the application first to make changes.</source>
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="ui/main_window.py" line="2538" />
+            <location filename="ui/main_window.py" line="2822" />
+            <source>%(fps)s fps</source>
+            <translation>%(fps)s fps</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2623" />
             <source>%(language)s (draft)</source>
             <translation>%(language)s（草稿）</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2976" />
+            <location filename="ui/main_window.py" line="3155" />
             <source>A new version (%(version)s) is available.
 
 Do you want to visit the download page?</source>
@@ -405,27 +400,42 @@ Do you want to visit the download page?</source>
 是否访问下载页面?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1204" />
+            <location filename="ui/main_window.py" line="1289" />
             <source>Application is locked.</source>
             <translation>应用程序已锁定。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2604" />
+            <location filename="ui/main_window.py" line="2819" />
+            <source>Audio codec</source>
+            <translation>音频编解码器</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2689" />
             <source>Backup folder path does not exist.</source>
             <translation>备份文件夹路径不存在。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="795" />
+            <location filename="ui/main_window.py" line="2765" />
+            <source>BallBuster XT</source>
+            <translation>BallBuster XT</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2821" />
+            <source>Bitrate</source>
+            <translation>比特率</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="787" />
             <source>Check for Updates</source>
             <translation>检查更新</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3350" />
+            <location filename="ui/main_window.py" line="3508" />
             <source>Choose the folder to monitor</source>
             <translation>选择要监视的文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2911" />
+            <location filename="ui/main_window.py" line="3090" />
             <source>Clear Log</source>
             <translation>清除日志</translation>
         </message>
@@ -440,12 +450,12 @@ Do you want to visit the download page?</source>
             <translation>清空文件列表和日志</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1773" />
+            <location filename="ui/main_window.py" line="1858" />
             <source>Click to download update</source>
             <translation>点击下载更新</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3433" />
+            <location filename="ui/main_window.py" line="3591" />
             <source>Click to exit the Easter Egg and return to the log view.</source>
             <translation>单击退出彩蛋并返回日志视图。</translation>
         </message>
@@ -455,123 +465,158 @@ Do you want to visit the download page?</source>
             <translation>点击打开设置</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="787" />
+            <location filename="ui/main_window.py" line="2720" />
+            <source>Collects system details for support. Redaction is always on.</source>
+            <translation>收集系统详细信息以供技术支持使用。始终启用信息脱敏。</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="778" />
             <source>Compact mode</source>
             <translation>紧凑模式</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3293" />
+            <location filename="ui/main_window.py" line="3451" />
             <source>Convert Media File</source>
             <translation>转换媒体文件</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2340" />
+            <location filename="ui/main_window.py" line="2425" />
             <source>Convert Media Files</source>
             <translation>转换媒体文件</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1233" />
+            <location filename="ui/main_window.py" line="1318" />
             <source>Converting...</source>
             <translation>正在转换...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2915" />
+            <location filename="ui/main_window.py" line="3094" />
             <source>Copy</source>
             <translation>复制</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2968" />
+            <location filename="ui/main_window.py" line="2827" />
+            <source>Copy only</source>
+            <translation>仅复制</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="3147" />
             <source>Could not check for updates:
 %(error)s</source>
             <translation>无法检查更新：
 %(error)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2596" />
+            <location filename="ui/main_window.py" line="2781" />
+            <source>Current Video Settings</source>
+            <translation>当前视频设置</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2681" />
             <source>Destination folder path does not exist.</source>
             <translation>目标文件夹路径不存在。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2341" />
+            <location filename="ui/main_window.py" line="2426" />
             <source>Do you wish to convert %(what)s according to settings?</source>
             <translation>是否按当前设置转换 %(what)s？</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3294" />
+            <location filename="ui/main_window.py" line="3452" />
             <source>Do you wish to convert media file according to settings?</source>
             <translation>是否按当前设置转换该媒体文件？</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2351" />
-            <location filename="ui/main_window.py" line="3303" />
+            <location filename="ui/main_window.py" line="2436" />
+            <location filename="ui/main_window.py" line="3461" />
             <source>Don't Show Again</source>
             <translation>不再显示</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2352" />
-            <location filename="ui/main_window.py" line="3304" />
+            <location filename="ui/main_window.py" line="2437" />
+            <location filename="ui/main_window.py" line="3462" />
             <source>Don't show me this dialog again?</source>
             <translation>不再显示此对话框？</translation>
         </message>
         <message>
             <location filename="ui/main_window.py" line="385" />
-            <location filename="ui/main_window.py" line="2793" />
-            <location filename="ui/main_window.py" line="2759" />
+            <location filename="ui/main_window.py" line="2972" />
+            <location filename="ui/main_window.py" line="2938" />
             <source>Drag and drop media files here
 or select source folder to start monitoring and converting</source>
             <translation>将媒体文件拖放到此处
 或选择源文件夹以开始监视并转换</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="548" />
+            <location filename="ui/main_window.py" line="2715" />
             <source>Drop files or monitor a folder; converted files are listed above the log.</source>
             <translation>拖放文件或监视文件夹;已转换的文件列在日志上方。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3432" />
+            <location filename="ui/main_window.py" line="3590" />
             <source>Exit Game</source>
             <translation>退出游戏</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1295" />
+            <location filename="ui/main_window.py" line="1380" />
             <source>Finishing and saving the active recording.</source>
             <translation>正在完成并保存当前录制。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2588" />
-            <location filename="ui/main_window.py" line="2596" />
-            <location filename="ui/main_window.py" line="2604" />
+            <location filename="ui/main_window.py" line="2766" />
+            <source>Fling balls at other balls until the balls are gone. Video conversion has been temporarily postponed in the name of science.</source>
+            <translation>把球弹向其他球,直到球都消失。以科学之名,视频转换暂时推迟。</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2673" />
+            <location filename="ui/main_window.py" line="2681" />
+            <location filename="ui/main_window.py" line="2689" />
             <source>Folder Not Found</source>
             <translation>未找到文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="787" />
+            <location filename="ui/main_window.py" line="2817" />
+            <source>Format</source>
+            <translation>格式</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2822" />
+            <source>Frame rate</source>
+            <translation>帧率</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="778" />
             <source>Full window mode</source>
             <translation>完整窗口模式</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="774" />
+            <location filename="ui/main_window.py" line="765" />
             <source>Help</source>
             <translation>帮助</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2579" />
+            <location filename="ui/main_window.py" line="2664" />
             <source>Help Document Not Found</source>
             <translation>未找到帮助文档</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="773" />
+            <location filename="ui/main_window.py" line="1175" />
+            <source>Hide %(tool)s</source>
+            <translation>隐藏 %(tool)s</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="764" />
             <source>Info</source>
             <translation>信息</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2531" />
-            <location filename="ui/main_window.py" line="2556" />
+            <location filename="ui/main_window.py" line="2616" />
+            <location filename="ui/main_window.py" line="2641" />
             <source>Language</source>
             <translation>语言</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="667" />
+            <location filename="ui/main_window.py" line="674" />
             <source>Loading media player…</source>
             <translation>正在载入媒体播放器…</translation>
         </message>
@@ -581,112 +626,136 @@ or select source folder to start monitoring and converting</source>
             <translation>锁定/解锁设置</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1189" />
-            <location filename="ui/main_window.py" line="1900" />
+            <location filename="ui/main_window.py" line="1274" />
+            <location filename="ui/main_window.py" line="1985" />
             <source>Locked</source>
             <translation>已锁定</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="628" />
+            <location filename="ui/main_window.py" line="635" />
+            <location filename="ui/main_window.py" line="2724" />
             <source>Lossless Editor</source>
             <translation>无损编辑器</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="682" />
+            <location filename="ui/main_window.py" line="689" />
+            <location filename="ui/main_window.py" line="2734" />
             <source>Media Player</source>
             <translation>媒体播放器</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1973" />
+            <location filename="ui/main_window.py" line="2058" />
             <source>Missing Folders</source>
             <translation>缺少文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="656" />
+            <location filename="ui/main_window.py" line="2827" />
+            <source>Mode</source>
+            <translation>模式</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="663" />
+            <location filename="ui/main_window.py" line="2729" />
             <source>Multi-Source Recorder</source>
             <translation>多源录制</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2963" />
+            <location filename="ui/main_window.py" line="3142" />
             <source>No Updates</source>
             <translation>无可用更新</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2367" />
+            <location filename="ui/main_window.py" line="2452" />
             <source>No supported video files found in:
 %(paths)s</source>
             <translation>在以下位置未找到受支持的视频文件：
 %(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2896" />
-            <location filename="ui/main_window.py" line="1482" />
+            <location filename="ui/main_window.py" line="3075" />
+            <location filename="ui/main_window.py" line="1567" />
             <source>Not recording</source>
             <translation>未在录制</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="779" />
+            <location filename="ui/main_window.py" line="770" />
             <source>Open Backup Folder</source>
             <translation>打开备份文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="778" />
+            <location filename="ui/main_window.py" line="769" />
             <source>Open Destination Folder</source>
             <translation>打开目标文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="742" />
+            <location filename="ui/main_window.py" line="2801" />
             <source>Open Settings</source>
             <translation>打开设置</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="777" />
+            <location filename="ui/main_window.py" line="768" />
             <source>Open Source Folder</source>
             <translation>打开源文件夹</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="604" />
+            <location filename="ui/main_window.py" line="611" />
+            <location filename="ui/main_window.py" line="2719" />
             <source>PC Report</source>
             <translation>系统报告</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2147" />
+            <location filename="ui/main_window.py" line="2232" />
             <source>Play BallBuster XT</source>
             <translation>玩 BallBuster XT</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1973" />
+            <location filename="ui/main_window.py" line="2058" />
             <source>Please select valid Source and Destination folders.</source>
             <translation>请选择有效的源文件夹和目标文件夹。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="797" />
-            <location filename="ui/main_window.py" line="1634" />
+            <location filename="ui/main_window.py" line="789" />
+            <location filename="ui/main_window.py" line="1719" />
             <source>Quit</source>
             <translation>退出</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2884" />
+            <location filename="ui/main_window.py" line="3063" />
             <source>Ready. Reports are saved to your Desktop by default.</source>
             <translation>就绪。报告默认保存到桌面。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1247" />
+            <location filename="ui/main_window.py" line="2730" />
+            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
+            <translation>同时录制最多四个摄像头、流或屏幕,可保存为单独文件或一个组合画面。</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1332" />
             <source>Recording is unavailable while conversion is running.</source>
             <translation>转换进行中无法录制。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1215" />
+            <location filename="ui/main_window.py" line="1300" />
             <source>Recording...</source>
             <translation>正在录制...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1277" />
+            <location filename="ui/main_window.py" line="1362" />
             <source>Releasing the camera preview before recording starts.</source>
             <translation>开始录制前正在释放摄像头预览。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2916" />
+            <location filename="ui/main_window.py" line="2820" />
+            <source>Resolution</source>
+            <translation>分辨率</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2735" />
+            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
+            <translation>使用同一组播放控件并排查看最多四个片段;“检查”显示所选片段的 ffprobe 详细信息。</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="3095" />
             <source>Select All</source>
             <translation>全选</translation>
         </message>
@@ -696,96 +765,111 @@ or select source folder to start monitoring and converting</source>
             <translation>选择要转换的媒体文件</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="781" />
-            <location filename="ui/main_window.py" line="2913" />
+            <location filename="ui/main_window.py" line="772" />
+            <location filename="ui/main_window.py" line="3092" />
             <source>Settings</source>
             <translation>设置</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1632" />
+            <location filename="ui/main_window.py" line="1717" />
             <source>Show</source>
             <translation>显示</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2588" />
+            <location filename="ui/main_window.py" line="1112" />
+            <source>Show all</source>
+            <translation>全部显示</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1179" />
+            <source>Show all tools</source>
+            <translation>显示所有工具</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2673" />
             <source>Source folder path does not exist.</source>
             <translation>源文件夹路径不存在。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="751" />
-            <location filename="ui/main_window.py" line="1327" />
+            <location filename="ui/main_window.py" line="742" />
+            <location filename="ui/main_window.py" line="1412" />
             <source>Start</source>
             <translation>开始</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1327" />
+            <location filename="ui/main_window.py" line="1412" />
             <source>Start Recording</source>
             <translation>开始录制</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1352" />
+            <location filename="ui/main_window.py" line="1437" />
             <source>Start monitoring the source folder for files to convert.</source>
             <translation>开始监视源文件夹中待转换的文件。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="757" />
+            <location filename="ui/main_window.py" line="748" />
             <source>Start or stop the automatic conversion process.</source>
             <translation>启动或停止自动转换。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1350" />
+            <location filename="ui/main_window.py" line="1435" />
             <source>Start recording from the enabled recorder sources.</source>
             <translation>从已启用的录制源开始录制。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1263" />
+            <location filename="ui/main_window.py" line="1348" />
             <source>Starting...</source>
             <translation>正在启动...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3423" />
+            <location filename="ui/main_window.py" line="3580" />
             <source>Status: Gaming &lt;font color='#43a296'&gt;●&lt;/font&gt;</source>
             <translation>状态:游戏中 &lt;font color='#43a296'&gt;●&lt;/font&gt;</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1299" />
+            <location filename="ui/main_window.py" line="3424" />
+            <source>Status: Gaming &lt;font color='#43a296'&gt;●&lt;/font&gt;  Score: %(score)s  High: %(high)s  Level: %(level)s  Best level: %(best)s</source>
+            <translation>状态:游戏中 &lt;font color='#43a296'&gt;●&lt;/font&gt;  得分:%(score)s  最高分:%(high)s  关卡:%(level)s  最高关卡:%(best)s</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1384" />
             <source>Stop</source>
             <translation>停止</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1299" />
+            <location filename="ui/main_window.py" line="1384" />
             <source>Stop Recording</source>
             <translation>停止录制</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1324" />
+            <location filename="ui/main_window.py" line="1409" />
             <source>Stop monitoring the source folder for files to convert.</source>
             <translation>停止监视源文件夹中待转换的文件。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1322" />
+            <location filename="ui/main_window.py" line="1407" />
             <source>Stop the active multi-source recording.</source>
             <translation>停止当前的多源录制。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1281" />
+            <location filename="ui/main_window.py" line="1366" />
             <source>Stopping...</source>
             <translation>正在停止...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1901" />
+            <location filename="ui/main_window.py" line="1986" />
             <source>The application is locked. Unlock to change settings.</source>
             <translation>应用程序已锁定。请解锁后再更改设置。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3318" />
+            <location filename="ui/main_window.py" line="3476" />
             <source>The following files are not supported:
 %(paths)s</source>
             <translation>以下文件不受支持：
 %(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2580" />
+            <location filename="ui/main_window.py" line="2665" />
             <source>The help document could not be found.
 
 Build it with:
@@ -796,7 +880,7 @@ Build it with:
   python docs/help/source/build_help_docs.py</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2954" />
+            <location filename="ui/main_window.py" line="3133" />
             <source>This build cannot check for updates: no update source has been set.
 
 You are running version %(version)s.</source>
@@ -805,18 +889,33 @@ You are running version %(version)s.</source>
 当前运行的版本为 %(version)s。</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1480" />
+            <location filename="ui/main_window.py" line="2825" />
+            <source>Time window</source>
+            <translation>时间窗口</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1104" />
+            <source>Tools</source>
+            <translation>工具</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2725" />
+            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
+            <translation>剪辑、重新封装、提取或移除音频,以及合并片段,均无需重新编码。</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1565" />
             <source>Unavailable while conversion is running</source>
             <translation>转换进行中时不可用</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2366" />
-            <location filename="ui/main_window.py" line="3317" />
+            <location filename="ui/main_window.py" line="2451" />
+            <location filename="ui/main_window.py" line="3475" />
             <source>Unsupported Files</source>
             <translation>不受支持的文件</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2975" />
+            <location filename="ui/main_window.py" line="3154" />
             <source>Update Available</source>
             <translation>有可用更新</translation>
         </message>
@@ -826,33 +925,33 @@ You are running version %(version)s.</source>
             <translation>有可用更新!</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2967" />
+            <location filename="ui/main_window.py" line="3146" />
             <source>Update Check Failed</source>
             <translation>检查更新失败</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1771" />
+            <location filename="ui/main_window.py" line="1856" />
             <source>Update v%(version)s Available!</source>
             <translation>更新 v%(version)s 可用!</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2953" />
+            <location filename="ui/main_window.py" line="3132" />
             <source>Updates Not Configured</source>
             <translation>未配置更新</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2910" />
+            <location filename="ui/main_window.py" line="3089" />
             <source>Upload</source>
             <translation>上传</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="547" />
-            <location filename="ui/main_window.py" line="577" />
+            <location filename="ui/main_window.py" line="582" />
+            <location filename="ui/main_window.py" line="2714" />
             <source>Video Converter</source>
             <translation>视频转换器</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1630" />
+            <location filename="ui/main_window.py" line="1715" />
             <source>Video Converter Application</source>
             <translation>视频转换器应用程序</translation>
         </message>
@@ -862,12 +961,17 @@ You are running version %(version)s.</source>
             <translation>视频转换器 v%(version)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="782" />
+            <location filename="ui/main_window.py" line="2818" />
+            <source>Video codec</source>
+            <translation>视频编解码器</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="773" />
             <source>Window</source>
             <translation>窗口</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2964" />
+            <location filename="ui/main_window.py" line="3143" />
             <source>You are running the latest version.</source>
             <translation>您使用的已是最新版本。</translation>
         </message>
@@ -880,32 +984,32 @@ You are running version %(version)s.</source>
             <translation> 秒</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="766" />
+            <location filename="ui/media_player_widget.py" line="762" />
             <source>0:00:00.000 / 0:00:00.000</source>
             <translation>0:00:00.000 / 0:00:00.000</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1131" />
+            <location filename="ui/media_player_widget.py" line="1125" />
             <source>Add a folder of videos</source>
             <translation>添加一个视频文件夹</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="286" />
+            <location filename="ui/media_player_parts.py" line="290" />
             <source>Add files...</source>
             <translation>添加文件...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="289" />
+            <location filename="ui/media_player_parts.py" line="293" />
             <source>Add folder...</source>
             <translation>添加文件夹...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1120" />
+            <location filename="ui/media_player_widget.py" line="1114" />
             <source>Add videos to playlist</source>
             <translation>将视频添加到播放列表</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="295" />
+            <location filename="ui/media_player_parts.py" line="299" />
             <source>Clear playlist</source>
             <translation>清空播放列表</translation>
         </message>
@@ -915,22 +1019,22 @@ You are running version %(version)s.</source>
             <translation>清空此面板</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="490" />
+            <location filename="ui/media_player_parts.py" line="494" />
             <source>Conversion failed: %(error)s</source>
             <translation>转换失败:%(error)s</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="455" />
+            <location filename="ui/media_player_parts.py" line="459" />
             <source>Convert to MP4 (H.264) and play</source>
             <translation>转换为 MP4 (H.264) 并播放</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="484" />
+            <location filename="ui/media_player_parts.py" line="488" />
             <source>Converting... %(percent)s%%</source>
             <translation>正在转换... %(percent)s%%</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="460" />
+            <location filename="ui/media_player_parts.py" line="464" />
             <source>Dismiss</source>
             <translation>关闭</translation>
         </message>
@@ -949,12 +1053,12 @@ or click Load</source>
             <translation>文件名</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="790" />
+            <location filename="ui/media_player_widget.py" line="786" />
             <source>Fullscreen (F)</source>
             <translation>全屏 (F)</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="797" />
+            <location filename="ui/media_player_widget.py" line="793" />
             <source>Inspect (ffprobe details for the selected panel)</source>
             <translation>检查(所选面板的 ffprobe 详细信息)</translation>
         </message>
@@ -969,13 +1073,8 @@ or click Load</source>
             <translation>正在加载...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="685" />
-            <source>Media Player</source>
-            <translation>媒体播放器</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_widget.py" line="817" />
-            <location filename="ui/media_player_widget.py" line="1029" />
+            <location filename="ui/media_player_widget.py" line="813" />
+            <location filename="ui/media_player_widget.py" line="1026" />
             <source>Mute (M)</source>
             <translation>静音 (M)</translation>
         </message>
@@ -995,11 +1094,6 @@ or click Load</source>
             <translation>面板</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1047" />
-            <source>Panel %(number)s</source>
-            <translation>面板 %(number)s</translation>
-        </message>
-        <message>
             <location filename="ui/media_player_widget.py" line="549" />
             <source>Panel %(number)s: %(name)s</source>
             <translation>面板 %(number)s:%(name)s</translation>
@@ -1011,7 +1105,7 @@ or click Load</source>
             <translation>面板 %(number)s:空</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="821" />
+            <location filename="ui/media_player_widget.py" line="817" />
             <source>Panels</source>
             <translation>面板数</translation>
         </message>
@@ -1021,48 +1115,39 @@ or click Load</source>
             <translation>当前正在显示此片段的面板。</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1308" />
+            <location filename="ui/media_player_widget.py" line="1303" />
             <source>Pause all</source>
             <translation>全部暂停</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="779" />
-            <location filename="ui/media_player_widget.py" line="1308" />
+            <location filename="ui/media_player_widget.py" line="775" />
+            <location filename="ui/media_player_widget.py" line="1303" />
             <source>Play all</source>
             <translation>全部播放</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="794" />
+            <location filename="ui/media_player_widget.py" line="790" />
+            <location filename="ui/media_player_widget.py" line="1042" />
             <source>Playlist</source>
             <translation>播放列表</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="318" />
-            <source>Playlist - %(panel)s</source>
-            <translation>播放列表 - %(panel)s</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_parts.py" line="292" />
+            <location filename="ui/media_player_parts.py" line="296" />
             <source>Remove selected</source>
             <translation>移除所选项</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="785" />
+            <location filename="ui/media_player_widget.py" line="781" />
             <source>Restart</source>
             <translation>重新开始</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="686" />
-            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
-            <translation>使用同一组播放控件并排查看最多四个片段;“检查”显示所选片段的 ffprobe 详细信息。</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_widget.py" line="801" />
+            <location filename="ui/media_player_widget.py" line="797" />
             <source>Speed</source>
             <translation>速度</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="782" />
+            <location filename="ui/media_player_widget.py" line="778" />
             <source>Stop all</source>
             <translation>全部停止</translation>
         </message>
@@ -1072,38 +1157,38 @@ or click Load</source>
             <translation>同步偏移:相对于其他面板,将此片段提前(负值)或延后(正值)。双击可编辑。</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1029" />
+            <location filename="ui/media_player_widget.py" line="1026" />
             <source>Unmute (M)</source>
             <translation>取消静音 (M)</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="809" />
+            <location filename="ui/media_player_widget.py" line="805" />
             <source>Volume</source>
             <translation>音量</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="815" />
+            <location filename="ui/media_player_widget.py" line="811" />
             <source>Volume for every panel</source>
             <translation>所有面板的音量</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1240" />
+            <location filename="ui/media_player_widget.py" line="1235" />
             <source>Windows cannot play %(codecs)s in %(container)s.</source>
             <translation>Windows 无法播放 %(container)s 中的 %(codecs)s。</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1235" />
+            <location filename="ui/media_player_widget.py" line="1230" />
             <source>Windows cannot play this file.</source>
             <translation>Windows 无法播放此文件。</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1290" />
+            <location filename="ui/media_player_widget.py" line="1285" />
             <source>the converter could not produce an MP4; see the Conversion Log</source>
             <translation>转换器无法生成 MP4;请查看转换日志</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1236" />
-            <location filename="ui/media_player_widget.py" line="1237" />
+            <location filename="ui/media_player_widget.py" line="1231" />
+            <location filename="ui/media_player_widget.py" line="1232" />
             <source>unknown</source>
             <translation>未知</translation>
         </message>
@@ -1111,72 +1196,62 @@ or click Load</source>
     <context>
         <name>PcReport</name>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="119" />
-            <source>Collects system details for support. Redaction is always on.</source>
-            <translation>收集系统详细信息以供技术支持使用。始终启用信息脱敏。</translation>
-        </message>
-        <message>
-            <location filename="ui/pc_report_dialog.py" line="276" />
+            <location filename="ui/pc_report_dialog.py" line="236" />
             <source>Elevation was cancelled or refused; the report will run without administrator rights.</source>
             <translation>提权已取消或被拒绝;报告将在没有管理员权限的情况下运行。</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="137" />
+            <location filename="ui/pc_report_dialog.py" line="117" />
             <source>Generate PC Report</source>
             <translation>生成 PC 报告</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="332" />
+            <location filename="ui/pc_report_dialog.py" line="292" />
             <source>Generating PC report inside this tab...</source>
             <translation>正在此选项卡中生成 PC 报告...</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="139" />
+            <location filename="ui/pc_report_dialog.py" line="119" />
             <source>Open folder</source>
             <translation>打开文件夹</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="138" />
+            <location filename="ui/pc_report_dialog.py" line="118" />
             <source>Open report</source>
             <translation>打开报告</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="118" />
-            <source>PC Report</source>
-            <translation>系统报告</translation>
-        </message>
-        <message>
-            <location filename="ui/pc_report_dialog.py" line="377" />
+            <location filename="ui/pc_report_dialog.py" line="313" />
             <source>PC report complete: %(path)s</source>
             <translation>PC 报告已完成:%(path)s</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="384" />
+            <location filename="ui/pc_report_dialog.py" line="320" />
             <source>PC report generated, but saving failed.</source>
             <translation>PC 报告已生成,但保存失败。</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="168" />
+            <location filename="ui/pc_report_dialog.py" line="148" />
             <source>Ready. Reports are saved to your Desktop by default.</source>
             <translation>就绪。报告默认保存到桌面。</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="177" />
+            <location filename="ui/pc_report_dialog.py" line="157" />
             <source>Report progress appears here.</source>
             <translation>报告进度将显示在此处。</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="142" />
+            <location filename="ui/pc_report_dialog.py" line="122" />
             <source>Restart NVC with administrator rights so the report can read TPM, BitLocker, disk reliability and SMB server details.</source>
             <translation>以管理员权限重新启动 NVC,以便报告读取 TPM、BitLocker、磁盘可靠性和 SMB 服务器的详细信息。</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="140" />
+            <location filename="ui/pc_report_dialog.py" line="120" />
             <source>Run as administrator</source>
             <translation>以管理员身份运行</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="250" />
+            <location filename="ui/pc_report_dialog.py" line="210" />
             <source>Stop the current conversion or recording before restarting as administrator.</source>
             <translation>在以管理员身份重新启动之前,请先停止当前的转换或录制。</translation>
         </message>
@@ -1184,23 +1259,13 @@ or click Load</source>
     <context>
         <name>Preview</name>
         <message>
-            <location filename="ui/preview_controller.py" line="85" />
-            <location filename="ui/preview_controller.py" line="234" />
-            <location filename="ui/preview_controller.py" line="273" />
-            <location filename="ui/preview_controller.py" line="393" />
-            <location filename="ui/preview_controller.py" line="433" />
-            <location filename="ui/preview_controller.py" line="436" />
-            <source>No Preview</source>
-            <translation>无预览</translation>
-        </message>
-        <message>
-            <location filename="ui/preview_controller.py" line="485" />
+            <location filename="ui/preview_controller.py" line="554" />
             <source>Preview failed</source>
             <translation>预览失败</translation>
         </message>
         <message>
-            <location filename="ui/preview_controller.py" line="459" />
-            <location filename="ui/preview_controller.py" line="409" />
+            <location filename="ui/preview_controller.py" line="528" />
+            <location filename="ui/preview_controller.py" line="478" />
             <source>ffmpeg missing</source>
             <translation>缺少 ffmpeg</translation>
         </message>
@@ -1208,77 +1273,77 @@ or click Load</source>
     <context>
         <name>Recorder</name>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="110" />
+            <location filename="ui/multi_source_recorder_widget.py" line="109" />
             <source> s</source>
             <translation> 秒</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1088" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1083" />
             <source>%(cameras)s, %(microphones)s found</source>
             <translation>找到 %(cameras)s、%(microphones)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2057" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2081" />
             <source>%(device)s (not found)</source>
             <translation>%(device)s(未找到)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1081" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1076" />
             <source>%(n)d camera</source>
             <translation>%(n)d 个摄像头</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1081" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1076" />
             <source>%(n)d cameras</source>
             <translation>%(n)d 个摄像头</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1083" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1078" />
             <source>%(n)d microphone</source>
             <translation>%(n)d 个麦克风</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1085" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1080" />
             <source>%(n)d microphones</source>
             <translation>%(n)d 个麦克风</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="912" />
+            <location filename="ui/multi_source_recorder_widget.py" line="907" />
             <source>%(name)s *</source>
             <translation>%(name)s *</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3622" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3647" />
             <source>%(row)s: audio device '%(device)s' unavailable, recording video only</source>
             <translation>%(row)s:音频设备“%(device)s”不可用,仅录制视频</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1646" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1630" />
             <source>...</source>
             <translation>...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="678" />
+            <location filename="ui/multi_source_recorder_widget.py" line="673" />
             <source>/</source>
             <translation>/</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="770" />
+            <location filename="ui/multi_source_recorder_widget.py" line="765" />
             <source>01:00:00</source>
             <translation>01:00:00</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1340" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1332" />
             <source>192.168.1.50 or rtsp://camera/stream</source>
             <translation>192.168.1.50 或 rtsp://camera/stream</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1295" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1287" />
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.</source>
             <translation>Basler / GenICam 设置在 Basler pylon Viewer 中管理。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2640" />
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.
 
 The FFmpeg DirectShow property dialog does not reliably open Basler camera controls and can produce BindToObject errors while NVC is previewing the camera.
@@ -1291,29 +1356,29 @@ FFmpeg DirectShow 属性对话框无法可靠地打开 Basler 摄像头控件,�
 请打开 pylon Viewer 调整曝光、增益、触发模式、像素格式和摄像头默认值。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2606" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1294" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2639" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1286" />
             <source>Basler Camera Settings</source>
             <translation>Basler 摄像头设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="599" />
+            <location filename="ui/multi_source_recorder_widget.py" line="594" />
             <source>Camera %(number)s settings</source>
             <translation>摄像头 %(number)s 设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1317" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2574" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1309" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
             <source>Camera Settings</source>
             <translation>摄像头设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1306" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1298" />
             <source>Camera settings for %(device)s will use the camera driver's native controls when available.</source>
             <translation>%(device)s 的摄像头设置将在可用时使用摄像头驱动程序的原生控件。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1381" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1373" />
             <source>Check the camera address.
 
 %(problem)s</source>
@@ -1322,79 +1387,79 @@ FFmpeg DirectShow 属性对话框无法可靠地打开 Basler 摄像头控件,�
 %(problem)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1647" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1631" />
             <source>Choose recording folder</source>
             <translation>选择录制文件夹</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="234" />
+            <location filename="ui/multi_source_recorder_widget.py" line="233" />
             <source>Choose what this source records. The desktop and window modes use GDI; a single display is captured through the GPU.</source>
             <translation>选择此源录制的内容。桌面和窗口模式使用 GDI;单个显示器通过 GPU 捕获。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="752" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1683" />
+            <location filename="ui/multi_source_recorder_widget.py" line="747" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1667" />
             <source>Combined grid</source>
             <translation>组合网格</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1190" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1191" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1185" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1186" />
             <source>Could not detect supported modes; Auto is recommended.</source>
             <translation>无法检测支持的模式;建议使用“自动”。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2908" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2933" />
             <source>Could not open the recording folder:
 %(error)s</source>
             <translation>无法打开录制文件夹:
 %(error)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2914" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2939" />
             <source>Could not open the recording folder:
 %(path)s</source>
             <translation>无法打开录制文件夹:
 %(path)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="676" />
+            <location filename="ui/multi_source_recorder_widget.py" line="671" />
             <source>Delete</source>
             <translation>删除</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="871" />
+            <location filename="ui/multi_source_recorder_widget.py" line="866" />
             <source>Delete Video Preset</source>
             <translation>删除视频预设</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="872" />
+            <location filename="ui/multi_source_recorder_widget.py" line="867" />
             <source>Delete preset '%(name)s'?</source>
             <translation>是否删除预设“%(name)s”?</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1175" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1176" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1170" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1171" />
             <source>Detecting supported camera modes...</source>
             <translation>正在检测支持的摄像头模式...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1072" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1067" />
             <source>Device scan failed. Check that ffmpeg.exe is present and try again.</source>
             <translation>设备扫描失败。请确认 ffmpeg.exe 存在后重试。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1644" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1628" />
             <source>Double-click to choose the recording folder</source>
             <translation>双击选择录制文件夹</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1551" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1535" />
             <source>Double-click to open video settings</source>
             <translation>双击打开视频设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="432" />
+            <location filename="ui/multi_source_recorder_widget.py" line="431" />
             <source>Drag to pan/tilt this camera</source>
             <translation>拖动以平移/俯仰此摄像头</translation>
         </message>
@@ -1404,193 +1469,190 @@ FFmpeg DirectShow 属性对话框无法可靠地打开 Basler 摄像头控件,�
             <translation>拖动以选择要录制的区域。按 Esc 取消。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3097" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1749" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1753" />
+            <source>Enable at least one source</source>
+            <translation>请至少启用一个来源</translation>
+        </message>
+        <message>
+            <location filename="ui/multi_source_recorder_widget.py" line="3122" />
             <source>Enable at least one source and enter its source string.</source>
             <translation>请至少启用一个源并输入其源字符串。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3101" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3126" />
             <source>Enable at least one unique source.</source>
             <translation>请至少启用一个不重复的源。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2913" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2907" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2938" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2932" />
             <source>Folder unavailable</source>
             <translation>文件夹不可用</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="268" />
+            <location filename="ui/multi_source_recorder_widget.py" line="267" />
             <source>Height</source>
             <translation>高度</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="673" />
+            <location filename="ui/multi_source_recorder_widget.py" line="668" />
             <source>Load</source>
             <translation>载入</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2920" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2945" />
             <source>Missing FFmpeg</source>
             <translation>缺少 FFmpeg</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="245" />
-            <location filename="ui/multi_source_recorder_widget.py" line="310" />
+            <location filename="ui/multi_source_recorder_widget.py" line="244" />
+            <location filename="ui/multi_source_recorder_widget.py" line="309" />
             <source>Monitor %(number)d</source>
             <translation>显示器 %(number)d</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1486" />
-            <source>Multi-Source Recorder</source>
-            <translation>多源录制器</translation>
-        </message>
-        <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2048" />
-            <location filename="ui/multi_source_recorder_widget.py" line="588" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2072" />
+            <location filename="ui/multi_source_recorder_widget.py" line="583" />
             <source>No Audio</source>
             <translation>无音频</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3097" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3101" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3122" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3126" />
             <source>No Sources</source>
             <translation>无源</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1317" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1309" />
             <source>No camera-specific settings are available for this source type yet.</source>
             <translation>此源类型尚无特定于摄像头的设置。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1491" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2494" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3758" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3487" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1477" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2527" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3783" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1750" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3512" />
             <source>Not recording</source>
             <translation>未在录制</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="242" />
+            <location filename="ui/multi_source_recorder_widget.py" line="241" />
             <source>One display (GPU)</source>
             <translation>单个显示器 (GPU)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="248" />
+            <location filename="ui/multi_source_recorder_widget.py" line="247" />
             <source>One window</source>
             <translation>单个窗口</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1667" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1651" />
             <source>Open the recording folder in your file browser</source>
             <translation>在文件浏览器中打开录制文件夹</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="745" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1624" />
+            <location filename="ui/multi_source_recorder_widget.py" line="740" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1608" />
             <source>Output settings</source>
             <translation>输出设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="257" />
+            <location filename="ui/multi_source_recorder_widget.py" line="256" />
             <source>Part of the desktop</source>
             <translation>桌面的一部分</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="753" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1684" />
+            <location filename="ui/multi_source_recorder_widget.py" line="748" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1668" />
             <source>Picture-in-picture</source>
             <translation>画中画</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="854" />
+            <location filename="ui/multi_source_recorder_widget.py" line="849" />
             <source>Preset name:</source>
             <translation>预设名称:</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1334" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1380" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1326" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1372" />
             <source>RTSP/IP Camera Settings</source>
             <translation>RTSP/IP 摄像头设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1487" />
-            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
-            <translation>同时录制最多四个摄像头、流或屏幕,可保存为单独文件或一个组合画面。</translation>
-        </message>
-        <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3144" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3535" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3577" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3693" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3450" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3169" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3560" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3602" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3718" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3475" />
             <source>Recording</source>
             <translation>正在录制</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2831" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2864" />
             <source>Recording Log</source>
             <translation>录制日志</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3838" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3863" />
             <source>Recording failed - FFmpeg did not stop cleanly</source>
             <translation>录制失败 - FFmpeg 未正常停止</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3458" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3135" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3485" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3483" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3160" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3510" />
             <source>Recording failed - check camera availability</source>
             <translation>录制失败 - 请检查摄像头是否可用</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1525" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1511" />
             <source>Recording properties</source>
             <translation>录制属性</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3777" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3802" />
             <source>Recording stopped (forced)</source>
             <translation>录制已停止(强制)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3478" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3503" />
             <source>Recording: %(name)s failed - check camera availability</source>
             <translation>录制:%(name)s 失败 - 请检查摄像头是否可用</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="253" />
+            <location filename="ui/multi_source_recorder_widget.py" line="252" />
             <source>Refresh</source>
             <translation>刷新</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="853" />
+            <location filename="ui/multi_source_recorder_widget.py" line="848" />
             <source>Save Video Preset</source>
             <translation>保存视频预设</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="675" />
+            <location filename="ui/multi_source_recorder_widget.py" line="670" />
             <source>Save as...</source>
             <translation>另存为...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="636" />
+            <location filename="ui/multi_source_recorder_widget.py" line="631" />
             <source>Scan again for cameras and microphones</source>
             <translation>重新扫描摄像头和麦克风</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1066" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1061" />
             <source>Scanning for cameras and microphones...</source>
             <translation>正在扫描摄像头和麦克风...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="226" />
+            <location filename="ui/multi_source_recorder_widget.py" line="225" />
             <source>Screen Capture Settings</source>
             <translation>屏幕捕获设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2574" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
             <source>Select a USB / DirectShow camera first.</source>
             <translation>请先选择一个 USB / DirectShow 摄像头。</translation>
         </message>
@@ -1600,103 +1662,103 @@ FFmpeg DirectShow 属性对话框无法可靠地打开 Basler 摄像头控件,�
             <translation>选择屏幕区域</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="262" />
+            <location filename="ui/multi_source_recorder_widget.py" line="261" />
             <source>Select on screen...</source>
             <translation>在屏幕上选择...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="751" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1682" />
+            <location filename="ui/multi_source_recorder_widget.py" line="746" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1666" />
             <source>Separate videos</source>
             <translation>单独视频</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1686" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1670" />
             <source>Separate videos: one file per source. Combined grid: one file with the sources side by side. Picture-in-picture: one file with source 1 full frame and the others as insets.</source>
             <translation>单独视频:每个源一个文件。组合网格:一个文件,各源并排显示。画中画:一个文件,源 1 为全画幅,其他源为小窗。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="674" />
+            <location filename="ui/multi_source_recorder_widget.py" line="669" />
             <source>Set</source>
             <translation>设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1608" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1592" />
             <source>Show recording log</source>
             <translation>显示录制日志</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1911" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1931" />
             <source>Source</source>
             <translation>源</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1726" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1710" />
             <source>Start recording</source>
             <translation>开始录制</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3111" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3136" />
             <source>Starting recording...</source>
             <translation>正在开始录制...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1739" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1723" />
             <source>Stop Recording</source>
             <translation>停止录制</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3736" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3761" />
             <source>Stopping...</source>
             <translation>正在停止...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1220" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1215" />
             <source>Supported frame rates detected from the camera driver.</source>
             <translation>从摄像头驱动程序检测到的支持帧率。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1221" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1216" />
             <source>Supported resolutions detected from the camera driver.</source>
             <translation>从摄像头驱动程序检测到的支持分辨率。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="113" />
+            <location filename="ui/multi_source_recorder_widget.py" line="112" />
             <source>Sync offset for Combined grid and Picture-in-picture: shift this source earlier (negative) or later (positive) to line it up with the others.</source>
             <translation>组合网格和画中画的同步偏移:将此源提前(负值)或延后(正值),使其与其他源对齐。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="766" />
+            <location filename="ui/multi_source_recorder_widget.py" line="761" />
             <source>Timer settings</source>
             <translation>计时器设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="783" />
+            <location filename="ui/multi_source_recorder_widget.py" line="778" />
             <source>USB / DirectShow expects the Windows camera name. RTSP/IP can use an IP address or full rtsp:// URL. Basler / GenICam expects the source string from pylon or device setup.</source>
             <translation>USB / DirectShow 需要 Windows 摄像头名称。RTSP/IP 可使用 IP 地址或完整的 rtsp:// URL。Basler / GenICam 需要来自 pylon 或设备设置的源字符串。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1305" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1297" />
             <source>USB Camera Settings</source>
             <translation>USB 摄像头设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1702" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1686" />
             <source>USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources.</source>
             <translation>USB 摄像头和屏幕捕获始终重新编码为 H.264;“复制”适用于 RTSP 和文件源。</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="768" />
+            <location filename="ui/multi_source_recorder_widget.py" line="763" />
             <source>Use maximum recording time</source>
             <translation>使用最长录制时间</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1677" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1661" />
             <source>Video</source>
             <translation>视频</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1909" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1929" />
             <source>Video %(number)s
 %(kind)s
 Configure the source</source>
@@ -1705,7 +1767,7 @@ Configure the source</source>
 请配置源</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1914" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1934" />
             <source>Video %(number)s
 %(source)s
 Opening preview...</source>
@@ -1714,7 +1776,7 @@ Opening preview...</source>
 正在打开预览...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2357" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2385" />
             <source>Video %(number)s
 Camera is not available as a DirectShow video device
 Refresh devices or check pylon/GenICam setup</source>
@@ -1723,7 +1785,7 @@ Refresh devices or check pylon/GenICam setup</source>
 请刷新设备或检查 pylon/GenICam 设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2370" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2398" />
             <source>Video %(number)s
 Cannot resolve the camera address
 Check the IP in Video Settings</source>
@@ -1732,21 +1794,21 @@ Check the IP in Video Settings</source>
 请在“视频设置”中检查 IP</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1500" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1486" />
             <source>Video %(number)s
 No signal</source>
             <translation>视频 %(number)s
 无信号</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3286" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3311" />
             <source>Video %(number)s
 Opening combined preview...</source>
             <translation>视频 %(number)s
 正在打开组合预览...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2377" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2405" />
             <source>Video %(number)s
 Preview interrupted
 Reconnecting...</source>
@@ -1755,7 +1817,7 @@ Reconnecting...</source>
 正在重新连接...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2382" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2410" />
             <source>Video %(number)s
 Preview unavailable
 Camera may be in use</source>
@@ -1764,7 +1826,7 @@ Camera may be in use</source>
 摄像头可能正在使用中</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1918" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1938" />
             <source>Video %(number)s
 RTSP/IP
 Opening preview...</source>
@@ -1773,7 +1835,7 @@ RTSP/IP
 正在打开预览...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2537" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2570" />
             <source>Video %(number)s
 Recording
 Starting live preview...</source>
@@ -1782,7 +1844,7 @@ Starting live preview...</source>
 正在启动实时预览...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1922" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1942" />
             <source>Video %(number)s
 Screen capture
 Opening preview...</source>
@@ -1791,68 +1853,68 @@ Opening preview...</source>
 正在打开预览...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="662" />
+            <location filename="ui/multi_source_recorder_widget.py" line="657" />
             <source>Video Preset</source>
             <translation>视频预设</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="721" />
+            <location filename="ui/multi_source_recorder_widget.py" line="716" />
             <source>Video Preset:</source>
             <translation>视频预设:</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="488" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1603" />
+            <location filename="ui/multi_source_recorder_widget.py" line="487" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1587" />
             <source>Video Settings</source>
             <translation>视频设置</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="239" />
+            <location filename="ui/multi_source_recorder_widget.py" line="238" />
             <source>Whole desktop (every monitor)</source>
             <translation>整个桌面(所有显示器)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="268" />
+            <location filename="ui/multi_source_recorder_widget.py" line="267" />
             <source>Width</source>
             <translation>宽度</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="267" />
+            <location filename="ui/multi_source_recorder_widget.py" line="266" />
             <source>X</source>
             <translation>X</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="267" />
+            <location filename="ui/multi_source_recorder_widget.py" line="266" />
             <source>Y</source>
             <translation>Y</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="677" />
+            <location filename="ui/multi_source_recorder_widget.py" line="672" />
             <source>[</source>
             <translation>[</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3338" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3363" />
             <source>[Combined] using audio from %(row)s</source>
             <translation>[组合] 使用来自 %(row)s 的音频</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="679" />
+            <location filename="ui/multi_source_recorder_widget.py" line="674" />
             <source>]</source>
             <translation>]</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1562" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1546" />
             <source>address, device, or URL</source>
             <translation>地址、设备或 URL</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1697" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1681" />
             <source>blank = until stopped</source>
             <translation>留空 = 直到手动停止</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2920" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2945" />
             <source>ffmpeg.exe could not be found.</source>
             <translation>找不到 ffmpeg.exe。</translation>
         </message>
@@ -2520,6 +2582,65 @@ Configure your desired settings and click 'Save to %(number)s' to create it.</so
             <location filename="ui/workflow_rules.py" line="87" />
             <source>Stopping recording</source>
             <translation>正在停止录制</translation>
+        </message>
+    </context>
+    <context>
+        <name>LosslessEditor</name>
+        <message>
+            <source>Lossless Editor</source>
+            <translation type="vanished">无损编辑器</translation>
+        </message>
+        <message>
+            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
+            <translation type="vanished">剪辑、重新封装、提取或移除音频,以及合并片段,均无需重新编码。</translation>
+        </message>
+    </context>
+    <context>
+        <name>MediaPlayer</name>
+        <message>
+            <source>Media Player</source>
+            <translation type="vanished">媒体播放器</translation>
+        </message>
+        <message>
+            <source>Panel %(number)s</source>
+            <translation type="vanished">面板 %(number)s</translation>
+        </message>
+        <message>
+            <source>Playlist - %(panel)s</source>
+            <translation type="vanished">播放列表 - %(panel)s</translation>
+        </message>
+        <message>
+            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
+            <translation type="vanished">使用同一组播放控件并排查看最多四个片段;“检查”显示所选片段的 ffprobe 详细信息。</translation>
+        </message>
+    </context>
+    <context>
+        <name>PcReport</name>
+        <message>
+            <source>Collects system details for support. Redaction is always on.</source>
+            <translation type="vanished">收集系统详细信息以供技术支持使用。始终启用信息脱敏。</translation>
+        </message>
+        <message>
+            <source>PC Report</source>
+            <translation type="vanished">系统报告</translation>
+        </message>
+    </context>
+    <context>
+        <name>Preview</name>
+        <message>
+            <source>No Preview</source>
+            <translation type="vanished">无预览</translation>
+        </message>
+    </context>
+    <context>
+        <name>Recorder</name>
+        <message>
+            <source>Multi-Source Recorder</source>
+            <translation type="vanished">多源录制器</translation>
+        </message>
+        <message>
+            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
+            <translation type="vanished">同时录制最多四个摄像头、流或屏幕,可保存为单独文件或一个组合画面。</translation>
         </message>
     </context>
 </TS>

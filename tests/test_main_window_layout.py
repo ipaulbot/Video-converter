@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 
 from ui import theme
@@ -55,6 +55,25 @@ class TabCardTests(unittest.TestCase):
         self.assertEqual(set(self.window.tool_tab_cards), keys)
         for key, card in self.window.tool_tab_cards.items():
             self.assertIsInstance(card, LeafFrame, key)
+
+    def test_pc_report_heartbeat_shows_only_while_its_tab_is_current(self):
+        w = self.window
+        tabs = w.tabs
+        pc_index = tabs.indexOf(w.tool_tab_widgets["pc_report"])
+        conv_index = tabs.indexOf(w.tool_tab_widgets["video_converter"])
+        try:
+            tabs.setCurrentIndex(pc_index)
+            w.pc_report_widget.report_running.emit(True)
+            self.assertTrue(w.preview.heartbeat_active)
+            tabs.setCurrentIndex(conv_index)
+            self.assertFalse(w.preview.heartbeat_active)
+            tabs.setCurrentIndex(pc_index)
+            self.assertTrue(w.preview.heartbeat_active)
+            w.pc_report_widget.report_running.emit(False)
+            self.assertFalse(w.preview.heartbeat_active)
+        finally:
+            w.pc_report_widget.report_running.emit(False)
+            tabs.setCurrentIndex(conv_index)
 
     def test_tab_pane_has_no_border_of_its_own(self):
         self.assertIn(
@@ -235,13 +254,24 @@ class TabHeaderUnityTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
-    def test_every_tool_tab_opens_with_the_same_header_glyph_and_its_title(self):
+    def _window(self):
         with patch("ui.main_window.save_settings"):
             window = VideoConverterApp()
         self.addCleanup(window.shutdown)
+        window.settings["visible_tool_tabs"] = dict.fromkeys(
+            window.settings.get("visible_tool_tabs", {}), True)
+        window.apply_tool_tab_visibility()
         window._ensure_media_player_widget()
-        headers = window.tab_headers()
-        self.assertEqual(set(headers), set(window.tool_tab_widgets))
+        return window
+
+    def test_the_sidebar_context_header_follows_the_current_tab(self):
+        # Since 2026-09-27 the one TabHeader lives in the sidebar under the
+        # logo and describes whichever tool tab is current.
+        window = self._window()
+        header = window.context_header
+        self.assertIsInstance(header, TabHeader)
+        self.assertTrue(header.compact)
+        self.assertEqual(header.width(), 180)
         expected = {
             "video_converter": ("convert", "Video Converter"),
             "pc_report": ("pc", "PC Report"),
@@ -250,41 +280,138 @@ class TabHeaderUnityTests(unittest.TestCase):
             "media_player": ("player", "Media Player"),
         }
         for key, (glyph, title) in expected.items():
-            header = headers[key]
-            self.assertIsInstance(header, TabHeader, key)
+            window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
             self.assertEqual(header.glyph_name, glyph, key)
             self.assertEqual(header.title_label.text(), title, key)
             self.assertEqual(header.title_label.text(), window.tabs.tabText(
                 window.tabs.indexOf(window.tool_tab_widgets[key])), key)
-            self.assertEqual(header.glyph_label.width(), TabHeader.GLYPH_PX, key)
-            self.assertFalse(header.description_label.isHidden(), key)
-        self.assertIn(window.converter_header, window.reskin_widgets())
+            self.assertTrue(header.description_label.text(), key)
+        self.assertIn(header, window.reskin_widgets())
+        self.assertEqual(set(window.tab_headers()), set(window.tool_tab_widgets))
+        self.assertTrue(all(h is header for h in window.tab_headers().values()))
 
-    def test_every_tool_tab_header_sits_at_the_same_spot_in_the_window(self):
-        # The recorder's and the player's headers sat 6 / 16 px lower and
-        # further right than the others: their widgets kept their own outer
-        # layout margins while the other tabs use none.
-        with patch("ui.main_window.save_settings"):
-            window = VideoConverterApp()
-        self.addCleanup(window.shutdown)
-        window.settings["visible_tool_tabs"] = dict.fromkeys(
-            window.settings.get("visible_tool_tabs", {}), True)
-        window.apply_tool_tab_visibility()
-        window._ensure_media_player_widget()
+    def test_the_context_header_sits_between_the_logo_and_the_preview(self):
+        window = self._window()
+        left = window.left_layout
+        self.assertLess(left.indexOf(window.logo_label), left.indexOf(window.context_header))
+        self.assertLess(left.indexOf(window.context_header), left.indexOf(window.preview_container))
+
+    def test_tool_tabs_carry_no_header_of_their_own(self):
+        window = self._window()
+        for key, widget in window.tool_tab_widgets.items():
+            self.assertIsNone(widget.findChild(TabHeader), key)
+
+    def test_the_sidebar_no_longer_carries_the_settings_text(self):
+        window = self._window()
+        self.assertFalse(hasattr(window, "settings_display"))
+
+    def test_the_glyph_of_the_context_header_is_centred_over_its_title(self):
+        window = self._window()
         window.move(-7000, -7000)
         window.show()
         try:
-            spots = {}
-            for key, header in window.tab_headers().items():
-                window.tabs.setCurrentWidget(window.tool_tab_widgets[key])
-                for _ in range(6):
-                    self.app.processEvents()
-                origin = header.mapTo(window, QPoint(0, 0))
-                glyph = header.glyph_label.mapTo(window, QPoint(0, 0))
-                spots[key] = (origin.x(), origin.y(), glyph.y() - origin.y())
-            self.assertEqual(len(set(spots.values())), 1, spots)
+            for _ in range(6):
+                self.app.processEvents()
+            header = window.context_header
+            glyph = header.glyph_label.geometry()
+            title = header.title_label.geometry()
+            self.assertLess(glyph.bottom(), title.top())
+            self.assertAlmostEqual(glyph.center().x(), header.width() // 2, delta=2)
         finally:
             window.hide()
+
+
+class ToolVisibilityTests(unittest.TestCase):
+    """Right-click a tab to hide it; the burger's Tools submenu shows/hides any tool."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication.instance() or QApplication([])
+
+    def _window(self):
+        with patch("ui.main_window.save_settings"):
+            window = VideoConverterApp()
+        self.addCleanup(window.shutdown)
+        window.settings["visible_tool_tabs"] = dict.fromkeys(window.tool_tab_widgets, True)
+        window.apply_tool_tab_visibility()
+        return window
+
+    def _visible(self, window, key):
+        return window.tabs.isTabVisible(window.tabs.indexOf(window.tool_tab_widgets[key]))
+
+    def test_burger_tools_submenu_lists_every_tool_with_a_check_mark(self):
+        window = self._window()
+        actions = window.tool_visibility_actions
+        self.assertEqual(set(actions), set(window.tool_tab_widgets))
+        for key, action in actions.items():
+            self.assertTrue(action.isCheckable(), key)
+            self.assertTrue(action.isChecked(), key)
+            self.assertEqual(action.text(), window.tabs.tabText(
+                window.tabs.indexOf(window.tool_tab_widgets[key])), key)
+        self.assertIn(window.show_all_tools_action, window.tools_menu.actions())
+
+    def test_unchecking_a_tool_hides_its_tab_and_is_saved(self):
+        window = self._window()
+        with patch("ui.main_window.save_settings") as save:
+            window.tool_visibility_actions["pc_report"].trigger()
+        save.assert_called_once()
+        self.assertFalse(window.settings["visible_tool_tabs"]["pc_report"])
+        self.assertFalse(self._visible(window, "pc_report"))
+        with patch("ui.main_window.save_settings"):
+            window.tool_visibility_actions["pc_report"].trigger()
+        self.assertTrue(self._visible(window, "pc_report"))
+
+    def test_show_all_brings_every_tool_back(self):
+        window = self._window()
+        with patch("ui.main_window.save_settings"):
+            window.set_tool_visible("pc_report", False)
+            window.set_tool_visible("media_player", False)
+            window.show_all_tools_action.trigger()
+        self.assertTrue(all(window.settings["visible_tool_tabs"].values()))
+        self.assertTrue(all(self._visible(window, k) for k in window.tool_tab_widgets))
+        self.assertTrue(all(a.isChecked() for a in window.tool_visibility_actions.values()))
+
+    def test_hiding_the_current_tab_moves_to_the_nearest_visible_one(self):
+        window = self._window()
+        order = window.current_tool_tab_order()
+        window.tabs.setCurrentWidget(window.tool_tab_widgets[order[1]])
+        with patch("ui.main_window.save_settings"):
+            window.set_tool_visible(order[1], False)
+        self.assertEqual(window.current_tool_key(), order[2])
+
+    def test_the_last_visible_tool_cannot_be_hidden(self):
+        window = self._window()
+        order = window.current_tool_tab_order()
+        with patch("ui.main_window.save_settings"):
+            for key in order[1:]:
+                window.set_tool_visible(key, False)
+            window.set_tool_visible(order[0], False)      # refused
+        self.assertTrue(window.settings["visible_tool_tabs"][order[0]])
+        self.assertTrue(self._visible(window, order[0]))
+        self.assertFalse(window.tool_visibility_actions[order[0]].isEnabled())
+        menu = window.tab_context_menu_for(window.tabs.indexOf(window.tool_tab_widgets[order[0]]))
+        hide = menu.actions()[0]
+        self.assertEqual(hide.text(), f"Hide {window.tabs.tabText(0)}")
+        self.assertFalse(hide.isEnabled())
+
+    def test_right_click_menu_hides_that_tab(self):
+        window = self._window()
+        index = window.tabs.indexOf(window.tool_tab_widgets["lossless_editor"])
+        self.assertEqual(window.tabs.tabBar().contextMenuPolicy(), Qt.CustomContextMenu)
+        menu = window.tab_context_menu_for(index)
+        hide = menu.actions()[0]
+        self.assertEqual(hide.text(), "Hide Lossless Editor")
+        with patch("ui.main_window.save_settings"):
+            hide.trigger()
+        self.assertFalse(self._visible(window, "lossless_editor"))
+        self.assertFalse(window.tool_visibility_actions["lossless_editor"].isChecked())
+
+    def test_settings_written_elsewhere_refresh_the_check_marks(self):
+        window = self._window()
+        window.settings["visible_tool_tabs"]["media_player"] = False
+        window.apply_tool_tab_visibility()
+        self.assertFalse(window.tool_visibility_actions["media_player"].isChecked())
+        self.assertFalse(self._visible(window, "media_player"))
 
 
 class MovableTabTests(unittest.TestCase):

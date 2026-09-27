@@ -542,17 +542,22 @@ class VideoConverterApp(QMainWindow):
         self.converter_tab = QWidget()
         converter_layout = QVBoxLayout(self.converter_tab)
         converter_layout.setContentsMargins(0, 0, 0, 0)
-        self.converter_header = TabHeader(
-            "convert",
-            _tr("Video Converter"),
-            _tr("Drop files or monitor a folder; converted files are listed above the log."),
-        )
-        converter_layout.addWidget(self.converter_header)
+        # Current Video Settings: a compact read-only table beside the log
+        # (moved here from the sidebar on 2026-09-27; the sidebar now carries
+        # the context header for the current tab instead).
+        self._build_settings_table()
+        self.converter_lower_splitter = QSplitter(Qt.Horizontal)
+        self.converter_lower_splitter.setChildrenCollapsible(False)
+        self.converter_lower_splitter.setHandleWidth(8)
+        self.converter_lower_splitter.addWidget(self.log_tab)
+        self.converter_lower_splitter.addWidget(self.settings_table_box)
+        self.converter_lower_splitter.setStretchFactor(0, 3)
+        self.converter_lower_splitter.setStretchFactor(1, 0)
         self.converter_splitter = QSplitter(Qt.Vertical)
         self.converter_splitter.setChildrenCollapsible(False)
         self.converter_splitter.setHandleWidth(8)
         self.converter_splitter.addWidget(self.converted_files_widget)
-        self.converter_splitter.addWidget(self.log_tab)
+        self.converter_splitter.addWidget(self.converter_lower_splitter)
         self.converter_splitter.setStretchFactor(0, 2)
         self.converter_splitter.setStretchFactor(1, 3)
         converter_layout.addWidget(self.converter_splitter, 1)
@@ -584,6 +589,8 @@ class VideoConverterApp(QMainWindow):
             converting=converting_or_monitoring,
             locked=bool(getattr(self, 'locked', False))
         )
+        self._pc_report_running = False
+        self.pc_report_widget.report_running.connect(self._on_pc_report_running)
         self.pc_report_tab = QWidget()
         pc_report_layout = QVBoxLayout(self.pc_report_tab)
         pc_report_layout.setContentsMargins(0, 0, 0, 0)
@@ -711,38 +718,22 @@ class VideoConverterApp(QMainWindow):
         self.central_widget = central_widget  # Save reference for drag events
         main_layout = QHBoxLayout(central_widget)
 
-        # Left side: logo + settings + preview + start/stop button
+        # Left side: logo + context header + preview + start/stop button
         left_layout = QVBoxLayout()
+        self.left_layout = left_layout
         left_layout.setContentsMargins(10, 10, 10, 10)
         left_layout.setSpacing(10)
         left_layout.addWidget(self.logo_label, alignment=Qt.AlignHCenter)
         left_layout.addWidget(self.update_label, alignment=Qt.AlignHCenter)  # under logo
 
-        # Current settings display in sidebar
-        self.settings_display = QLabel()
-        self.settings_display.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.settings_display.setStyleSheet(theme.qss("""
-            QLabel { 
-                color: $ink_slate; 
-                font-size: 9pt; 
-                background: transparent; 
-                border: none;
-                margin: 0px;
-                padding: 0px;
-                text-align: justify;
-            }
-        """))
-        self.settings_display.setWordWrap(True)
-        self.settings_display.setFixedWidth(180)
-        # Make it clickable with hover effects
-        self.settings_display.mousePressEvent = self.settings_display_clicked
-        self.settings_display.enterEvent = self.settings_display_enter
-        self.settings_display.leaveEvent = self.settings_display_leave
-        self.settings_display.setCursor(Qt.PointingHandCursor)  # Show hand cursor on hover
-        self.settings_display.setToolTip(_tr("Open Settings"))  # Add tooltip
-        left_layout.addWidget(self.settings_display)
+        # The context header: glyph, title and description of the current
+        # tool tab (one header here since 2026-09-27, instead of one per tab).
+        glyph, title, description = self.tool_headings()["video_converter"]
+        self.context_header = TabHeader(glyph, title, description, compact=True)
+        left_layout.addWidget(self.context_header, alignment=Qt.AlignHCenter)
+        self.tabs.currentChanged.connect(self._update_context_header)
 
-        # Preview goes below settings text (no special centering; align with other sidebar items)
+        # Preview goes below the context header (aligned with the other sidebar items)
         left_layout.addWidget(self.preview_container)
 
         left_layout.addStretch()
@@ -791,6 +782,7 @@ class VideoConverterApp(QMainWindow):
             mode_group.addAction(action)
             action.triggered.connect(lambda _checked, m=mode: self.set_window_mode(m))
             self.window_mode_actions[mode] = action
+        self._build_tools_menu(burger_menu)
         self._add_language_menu(burger_menu)
         burger_menu.addAction(_tr("Check for Updates"), self.check_for_updates)
         burger_menu.addSeparator()
@@ -846,9 +838,11 @@ class VideoConverterApp(QMainWindow):
     def hide_files_table_for_game(self):
         """The easter-egg game replaces the log pane; give it the whole card."""
         self.converted_files_widget.hide()
+        self.settings_table_box.hide()
 
     def restore_files_table_after_game(self):
         self.converted_files_widget.show()
+        self.settings_table_box.show()
 
     def layout_mode_widgets(self):
         """Tool widgets that adapt to the window mode."""
@@ -1102,6 +1096,97 @@ class VideoConverterApp(QMainWindow):
                 self.tabs.setTabVisible(index, bool(visible_tabs.get(key, False)))
             except AttributeError:
                 widget.setVisible(bool(visible_tabs.get(key, False)))
+        self._sync_tool_visibility_actions()
+
+    # -- hiding and showing tools ----------------------------------------
+    def _build_tools_menu(self, parent_menu):
+        """Burger > Tools: one checkable action per tool tab, plus Show all."""
+        self.tools_menu = parent_menu.addMenu(_tr("Tools"))
+        self.tool_visibility_actions = {}
+        for key in self.tool_tab_widgets:
+            action = self.tools_menu.addAction(self.tabs.tabText(self.tabs.indexOf(self.tool_tab_widgets[key])))
+            action.setCheckable(True)
+            action.triggered.connect(lambda checked, k=key: self.set_tool_visible(k, checked))
+            self.tool_visibility_actions[key] = action
+        self.tools_menu.addSeparator()
+        self.show_all_tools_action = self.tools_menu.addAction(_tr("Show all"))
+        self.show_all_tools_action.triggered.connect(self.show_all_tools)
+        # Right-click on a tab hides that tool.
+        bar = self.tabs.tabBar()
+        bar.setContextMenuPolicy(Qt.CustomContextMenu)
+        bar.customContextMenuRequested.connect(self._on_tab_bar_context_menu)
+        self._sync_tool_visibility_actions()
+
+    def visible_tool_keys(self):
+        visible = self.settings.get('visible_tool_tabs', {})
+        return [key for key in self.tool_tab_widgets if visible.get(key, False)]
+
+    def _sync_tool_visibility_actions(self):
+        actions = getattr(self, 'tool_visibility_actions', None)
+        if not actions:
+            return
+        visible = self.visible_tool_keys()
+        for key, action in actions.items():
+            action.blockSignals(True)
+            action.setChecked(key in visible)
+            # The last visible tool stays: an empty window has no way back.
+            action.setEnabled(not (len(visible) == 1 and visible[0] == key))
+            action.blockSignals(False)
+
+    def set_tool_visible(self, key, visible):
+        """Show or hide one tool tab, persisting settings["visible_tool_tabs"].
+
+        Refuses to hide the last visible tool. Hiding the current tab selects
+        the nearest visible one so the window never shows an empty pane.
+        """
+        visible = bool(visible)
+        table = dict(self.settings.get('visible_tool_tabs', {}))
+        if not visible and self.visible_tool_keys() == [key]:
+            self._sync_tool_visibility_actions()
+            return False
+        if table.get(key, False) == visible:
+            self._sync_tool_visibility_actions()
+            return True
+        if not visible and self.current_tool_key() == key:
+            order = self.current_tool_tab_order()
+            shown = [k for k in order if table.get(k, False) and k != key]
+            position = order.index(key)
+            nearest = min(shown, key=lambda k: (abs(order.index(k) - position), order.index(k) < position))
+            self.tabs.setCurrentWidget(self.tool_tab_widgets[nearest])
+        table[key] = visible
+        self.settings['visible_tool_tabs'] = table
+        save_settings(self.settings)
+        self.apply_tool_tab_visibility()
+        return True
+
+    def show_all_tools(self):
+        self.settings['visible_tool_tabs'] = dict.fromkeys(self.tool_tab_widgets, True)
+        save_settings(self.settings)
+        self.apply_tool_tab_visibility()
+
+    def tab_context_menu_for(self, index):
+        """The right-click menu for the tab at `index` (None if it is not a tool tab)."""
+        from PyQt5.QtWidgets import QMenu
+        widget = self.tabs.widget(index)
+        key = next((k for k, w in self.tool_tab_widgets.items() if w is widget), None)
+        if key is None:
+            return None
+        menu = QMenu(self)
+        hide = menu.addAction(_tr("Hide %(tool)s") % {"tool": self.tabs.tabText(index)})
+        hide.setEnabled(self.visible_tool_keys() != [key])
+        hide.triggered.connect(lambda _checked=False, k=key: self.set_tool_visible(k, False))
+        menu.addSeparator()
+        menu.addAction(_tr("Show all tools"), self.show_all_tools)
+        return menu
+
+    def _on_tab_bar_context_menu(self, pos):
+        bar = self.tabs.tabBar()
+        index = bar.tabAt(pos)
+        if index < 0:
+            return
+        menu = self.tab_context_menu_for(index)
+        if menu is not None:
+            menu.exec_(bar.mapToGlobal(pos))
 
     def lock_icon_clicked(self, event):
         self.toggle_lock()
@@ -1546,7 +1631,7 @@ class VideoConverterApp(QMainWindow):
         elif self._showing_recorder_layout_preview:
             # Leaving the recorder tab: drop the schematic so a later file preview is clean.
             self._showing_recorder_layout_preview = False
-            self._set_preview_placeholder("No Preview")
+            self._set_preview_placeholder()
 
     def _refresh_recorder_layout_preview_if_active(self):
         if self._recorder_tab_is_active():
@@ -2620,33 +2705,127 @@ class VideoConverterApp(QMainWindow):
             dialog.tabs.setCurrentIndex(tab_index)
         dialog.exec_()
 
-    def settings_display_clicked(self, event):
-        """Handle click on the settings display label to open Format tab."""
-        # Only open settings if not in game mode
-        if not (hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None):
-            self.show_settings(tab_index=3)  # 3 is the Format tab index
+    # -- sidebar context header -------------------------------------------
+    def tool_headings(self):
+        """Glyph, title and description per tool tab, as the sidebar shows them."""
+        return {
+            "video_converter": (
+                "convert",
+                _tr("Video Converter"),
+                _tr("Drop files or monitor a folder; converted files are listed above the log."),
+            ),
+            "pc_report": (
+                "pc",
+                _tr("PC Report"),
+                _tr("Collects system details for support. Redaction is always on."),
+            ),
+            "lossless_editor": (
+                "scissors",
+                _tr("Lossless Editor"),
+                _tr("Trim, remux, extract or remove audio, and merge clips without re-encoding."),
+            ),
+            "multi_source_recorder": (
+                "record",
+                _tr("Multi-Source Recorder"),
+                _tr("Record up to four cameras, streams or screens at once, as separate files or one combined picture."),
+            ),
+            "media_player": (
+                "player",
+                _tr("Media Player"),
+                _tr("Review up to four clips side by side with one transport; Inspect shows "
+                    "the selected clip's ffprobe details."),
+            ),
+        }
 
-    def settings_display_enter(self, event):
-        """Add underline to header text on hover."""
-        if not (hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None):
-            # Add underline to "Current Video Settings:"
-            current_text = self.settings_display.text()
-            underlined_text = current_text.replace(
-                '<b>Current Video Settings:</b>',
-                '<b><u>Current Video Settings:</u></b>'
-            )
-            self.settings_display.setText(underlined_text)
+    def current_tool_key(self):
+        """The tool_tab_widgets key of the current tab, or None."""
+        current = self.tabs.currentWidget()
+        for key, widget in getattr(self, "tool_tab_widgets", {}).items():
+            if widget is current:
+                return key
+        return None
 
-    def settings_display_leave(self, event):
-        """Remove underline from header text when not hovering."""
-        if not (hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None):
-            # Remove underline from "Current Video Settings:"
-            current_text = self.settings_display.text()
-            ununderlined_text = current_text.replace(
-                '<b><u>Current Video Settings:</u></b>',
-                '<b>Current Video Settings:</b>'
-            )
-            self.settings_display.setText(ununderlined_text)
+    def _update_context_header(self, _index=None):
+        header = getattr(self, "context_header", None)
+        if header is None:
+            return
+        key = self.current_tool_key()
+        game = getattr(self, "ballbuster_widget", None)
+        if key == "video_converter" and game is not None:
+            header.set_heading(*self._game_heading())
+            return
+        heading = self.tool_headings().get(key)
+        if heading is not None:
+            header.set_heading(*heading)
+
+    @staticmethod
+    def _game_heading():
+        return (
+            "balls",
+            _tr("BallBuster XT"),
+            _tr("Fling balls at other balls until the balls are gone. Video conversion "
+                "has been temporarily postponed in the name of science."),
+        )
+
+    # -- Current Video Settings table ---------------------------------------
+    SETTINGS_TABLE_WIDTH = 210
+
+    def _build_settings_table(self):
+        """The read-only two-column table beside the converter log; click opens Settings."""
+        from PyQt5.QtWidgets import QAbstractItemView, QHeaderView, QTableWidget
+
+        self.settings_table_box = QWidget()
+        box_layout = QVBoxLayout(self.settings_table_box)
+        box_layout.setContentsMargins(0, 0, 0, 0)
+        box_layout.setSpacing(4)
+        self.settings_table_title = QLabel(_tr("Current Video Settings"))
+        self.settings_table_title.setStyleSheet(theme.qss("color: $ink_slate; font-size: 9pt; font-weight: bold; background: transparent; border: none;"))
+        box_layout.addWidget(self.settings_table_title)
+        self.settings_table = QTableWidget(0, 2)
+        table = self.settings_table
+        table.horizontalHeader().hide()
+        table.verticalHeader().hide()
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.setSelectionMode(QAbstractItemView.NoSelection)
+        table.setFocusPolicy(Qt.NoFocus)
+        table.setShowGrid(False)
+        table.setWordWrap(False)
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        table.verticalHeader().setDefaultSectionSize(20)
+        table.setStyleSheet(theme.qss(
+            "QTableWidget { border: 1px solid $separator; border-radius: 6px; background: white; "
+            "color: $ink_slate; font-size: 9pt; } QTableWidget::item { padding: 0px 6px; }"
+        ))
+        table.setCursor(Qt.PointingHandCursor)
+        table.setToolTip(_tr("Open Settings"))
+        table.cellClicked.connect(self._settings_table_clicked)
+        box_layout.addWidget(table, 1)
+        self.settings_table_box.setMinimumWidth(170)
+        self.settings_table_box.setMaximumWidth(self.SETTINGS_TABLE_WIDTH + 30)
+
+    def _settings_table_clicked(self, _row, _column):
+        """Open the Format tab of Settings (the old sidebar text did the same)."""
+        if getattr(self, "ballbuster_widget", None) is not None:
+            return
+        self.show_settings(tab_index=3)  # 3 is the Format tab index
+
+    def _settings_table_rows(self):
+        """(label, value) pairs for the table, in display order."""
+        s = self.settings
+        rows = [
+            (_tr("Format"), str(s.get('output_format', 'MP4')).upper()),
+            (_tr("Video codec"), str(s.get('video_codec', 'H.264'))),
+            (_tr("Audio codec"), str(s.get('audio_codec', 'AAC'))),
+            (_tr("Resolution"), str(s.get('video_size', '1920x1080'))),
+            (_tr("Bitrate"), str(s.get('video_bitrate', '2000k'))),
+            (_tr("Frame rate"), _tr("%(fps)s fps") % {"fps": s.get('framerate', '25')}),
+        ]
+        if not s.get('no_time_restrictions', True):
+            rows.append((_tr("Time window"), f"{s.get('start_time', '00:00')} - {s.get('end_time', '23:59')}"))
+        if s.get('copy_only', False):
+            rows.append((_tr("Mode"), _tr("Copy only")))
+        return rows
 
     def update_settings(self, new_settings):
         self.settings.update(new_settings)
@@ -2875,7 +3054,7 @@ class VideoConverterApp(QMainWindow):
         self.preview_frame_index = 0
         self.preview_playing = False
         self.play_pause_btn.hide()
-        self._set_preview_placeholder(text="No Preview")
+        self._set_preview_placeholder()
     def clear_pc_report_tab(self, event=None):
         widget = getattr(self, 'pc_report_widget', None)
         if widget and hasattr(widget, 'output'):
@@ -3012,21 +3191,17 @@ class VideoConverterApp(QMainWindow):
             getattr(self, "media_player_widget", None),
             getattr(self, "multi_source_recorder_widget", None),
             getattr(self, "converted_files_widget", None),
-            getattr(self, "converter_header", None),
+            getattr(self, "context_header", None),
         ] + list(getattr(self, "tool_tab_cards", {}).values())
         return [w for w in candidates if w is not None and hasattr(w, "reskin")]
 
     def tab_headers(self):
-        """The shared TabHeader at the top of each tool tab, keyed like tool_tab_widgets."""
-        headers = {}
-        for key, widget in getattr(self, "tool_tab_widgets", {}).items():
-            if key == "video_converter":
-                headers[key] = self.converter_header
-                continue
-            header = widget.findChild(TabHeader)
-            if header is not None:
-                headers[key] = header
-        return headers
+        """The header describing each tool tab, keyed like tool_tab_widgets.
+
+        Since 2026-09-27 that is the one sidebar context header for every key.
+        """
+        header = getattr(self, "context_header", None)
+        return {key: header for key in getattr(self, "tool_tab_widgets", {})}
 
     def apply_button_style_to_all_widgets(self, widget):
         """Apply the current button style beneath `widget`.
@@ -3167,7 +3342,7 @@ class VideoConverterApp(QMainWindow):
     def update_preview_controls_style(self):
         return self.preview.update_preview_controls_style()
 
-    def _set_preview_placeholder(self, text="No Preview"):
+    def _set_preview_placeholder(self, text=None):
         return self.preview._set_preview_placeholder(text)
 
     def _clear_preview_display(self):
@@ -3213,60 +3388,43 @@ class VideoConverterApp(QMainWindow):
             tab_font=m.tab_font_pt))
 
     def update_settings_display(self):
-        """Update the current video settings display in the main area."""
-        if hasattr(self, 'settings_display'):
-            # Check if game is active
-            if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget is not None:
-                # Show game progress
-                try:
-                    score = getattr(self.ballbuster_widget, 'score', 0)
-                    level = getattr(self.ballbuster_widget, 'level_index', 0) + 1  # Display as 1-indexed
-                    high_scores = getattr(self.ballbuster_widget, 'high_scores', [])
-                    # Get the highest score and level from high_scores list
-                    # high_scores format: [(name, score, level), ...]
-                    high_score = high_scores[0][1] if high_scores else 0
-                    highest_level = high_scores[0][2] if high_scores else 0
+        """Refresh the Current Video Settings table in the Video Converter tab."""
+        table = getattr(self, 'settings_table', None)
+        if table is None:
+            return
+        from PyQt5.QtWidgets import QTableWidgetItem
+        rows = self._settings_table_rows()
+        table.setRowCount(len(rows))
+        for row, (label, value) in enumerate(rows):
+            for column, text in enumerate((label, value)):
+                item = table.item(row, column)
+                if item is None:
+                    item = QTableWidgetItem()
+                    item.setFlags(Qt.ItemIsEnabled)
+                    table.setItem(row, column, item)
+                item.setText(text)
+            table.item(row, 0).setForeground(QColor(theme.skin().accent))
 
-                    settings_text = f"""
-<div style="line-height: 1.2;">
-<b>Current Game Progress:</b><br>
-• Current Score: {score}<br>
-• High Score: {high_score}<br>
-• Level: {level}<br>
-• Highest Level: {highest_level}<br>
-<span style="color: transparent;">• Placeholder</span><br>
-<span style="color: transparent;">• Placeholder</span>
-</div>
-"""
-                    self.settings_display.setText(settings_text)
-                    return
-                except Exception:
-                    pass  # Fall through to show video settings if game data unavailable
-
-            # Format settings similar to EthoVision dialog
-            settings_text = f"""
-<div style="line-height: 1.2;">
-<b>Current Video Settings:</b><br>
-• Format: {self.settings.get('output_format', 'MP4').upper()}<br>
-• Video Codec: {self.settings.get('video_codec', 'H.264')}<br>
-• Audio Codec: {self.settings.get('audio_codec', 'AAC')}<br>
-• Resolution: {self.settings.get('video_size', '1920x1080')}<br>
-• Bitrate: {self.settings.get('video_bitrate', '2000k')}<br>
-• Frame Rate: {self.settings.get('framerate', '25')} fps
-</div>
-"""
-
-            # Add time restrictions if enabled
-            if not self.settings.get('no_time_restrictions', True):
-                start_time = self.settings.get('start_time', '00:00')
-                end_time = self.settings.get('end_time', '23:59')
-                settings_text += f"• Time Window: {start_time} - {end_time}<br>"
-
-            # Add copy-only mode if enabled
-            if self.settings.get('copy_only', False):
-                settings_text += "• Mode: Copy Only (No Conversion)<br>"
-
-            self.settings_display.setText(settings_text)
+    def update_game_progress(self):
+        """While BallBuster runs, the converter status line carries the score."""
+        game = getattr(self, 'ballbuster_widget', None)
+        if game is None:
+            return
+        try:
+            score = getattr(game, 'score', 0)
+            level = getattr(game, 'level_index', 0) + 1  # Display as 1-indexed
+            high_scores = getattr(game, 'high_scores', [])
+            # high_scores format: [(name, score, level), ...]
+            high_score = high_scores[0][1] if high_scores else 0
+            highest_level = high_scores[0][2] if high_scores else 0
+        except Exception:
+            logger.debug("update_game_progress: suppressed error", exc_info=True)
+            return
+        self.status_label_log_tab.setText(
+            _tr("Status: Gaming <font color='#43a296'>●</font>  Score: %(score)s  High: %(high)s  "
+                "Level: %(level)s  Best level: %(best)s")
+            % {"score": score, "high": high_score, "level": level, "best": highest_level}
+        )
 
     def open_file_dialog(self):
         from PyQt5.QtWidgets import QFileDialog
@@ -3396,12 +3554,9 @@ class VideoConverterApp(QMainWindow):
         self.log_tab_layout.insertWidget(self.log_container_index, self.ballbuster_widget, 1) # stretch=1
         self.ballbuster_widget.setFocus()
 
-        # Update settings display to show game progress
-        self.update_settings_display()
-
         # Start a timer to update game progress in real-time
         self.game_progress_timer = QTimer(self)
-        self.game_progress_timer.timeout.connect(self.update_settings_display)
+        self.game_progress_timer.timeout.connect(self.update_game_progress)
         self.game_progress_timer.start(100)  # Update every 100ms for smooth score updates
 
         # Disable mouse interaction for all other widgets (so they keep visual style)
@@ -3419,15 +3574,11 @@ class VideoConverterApp(QMainWindow):
             self.drag_drop_overlay.hide()
 
         self.ballbuster_widget.destroyed.connect(self.restore_log_view)
-        # The tab header belongs to the game while it runs.
-        self.converter_header.set_heading(
-            "balls",
-            _tr("BallBuster XT"),
-            _tr("Fling balls at other balls until the balls are gone. Video conversion "
-                "has been temporarily postponed in the name of science."),
-        )
-        # Update status label to Gaming
+        # The sidebar context header belongs to the game while it runs.
+        self._update_context_header()
+        # The status line carries the score while the game runs.
         self.status_label_log_tab.setText(_tr("Status: Gaming <font color='#43a296'>●</font>"))
+        self.update_game_progress()
 
         # Transform Start button into Exit Game
         try:
@@ -3494,11 +3645,7 @@ class VideoConverterApp(QMainWindow):
         self.log_container.show()
         self.restore_files_table_after_game()
         self.log_tab_footer_widget.show()
-        self.converter_header.set_heading(
-            "convert",
-            _tr("Video Converter"),
-            _tr("Drop files or monitor a folder; converted files are listed above the log."),
-        )
+        self._update_context_header()
         # Restore NVC logo and tray icon
         self.update_icons()
 
@@ -3537,6 +3684,22 @@ class VideoConverterApp(QMainWindow):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget and index != 0:
             self.ballbuster_widget.close()
         self.update_single_workflow_availability()
+        self._sync_pc_report_heartbeat()
+
+    def _on_pc_report_running(self, running):
+        self._pc_report_running = bool(running)
+        self._sync_pc_report_heartbeat()
+
+    def _pc_report_tab_is_active(self):
+        scroll = getattr(self, "pc_report_tab_scroll", None)
+        return scroll is not None and self.tabs.currentWidget() is scroll
+
+    def _sync_pc_report_heartbeat(self):
+        """The heart pulses in the sidebar leaf only while PC Report is the current tab."""
+        preview = getattr(self, "preview", None)
+        if preview is None:
+            return
+        preview.show_heartbeat(self._pc_report_running and self._pc_report_tab_is_active())
 
     def exit_game(self):
         if hasattr(self, 'ballbuster_widget') and self.ballbuster_widget:

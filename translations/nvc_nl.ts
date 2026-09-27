@@ -243,147 +243,137 @@ Ontgrendel de toepassing eerst om wijzigingen te maken.</translation>
     <context>
         <name>LosslessEditor</name>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="109" />
+            <location filename="ui/lossless_editor_widget.py" line="102" />
             <source>00:00:00</source>
             <translation>00:00:00</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="317" />
+            <location filename="ui/lossless_editor_widget.py" line="309" />
             <source>Add at least two valid files to merge.</source>
             <translation>Voeg minstens twee geldige bestanden toe om samen te voegen.</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="158" />
+            <location filename="ui/lossless_editor_widget.py" line="151" />
             <source>Add files to the merge list</source>
             <translation>Bestanden aan de samenvoeglijst toevoegen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="99" />
+            <location filename="ui/lossless_editor_widget.py" line="92" />
             <source>Choose a source media file</source>
             <translation>Kies een bronmediabestand</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="161" />
+            <location filename="ui/lossless_editor_widget.py" line="154" />
             <source>Clear the merge list</source>
             <translation>De samenvoeglijst leegmaken</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="164" />
+            <location filename="ui/lossless_editor_widget.py" line="157" />
             <source>Concatenate the listed clips losslessly</source>
             <translation>De vermelde clips verliesvrij aaneenvoegen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="130" />
+            <location filename="ui/lossless_editor_widget.py" line="123" />
             <source>Copy every stream into the chosen container</source>
             <translation>Elke stream naar de gekozen container kopiëren</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="128" />
+            <location filename="ui/lossless_editor_widget.py" line="121" />
             <source>Cut Start to End without re-encoding</source>
             <translation>Van Start tot Einde knippen zonder opnieuw te coderen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="118" />
+            <location filename="ui/lossless_editor_widget.py" line="111" />
             <source>End:</source>
             <translation>Einde:</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="131" />
+            <location filename="ui/lossless_editor_widget.py" line="124" />
             <source>Extract audio</source>
             <translation>Audio uitpakken</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="176" />
+            <location filename="ui/lossless_editor_widget.py" line="169" />
             <source>FFmpeg output appears here.</source>
             <translation>FFmpeg-uitvoer verschijnt hier.</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="102" />
+            <location filename="ui/lossless_editor_widget.py" line="95" />
             <source>Input:</source>
             <translation>Invoer:</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="89" />
-            <source>Lossless Editor</source>
-            <translation>Verliesvrije editor</translation>
-        </message>
-        <message>
-            <location filename="ui/lossless_editor_widget.py" line="163" />
+            <location filename="ui/lossless_editor_widget.py" line="156" />
             <source>Merge</source>
             <translation>Samenvoegen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="329" />
+            <location filename="ui/lossless_editor_widget.py" line="321" />
             <source>Merge Error</source>
             <translation>Fout bij samenvoegen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="317" />
+            <location filename="ui/lossless_editor_widget.py" line="309" />
             <source>Merge Files</source>
             <translation>Bestanden samenvoegen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="152" />
+            <location filename="ui/lossless_editor_widget.py" line="145" />
             <source>Merge list</source>
             <translation>Samenvoeglijst</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="246" />
+            <location filename="ui/lossless_editor_widget.py" line="238" />
             <source>Missing FFmpeg</source>
             <translation>FFmpeg ontbreekt</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="253" />
+            <location filename="ui/lossless_editor_widget.py" line="245" />
             <source>Missing Input</source>
             <translation>Ontbrekende invoer</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="121" />
+            <location filename="ui/lossless_editor_widget.py" line="114" />
             <source>Output:</source>
             <translation>Uitvoer:</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="132" />
+            <location filename="ui/lossless_editor_widget.py" line="125" />
             <source>Remove audio</source>
             <translation>Audio verwijderen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="129" />
+            <location filename="ui/lossless_editor_widget.py" line="122" />
             <source>Remux</source>
             <translation>Remuxen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="97" />
+            <location filename="ui/lossless_editor_widget.py" line="90" />
             <source>Select a source media file</source>
             <translation>Selecteer een bronmediabestand</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="253" />
+            <location filename="ui/lossless_editor_widget.py" line="245" />
             <source>Select a valid input media file first.</source>
             <translation>Selecteer eerst een geldig invoermediabestand.</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="116" />
+            <location filename="ui/lossless_editor_widget.py" line="109" />
             <source>Start:</source>
             <translation>Begin:</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="127" />
+            <location filename="ui/lossless_editor_widget.py" line="120" />
             <source>Trim</source>
             <translation>Knippen</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="90" />
-            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
-            <translation>Knippen, remuxen, audio uitpakken of verwijderen en clips samenvoegen zonder opnieuw te coderen.</translation>
-        </message>
-        <message>
-            <location filename="ui/lossless_editor_widget.py" line="113" />
+            <location filename="ui/lossless_editor_widget.py" line="106" />
             <source>end of file</source>
             <translation>einde van bestand</translation>
         </message>
         <message>
-            <location filename="ui/lossless_editor_widget.py" line="246" />
+            <location filename="ui/lossless_editor_widget.py" line="238" />
             <source>ffmpeg.exe could not be found.</source>
             <translation>ffmpeg.exe kon niet worden gevonden.</translation>
         </message>
@@ -391,12 +381,17 @@ Ontgrendel de toepassing eerst om wijzigingen te maken.</translation>
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="ui/main_window.py" line="2538" />
+            <location filename="ui/main_window.py" line="2822" />
+            <source>%(fps)s fps</source>
+            <translation>%(fps)s fps</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2623" />
             <source>%(language)s (draft)</source>
             <translation>%(language)s (concept)</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2976" />
+            <location filename="ui/main_window.py" line="3155" />
             <source>A new version (%(version)s) is available.
 
 Do you want to visit the download page?</source>
@@ -405,27 +400,42 @@ Do you want to visit the download page?</source>
 Wilt u de downloadpagina bezoeken?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1204" />
+            <location filename="ui/main_window.py" line="1289" />
             <source>Application is locked.</source>
             <translation>De toepassing is vergrendeld.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2604" />
+            <location filename="ui/main_window.py" line="2819" />
+            <source>Audio codec</source>
+            <translation>Audiocodec</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2689" />
             <source>Backup folder path does not exist.</source>
             <translation>Het pad naar de back-upmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="795" />
+            <location filename="ui/main_window.py" line="2765" />
+            <source>BallBuster XT</source>
+            <translation>BallBuster XT</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2821" />
+            <source>Bitrate</source>
+            <translation>Bitrate</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="787" />
             <source>Check for Updates</source>
             <translation>Controleren op updates</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3350" />
+            <location filename="ui/main_window.py" line="3508" />
             <source>Choose the folder to monitor</source>
             <translation>Kies de map om te bewaken</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2911" />
+            <location filename="ui/main_window.py" line="3090" />
             <source>Clear Log</source>
             <translation>Logboek wissen</translation>
         </message>
@@ -440,12 +450,12 @@ Wilt u de downloadpagina bezoeken?</translation>
             <translation>De bestandslijst en het logboek leegmaken</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1773" />
+            <location filename="ui/main_window.py" line="1858" />
             <source>Click to download update</source>
             <translation>Klik om de update te downloaden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3433" />
+            <location filename="ui/main_window.py" line="3591" />
             <source>Click to exit the Easter Egg and return to the log view.</source>
             <translation>Klik om de Easter Egg te verlaten en terug te keren naar het logboek.</translation>
         </message>
@@ -455,123 +465,158 @@ Wilt u de downloadpagina bezoeken?</translation>
             <translation>Klik om instellingen te openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="787" />
+            <location filename="ui/main_window.py" line="2720" />
+            <source>Collects system details for support. Redaction is always on.</source>
+            <translation>Verzamelt systeemgegevens voor ondersteuning. Anonimisering staat altijd aan.</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="778" />
             <source>Compact mode</source>
             <translation>Compacte modus</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3293" />
+            <location filename="ui/main_window.py" line="3451" />
             <source>Convert Media File</source>
             <translation>Mediabestand converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2340" />
+            <location filename="ui/main_window.py" line="2425" />
             <source>Convert Media Files</source>
             <translation>Mediabestanden converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1233" />
+            <location filename="ui/main_window.py" line="1318" />
             <source>Converting...</source>
             <translation>Converteren...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2915" />
+            <location filename="ui/main_window.py" line="3094" />
             <source>Copy</source>
             <translation>Kopiëren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2968" />
+            <location filename="ui/main_window.py" line="2827" />
+            <source>Copy only</source>
+            <translation>Alleen kopiëren</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="3147" />
             <source>Could not check for updates:
 %(error)s</source>
             <translation>Kon niet controleren op updates:
 %(error)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2596" />
+            <location filename="ui/main_window.py" line="2781" />
+            <source>Current Video Settings</source>
+            <translation>Huidige video-instellingen</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2681" />
             <source>Destination folder path does not exist.</source>
             <translation>Het pad naar de doelmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2341" />
+            <location filename="ui/main_window.py" line="2426" />
             <source>Do you wish to convert %(what)s according to settings?</source>
             <translation>Wilt u %(what)s converteren volgens de instellingen?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3294" />
+            <location filename="ui/main_window.py" line="3452" />
             <source>Do you wish to convert media file according to settings?</source>
             <translation>Wilt u het mediabestand converteren volgens de instellingen?</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2351" />
-            <location filename="ui/main_window.py" line="3303" />
+            <location filename="ui/main_window.py" line="2436" />
+            <location filename="ui/main_window.py" line="3461" />
             <source>Don't Show Again</source>
             <translation>Niet meer weergeven</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2352" />
-            <location filename="ui/main_window.py" line="3304" />
+            <location filename="ui/main_window.py" line="2437" />
+            <location filename="ui/main_window.py" line="3462" />
             <source>Don't show me this dialog again?</source>
             <translation>Dit venster niet meer weergeven?</translation>
         </message>
         <message>
             <location filename="ui/main_window.py" line="385" />
-            <location filename="ui/main_window.py" line="2793" />
-            <location filename="ui/main_window.py" line="2759" />
+            <location filename="ui/main_window.py" line="2972" />
+            <location filename="ui/main_window.py" line="2938" />
             <source>Drag and drop media files here
 or select source folder to start monitoring and converting</source>
             <translation>Sleep mediabestanden hierheen
 of kies een bronmap om te controleren en converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="548" />
+            <location filename="ui/main_window.py" line="2715" />
             <source>Drop files or monitor a folder; converted files are listed above the log.</source>
             <translation>Sleep bestanden hierheen of bewaak een map; geconverteerde bestanden staan boven het logboek.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3432" />
+            <location filename="ui/main_window.py" line="3590" />
             <source>Exit Game</source>
             <translation>Spel verlaten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1295" />
+            <location filename="ui/main_window.py" line="1380" />
             <source>Finishing and saving the active recording.</source>
             <translation>De actieve opname wordt afgerond en opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2588" />
-            <location filename="ui/main_window.py" line="2596" />
-            <location filename="ui/main_window.py" line="2604" />
+            <location filename="ui/main_window.py" line="2766" />
+            <source>Fling balls at other balls until the balls are gone. Video conversion has been temporarily postponed in the name of science.</source>
+            <translation>Slinger ballen naar andere ballen tot de ballen op zijn. Videoconversie is tijdelijk uitgesteld in naam van de wetenschap.</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2673" />
+            <location filename="ui/main_window.py" line="2681" />
+            <location filename="ui/main_window.py" line="2689" />
             <source>Folder Not Found</source>
             <translation>Map niet gevonden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="787" />
+            <location filename="ui/main_window.py" line="2817" />
+            <source>Format</source>
+            <translation>Formaat</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2822" />
+            <source>Frame rate</source>
+            <translation>Framesnelheid</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="778" />
             <source>Full window mode</source>
             <translation>Volledig-venstermodus</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="774" />
+            <location filename="ui/main_window.py" line="765" />
             <source>Help</source>
             <translation>Help</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2579" />
+            <location filename="ui/main_window.py" line="2664" />
             <source>Help Document Not Found</source>
             <translation>Helpdocument niet gevonden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="773" />
+            <location filename="ui/main_window.py" line="1175" />
+            <source>Hide %(tool)s</source>
+            <translation>%(tool)s verbergen</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="764" />
             <source>Info</source>
             <translation>Info</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2531" />
-            <location filename="ui/main_window.py" line="2556" />
+            <location filename="ui/main_window.py" line="2616" />
+            <location filename="ui/main_window.py" line="2641" />
             <source>Language</source>
             <translation>Taal</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="667" />
+            <location filename="ui/main_window.py" line="674" />
             <source>Loading media player…</source>
             <translation>Mediaspeler laden…</translation>
         </message>
@@ -581,112 +626,136 @@ of kies een bronmap om te controleren en converteren</translation>
             <translation>Instellingen vergrendelen/ontgrendelen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1189" />
-            <location filename="ui/main_window.py" line="1900" />
+            <location filename="ui/main_window.py" line="1274" />
+            <location filename="ui/main_window.py" line="1985" />
             <source>Locked</source>
             <translation>Vergrendeld</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="628" />
+            <location filename="ui/main_window.py" line="635" />
+            <location filename="ui/main_window.py" line="2724" />
             <source>Lossless Editor</source>
             <translation>Verliesvrije editor</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="682" />
+            <location filename="ui/main_window.py" line="689" />
+            <location filename="ui/main_window.py" line="2734" />
             <source>Media Player</source>
             <translation>Mediaspeler</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1973" />
+            <location filename="ui/main_window.py" line="2058" />
             <source>Missing Folders</source>
             <translation>Ontbrekende mappen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="656" />
+            <location filename="ui/main_window.py" line="2827" />
+            <source>Mode</source>
+            <translation>Modus</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="663" />
+            <location filename="ui/main_window.py" line="2729" />
             <source>Multi-Source Recorder</source>
             <translation>Multi-source recorder</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2963" />
+            <location filename="ui/main_window.py" line="3142" />
             <source>No Updates</source>
             <translation>Geen updates</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2367" />
+            <location filename="ui/main_window.py" line="2452" />
             <source>No supported video files found in:
 %(paths)s</source>
             <translation>Geen ondersteunde videobestanden gevonden in:
 %(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2896" />
-            <location filename="ui/main_window.py" line="1482" />
+            <location filename="ui/main_window.py" line="3075" />
+            <location filename="ui/main_window.py" line="1567" />
             <source>Not recording</source>
             <translation>Niet aan het opnemen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="779" />
+            <location filename="ui/main_window.py" line="770" />
             <source>Open Backup Folder</source>
             <translation>Back-upmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="778" />
+            <location filename="ui/main_window.py" line="769" />
             <source>Open Destination Folder</source>
             <translation>Doelmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="742" />
+            <location filename="ui/main_window.py" line="2801" />
             <source>Open Settings</source>
             <translation>Instellingen openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="777" />
+            <location filename="ui/main_window.py" line="768" />
             <source>Open Source Folder</source>
             <translation>Bronmap openen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="604" />
+            <location filename="ui/main_window.py" line="611" />
+            <location filename="ui/main_window.py" line="2719" />
             <source>PC Report</source>
             <translation>PC-rapport</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2147" />
+            <location filename="ui/main_window.py" line="2232" />
             <source>Play BallBuster XT</source>
             <translation>BallBuster XT spelen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1973" />
+            <location filename="ui/main_window.py" line="2058" />
             <source>Please select valid Source and Destination folders.</source>
             <translation>Selecteer een geldige bron- en doelmap.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="797" />
-            <location filename="ui/main_window.py" line="1634" />
+            <location filename="ui/main_window.py" line="789" />
+            <location filename="ui/main_window.py" line="1719" />
             <source>Quit</source>
             <translation>Afsluiten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2884" />
+            <location filename="ui/main_window.py" line="3063" />
             <source>Ready. Reports are saved to your Desktop by default.</source>
             <translation>Gereed. Rapporten worden standaard op uw bureaublad opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1247" />
+            <location filename="ui/main_window.py" line="2730" />
+            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
+            <translation>Neem tot vier camera's, streams of schermen tegelijk op, als losse bestanden of als één gecombineerd beeld.</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1332" />
             <source>Recording is unavailable while conversion is running.</source>
             <translation>Opnemen is niet beschikbaar terwijl een conversie loopt.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1215" />
+            <location filename="ui/main_window.py" line="1300" />
             <source>Recording...</source>
             <translation>Opname bezig...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1277" />
+            <location filename="ui/main_window.py" line="1362" />
             <source>Releasing the camera preview before recording starts.</source>
             <translation>De camerapreview wordt vrijgegeven voordat de opname begint.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2916" />
+            <location filename="ui/main_window.py" line="2820" />
+            <source>Resolution</source>
+            <translation>Resolutie</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2735" />
+            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
+            <translation>Bekijk tot vier clips naast elkaar met één bediening; Inspecteren toont de ffprobe-gegevens van de geselecteerde clip.</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="3095" />
             <source>Select All</source>
             <translation>Alles selecteren</translation>
         </message>
@@ -696,96 +765,111 @@ of kies een bronmap om te controleren en converteren</translation>
             <translation>Selecteer mediabestanden om te converteren</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="781" />
-            <location filename="ui/main_window.py" line="2913" />
+            <location filename="ui/main_window.py" line="772" />
+            <location filename="ui/main_window.py" line="3092" />
             <source>Settings</source>
             <translation>Instellingen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1632" />
+            <location filename="ui/main_window.py" line="1717" />
             <source>Show</source>
             <translation>Weergeven</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2588" />
+            <location filename="ui/main_window.py" line="1112" />
+            <source>Show all</source>
+            <translation>Alles tonen</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1179" />
+            <source>Show all tools</source>
+            <translation>Alle hulpmiddelen tonen</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2673" />
             <source>Source folder path does not exist.</source>
             <translation>Het pad naar de bronmap bestaat niet.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="751" />
-            <location filename="ui/main_window.py" line="1327" />
+            <location filename="ui/main_window.py" line="742" />
+            <location filename="ui/main_window.py" line="1412" />
             <source>Start</source>
             <translation>Starten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1327" />
+            <location filename="ui/main_window.py" line="1412" />
             <source>Start Recording</source>
             <translation>Opname starten</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1352" />
+            <location filename="ui/main_window.py" line="1437" />
             <source>Start monitoring the source folder for files to convert.</source>
             <translation>Begin de bronmap te controleren op bestanden om te converteren.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="757" />
+            <location filename="ui/main_window.py" line="748" />
             <source>Start or stop the automatic conversion process.</source>
             <translation>Start of stop het automatische conversieproces.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1350" />
+            <location filename="ui/main_window.py" line="1435" />
             <source>Start recording from the enabled recorder sources.</source>
             <translation>Start de opname vanaf de ingeschakelde bronnen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1263" />
+            <location filename="ui/main_window.py" line="1348" />
             <source>Starting...</source>
             <translation>Starten...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3423" />
+            <location filename="ui/main_window.py" line="3580" />
             <source>Status: Gaming &lt;font color='#43a296'&gt;●&lt;/font&gt;</source>
             <translation>Status: Spel actief &lt;font color='#43a296'&gt;●&lt;/font&gt;</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1299" />
+            <location filename="ui/main_window.py" line="3424" />
+            <source>Status: Gaming &lt;font color='#43a296'&gt;●&lt;/font&gt;  Score: %(score)s  High: %(high)s  Level: %(level)s  Best level: %(best)s</source>
+            <translation>Status: Spel actief &lt;font color='#43a296'&gt;●&lt;/font&gt;  Score: %(score)s  Hoogste: %(high)s  Niveau: %(level)s  Beste niveau: %(best)s</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1384" />
             <source>Stop</source>
             <translation>Stoppen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1299" />
+            <location filename="ui/main_window.py" line="1384" />
             <source>Stop Recording</source>
             <translation>Opname stoppen</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1324" />
+            <location filename="ui/main_window.py" line="1409" />
             <source>Stop monitoring the source folder for files to convert.</source>
             <translation>Stop met het bewaken van de bronmap op bestanden om te converteren.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1322" />
+            <location filename="ui/main_window.py" line="1407" />
             <source>Stop the active multi-source recording.</source>
             <translation>De actieve multibron-opname stoppen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1281" />
+            <location filename="ui/main_window.py" line="1366" />
             <source>Stopping...</source>
             <translation>Stoppen...</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1901" />
+            <location filename="ui/main_window.py" line="1986" />
             <source>The application is locked. Unlock to change settings.</source>
             <translation>De toepassing is vergrendeld. Ontgrendel om instellingen te wijzigen.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="3318" />
+            <location filename="ui/main_window.py" line="3476" />
             <source>The following files are not supported:
 %(paths)s</source>
             <translation>De volgende bestanden worden niet ondersteund:
 %(paths)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2580" />
+            <location filename="ui/main_window.py" line="2665" />
             <source>The help document could not be found.
 
 Build it with:
@@ -796,7 +880,7 @@ Bouw het met:
   python docs/help/source/build_help_docs.py</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2954" />
+            <location filename="ui/main_window.py" line="3133" />
             <source>This build cannot check for updates: no update source has been set.
 
 You are running version %(version)s.</source>
@@ -805,18 +889,33 @@ You are running version %(version)s.</source>
 U gebruikt versie %(version)s.</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1480" />
+            <location filename="ui/main_window.py" line="2825" />
+            <source>Time window</source>
+            <translation>Tijdvenster</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1104" />
+            <source>Tools</source>
+            <translation>Hulpmiddelen</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="2725" />
+            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
+            <translation>Knippen, remuxen, audio uitpakken of verwijderen en clips samenvoegen zonder opnieuw te coderen.</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="1565" />
             <source>Unavailable while conversion is running</source>
             <translation>Niet beschikbaar terwijl een conversie loopt</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2366" />
-            <location filename="ui/main_window.py" line="3317" />
+            <location filename="ui/main_window.py" line="2451" />
+            <location filename="ui/main_window.py" line="3475" />
             <source>Unsupported Files</source>
             <translation>Niet-ondersteunde bestanden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2975" />
+            <location filename="ui/main_window.py" line="3154" />
             <source>Update Available</source>
             <translation>Update beschikbaar</translation>
         </message>
@@ -826,33 +925,33 @@ U gebruikt versie %(version)s.</translation>
             <translation>Update beschikbaar!</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2967" />
+            <location filename="ui/main_window.py" line="3146" />
             <source>Update Check Failed</source>
             <translation>Controle op updates mislukt</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1771" />
+            <location filename="ui/main_window.py" line="1856" />
             <source>Update v%(version)s Available!</source>
             <translation>Update v%(version)s beschikbaar!</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2953" />
+            <location filename="ui/main_window.py" line="3132" />
             <source>Updates Not Configured</source>
             <translation>Updates niet geconfigureerd</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2910" />
+            <location filename="ui/main_window.py" line="3089" />
             <source>Upload</source>
             <translation>Uploaden</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="547" />
-            <location filename="ui/main_window.py" line="577" />
+            <location filename="ui/main_window.py" line="582" />
+            <location filename="ui/main_window.py" line="2714" />
             <source>Video Converter</source>
             <translation>Videoconverter</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="1630" />
+            <location filename="ui/main_window.py" line="1715" />
             <source>Video Converter Application</source>
             <translation>Videoconverter-toepassing</translation>
         </message>
@@ -862,12 +961,17 @@ U gebruikt versie %(version)s.</translation>
             <translation>Videoconverter v%(version)s</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="782" />
+            <location filename="ui/main_window.py" line="2818" />
+            <source>Video codec</source>
+            <translation>Videocodec</translation>
+        </message>
+        <message>
+            <location filename="ui/main_window.py" line="773" />
             <source>Window</source>
             <translation>Venster</translation>
         </message>
         <message>
-            <location filename="ui/main_window.py" line="2964" />
+            <location filename="ui/main_window.py" line="3143" />
             <source>You are running the latest version.</source>
             <translation>U gebruikt de nieuwste versie.</translation>
         </message>
@@ -880,32 +984,32 @@ U gebruikt versie %(version)s.</translation>
             <translation> s</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="766" />
+            <location filename="ui/media_player_widget.py" line="762" />
             <source>0:00:00.000 / 0:00:00.000</source>
             <translation>0:00:00.000 / 0:00:00.000</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1131" />
+            <location filename="ui/media_player_widget.py" line="1125" />
             <source>Add a folder of videos</source>
             <translation>Een map met video's toevoegen</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="286" />
+            <location filename="ui/media_player_parts.py" line="290" />
             <source>Add files...</source>
             <translation>Bestanden toevoegen...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="289" />
+            <location filename="ui/media_player_parts.py" line="293" />
             <source>Add folder...</source>
             <translation>Map toevoegen...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1120" />
+            <location filename="ui/media_player_widget.py" line="1114" />
             <source>Add videos to playlist</source>
             <translation>Video's aan afspeellijst toevoegen</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="295" />
+            <location filename="ui/media_player_parts.py" line="299" />
             <source>Clear playlist</source>
             <translation>Afspeellijst leegmaken</translation>
         </message>
@@ -915,22 +1019,22 @@ U gebruikt versie %(version)s.</translation>
             <translation>Dit paneel leegmaken</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="490" />
+            <location filename="ui/media_player_parts.py" line="494" />
             <source>Conversion failed: %(error)s</source>
             <translation>Conversie mislukt: %(error)s</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="455" />
+            <location filename="ui/media_player_parts.py" line="459" />
             <source>Convert to MP4 (H.264) and play</source>
             <translation>Converteren naar MP4 (H.264) en afspelen</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="484" />
+            <location filename="ui/media_player_parts.py" line="488" />
             <source>Converting... %(percent)s%%</source>
             <translation>Converteren... %(percent)s%%</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="460" />
+            <location filename="ui/media_player_parts.py" line="464" />
             <source>Dismiss</source>
             <translation>Sluiten</translation>
         </message>
@@ -949,12 +1053,12 @@ of klik op Laden</translation>
             <translation>Bestandsnaam</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="790" />
+            <location filename="ui/media_player_widget.py" line="786" />
             <source>Fullscreen (F)</source>
             <translation>Volledig scherm (F)</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="797" />
+            <location filename="ui/media_player_widget.py" line="793" />
             <source>Inspect (ffprobe details for the selected panel)</source>
             <translation>Inspecteren (ffprobe-gegevens van het geselecteerde paneel)</translation>
         </message>
@@ -969,13 +1073,8 @@ of klik op Laden</translation>
             <translation>Laden...</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="685" />
-            <source>Media Player</source>
-            <translation>Mediaspeler</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_widget.py" line="817" />
-            <location filename="ui/media_player_widget.py" line="1029" />
+            <location filename="ui/media_player_widget.py" line="813" />
+            <location filename="ui/media_player_widget.py" line="1026" />
             <source>Mute (M)</source>
             <translation>Dempen (M)</translation>
         </message>
@@ -995,11 +1094,6 @@ of klik op Laden</translation>
             <translation>Paneel</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1047" />
-            <source>Panel %(number)s</source>
-            <translation>Paneel %(number)s</translation>
-        </message>
-        <message>
             <location filename="ui/media_player_widget.py" line="549" />
             <source>Panel %(number)s: %(name)s</source>
             <translation>Paneel %(number)s: %(name)s</translation>
@@ -1011,7 +1105,7 @@ of klik op Laden</translation>
             <translation>Paneel %(number)s: leeg</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="821" />
+            <location filename="ui/media_player_widget.py" line="817" />
             <source>Panels</source>
             <translation>Panelen</translation>
         </message>
@@ -1021,48 +1115,39 @@ of klik op Laden</translation>
             <translation>Panelen die deze clip nu tonen.</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1308" />
+            <location filename="ui/media_player_widget.py" line="1303" />
             <source>Pause all</source>
             <translation>Alles pauzeren</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="779" />
-            <location filename="ui/media_player_widget.py" line="1308" />
+            <location filename="ui/media_player_widget.py" line="775" />
+            <location filename="ui/media_player_widget.py" line="1303" />
             <source>Play all</source>
             <translation>Alles afspelen</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="794" />
+            <location filename="ui/media_player_widget.py" line="790" />
+            <location filename="ui/media_player_widget.py" line="1042" />
             <source>Playlist</source>
             <translation>Afspeellijst</translation>
         </message>
         <message>
-            <location filename="ui/media_player_parts.py" line="318" />
-            <source>Playlist - %(panel)s</source>
-            <translation>Afspeellijst - %(panel)s</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_parts.py" line="292" />
+            <location filename="ui/media_player_parts.py" line="296" />
             <source>Remove selected</source>
             <translation>Selectie verwijderen</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="785" />
+            <location filename="ui/media_player_widget.py" line="781" />
             <source>Restart</source>
             <translation>Opnieuw starten</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="686" />
-            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
-            <translation>Bekijk tot vier clips naast elkaar met één bediening; Inspecteren toont de ffprobe-gegevens van de geselecteerde clip.</translation>
-        </message>
-        <message>
-            <location filename="ui/media_player_widget.py" line="801" />
+            <location filename="ui/media_player_widget.py" line="797" />
             <source>Speed</source>
             <translation>Snelheid</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="782" />
+            <location filename="ui/media_player_widget.py" line="778" />
             <source>Stop all</source>
             <translation>Alles stoppen</translation>
         </message>
@@ -1072,38 +1157,38 @@ of klik op Laden</translation>
             <translation>Synchronisatieverschuiving: verschuif deze clip eerder (negatief) of later (positief) ten opzichte van de andere panelen. Dubbelklik om te bewerken.</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1029" />
+            <location filename="ui/media_player_widget.py" line="1026" />
             <source>Unmute (M)</source>
             <translation>Dempen opheffen (M)</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="809" />
+            <location filename="ui/media_player_widget.py" line="805" />
             <source>Volume</source>
             <translation>Volume</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="815" />
+            <location filename="ui/media_player_widget.py" line="811" />
             <source>Volume for every panel</source>
             <translation>Volume voor elk paneel</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1240" />
+            <location filename="ui/media_player_widget.py" line="1235" />
             <source>Windows cannot play %(codecs)s in %(container)s.</source>
             <translation>Windows kan %(codecs)s in %(container)s niet afspelen.</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1235" />
+            <location filename="ui/media_player_widget.py" line="1230" />
             <source>Windows cannot play this file.</source>
             <translation>Windows kan dit bestand niet afspelen.</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1290" />
+            <location filename="ui/media_player_widget.py" line="1285" />
             <source>the converter could not produce an MP4; see the Conversion Log</source>
             <translation>de converter kon geen MP4 maken; zie het conversielogboek</translation>
         </message>
         <message>
-            <location filename="ui/media_player_widget.py" line="1236" />
-            <location filename="ui/media_player_widget.py" line="1237" />
+            <location filename="ui/media_player_widget.py" line="1231" />
+            <location filename="ui/media_player_widget.py" line="1232" />
             <source>unknown</source>
             <translation>onbekend</translation>
         </message>
@@ -1111,72 +1196,62 @@ of klik op Laden</translation>
     <context>
         <name>PcReport</name>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="119" />
-            <source>Collects system details for support. Redaction is always on.</source>
-            <translation>Verzamelt systeemgegevens voor ondersteuning. Anonimisering staat altijd aan.</translation>
-        </message>
-        <message>
-            <location filename="ui/pc_report_dialog.py" line="276" />
+            <location filename="ui/pc_report_dialog.py" line="236" />
             <source>Elevation was cancelled or refused; the report will run without administrator rights.</source>
             <translation>Verhoging is geannuleerd of geweigerd; het rapport wordt zonder beheerdersrechten gemaakt.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="137" />
+            <location filename="ui/pc_report_dialog.py" line="117" />
             <source>Generate PC Report</source>
             <translation>PC-rapport genereren</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="332" />
+            <location filename="ui/pc_report_dialog.py" line="292" />
             <source>Generating PC report inside this tab...</source>
             <translation>PC-rapport wordt in dit tabblad gegenereerd...</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="139" />
+            <location filename="ui/pc_report_dialog.py" line="119" />
             <source>Open folder</source>
             <translation>Map openen</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="138" />
+            <location filename="ui/pc_report_dialog.py" line="118" />
             <source>Open report</source>
             <translation>Rapport openen</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="118" />
-            <source>PC Report</source>
-            <translation>PC-rapport</translation>
-        </message>
-        <message>
-            <location filename="ui/pc_report_dialog.py" line="377" />
+            <location filename="ui/pc_report_dialog.py" line="313" />
             <source>PC report complete: %(path)s</source>
             <translation>PC-rapport voltooid: %(path)s</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="384" />
+            <location filename="ui/pc_report_dialog.py" line="320" />
             <source>PC report generated, but saving failed.</source>
             <translation>PC-rapport gegenereerd, maar opslaan is mislukt.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="168" />
+            <location filename="ui/pc_report_dialog.py" line="148" />
             <source>Ready. Reports are saved to your Desktop by default.</source>
             <translation>Gereed. Rapporten worden standaard op uw bureaublad opgeslagen.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="177" />
+            <location filename="ui/pc_report_dialog.py" line="157" />
             <source>Report progress appears here.</source>
             <translation>De voortgang van het rapport verschijnt hier.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="142" />
+            <location filename="ui/pc_report_dialog.py" line="122" />
             <source>Restart NVC with administrator rights so the report can read TPM, BitLocker, disk reliability and SMB server details.</source>
             <translation>Start NVC opnieuw met beheerdersrechten zodat het rapport TPM, BitLocker, schijfbetrouwbaarheid en SMB-servergegevens kan lezen.</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="140" />
+            <location filename="ui/pc_report_dialog.py" line="120" />
             <source>Run as administrator</source>
             <translation>Als beheerder uitvoeren</translation>
         </message>
         <message>
-            <location filename="ui/pc_report_dialog.py" line="250" />
+            <location filename="ui/pc_report_dialog.py" line="210" />
             <source>Stop the current conversion or recording before restarting as administrator.</source>
             <translation>Stop de huidige conversie of opname voordat u als beheerder opnieuw start.</translation>
         </message>
@@ -1184,23 +1259,13 @@ of klik op Laden</translation>
     <context>
         <name>Preview</name>
         <message>
-            <location filename="ui/preview_controller.py" line="85" />
-            <location filename="ui/preview_controller.py" line="234" />
-            <location filename="ui/preview_controller.py" line="273" />
-            <location filename="ui/preview_controller.py" line="393" />
-            <location filename="ui/preview_controller.py" line="433" />
-            <location filename="ui/preview_controller.py" line="436" />
-            <source>No Preview</source>
-            <translation>Geen voorbeeld</translation>
-        </message>
-        <message>
-            <location filename="ui/preview_controller.py" line="485" />
+            <location filename="ui/preview_controller.py" line="554" />
             <source>Preview failed</source>
             <translation>Voorbeeld mislukt</translation>
         </message>
         <message>
-            <location filename="ui/preview_controller.py" line="459" />
-            <location filename="ui/preview_controller.py" line="409" />
+            <location filename="ui/preview_controller.py" line="528" />
+            <location filename="ui/preview_controller.py" line="478" />
             <source>ffmpeg missing</source>
             <translation>ffmpeg ontbreekt</translation>
         </message>
@@ -1208,77 +1273,77 @@ of klik op Laden</translation>
     <context>
         <name>Recorder</name>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="110" />
+            <location filename="ui/multi_source_recorder_widget.py" line="109" />
             <source> s</source>
             <translation> s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1088" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1083" />
             <source>%(cameras)s, %(microphones)s found</source>
             <translation>%(cameras)s, %(microphones)s gevonden</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2057" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2081" />
             <source>%(device)s (not found)</source>
             <translation>%(device)s (niet gevonden)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1081" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1076" />
             <source>%(n)d camera</source>
             <translation>%(n)d camera</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1081" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1076" />
             <source>%(n)d cameras</source>
             <translation>%(n)d camera's</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1083" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1078" />
             <source>%(n)d microphone</source>
             <translation>%(n)d microfoon</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1085" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1080" />
             <source>%(n)d microphones</source>
             <translation>%(n)d microfoons</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="912" />
+            <location filename="ui/multi_source_recorder_widget.py" line="907" />
             <source>%(name)s *</source>
             <translation>%(name)s *</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3622" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3647" />
             <source>%(row)s: audio device '%(device)s' unavailable, recording video only</source>
             <translation>%(row)s: audioapparaat '%(device)s' niet beschikbaar, alleen video wordt opgenomen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1646" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1630" />
             <source>...</source>
             <translation>...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="678" />
+            <location filename="ui/multi_source_recorder_widget.py" line="673" />
             <source>/</source>
             <translation>/</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="770" />
+            <location filename="ui/multi_source_recorder_widget.py" line="765" />
             <source>01:00:00</source>
             <translation>01:00:00</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1340" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1332" />
             <source>192.168.1.50 or rtsp://camera/stream</source>
             <translation>192.168.1.50 of rtsp://camera/stream</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1295" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1287" />
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.</source>
             <translation>Basler-/GenICam-instellingen worden beheerd in Basler pylon Viewer.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2640" />
             <source>Basler / GenICam settings are managed in Basler pylon Viewer.
 
 The FFmpeg DirectShow property dialog does not reliably open Basler camera controls and can produce BindToObject errors while NVC is previewing the camera.
@@ -1291,29 +1356,29 @@ Het FFmpeg DirectShow-eigenschappenvenster opent de Basler-camerabediening niet 
 Open pylon Viewer om belichting, versterking, triggermodus, pixelformaat en camerastandaarden aan te passen.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2606" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1294" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2639" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1286" />
             <source>Basler Camera Settings</source>
             <translation>Basler-camera-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="599" />
+            <location filename="ui/multi_source_recorder_widget.py" line="594" />
             <source>Camera %(number)s settings</source>
             <translation>Instellingen camera %(number)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1317" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2574" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1309" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
             <source>Camera Settings</source>
             <translation>Camera-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1306" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1298" />
             <source>Camera settings for %(device)s will use the camera driver's native controls when available.</source>
             <translation>De camera-instellingen voor %(device)s gebruiken de eigen bediening van het camerastuurprogramma wanneer die beschikbaar is.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1381" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1373" />
             <source>Check the camera address.
 
 %(problem)s</source>
@@ -1322,79 +1387,79 @@ Open pylon Viewer om belichting, versterking, triggermodus, pixelformaat en came
 %(problem)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1647" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1631" />
             <source>Choose recording folder</source>
             <translation>Opnamemap kiezen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="234" />
+            <location filename="ui/multi_source_recorder_widget.py" line="233" />
             <source>Choose what this source records. The desktop and window modes use GDI; a single display is captured through the GPU.</source>
             <translation>Kies wat deze bron opneemt. De bureaublad- en venstermodi gebruiken GDI; één beeldscherm wordt via de GPU vastgelegd.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="752" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1683" />
+            <location filename="ui/multi_source_recorder_widget.py" line="747" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1667" />
             <source>Combined grid</source>
             <translation>Gecombineerd raster</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1190" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1191" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1185" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1186" />
             <source>Could not detect supported modes; Auto is recommended.</source>
             <translation>Ondersteunde modi konden niet worden gedetecteerd; Auto wordt aanbevolen.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2908" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2933" />
             <source>Could not open the recording folder:
 %(error)s</source>
             <translation>De opnamemap kon niet worden geopend:
 %(error)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2914" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2939" />
             <source>Could not open the recording folder:
 %(path)s</source>
             <translation>De opnamemap kon niet worden geopend:
 %(path)s</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="676" />
+            <location filename="ui/multi_source_recorder_widget.py" line="671" />
             <source>Delete</source>
             <translation>Verwijderen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="871" />
+            <location filename="ui/multi_source_recorder_widget.py" line="866" />
             <source>Delete Video Preset</source>
             <translation>Videovoorinstelling verwijderen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="872" />
+            <location filename="ui/multi_source_recorder_widget.py" line="867" />
             <source>Delete preset '%(name)s'?</source>
             <translation>Voorinstelling '%(name)s' verwijderen?</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1175" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1176" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1170" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1171" />
             <source>Detecting supported camera modes...</source>
             <translation>Ondersteunde cameramodi worden gedetecteerd...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1072" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1067" />
             <source>Device scan failed. Check that ffmpeg.exe is present and try again.</source>
             <translation>Apparaatscan mislukt. Controleer of ffmpeg.exe aanwezig is en probeer het opnieuw.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1644" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1628" />
             <source>Double-click to choose the recording folder</source>
             <translation>Dubbelklik om de opnamemap te kiezen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1551" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1535" />
             <source>Double-click to open video settings</source>
             <translation>Dubbelklik om de video-instellingen te openen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="432" />
+            <location filename="ui/multi_source_recorder_widget.py" line="431" />
             <source>Drag to pan/tilt this camera</source>
             <translation>Sleep om deze camera te draaien/kantelen</translation>
         </message>
@@ -1404,193 +1469,190 @@ Open pylon Viewer om belichting, versterking, triggermodus, pixelformaat en came
             <translation>Sleep om het op te nemen gebied te selecteren. Druk op Esc om te annuleren.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3097" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1749" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1753" />
+            <source>Enable at least one source</source>
+            <translation>Schakel minstens één bron in</translation>
+        </message>
+        <message>
+            <location filename="ui/multi_source_recorder_widget.py" line="3122" />
             <source>Enable at least one source and enter its source string.</source>
             <translation>Schakel minstens één bron in en voer de brontekst in.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3101" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3126" />
             <source>Enable at least one unique source.</source>
             <translation>Schakel minstens één unieke bron in.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2913" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2907" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2938" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2932" />
             <source>Folder unavailable</source>
             <translation>Map niet beschikbaar</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="268" />
+            <location filename="ui/multi_source_recorder_widget.py" line="267" />
             <source>Height</source>
             <translation>Hoogte</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="673" />
+            <location filename="ui/multi_source_recorder_widget.py" line="668" />
             <source>Load</source>
             <translation>Laden</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2920" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2945" />
             <source>Missing FFmpeg</source>
             <translation>FFmpeg ontbreekt</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="245" />
-            <location filename="ui/multi_source_recorder_widget.py" line="310" />
+            <location filename="ui/multi_source_recorder_widget.py" line="244" />
+            <location filename="ui/multi_source_recorder_widget.py" line="309" />
             <source>Monitor %(number)d</source>
             <translation>Beeldscherm %(number)d</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1486" />
-            <source>Multi-Source Recorder</source>
-            <translation>Multibron-recorder</translation>
-        </message>
-        <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2048" />
-            <location filename="ui/multi_source_recorder_widget.py" line="588" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2072" />
+            <location filename="ui/multi_source_recorder_widget.py" line="583" />
             <source>No Audio</source>
             <translation>Geen audio</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3097" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3101" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3122" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3126" />
             <source>No Sources</source>
             <translation>Geen bronnen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1317" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1309" />
             <source>No camera-specific settings are available for this source type yet.</source>
             <translation>Voor dit brontype zijn nog geen cameraspecifieke instellingen beschikbaar.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1491" />
-            <location filename="ui/multi_source_recorder_widget.py" line="2494" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3758" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3487" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1477" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2527" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3783" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1750" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3512" />
             <source>Not recording</source>
             <translation>Niet aan het opnemen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="242" />
+            <location filename="ui/multi_source_recorder_widget.py" line="241" />
             <source>One display (GPU)</source>
             <translation>Eén beeldscherm (GPU)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="248" />
+            <location filename="ui/multi_source_recorder_widget.py" line="247" />
             <source>One window</source>
             <translation>Eén venster</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1667" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1651" />
             <source>Open the recording folder in your file browser</source>
             <translation>De opnamemap openen in uw bestandsbeheer</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="745" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1624" />
+            <location filename="ui/multi_source_recorder_widget.py" line="740" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1608" />
             <source>Output settings</source>
             <translation>Uitvoerinstellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="257" />
+            <location filename="ui/multi_source_recorder_widget.py" line="256" />
             <source>Part of the desktop</source>
             <translation>Deel van het bureaublad</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="753" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1684" />
+            <location filename="ui/multi_source_recorder_widget.py" line="748" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1668" />
             <source>Picture-in-picture</source>
             <translation>Beeld-in-beeld</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="854" />
+            <location filename="ui/multi_source_recorder_widget.py" line="849" />
             <source>Preset name:</source>
             <translation>Naam voorinstelling:</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1334" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1380" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1326" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1372" />
             <source>RTSP/IP Camera Settings</source>
             <translation>RTSP/IP-camera-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1487" />
-            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
-            <translation>Neem tot vier camera's, streams of schermen tegelijk op, als losse bestanden of als één gecombineerd beeld.</translation>
-        </message>
-        <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3144" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3535" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3577" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3693" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3450" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3169" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3560" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3602" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3718" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3475" />
             <source>Recording</source>
             <translation>Opnemen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2831" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2864" />
             <source>Recording Log</source>
             <translation>Opnamelogboek</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3838" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3863" />
             <source>Recording failed - FFmpeg did not stop cleanly</source>
             <translation>Opname mislukt - FFmpeg is niet netjes gestopt</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3458" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3135" />
-            <location filename="ui/multi_source_recorder_widget.py" line="3485" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3483" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3160" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3510" />
             <source>Recording failed - check camera availability</source>
             <translation>Opname mislukt - controleer of de camera beschikbaar is</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1525" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1511" />
             <source>Recording properties</source>
             <translation>Opname-eigenschappen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3777" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3802" />
             <source>Recording stopped (forced)</source>
             <translation>Opname gestopt (geforceerd)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3478" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3503" />
             <source>Recording: %(name)s failed - check camera availability</source>
             <translation>Opname: %(name)s mislukt - controleer of de camera beschikbaar is</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="253" />
+            <location filename="ui/multi_source_recorder_widget.py" line="252" />
             <source>Refresh</source>
             <translation>Vernieuwen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="853" />
+            <location filename="ui/multi_source_recorder_widget.py" line="848" />
             <source>Save Video Preset</source>
             <translation>Videovoorinstelling opslaan</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="675" />
+            <location filename="ui/multi_source_recorder_widget.py" line="670" />
             <source>Save as...</source>
             <translation>Opslaan als...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="636" />
+            <location filename="ui/multi_source_recorder_widget.py" line="631" />
             <source>Scan again for cameras and microphones</source>
             <translation>Opnieuw scannen naar camera's en microfoons</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1066" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1061" />
             <source>Scanning for cameras and microphones...</source>
             <translation>Scannen naar camera's en microfoons...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="226" />
+            <location filename="ui/multi_source_recorder_widget.py" line="225" />
             <source>Screen Capture Settings</source>
             <translation>Schermopname-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2574" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2607" />
             <source>Select a USB / DirectShow camera first.</source>
             <translation>Selecteer eerst een USB-/DirectShow-camera.</translation>
         </message>
@@ -1600,103 +1662,103 @@ Open pylon Viewer om belichting, versterking, triggermodus, pixelformaat en came
             <translation>Een schermgebied selecteren</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="262" />
+            <location filename="ui/multi_source_recorder_widget.py" line="261" />
             <source>Select on screen...</source>
             <translation>Op het scherm selecteren...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="751" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1682" />
+            <location filename="ui/multi_source_recorder_widget.py" line="746" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1666" />
             <source>Separate videos</source>
             <translation>Losse video's</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1686" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1670" />
             <source>Separate videos: one file per source. Combined grid: one file with the sources side by side. Picture-in-picture: one file with source 1 full frame and the others as insets.</source>
             <translation>Losse video's: één bestand per bron. Gecombineerd raster: één bestand met de bronnen naast elkaar. Beeld-in-beeld: één bestand met bron 1 op volledig beeld en de andere als inzetten.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="674" />
+            <location filename="ui/multi_source_recorder_widget.py" line="669" />
             <source>Set</source>
             <translation>Instellen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1608" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1592" />
             <source>Show recording log</source>
             <translation>Opnamelogboek tonen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1911" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1931" />
             <source>Source</source>
             <translation>Bron</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1726" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1710" />
             <source>Start recording</source>
             <translation>Opname starten</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3111" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3136" />
             <source>Starting recording...</source>
             <translation>Opname wordt gestart...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1739" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1723" />
             <source>Stop Recording</source>
             <translation>Opname stoppen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3736" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3761" />
             <source>Stopping...</source>
             <translation>Stoppen...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1220" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1215" />
             <source>Supported frame rates detected from the camera driver.</source>
             <translation>Ondersteunde framesnelheden gedetecteerd via het camerastuurprogramma.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1221" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1216" />
             <source>Supported resolutions detected from the camera driver.</source>
             <translation>Ondersteunde resoluties gedetecteerd via het camerastuurprogramma.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="113" />
+            <location filename="ui/multi_source_recorder_widget.py" line="112" />
             <source>Sync offset for Combined grid and Picture-in-picture: shift this source earlier (negative) or later (positive) to line it up with the others.</source>
             <translation>Synchronisatieverschuiving voor Gecombineerd raster en Beeld-in-beeld: verschuif deze bron eerder (negatief) of later (positief) om hem gelijk te laten lopen met de andere.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="766" />
+            <location filename="ui/multi_source_recorder_widget.py" line="761" />
             <source>Timer settings</source>
             <translation>Timerinstellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="783" />
+            <location filename="ui/multi_source_recorder_widget.py" line="778" />
             <source>USB / DirectShow expects the Windows camera name. RTSP/IP can use an IP address or full rtsp:// URL. Basler / GenICam expects the source string from pylon or device setup.</source>
             <translation>USB/DirectShow verwacht de Windows-cameranaam. RTSP/IP kan een IP-adres of een volledige rtsp://-URL gebruiken. Basler/GenICam verwacht de brontekst uit pylon of de apparaatinstellingen.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1305" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1297" />
             <source>USB Camera Settings</source>
             <translation>USB-camera-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1702" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1686" />
             <source>USB cameras and screen capture are always re-encoded to H.264; copy applies to RTSP and file sources.</source>
             <translation>USB-camera's en schermopnamen worden altijd opnieuw gecodeerd naar H.264; kopiëren geldt voor RTSP- en bestandsbronnen.</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="768" />
+            <location filename="ui/multi_source_recorder_widget.py" line="763" />
             <source>Use maximum recording time</source>
             <translation>Maximale opnametijd gebruiken</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1677" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1661" />
             <source>Video</source>
             <translation>Video</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1909" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1929" />
             <source>Video %(number)s
 %(kind)s
 Configure the source</source>
@@ -1705,7 +1767,7 @@ Configure the source</source>
 Configureer de bron</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1914" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1934" />
             <source>Video %(number)s
 %(source)s
 Opening preview...</source>
@@ -1714,7 +1776,7 @@ Opening preview...</source>
 Voorbeeld wordt geopend...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2357" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2385" />
             <source>Video %(number)s
 Camera is not available as a DirectShow video device
 Refresh devices or check pylon/GenICam setup</source>
@@ -1723,7 +1785,7 @@ Camera is niet beschikbaar als DirectShow-videoapparaat
 Vernieuw de apparaten of controleer de pylon-/GenICam-installatie</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2370" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2398" />
             <source>Video %(number)s
 Cannot resolve the camera address
 Check the IP in Video Settings</source>
@@ -1732,21 +1794,21 @@ Het camera-adres kan niet worden opgelost
 Controleer het IP-adres in Video-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1500" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1486" />
             <source>Video %(number)s
 No signal</source>
             <translation>Video %(number)s
 Geen signaal</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3286" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3311" />
             <source>Video %(number)s
 Opening combined preview...</source>
             <translation>Video %(number)s
 Gecombineerd voorbeeld wordt geopend...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2377" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2405" />
             <source>Video %(number)s
 Preview interrupted
 Reconnecting...</source>
@@ -1755,7 +1817,7 @@ Voorbeeld onderbroken
 Opnieuw verbinden...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2382" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2410" />
             <source>Video %(number)s
 Preview unavailable
 Camera may be in use</source>
@@ -1764,7 +1826,7 @@ Voorbeeld niet beschikbaar
 De camera is mogelijk in gebruik</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1918" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1938" />
             <source>Video %(number)s
 RTSP/IP
 Opening preview...</source>
@@ -1773,7 +1835,7 @@ RTSP/IP
 Voorbeeld wordt geopend...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2537" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2570" />
             <source>Video %(number)s
 Recording
 Starting live preview...</source>
@@ -1782,7 +1844,7 @@ Opname
 Livevoorbeeld wordt gestart...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1922" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1942" />
             <source>Video %(number)s
 Screen capture
 Opening preview...</source>
@@ -1791,68 +1853,68 @@ Schermopname
 Voorbeeld wordt geopend...</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="662" />
+            <location filename="ui/multi_source_recorder_widget.py" line="657" />
             <source>Video Preset</source>
             <translation>Videovoorinstelling</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="721" />
+            <location filename="ui/multi_source_recorder_widget.py" line="716" />
             <source>Video Preset:</source>
             <translation>Videovoorinstelling:</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="488" />
-            <location filename="ui/multi_source_recorder_widget.py" line="1603" />
+            <location filename="ui/multi_source_recorder_widget.py" line="487" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1587" />
             <source>Video Settings</source>
             <translation>Video-instellingen</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="239" />
+            <location filename="ui/multi_source_recorder_widget.py" line="238" />
             <source>Whole desktop (every monitor)</source>
             <translation>Hele bureaublad (elk beeldscherm)</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="268" />
+            <location filename="ui/multi_source_recorder_widget.py" line="267" />
             <source>Width</source>
             <translation>Breedte</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="267" />
+            <location filename="ui/multi_source_recorder_widget.py" line="266" />
             <source>X</source>
             <translation>X</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="267" />
+            <location filename="ui/multi_source_recorder_widget.py" line="266" />
             <source>Y</source>
             <translation>Y</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="677" />
+            <location filename="ui/multi_source_recorder_widget.py" line="672" />
             <source>[</source>
             <translation>[</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="3338" />
+            <location filename="ui/multi_source_recorder_widget.py" line="3363" />
             <source>[Combined] using audio from %(row)s</source>
             <translation>[Gecombineerd] audio van %(row)s wordt gebruikt</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="679" />
+            <location filename="ui/multi_source_recorder_widget.py" line="674" />
             <source>]</source>
             <translation>]</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1562" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1546" />
             <source>address, device, or URL</source>
             <translation>adres, apparaat of URL</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="1697" />
+            <location filename="ui/multi_source_recorder_widget.py" line="1681" />
             <source>blank = until stopped</source>
             <translation>leeg = tot gestopt</translation>
         </message>
         <message>
-            <location filename="ui/multi_source_recorder_widget.py" line="2920" />
+            <location filename="ui/multi_source_recorder_widget.py" line="2945" />
             <source>ffmpeg.exe could not be found.</source>
             <translation>ffmpeg.exe kon niet worden gevonden.</translation>
         </message>
@@ -2520,6 +2582,65 @@ Stel de gewenste instellingen in en klik op 'Opslaan in %(number)s' om hem te ma
             <location filename="ui/workflow_rules.py" line="87" />
             <source>Stopping recording</source>
             <translation>Opname wordt gestopt</translation>
+        </message>
+    </context>
+    <context>
+        <name>LosslessEditor</name>
+        <message>
+            <source>Lossless Editor</source>
+            <translation type="vanished">Verliesvrije editor</translation>
+        </message>
+        <message>
+            <source>Trim, remux, extract or remove audio, and merge clips without re-encoding.</source>
+            <translation type="vanished">Knippen, remuxen, audio uitpakken of verwijderen en clips samenvoegen zonder opnieuw te coderen.</translation>
+        </message>
+    </context>
+    <context>
+        <name>MediaPlayer</name>
+        <message>
+            <source>Media Player</source>
+            <translation type="vanished">Mediaspeler</translation>
+        </message>
+        <message>
+            <source>Panel %(number)s</source>
+            <translation type="vanished">Paneel %(number)s</translation>
+        </message>
+        <message>
+            <source>Playlist - %(panel)s</source>
+            <translation type="vanished">Afspeellijst - %(panel)s</translation>
+        </message>
+        <message>
+            <source>Review up to four clips side by side with one transport; Inspect shows the selected clip's ffprobe details.</source>
+            <translation type="vanished">Bekijk tot vier clips naast elkaar met één bediening; Inspecteren toont de ffprobe-gegevens van de geselecteerde clip.</translation>
+        </message>
+    </context>
+    <context>
+        <name>PcReport</name>
+        <message>
+            <source>Collects system details for support. Redaction is always on.</source>
+            <translation type="vanished">Verzamelt systeemgegevens voor ondersteuning. Anonimisering staat altijd aan.</translation>
+        </message>
+        <message>
+            <source>PC Report</source>
+            <translation type="vanished">PC-rapport</translation>
+        </message>
+    </context>
+    <context>
+        <name>Preview</name>
+        <message>
+            <source>No Preview</source>
+            <translation type="vanished">Geen voorbeeld</translation>
+        </message>
+    </context>
+    <context>
+        <name>Recorder</name>
+        <message>
+            <source>Multi-Source Recorder</source>
+            <translation type="vanished">Multibron-recorder</translation>
+        </message>
+        <message>
+            <source>Record up to four cameras, streams or screens at once, as separate files or one combined picture.</source>
+            <translation type="vanished">Neem tot vier camera's, streams of schermen tegelijk op, als losse bestanden of als één gecombineerd beeld.</translation>
         </message>
     </context>
 </TS>

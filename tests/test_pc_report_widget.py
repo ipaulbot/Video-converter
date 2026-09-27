@@ -2,7 +2,6 @@ import inspect
 import unittest
 from unittest.mock import Mock, patch
 
-from PyQt5.QtCore import QAbstractAnimation
 from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QSizePolicy
 
 from ui import theme
@@ -165,27 +164,27 @@ class PCReportWidgetTests(unittest.TestCase):
             widget = PCReportWidget()
             self.assertFalse(widget.btn_admin.isHidden())
 
-    def test_heart_pulses_while_running_and_settles_on_finish(self):
+    def test_report_running_is_announced_for_the_sidebar_heartbeat(self):
+        # The pulsing heart lives in the sidebar leaf (PreviewController), so
+        # the widget only has to say when a report starts and stops.
         widget = PCReportWidget()
+        seen = []
+        widget.report_running.connect(seen.append)
         with patch("ui.pc_report_dialog._PCReportWorker") as worker_cls:
             worker = worker_cls.return_value
             worker.isRunning.return_value = False
             widget.on_run()
-            self.assertIsNotNone(widget.heart_anim)
-            self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Running)
-            self.assertEqual(widget.heart_anim.loopCount(), -1)
-            self.assertFalse(widget.heart_label.isHidden())
+        self.assertEqual(seen, [True])
         widget._on_worker_finished("<html></html>", "{}")
-        self.assertEqual(widget.heart_anim.state(), QAbstractAnimation.Stopped)
-        self.assertEqual(widget.heart_effect.opacity(), 1.0)
-        widget._settle_heart(success=False)
-        self.assertTrue(widget.heart_label.isHidden())
+        self.assertEqual(seen, [True, False])
+        self.assertFalse(hasattr(widget, "heart_label"))
 
-    def test_heart_goes_dark_when_the_worker_reports_failure(self):
+    def test_report_running_falls_when_the_worker_reports_failure(self):
         widget = PCReportWidget()
-        widget._start_heart()
+        seen = []
+        widget.report_running.connect(seen.append)
         widget._on_worker_finished("<html><h1>PC Report Failed</h1></html>", "")
-        self.assertTrue(widget.heart_label.isHidden())
+        self.assertEqual(seen, [False])
 
     def test_relaunch_elevated_releases_guard_and_quits_on_success(self):
         widget = PCReportWidget()
@@ -240,18 +239,13 @@ class PCReportWidgetTests(unittest.TestCase):
         fake_ctypes.windll.shell32.ShellExecuteW.assert_not_called()
         self.assertIn("Stop the current conversion or recording", widget.status_label.text())
 
-    def test_header_is_the_shared_tab_header_with_the_heart_under_its_glyph(self):
+    def test_widget_has_no_header_of_its_own(self):
+        # Since 2026-09-27 the sidebar context header names the current tab.
         widget = PCReportWidget()
-        self.assertIsInstance(widget.header, TabHeader)
-        self.assertEqual(widget.header.glyph_name, "pc")
-        self.assertEqual(widget.header.title_label.text(), "PC Report")
-        self.assertIs(widget.logo_label, widget.header.glyph_label)
-        self.assertIs(widget.heart_label.parentWidget(), widget.header)
-        # One glyph size in both modes; the heart is scaled to sit in its screen.
+        self.assertIsNone(widget.findChild(TabHeader))
+        self.assertFalse(hasattr(widget, "header"))
         for metrics in (theme.FULL, theme.COMPACT):
-            widget.apply_layout_mode(metrics)
-            self.assertEqual(widget.logo_label.pixmap().width(), TabHeader.GLYPH_PX, metrics.name)
-            self.assertEqual(widget.heart_label.pixmap().width(), TabHeader.GLYPH_PX, metrics.name)
+            widget.apply_layout_mode(metrics)   # still callable like every tool
 
     def test_main_window_pc_report_entrypoint_stays_embedded(self):
         source = inspect.getsource(VideoConverterApp.open_pc_report_dialog)

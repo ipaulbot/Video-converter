@@ -23,7 +23,6 @@ from PyQt5.QtCore import QCoreApplication, QEvent, QObject, QProcess, QSize, Qt,
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
     QFrame,
-    QLabel,
     QPushButton,
     QSlider,
     QStackedLayout,
@@ -33,6 +32,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui import theme
+from ui.leaf_frame import LeafPixmapLabel
 from utils.logger import logger
 from utils.resources import resource_path
 from utils.subprocess_helpers import (
@@ -40,7 +40,6 @@ from utils.subprocess_helpers import (
     FFPROBE_TIMEOUT,
     get_subprocess_startupinfo,
 )
-
 
 
 def _tr(source: str) -> str:
@@ -70,7 +69,7 @@ class PreviewController(QObject):
         self.preview_container = QFrame()
         self.preview_container.setStyleSheet(theme.preview_box_style())
         # Keep aspect ratio 16:9 and match sidebar content width for clean alignment
-        # (settings_display is fixedWidth(180) below)
+        # (the context header and Start button are fixedWidth(180) too)
         self.preview_container.setFixedSize(180, 101)
         self.preview_container.setMouseTracking(True)  # Enable mouse tracking for hover events
         self.preview_container.setAttribute(Qt.WA_Hover, True)  # Enable hover events
@@ -81,8 +80,11 @@ class PreviewController(QObject):
         self.preview_layout.setStackingMode(QStackedLayout.StackAll)
         self.preview_layout.setContentsMargins(0,0,0,0)
 
-        # 1. Preview Label (thumbnail + decoded frames)
-        self.preview_label = QLabel(_tr("No Preview"))
+        # 1. Preview Label (thumbnail + decoded frames), painted inside the leaf
+        # outline so a frame never squares off the container's rounded corners.
+        # Idle is a blank leaf: a caption would read as an error on tabs that
+        # simply have nothing to preview.
+        self.preview_label = LeafPixmapLabel("", radius=18)
         self.preview_label.setAlignment(Qt.AlignCenter)
         self.preview_label.setStyleSheet(theme.preview_placeholder_style())
         self.preview_label.setMouseTracking(True)  # Enable mouse tracking
@@ -169,8 +171,75 @@ class PreviewController(QObject):
         self.preview_ui_timer.setInterval(100)
         self.preview_ui_timer.timeout.connect(self._tick_preview_ui)
         self.preview_ui_timer.start()
+
+        # PC Report heartbeat: a red heart pulsing in the otherwise blank leaf
+        # while a report runs. Painted here, not in the PC Report tab, so the
+        # sidebar shows the work of the tool that owns it.
+        self.heartbeat_active = False
+        self._heartbeat_scale = 1.0
+        self._heartbeat_tick = 0
+        self._heartbeat_timer = QTimer(self)
+        self._heartbeat_timer.setInterval(self.HEARTBEAT_TICK_MS)
+        self._heartbeat_timer.timeout.connect(self._tick_heartbeat)
         self.update_preview_controls_style()
 
+    # -- heartbeat ------------------------------------------------------
+    HEARTBEAT_PERIOD_MS = 900
+    HEARTBEAT_TICK_MS = 50
+    HEARTBEAT_COLOR = "#f75f5f"
+
+    def show_heartbeat(self, active):
+        """Pulse a red heart in the leaf (True) or return to the idle state (False)."""
+        active = bool(active)
+        if active == self.heartbeat_active:
+            return
+        self.heartbeat_active = active
+        if active:
+            self.play_pause_btn.hide()
+            self.preview_scrubber.hide()
+            self._heartbeat_tick = 0
+            self._paint_heartbeat()
+            self._heartbeat_timer.start()
+            return
+        self._heartbeat_timer.stop()
+        self._heartbeat_scale = 1.0
+        if self.preview_source_path and not self.preview_playing:
+            # Hand the leaf back to the file that was being previewed.
+            self._generate_and_show_thumbnail(self.preview_source_path)
+        elif not self.preview_source_path:
+            self._set_preview_placeholder()
+
+    def _tick_heartbeat(self):
+        self._heartbeat_tick += 1
+        self._paint_heartbeat()
+
+    def _paint_heartbeat(self):
+        import math
+
+        from PyQt5.QtGui import QColor, QPainter, QPainterPath
+
+        phase = (self._heartbeat_tick * self.HEARTBEAT_TICK_MS % self.HEARTBEAT_PERIOD_MS) / self.HEARTBEAT_PERIOD_MS
+        self._heartbeat_scale = 1.0 + 0.1 * math.sin(2 * math.pi * phase)
+        w, h = self.preview_w, self.preview_h
+        pixmap = QPixmap(w, h)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QColor(self.HEARTBEAT_COLOR))
+        size = h * 0.55 * self._heartbeat_scale
+        painter.translate(w / 2, h / 2 + size * 0.05)
+        painter.scale(size / 100.0, size / 100.0)
+        # A heart on a 100-unit canvas centred on the origin.
+        heart = QPainterPath()
+        heart.moveTo(0, 45)
+        heart.cubicTo(-70, 0, -40, -55, 0, -25)
+        heart.cubicTo(40, -55, 70, 0, 0, 45)
+        heart.closeSubpath()
+        painter.drawPath(heart)
+        painter.end()
+        self.preview_label.setText("")
+        self.preview_label.setPixmap(pixmap)
 
     def eventFilter(self, obj, event):
         """Show the play button and scrubber while the pointer is over the box.
@@ -201,6 +270,7 @@ class PreviewController(QObject):
         self._stop_star_field()
         try:
             self.preview_ui_timer.stop()
+            self._heartbeat_timer.stop()
         except RuntimeError:
             logger.debug("PreviewController.shutdown: timer already gone", exc_info=True)
 
@@ -228,10 +298,9 @@ class PreviewController(QObject):
         self._start_preview_process(self.preview_source_path, seek_seconds=self.preview_seek_seconds)
 
     def _set_preview_placeholder(self, text=None):
-        # Resolved here rather than as a default argument: a default is
-        # evaluated once at import, which would freeze the startup language.
+        """Show `text` in the empty leaf; None (the idle state) shows nothing."""
         if text is None:
-            text = _tr("No Preview")
+            text = ""
         try:
             # Was a fourth copy of the locked/active/idle colour chain.
             self._host._sync_theme_skin()
@@ -270,7 +339,7 @@ class PreviewController(QObject):
             self.play_pause_btn.setIcon(self._host.style().standardIcon(QStyle.SP_MediaPlay))
         except Exception:
             logger.debug("VideoConverterApp._clear_preview_display: suppressed error", exc_info=True)
-        self._set_preview_placeholder(_tr("No Preview"))
+        self._set_preview_placeholder()
 
     def _start_star_field(self, theme_name=None):
         """Start animated star field in preview box."""
@@ -390,7 +459,7 @@ class PreviewController(QObject):
         """Generate and show a thumbnail for the given file."""
         try:
             if not file_path or not os.path.exists(file_path):
-                self._set_preview_placeholder(_tr("No Preview"))
+                self._set_preview_placeholder()
                 return
 
             import tempfile
@@ -430,10 +499,10 @@ class PreviewController(QObject):
                 self.preview_label.setText("")
                 self.preview_label.setPixmap(pix)
             else:
-                self._set_preview_placeholder(_tr("No Preview"))
+                self._set_preview_placeholder()
         except Exception as e:
             logger.error(f"Thumbnail generation failed: {e}")
-            self._set_preview_placeholder(_tr("No Preview"))
+            self._set_preview_placeholder()
 
     def _stop_preview_process(self):
         try:

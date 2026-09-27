@@ -7,8 +7,6 @@ import threading
 
 from PyQt5.QtCore import (
     QCoreApplication,
-    QEasingCurve,
-    QPropertyAnimation,
     Qt,
     QThread,
     QUrl,
@@ -16,7 +14,6 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import (
-    QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
     QPlainTextEdit,
@@ -34,7 +31,6 @@ from pc_report.render_json import render as render_json
 from pc_report.section import esc
 from ui import theme
 from ui.glyph_icons import set_link_glyph
-from ui.tab_header import TabHeader
 from utils.file_naming import get_unique_path
 from utils.logger import logger
 
@@ -95,6 +91,9 @@ class _PCReportWorker(QThread):
 class PCReportWidget(QWidget):
     """Embedded PC report generator for the main-window tab."""
 
+    # True when a report starts, False when the worker finishes (either way).
+    report_running = pyqtSignal(bool)
+
     def __init__(self, parent=None, button_style=None, converting=False, locked=False):
         super().__init__(parent)
         self.button_style = button_style
@@ -110,28 +109,9 @@ class PCReportWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
 
-        # The shared tab header: a monitor glyph, title, description. The heart
-        # sits under the glyph's screen and pulses while a report runs
-        # (restored from the pre-343d9c1 dialog).
-        self.header = TabHeader(
-            "pc",
-            _tr("PC Report"),
-            _tr("Collects system details for support. Redaction is always on."),
-        )
-        self.heart_label = QLabel()
-        self.heart_label.setStyleSheet("QLabel { background: transparent; border: none; }")
-        self.heart_label.setAlignment(Qt.AlignCenter)
-        self.heart_effect = QGraphicsOpacityEffect(self.heart_label)
-        self.heart_effect.setOpacity(0.0)
-        self.heart_label.setGraphicsEffect(self.heart_effect)
-        self.heart_label.hide()
-        self.heart_anim = None
-        self.header.add_layer_under_glyph(self.heart_label)
-        self.logo_label = self.header.glyph_label
-        self.logo_width = TabHeader.GLYPH_PX
-        self._set_logo()
-        layout.addWidget(self.header)
-
+        # No header of its own: the sidebar context header names the current
+        # tab, and while a report runs the sidebar leaf pulses a red heart
+        # (see report_running).
         actions = QHBoxLayout()
         actions.setSpacing(14)
         self.btn_run = QPushButton(_tr("Generate PC Report"))
@@ -183,25 +163,6 @@ class PCReportWidget(QWidget):
         self.btn_folder.clicked.connect(self.open_report_folder)
         self.btn_admin.clicked.connect(self.relaunch_elevated)
 
-    def _set_logo(self):
-        """Paint the monitor glyph for the current state and size the heart to sit in its screen."""
-        accent = theme.skin_for_state(locked=self.locked, active=self.converting).accent
-        self.header.reskin(accent)
-        try:
-            from PyQt5.QtGui import QPixmap
-
-            from utils.resources import resource_path
-            heart = "graphics/GREENPCREPORTHEART.png" if self.converting else "graphics/PCREPORTHEART.png"
-            path = resource_path(heart)
-            if os.path.exists(path):
-                # The heart canvas is the old logo's canvas, so scaled to the glyph
-                # size the heart lands where the monitor's screen is.
-                self.heart_label.setPixmap(
-                    QPixmap(path).scaledToWidth(self.logo_width, Qt.SmoothTransformation)
-                )
-        except Exception:
-            logger.debug("PCReportWidget._set_logo: suppressed error", exc_info=True)
-
     _LINK_GLYPHS = {"btn_open": "report", "btn_folder": "folder_open", "btn_admin": "shield"}
 
     def _apply_tier_styles(self):
@@ -213,9 +174,8 @@ class PCReportWidget(QWidget):
             set_link_glyph(link, glyph, accent)
 
     def apply_layout_mode(self, metrics):
-        # The header glyph has one size in both modes (metrics.pc_report_logo_w
-        # is no longer applied); the heart keeps in step with it.
-        self._set_logo()
+        """Nothing here depends on the window mode (metrics.pc_report_logo_w is
+        no longer applied); kept so the main window can treat every tool alike."""
 
     @staticmethod
     def is_elevated():
@@ -328,7 +288,7 @@ class PCReportWidget(QWidget):
         self.btn_open.setEnabled(False)
         self.btn_folder.setEnabled(False)
         self.progress.show()
-        self._start_heart()
+        self.report_running.emit(True)
         self.status_label.setText(_tr("Generating PC report inside this tab..."))
         self.output.clear()
         self.output.appendPlainText(f"Report will be saved to: {self.report_path}")
@@ -337,33 +297,9 @@ class PCReportWidget(QWidget):
         self.worker.finished.connect(self._on_worker_finished)
         self.worker.start()
 
-    def _start_heart(self):
-        self.heart_label.show()
-        if self.heart_anim is not None:
-            self.heart_anim.stop()
-        anim = QPropertyAnimation(self.heart_effect, b"opacity", self)
-        anim.setDuration(2400)
-        anim.setKeyValueAt(0.0, 0.2)
-        anim.setKeyValueAt(0.5, 1.0)
-        anim.setKeyValueAt(1.0, 0.2)
-        anim.setEasingCurve(QEasingCurve.InOutSine)
-        anim.setLoopCount(-1)
-        anim.start()
-        self.heart_anim = anim
-
-    def _settle_heart(self, success):
-        if self.heart_anim is not None:
-            self.heart_anim.stop()
-        if success:
-            self.heart_effect.setOpacity(1.0)
-        else:
-            self.heart_effect.setOpacity(0.0)
-            self.heart_label.hide()
-
     def _on_worker_finished(self, html, json_text):
         self.progress.hide()
-        # The worker reports failure as a stub page with empty JSON.
-        self._settle_heart(success=bool(json_text))
+        self.report_running.emit(False)
         self.btn_run.setEnabled(True)
         self.html = html
         self.json_text = json_text
@@ -398,7 +334,6 @@ class PCReportWidget(QWidget):
         self.button_style = button_style or self.button_style
         self.converting = converting
         self.locked = locked
-        self._set_logo()
         self._apply_tier_styles()
         self._set_progress_color(theme.skin_for_state(locked=locked, active=converting).accent)
 

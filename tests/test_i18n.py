@@ -378,11 +378,12 @@ class LanguageManagerTests(unittest.TestCase):
         import os
         if not os.path.exists(localization.qm_path("nl")):
             self.skipTest("nl has not been compiled")
+        # A string that is in the code today (the sidebar's table title).
         self.manager.apply("nl")
-        translated = QCoreApplication.translate("Preview", "No Preview")
+        translated = QCoreApplication.translate("MainWindow", "Current Video Settings")
         self.manager.apply("en")
-        english = QCoreApplication.translate("Preview", "No Preview")
-        self.assertEqual(english, "No Preview")
+        english = QCoreApplication.translate("MainWindow", "Current Video Settings")
+        self.assertEqual(english, "Current Video Settings")
         self.assertNotEqual(translated, english,
                             "the nl catalogue should have changed this string")
 
