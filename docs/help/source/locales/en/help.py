@@ -350,6 +350,21 @@ CHAPTERS: list[dict] = [
                 ("Copy File Path", "Copies the selected file path."),
                 ("Settings", "Opens Settings."),
             ]},
+            {"type": "para", "text": (
+                "BallBuster XT. The controller glyph in the footer starts a bubble-shooter "
+                "in place of the log while nothing is converting; the score, level and "
+                "best marks run in the status line, and the broom brings the log back. "
+                "Matches of three or more clear; bigger matches pay more per ball, and "
+                "back-to-back clears multiply the points (x2, then x3, shown as a chip "
+                "beside the level). Special balls announce themselves with a coloured wash "
+                "and ring around the shooter: gold is the Jackpot ball (it lands, spins a "
+                "reel and pays out a colour clear, a small bomb, 250 points or nothing), "
+                "teal the Bouncy ball (ricochets), red the Nuke, violet the Super ball "
+                "(cycles colours -- fire it on the one you need), orange a Charged ball. "
+                "The speaker in the top-right corner toggles the sound effects; NVC "
+                "remembers the choice and mutes the game by itself while a conversion or "
+                "recording is running. Scores from 2.3.0 on are weighted this way, so "
+                "older entries on the high-score list were earned under the flat rules.")},
         ],
     },
     {

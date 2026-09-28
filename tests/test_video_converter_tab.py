@@ -97,6 +97,29 @@ class VideoConverterTabTests(unittest.TestCase):
         self.assertLess(small, 7.0)
         self.assertGreaterEqual(small, 4.0)
 
+    def test_game_gets_sounds_that_follow_the_setting_and_auto_mute_while_converting(self):
+        window = self._window()
+        window.settings["game_sound"] = False
+        window.tabs.setCurrentWidget(window.converter_tab_scroll)
+        with patch("ui.main_window.save_settings") as save:
+            window.launch_ballbuster_game()
+            try:
+                game = window.ballbuster_widget
+                self.assertIsNotNone(game.sounds)
+                self.assertFalse(game.sounds.enabled)
+                game.toggle_sound()
+                self.assertTrue(window.settings["game_sound"])
+                save.assert_called()
+                self.assertFalse(game.sounds.auto_muted)
+                window.is_converting = True
+                window.update_game_progress()
+                self.assertTrue(game.sounds.auto_muted)
+                window.is_converting = False
+                window.update_game_progress()
+                self.assertFalse(game.sounds.auto_muted)
+            finally:
+                window.restore_log_view()
+
     def test_game_borrows_the_sidebar_context_header_and_returns_it(self):
         window = self._window()
         header = window.context_header

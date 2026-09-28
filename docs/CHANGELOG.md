@@ -668,3 +668,44 @@ Design note: `docs/superpowers/specs/2026-09-27-sidebar-context-panel-and-tools-
 - i18n: the recorder tile string translated in nl and zh-CN (475/475, .qm
   rebuilt); help Main Window Overview and recorder Video Settings updated in
   all three languages.
+
+## 2026-09-28
+
+### BallBuster XT pass (17:10)
+
+Design note: `docs/superpowers/specs/2026-09-28-ballbuster-jackpot-scoring-sound-design.md`.
+
+- **The log banner reads again.** Since the settings table took its place
+  beside the log, the compact log viewport (488 px) was narrower than a
+  banner row at Courier New 7 pt (520 px), so every row wrapped and read as
+  a blank line between rows. The intro now hides the settings table first
+  (the game hides it a moment later anyway) and shrinks the banner font
+  only if a row still would not fit.
+- **Skill-weighted scoring** (`ui/extras/game_rules.py`). 10 per ball, and
+  each ball beyond the third in a match is worth 10 more than the last
+  (3 = 30, 4 = 50, 5 = 80, 6 = 120). Dropped balls stay 20. Back-to-back
+  clearing shots multiply match and drop points x2, then x3 -- an "x2" /
+  "x3" chip sits beside the level while it applies; a miss resets it. Level
+  clear pays 250 (was 500) and the speed bonus scales from 500 at once to
+  0 at four minutes (was a flat 500 under four minutes), shown as
+  "SPEED +nnn". Existing high scores stay; the help notes the change.
+- **The Lottery ball is now the Jackpot ball.** It flies and sticks like a
+  plain ball, then spins a one-second reel on the spot and pays out: colour
+  clear of its neighbours' commonest colour (30 %), a small bomb (30 %),
+  +250 (25 %) or a dud that leaves a plain ball behind (15 %). Drawn as a
+  gold "?" disc so it no longer shares the Bouncy ball's picture. From level
+  2, 8 % of shots, never queued behind another special. The old ping-mode /
+  colour-cycler hybrid is gone (the Super ball keeps the cycler role).
+- **Special-ball tell.** While the shooter holds a special, the strip below
+  the lose line takes a soft radial wash and the ball a ring in its colour:
+  gold Jackpot, teal Bouncy, red Nuke, violet Super, orange Charged. The
+  Next preview gets the same ring. Eases in and out over 250 ms.
+- **Sound effects.** Twelve short synthesised effects
+  (`scripts/make_game_sounds.py` -> `graphics/balls/sfx/*.wav`, no third-
+  party audio): shoot, wall bounce, stick, pop (rising with the multiplier),
+  drop, bomb, reel tick, payout, level clear, game over. A speaker glyph in
+  the board's top-right corner toggles them (`settings['game_sound']`); the
+  game mutes itself while a conversion or recording is running.
+- Help: a BallBuster XT paragraph in the Video Converter section (en / nl /
+  zh-CN). No new translatable UI strings (the game's text is English-only,
+  as before).

@@ -3471,6 +3471,33 @@ class VideoConverterApp(QMainWindow):
                 "Level: %(level)s  Best level: %(best)s")
             % {"score": score, "high": high_score, "level": level, "best": highest_level}
         )
+        self._sync_game_auto_mute(game)
+
+    def _make_game_sounds(self, game):
+        """GameSounds for a BallBuster run: speaker state from settings,
+        auto-muted while NVC converts or records."""
+        from ui.extras.game_sounds import GameSounds
+        sounds = GameSounds(game, enabled=self.settings.get('game_sound', True),
+                            persist=self._persist_game_sound)
+        self._sync_game_auto_mute(game, sounds)
+        return sounds
+
+    def _persist_game_sound(self, key, value):
+        self.settings[key] = value
+        save_settings(self.settings)
+
+    def game_should_auto_mute(self):
+        activity = self.current_activity()
+        return bool(activity.converting) or activity.recording_phase in ("starting", "recording", "stopping")
+
+    def _sync_game_auto_mute(self, game, sounds=None):
+        sounds = sounds or getattr(game, 'sounds', None)
+        if sounds is None:
+            return
+        muted = self.game_should_auto_mute()
+        if muted != sounds.auto_muted:
+            sounds.set_auto_muted(muted)
+            game.update()
 
     def open_file_dialog(self):
         from PyQt5.QtWidgets import QFileDialog
@@ -3597,6 +3624,7 @@ class VideoConverterApp(QMainWindow):
 
         self.ballbuster_widget = BallBusterWidget(theme=skin_name)
         self.ballbuster_widget.setAttribute(Qt.WA_DeleteOnClose)
+        self.ballbuster_widget.sounds = self._make_game_sounds(self.ballbuster_widget)
         self.log_tab_layout.insertWidget(self.log_container_index, self.ballbuster_widget, 1) # stretch=1
         self.ballbuster_widget.setFocus()
 
