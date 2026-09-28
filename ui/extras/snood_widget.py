@@ -11,6 +11,15 @@ from PyQt5.QtWidgets import QWidget, QInputDialog, QDialog, QHBoxLayout, QVBoxLa
 from utils.resources import resource_path
 from utils.system_state import get_high_scores, set_high_scores, get_best_level, set_best_level
 from utils.logger import logger
+from ui.extras.game_rules import (
+    BALL_POINTS as BASE_SCORE,
+    LEVEL_CLEAR_BONUS,
+    Jackpot,
+    drop_points,
+    match_points,
+    speed_bonus,
+    streak_multiplier,
+)
 
 # --- Constants ---
 MAX_ROWS = 9
@@ -143,15 +152,15 @@ GRAVITY = 0.4
 # window size and on any machine.
 STEP_S = 1 / 60
 MAX_STEPS_PER_TICK = 4
-BASE_SCORE = 10
+# Points live in ui/extras/game_rules.py (match_points, drop_points, streak
+# multiplier, speed bonus, level bonus); BASE_SCORE is its 10-per-ball unit
+# for blast removals.
 BOMB_BONUS = 20      # flat bonus for using a bumper bomb
 CUE_BOMB_BONUS = 50  # flat bonus for N bomb
-FALL_SCORE = 20
 BOMB_RADIUS = 2
 N_BOMB_RADIUS = 3  # bigger blast for cue 'N' bomb
-# --- Level progression thresholds (per-level target score) ---
-LEVEL_SCORE_THRESHOLDS = [300, 600, 900, 1000, 1500]
-BALL_POINT_VALUE = 10
+JACKPOT_REEL_STEPS = 60  # one second of reel before the Jackpot ball pays out
+TELL_FADE_STEPS = 15     # 250 ms ease for the special-ball tint
 # High scores are stored inside unified system state file under AppData\NVC
 PADDING = 2
 WALL_PADDING = 4  # gap between window edge and wall
@@ -212,9 +221,9 @@ class SnoodWidget(QWidget):
     # Mapping of level → introduction data shown on NEXT LEVEL overlay
     INTRO_INFO = {
         1: {
-            'type': 'pingpong',
-            'name': 'Lottery Ball',
-            'description': 'Cycles colours and matches any set!'
+            'type': 'lottery',
+            'name': 'Jackpot Ball',
+            'description': 'Lands, spins, pays out: colour clear, bomb, points -- or nothing.'
         },
         2: {
             'type': 'ball1',    # will be marked charged
@@ -292,6 +301,9 @@ class SnoodWidget(QWidget):
             logger.info(f"HIGH SCORE: {score}  LEVEL: {level}  TAG: {name}")
         self.restart_button_rect = QRectF()
         self.exit_button_rect = QRectF()
+        self.speaker_button_rect = QRectF()
+        # GameSounds, attached by the host (main window); None = silent.
+        self.sounds = None
 
         self.init_game_state()
         self.start_level(0)
@@ -356,6 +368,23 @@ class SnoodWidget(QWidget):
         # Celebration particle systems
         self.confetti = []  # list of dicts: {x,y,vx,vy,spin,angle,color,life}
         self.fireworks = [] # list of sparks: {x,y,vx,vy,life,color}
+        # Short HUD messages ("SPEED +320", "+250"): (text, expires_at)
+        self.toasts = []
+        # Jackpot ball reel in progress: {'rc', 'steps', 'index', 'tick'}
+        self.jackpot_reel = None
+        self.last_jackpot_prize = None
+        # Shooter-zone tint for a loaded special ball: eases towards its target
+        self.tell_alpha = 0.0
+        self.tell_color = None
+
+    def show_toast(self, text, seconds=1.5):
+        self.toasts.append((text, time.time() + seconds))
+
+    def play_sound(self, name):
+        """Route to the GameSounds the host attached (None in tests / headless)."""
+        sounds = getattr(self, 'sounds', None)
+        if sounds is not None:
+            sounds.play(name)
 
     def load_images(self):
         """Load colored images according to selected theme."""
@@ -400,7 +429,7 @@ class SnoodWidget(QWidget):
         white_path = resource_path('graphics/white.png')
         if os.path.exists(white_path):
             images['white'] = QPixmap(white_path)
-        # ping-pong special ball
+        # Bouncy (ricochet) ball: the BallBuster icon in the theme's colour.
         ping_map = {
             'gray': 'GRAYSCALEBALLBUSTER.png',
             'teal': 'TEALBALLBUSTER.png',
@@ -410,14 +439,14 @@ class SnoodWidget(QWidget):
         for cand in [ping_file, ping_file.upper(), ping_file.capitalize()]:
             ping_path = resource_path(f'graphics/{cand}')
             if os.path.exists(ping_path):
-                images['pingpong'] = QPixmap(ping_path)
-                # Use the same BallBuster icon for the Bouncy ball
-                images['bouncy'] = images['pingpong']
+                images['bouncy'] = QPixmap(ping_path)
                 break
-        # special bouncy ball icon (teal ballbuster)
         bouncy_path = resource_path('graphics/TEALBALLBUSTER.png')
         if os.path.exists(bouncy_path):
             images['bouncy'] = QPixmap(bouncy_path)
+        # Jackpot (lottery) ball: drawn in code -- gold disc with a "?" -- so
+        # it never looks like the Bouncy ball (they shared an image before).
+        images['lottery'] = self._make_lottery_pixmap(128)
         # bumper
         path_bumper = resource_path(f'graphics/balls/{bumper_file}')
         if os.path.exists(path_bumper):
@@ -433,6 +462,31 @@ class SnoodWidget(QWidget):
         if os.path.exists(path_well):
             images['well'] = QPixmap(path_well)
         return images
+
+    LOTTERY_COLOR = '#e0b33c'
+
+    @classmethod
+    def _make_lottery_pixmap(cls, size):
+        """Gold ball with a white question mark, shaded like the PNG balls."""
+        from PyQt5.QtGui import QRadialGradient
+        pixmap = QPixmap(size, size)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+        gradient = QRadialGradient(size * 0.38, size * 0.35, size * 0.6)
+        gradient.setColorAt(0.0, QColor('#fff1c2'))
+        gradient.setColorAt(0.45, QColor(cls.LOTTERY_COLOR))
+        gradient.setColorAt(1.0, QColor('#8a6414'))
+        painter.setBrush(gradient)
+        painter.setPen(QPen(QColor('#6b4d0e'), max(1, size // 40)))
+        inset = size * 0.04
+        painter.drawEllipse(QRectF(inset, inset, size - 2 * inset, size - 2 * inset))
+        font = QFont('Segoe UI', int(size * 0.42), QFont.Bold)
+        painter.setFont(font)
+        painter.setPen(QColor('#ffffff'))
+        painter.drawText(QRectF(0, 0, size, size), Qt.AlignCenter, '?')
+        painter.end()
+        return pixmap
 
     def start_level(self, idx, keep_score=False):
         self.level_index = idx
@@ -497,9 +551,9 @@ class SnoodWidget(QWidget):
         types = list(set(t for row in pattern for t in row if t and t != 'bumper'))
         if not types:
             types = [f'ball{i}' for i in range(1,9)]
-        # Unlock Lottery (ping-pong) ball from level 2 onward
-        if idx >= 1 and 'pingpong' not in types:
-            types.append('pingpong')
+        # Unlock the Jackpot (lottery) ball from level 2 onward
+        if idx >= 1 and 'lottery' not in types:
+            types.append('lottery')
         # Unlock Bouncy ball (BallBuster ricochet) from level 4 onward (idx >=3)
         if idx >= 3 and 'bouncy' not in types:
             types.append('bouncy')
@@ -508,16 +562,11 @@ class SnoodWidget(QWidget):
         # Include N-bomb ('cue') in cycling list for Super ball starting at level 5
         self.cycle_types = self.available_types + (['cue'] if idx >= 4 else [])
 
-        self.current = self.create_ball(random.choice(self.available_types))
-        # determine next ball; honor forced introduction if set
-        if self.should_spawn_n_bomb():
-            self.next = self.create_ball('cue')
-        elif self.should_spawn_super_ball():
-            self.next = self.create_super_ball()
-        else:
-            self.next = self.create_ball(random.choice(self.available_types))
+        self.current = self.create_ball(random.choice(self.plain_types()))
+        self.next = self.pick_next_ball()
         self.loading = False
         self.can_shoot = True
+        self.jackpot_reel = None
 
         # ── Introduce special ball for early levels ──
         intro = self.INTRO_INFO.get(idx)
@@ -538,13 +587,128 @@ class SnoodWidget(QWidget):
         if t == 'bouncy':
             # Start with no pre-counted bounces; will increment on each real ricochet
             ball['bounces'] = 0
-        elif t == 'pingpong':
-            # Lottery ball cycles through colours
-            ball['cycler'] = True
-            ball['lottery'] = True
-            ball['cycle_index'] = 0
-            ball['cycle_last'] = time.time()
+        # 'lottery' (the Jackpot ball) flies and sticks like a plain ball; the
+        # reel runs once it is on the board (see attach_ball / _step).
         return ball
+
+    LOTTERY_ODDS = 0.08
+
+    def plain_types(self):
+        """The colours (and the Bouncy ball) a shot can be; never the Jackpot."""
+        return [t for t in self.available_types if t != 'lottery'] or [f'ball{i}' for i in range(1, 9)]
+
+    def should_spawn_lottery(self):
+        """Jackpot ball as the next shot: from level 2, 8 %, and never queued
+        behind another special (the ball about to become current)."""
+        if self.level_index < 1 or 'lottery' not in self.available_types:
+            return False
+        pending = self.loading_ball or self.current
+        if pending and (pending.get('special') or pending.get('cycler') or pending.get('charged')
+                        or pending['type'] in ('lottery', 'bouncy')):
+            return False
+        return random.random() < self.LOTTERY_ODDS
+
+    def pick_next_ball(self):
+        """Choose the ball for the Next slot: nuke, Super, Jackpot, or a plain one."""
+        if self.should_spawn_n_bomb():
+            return self.create_ball('cue')
+        if self.should_spawn_super_ball():
+            return self.create_super_ball()
+        if self.should_spawn_lottery():
+            return self.create_ball('lottery')
+        return self.create_ball(random.choice(self.plain_types()))
+
+    # ─────────────────────────────────────────────────────────
+    #  Jackpot ball: reel and payout (2026-09-28)
+    # ─────────────────────────────────────────────────────────
+    def start_jackpot_reel(self, r, c):
+        self.jackpot_reel = {'rc': (r, c), 'steps': JACKPOT_REEL_STEPS, 'index': 0, 'tick': 0}
+        self.can_shoot = False
+        self.play_sound("reel")
+
+    def _step_jackpot_reel(self):
+        reel = self.jackpot_reel
+        if not reel:
+            return
+        reel['steps'] -= 1
+        reel['tick'] += 1
+        # Glyph changes every 6 steps, slowing to every 12 for the last 24.
+        period = 12 if reel['steps'] < 24 else 6
+        if reel['tick'] % period == 0:
+            reel['index'] = (reel['index'] + 1) % len(Jackpot.REEL_GLYPHS)
+            self.play_sound("reel")
+        if reel['steps'] > 0:
+            return
+        r, c = reel['rc']
+        self.jackpot_reel = None
+        if not self.board[r][c] or self.board[r][c]['type'] != 'lottery':
+            self.can_shoot = not self.loading
+            return
+        prize = Jackpot.roll()
+        # Jackpot.apply empties cells; remember their colours for the fall.
+        types_before = {(rr, cc): self.board[rr][cc]['type']
+                        for rr in range(MAX_ROWS) for cc in range(NUM_COLS) if self.board[rr][cc]}
+        result = Jackpot.apply(self.board, r, c, prize,
+                               neighbours=self.get_neighbours(r, c),
+                               available=self.plain_types())
+        for rr, cc in result.removed:
+            cx, cy = self.cell_to_pos(rr, cc)
+            self.falling.append({'type': types_before.get((rr, cc), 'lottery'),
+                                 'x': cx, 'y': cy, 'vx': random.uniform(-1, 1), 'vy': -2,
+                                 'delay': random.randint(0, 8)})
+        self.last_jackpot_prize = prize
+        if prize == 'points':
+            self.score += result.points
+            self.show_toast(f"+{result.points}")
+            self.play_sound("payout")
+        elif prize == 'dud':
+            self.show_toast("NO LUCK")
+            self.play_sound("stick")
+        else:
+            self.score += len(result.removed) * BASE_SCORE
+            self.show_toast("COLOUR CLEAR" if prize == 'colour_clear' else "BOOM")
+            self.play_sound("bomb" if prize == 'bomb' else "payout")
+            self.flash_all_balls(intensity=2)
+        self.can_shoot = not self.loading
+        self.drop_floating()
+        self.maybe_level_complete()
+        if self.check_lose():
+            self.finish_game()
+
+    # ─────────────────────────────────────────────────────────
+    #  Special-ball tell (2026-09-28)
+    # ─────────────────────────────────────────────────────────
+    TINTS = {
+        'lottery': '#e0b33c',
+        'bouncy': '#43a296',
+        'cue': '#e05a5a',
+        'cycler': '#8a6fd6',
+        'charged': '#f0903c',
+    }
+
+    @classmethod
+    def special_tint(cls, ball):
+        """Colour that marks `ball` as special, or None for a plain colour."""
+        if not ball:
+            return None
+        if ball.get('cycler'):
+            return QColor(cls.TINTS['cycler'])
+        if ball.get('charged'):
+            return QColor(cls.TINTS['charged'])
+        colour = cls.TINTS.get(ball.get('type'))
+        return QColor(colour) if colour else None
+
+    def _step_tell(self):
+        """Ease the shooter-zone tint towards the current ball's colour."""
+        tint = self.special_tint(self.current)
+        target = 1.0 if tint else 0.0
+        if tint:
+            self.tell_color = tint
+        delta = 1.0 / TELL_FADE_STEPS
+        if self.tell_alpha < target:
+            self.tell_alpha = min(target, self.tell_alpha + delta)
+        elif self.tell_alpha > target:
+            self.tell_alpha = max(target, self.tell_alpha - delta)
 
     # ─────────────────────────────────────────────────────────
     #  Super Ball helpers
@@ -667,12 +831,12 @@ class SnoodWidget(QWidget):
                             self.board[rr][cc] = None
                             removed += 1
                         self.ping_final_rc = None
-                    # Failsafe: remove any residual pingpong ball still on board
+                    # Failsafe: remove any residual bouncy ball still on board
                     for rr in range(MAX_ROWS):
                         for cc in range(NUM_COLS):
-                            if self.board[rr][cc] and self.board[rr][cc]['type'] in ('pingpong', 'bouncy'):
+                            if self.board[rr][cc] and self.board[rr][cc]['type'] == 'bouncy':
                                 cx, cy = self.cell_to_pos(rr, cc)
-                                self.falling.append({'type': 'pingpong', 'x': cx, 'y': cy,
+                                self.falling.append({'type': 'bouncy', 'x': cx, 'y': cy,
                                                      'vx': random.uniform(-2, 2), 'vy': -4, 'delay': random.randint(0,8)})
                                 self.board[rr][cc] = None
                                 removed += 1
@@ -701,6 +865,8 @@ class SnoodWidget(QWidget):
         for b in (self.next, self.current, self.loading_ball):
             if b and b.get('cycler'):
                 self.update_super_ball(b)
+        self._step_jackpot_reel()
+        self._step_tell()
         if self.moving:
             self.update_moving()
         if self.loading and self.loading_ball:
@@ -793,16 +959,9 @@ class SnoodWidget(QWidget):
         last = ball.get('cycle_last', 0)
         if now - last < interval:
             return
-        # Decide colour pool: Lottery ball should not include specials (bouncy or cue)
-        if ball.get('lottery'):
-            # Lottery ball should cycle only through standard coloured balls (1–8)
-            colour_pool = [t for t in self.available_types
-                           if t not in ('bouncy', 'pingpong') and not t.startswith('cue')]
-            # Fallback safeguard
-            if not colour_pool:
-                colour_pool = [f'ball{i}' for i in range(1, 9)]
-        else:
-            colour_pool = self.cycle_types
+        # Super ball cycles the level's types (nuke included from level 5),
+        # never the Jackpot ball.
+        colour_pool = [t for t in self.cycle_types if t != 'lottery'] or [f'ball{i}' for i in range(1, 9)]
         idx = (ball.get('cycle_index', 0) + 1) % len(colour_pool)
         ball['cycle_index'] = idx
         ball['type'] = colour_pool[idx]
@@ -866,10 +1025,9 @@ class SnoodWidget(QWidget):
             self.next['cycle_last'] = time.time()
             self.next['type'] = self.cycle_types[0]
             self.next['special'] = (self.next['type'] in ('bumper', 'cue'))
-        # ---- Spawn Ping-Pong ball cheat (P) ---------------------------------
+        # ---- Spawn Jackpot ball cheat (P) -----------------------------------
         elif event.key() == Qt.Key_P and self.next and self.cheats_enabled:
-            self.next['type'] = 'pingpong'
-            self.next['special'] = True
+            self.next = self.create_ball('lottery')
         # Secret level-skip / clear – press 'C'
         elif event.key() == Qt.Key_W and not self.entering_initials and not self.level_transition and self.cheats_enabled:
             self.charge_random_ball()
@@ -908,6 +1066,9 @@ class SnoodWidget(QWidget):
             super().keyPressEvent(event)
 
     def mousePressEvent(self, event):
+        if self.speaker_button_rect.contains(event.pos()):
+            self.toggle_sound()
+            return
         if self.game_over or self.level_transition or self.win:
             if self.restart_button_rect.contains(event.pos()):
                 if self.win:
@@ -930,7 +1091,7 @@ class SnoodWidget(QWidget):
         if getattr(self, 'editor_active', False):
             self.editor_click(event.pos())
             return
-        if not self.moving and not self.loading and self.can_shoot:
+        if not self.moving and not self.loading and self.can_shoot and not self.jackpot_reel:
             self.launch_ball()
 
     def should_spawn_n_bomb(self):
@@ -953,14 +1114,15 @@ class SnoodWidget(QWidget):
             if 'bounces' not in self.moving:
                 self.moving['bounces'] = 0
             self.moving['rot'] = 0
-            # Initialize ping-pong tracking
-            if self.moving['type'] in ('pingpong', 'bouncy'):
+            # Initialize ricochet tracking
+            if self.moving['type'] == 'bouncy':
                 self.ping_targets.clear()
                 self.ping_final_rc = None
         self.moving['vx'] = math.cos(self.mouse_angle) * SPEED
         self.moving['vy'] = math.sin(self.mouse_angle) * SPEED
         self.current = None
         self.can_shoot = False
+        self.play_sound("shoot")
 
         self.loading = True
         self.loading_ball = self.next
@@ -982,16 +1144,11 @@ class SnoodWidget(QWidget):
             self.forced_next_data = None
             return  # intro ball queued; defer normal selection
         # fallback normal selection
-        if self.should_spawn_n_bomb():
-            self.next = self.create_ball('cue')
-        elif self.should_spawn_super_ball():
-            self.next = self.create_super_ball()
-        else:
-            self.next = self.create_ball(random.choice(self.available_types))
+        self.next = self.pick_next_ball()
 
     def update_moving(self):
         ball = self.moving
-        ping = (ball['type'] in ('pingpong', 'bouncy'))
+        ping = (ball['type'] == 'bouncy')
         ball['x'] += ball['vx']
         ball['y'] += ball['vy']
 
@@ -1001,10 +1158,12 @@ class SnoodWidget(QWidget):
             ball['x'] = left_wall
             ball['vx'] *= -1
             ball['bounces'] = ball.get('bounces',0) + 1
+            self.play_sound("bounce")
         elif ball['x'] > right_wall:
             ball['x'] = right_wall
             ball['vx'] *= -1
             ball['bounces'] = ball.get('bounces',0) + 1
+            self.play_sound("bounce")
 
                 # Stick to ceiling instead of bouncing
         # Ceiling at the same position as row 0 - no gap, no bounce, immediate attachment
@@ -1135,10 +1294,16 @@ class SnoodWidget(QWidget):
                 self.moving = None
                 return
 
-        self.board[r][c] = {'type': ball['type'], 'special': ball['special'], 'yellow_overlay': (True if ball['type']=='pingpong' else ball.get('yellow_overlay'))}
-        if ball['type'] in ('pingpong', 'bouncy'):
+        self.board[r][c] = {'type': ball['type'], 'special': ball['special'], 'yellow_overlay': ball.get('yellow_overlay')}
+        if ball['type'] == 'bouncy':
             self.ping_final_rc = (r, c)
         self.moving = None
+        if ball['type'] == 'lottery':
+            # The Jackpot ball: it is on the board, now the reel spins (see
+            # _step_jackpot_reel), and nothing else happens this shot.
+            self.board[r][c]['special'] = True
+            self.start_jackpot_reel(r, c)
+            return
         # ── Bumper interaction: if this ball landed adjacent to any bumper, jiggle the bumper(s)
         #    and immediately drop this ball so the board stays clear.
         adjacent_bumper_cells = [(nr, nc) for nr, nc in self.get_neighbours(r, c)
@@ -1242,12 +1407,17 @@ class SnoodWidget(QWidget):
                                                  'vx': random.uniform(-1, 1),
                                                  'vy': -2})
                             self.board[rr][cc] = None
-                        self.score += len(removal) * BASE_SCORE
+                        # Bigger matches pay more per ball; back-to-back
+                        # clears multiply (x2, then x3).
+                        bumpers = len(removal) - len(cluster)
+                        self.score += (match_points(len(cluster)) + bumpers * BASE_SCORE) * self.shot_multiplier()
+                        self.play_sound(f"pop{self.shot_multiplier()}" if self.shot_multiplier() > 1 else "pop")
                         self.maybe_level_complete()
                         self.drop_floating()
             else:
                 # Missed – reset streak
                 self.clear_streak = 0
+                self.play_sound("stick")
 
         # ── Post-placement bumper rejection ────────────────────────────
         # If the ball is still present, sits next to a bumper, and didn’t form a triplet,
@@ -1345,18 +1515,18 @@ class SnoodWidget(QWidget):
         if self.falling:
             self.awaiting_level_clear = True
             return
-        # 4-minute speed bonus
+        # Speed bonus: 500 at once, shrinking to nothing over four minutes.
         try:
             elapsed = time.time() - getattr(self, 'level_started_at', time.time())
-            if elapsed < 240:
-                self.score += 500
-                # quick on-screen toast
+            bonus = speed_bonus(elapsed)
+            if bonus:
+                self.score += bonus
                 self.flash_until = time.time() + 1.5
                 self.flash_intensity = 1.0
-                # Store a transient banner
-                self._speed_bonus_banner_until = time.time() + 1.5
+                self.show_toast(f"SPEED +{bonus}")
         except Exception:
             logger.debug("SnoodWidget.maybe_level_complete: suppressed error", exc_info=True)
+        self.play_sound("level")
         # drop bumpers visually during transition
         for r in range(MAX_ROWS):
             for c in range(NUM_COLS):
@@ -1365,7 +1535,7 @@ class SnoodWidget(QWidget):
                     self.falling.append({'type':'bumper','x':cx,'y':cy,'vx':0,'vy':0,'delay':random.randint(0,8)})
                     self.board[r][c]=None
         # award level-clear bonus
-        self.score += 500
+        self.score += LEVEL_CLEAR_BONUS
         # otherwise schedule overlay
         self._schedule_level_overlay()
 
@@ -1439,14 +1609,22 @@ class SnoodWidget(QWidget):
                         visited.add((nr, nc))
                         q.append((nr, nc))
 
+        dropped = 0
         for r in range(MAX_ROWS):
             for c in range(NUM_COLS):
                 if self.board[r][c] and (r,c) not in connected:
                     cx, cy = self.cell_to_pos(r, c)
                     self.falling.append({'type': self.board[r][c]['type'], 'x': cx, 'y': cy, 'vx': 0, 'vy': 0, 'delay': random.randint(0,8)})
                     self.board[r][c] = None
-                    self.score += FALL_SCORE
+                    dropped += 1
                     self.maybe_level_complete()
+        if dropped:
+            self.score += drop_points(dropped) * self.shot_multiplier()
+            self.play_sound("drop")
+
+    def shot_multiplier(self):
+        """x1, x2 or x3 from the run of clearing shots (`clear_streak`)."""
+        return streak_multiplier(self.clear_streak)
 
     def charge_random_ball(self):
         """Randomly charge a single normal ball on the board."""
@@ -1473,6 +1651,7 @@ class SnoodWidget(QWidget):
 
     def handle_charged_blast(self, r, c):
         # Explode charged ball in radius 1
+        self.play_sound("bomb")
         radius = 1
         to_remove = set()
         q = [(r, c, 0)]
@@ -1503,6 +1682,7 @@ class SnoodWidget(QWidget):
         return set()
 
     def handle_bomb(self, r, c):
+        self.play_sound("bomb")
         bomb_type = self.board[r][c]['type'] if self.board[r][c] else 'bumper'
         # Dynamic radius: cue bombs get larger radius; even larger if next to a charged ball
         if bomb_type == 'cue':
@@ -1647,11 +1827,14 @@ class SnoodWidget(QWidget):
                         x += jitter
                         y += jitter
                         # Draw background halo for special balls
-                        is_special = cell['type'] in ('pingpong','bouncy','cue') or cell.get('charged')
+                        is_special = cell['type'] in ('lottery','bouncy','cue') or cell.get('charged')
                         if is_special:
                             halo = self._ball_pixmap('white', draw_size)
                             if halo:
                                 painter.drawPixmap(int(x - draw_size/2), int(y - draw_size/2), halo)
+                        if self.jackpot_reel and self.jackpot_reel['rc'] == (r, c):
+                            self.draw_jackpot_reel(painter, x, y, draw_size)
+                            continue
                         # Draw yellow/red overlays
                         if cell.get('red_overlay'):
                             overlay = self._ball_pixmap('red', draw_size)
@@ -1691,6 +1874,7 @@ class SnoodWidget(QWidget):
                     painter.drawPixmap(int(self.stuck_ball['x'] - draw_size/2), int(self.stuck_ball['y'] - draw_size/2), pixmap)
 
             shooter_x, shooter_y = self.width() / 2, self.shooter_y
+            self.draw_shooter_tell(painter, threshold_y, draw_size)
             # Offset the start so the line begins at the ball surface, not its centre
             start_x = shooter_x + math.cos(self.mouse_angle) * self.ball_radius
             start_y = shooter_y + math.sin(self.mouse_angle) * self.ball_radius
@@ -1734,6 +1918,8 @@ class SnoodWidget(QWidget):
             painter.drawText(int(score_x), int(score_y), score_text)
             painter.setPen(self.primary_color)
             painter.drawText(int(level_x), int(level_y), level_text)
+            self.draw_multiplier_chip(painter, level_x + painter.fontMetrics().horizontalAdvance(level_text) + 16, score_y)
+            self.draw_toasts(painter)
 
             if self.next:
                 pixmap = self._ball_pixmap(self.next['type'], draw_size)
@@ -1741,7 +1927,10 @@ class SnoodWidget(QWidget):
                     preview_x = self.width() - self.ball_radius*2 - 20
                     preview_y = self.shooter_y
                     jitter = random.uniform(-3,3) if getattr(self, 'explosion_wiggle_until', 0) > time.time() else 0
+                    self.draw_special_ring(painter, preview_x + jitter, preview_y + jitter, draw_size,
+                                           self.special_tint(self.next), 1.0)
                     painter.drawPixmap(int(preview_x - draw_size/2 + jitter), int(preview_y - draw_size/2 + jitter), pixmap)
+            self.draw_speaker_button(painter)
 
         # Draw celebration particles (confetti + fireworks)
         self.draw_celebration(painter)
@@ -1757,6 +1946,149 @@ class SnoodWidget(QWidget):
             self.draw_game_over_overlay(painter)
 
         painter.end()
+
+    # ── Special-ball tell, Jackpot reel, speaker (2026-09-28) ────────
+    def draw_shooter_tell(self, painter, threshold_y, draw_size):
+        """Wash the strip below the lose line in the loaded special's colour
+        and ring the shooter ball. `tell_alpha` eases in and out."""
+        if self.tell_alpha <= 0.0 or self.tell_color is None:
+            return
+        from PyQt5.QtGui import QRadialGradient
+        painter.save()
+        cx, cy = self.width() / 2, self.shooter_y
+        radius = max(self.width() * 0.5, 1)
+        gradient = QRadialGradient(cx, cy, radius)
+        centre = QColor(self.tell_color)
+        centre.setAlphaF(0.22 * self.tell_alpha)
+        edge = QColor(self.tell_color)
+        edge.setAlphaF(0.0)
+        gradient.setColorAt(0.0, centre)
+        gradient.setColorAt(1.0, edge)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(gradient)
+        strip = QRectF(WALL_PADDING, threshold_y + 1, self.width() - 2 * WALL_PADDING,
+                       self.height() - threshold_y - 1)
+        painter.drawRect(strip)
+        painter.restore()
+        if self.current:
+            self.draw_special_ring(painter, self.current['x'], self.current['y'], draw_size,
+                                   self.tell_color, self.tell_alpha)
+
+    @staticmethod
+    def draw_special_ring(painter, x, y, draw_size, colour, alpha):
+        if colour is None or alpha <= 0.0:
+            return
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing)
+        ring = QColor(colour)
+        ring.setAlphaF(0.9 * alpha)
+        painter.setPen(QPen(ring, 3))
+        painter.setBrush(Qt.NoBrush)
+        half = draw_size / 2 + 3
+        painter.drawEllipse(QRectF(x - half, y - half, 2 * half, 2 * half))
+        painter.restore()
+
+    REEL_LABELS = {'colour_clear': '\u25cf', 'bomb': '\u2739', 'points': '+', 'dud': '\u00d7'}
+
+    def draw_jackpot_reel(self, painter, x, y, draw_size):
+        """The Jackpot ball on the board while its reel runs: gold disc, the
+        prize glyph flipping through the four outcomes."""
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing)
+        disc = self._ball_pixmap('lottery', draw_size)
+        if disc:
+            painter.drawPixmap(int(x - draw_size / 2), int(y - draw_size / 2), disc)
+        glyph = Jackpot.REEL_GLYPHS[self.jackpot_reel['index']]
+        painter.setBrush(QColor(255, 255, 255, 230))
+        painter.setPen(Qt.NoPen)
+        inner = draw_size * 0.62
+        painter.drawEllipse(QRectF(x - inner / 2, y - inner / 2, inner, inner))
+        painter.setPen(QColor('#6b4d0e'))
+        painter.setFont(QFont('Segoe UI', max(8, int(draw_size * 0.36)), QFont.Bold))
+        painter.drawText(QRectF(x - inner / 2, y - inner / 2, inner, inner), Qt.AlignCenter,
+                         self.REEL_LABELS[glyph])
+        painter.restore()
+
+    SPEAKER_PX = 24
+
+    def draw_speaker_button(self, painter):
+        """Top-right speaker glyph: click toggles sound; slashed when muted."""
+        sounds = self.sounds
+        if sounds is None:
+            self.speaker_button_rect = QRectF()
+            return
+        size = self.SPEAKER_PX
+        rect = QRectF(self.width() - size - 10, 8, size, size)
+        self.speaker_button_rect = rect
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing)
+        colour = QColor(self.primary_color)
+        painter.setPen(QPen(colour, 2))
+        painter.setBrush(colour)
+        # Speaker body: a small box and a cone
+        body = QRectF(rect.left() + 3, rect.top() + 8, 6, 8)
+        painter.drawRect(body)
+        from PyQt5.QtGui import QPolygonF
+        cone = QPolygonF([QPointF(rect.left() + 9, rect.top() + 8), QPointF(rect.left() + 15, rect.top() + 3),
+                          QPointF(rect.left() + 15, rect.top() + 21), QPointF(rect.left() + 9, rect.top() + 16)])
+        painter.drawPolygon(cone)
+        painter.setBrush(Qt.NoBrush)
+        if sounds.muted:
+            painter.drawLine(QPointF(rect.left() + 17, rect.top() + 8), QPointF(rect.left() + 22, rect.top() + 16))
+            painter.drawLine(QPointF(rect.left() + 22, rect.top() + 8), QPointF(rect.left() + 17, rect.top() + 16))
+        else:
+            painter.drawArc(QRectF(rect.left() + 12, rect.top() + 6, 10, 12), -60 * 16, 120 * 16)
+            painter.drawArc(QRectF(rect.left() + 14, rect.top() + 2, 14, 20), -60 * 16, 120 * 16)
+        painter.restore()
+
+    def toggle_sound(self):
+        if self.sounds is not None:
+            self.sounds.set_enabled(not self.sounds.enabled)
+            self.update()
+
+    # ── HUD extras (2026-09-28) ──────────────────────────────────────
+    def multiplier_chip_text(self):
+        """'x2' / 'x3' while a clear streak multiplies points, else ''."""
+        multiplier = self.shot_multiplier()
+        return f"x{multiplier}" if multiplier > 1 else ""
+
+    def draw_multiplier_chip(self, painter, x, baseline_y):
+        text = self.multiplier_chip_text()
+        if not text:
+            return
+        painter.save()
+        chip_font = QFont(self.font)
+        chip_font.setPointSize(max(8, self.font.pointSize() - 4))
+        painter.setFont(chip_font)
+        metrics = painter.fontMetrics()
+        w = metrics.horizontalAdvance(text) + 12
+        h = metrics.height() + 4
+        rect = QRectF(x, baseline_y - metrics.ascent() - 2, w, h)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QColor('#e0b33c'))
+        painter.drawRoundedRect(rect, h / 2, h / 2)
+        painter.setPen(QColor('#ffffff'))
+        painter.drawText(rect, Qt.AlignCenter, text)
+        painter.restore()
+
+    def draw_toasts(self, painter):
+        now = time.time()
+        self.toasts = [(text, until) for text, until in self.toasts if until > now]
+        if not self.toasts:
+            return
+        painter.save()
+        toast_font = QFont(self.font)
+        toast_font.setPointSize(self.font.pointSize() + 4)
+        painter.setFont(toast_font)
+        y = self.height() * 0.55
+        for text, until in self.toasts:
+            alpha = max(0.0, min(1.0, (until - now) / 0.4))  # fade in the last 0.4 s
+            colour = QColor('#e0b33c')
+            colour.setAlphaF(alpha)
+            painter.setPen(colour)
+            painter.drawText(QRectF(0, y - 20, self.width(), 40), Qt.AlignCenter, text)
+            y += 36
+        painter.restore()
 
     def check_lose(self):
         # Calculate threshold line same as in paintEvent - relative to shooter position
@@ -1800,6 +2132,7 @@ class SnoodWidget(QWidget):
         self.game_over = True  # ensure overlay shows
 
     def finish_game(self):
+        self.play_sound("over")
         # Drop all remaining balls for a satisfying splash animation
         for r in range(MAX_ROWS):
             for c in range(NUM_COLS):
@@ -1828,6 +2161,7 @@ class SnoodWidget(QWidget):
     def do_super_blast(self, cluster):
         '''Power-up that removes the given cluster with bonus points and falling animation.'''
         self.super_blast_active = True
+        self.play_sound("bomb")
         self.score += len(cluster) * BASE_SCORE * 2
         for rr, cc in cluster:
             x, y = self.cell_to_pos(rr, cc)
@@ -1881,10 +2215,9 @@ class SnoodWidget(QWidget):
                 icon_x = int(dlg_x + (dlg_w - icon_size)/2)
                 icon_y = int(dlg_y + 120)
                 # Animation per type
-                if icon_type == 'pingpong':
-                    cycle = self.cycle_types
-                    idx = (self.overlay_anim_counter // 30) % len(cycle)
-                    pix = self.images.get(cycle[idx], pix)
+                if icon_type == 'lottery':
+                    # Gentle bob: the ball itself is the gold "?" disc
+                    icon_y += int(3 * math.sin(self.overlay_anim_counter / 8.0))
                 elif intro.get('charged') == True:
                     # Jitter
                     jitter = (-2 if (self.overlay_anim_counter//6)%2 else 2)

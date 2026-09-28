@@ -2153,23 +2153,9 @@ class VideoConverterApp(QMainWindow):
         from utils.resources import resource_path
         binary_path = resource_path('graphics/balls/BallbusterXT.txt')
         try:
-            import time
-            from PyQt5.QtCore import QCoreApplication, QTimer
-            from PyQt5.QtGui import QFont
             with open(binary_path, 'r', encoding='utf-8', errors='ignore') as f:
                 lines = [line.rstrip('\n') for idx, line in enumerate(f) if idx < 1000]
-            # Temporarily switch console font to small monospace for ASCII art
-            prev_font = self.console_output.font()
-            self.console_output.setFont(QFont('Courier New', 7))
-            try:
-                for _ in range(3):
-                    for idx, line in enumerate(lines):
-                        self.console_output.appendHtml(f"<pre style='margin:0;font-family:\"Courier New\";font-size:7pt'>>{line}</pre>")
-                        if idx % 20 == 0:
-                            QCoreApplication.processEvents()
-                        time.sleep(0.01)
-            finally:
-                self.console_output.setFont(prev_font)
+            self._append_ballbuster_banner(lines)
         except FileNotFoundError:
             self.append_log(f"[INFO] Binary file {binary_path} not found. Proceeding anyway.")
         # Read high score and best level from system state
@@ -2201,6 +2187,57 @@ class VideoConverterApp(QMainWindow):
         from PyQt5.QtCore import QCoreApplication
         QCoreApplication.processEvents()
         self._schedule(3000, self.launch_ballbuster_game)
+
+    BANNER_FONT_FAMILY = 'Courier New'
+    BANNER_POINT_SIZE = 7.0
+    BANNER_MIN_POINT_SIZE = 4.0
+
+    def _banner_point_size(self, longest_line, viewport_width):
+        """Largest point size (7 down to 4, in halves) at which `longest_line`
+        fits `viewport_width` in the banner's monospace font. QPlainTextEdit
+        wraps at the viewport, and a wrapped banner row reads as a blank line
+        between rows."""
+        from PyQt5.QtGui import QFont, QFontMetricsF
+        size = self.BANNER_POINT_SIZE
+        while size > self.BANNER_MIN_POINT_SIZE:
+            font = QFont(self.BANNER_FONT_FAMILY)
+            font.setPointSizeF(size)
+            if QFontMetricsF(font).horizontalAdvance(longest_line) <= viewport_width:
+                break
+            size -= 0.5
+        return size
+
+    def _append_ballbuster_banner(self, lines):
+        """Write the ASCII title into the log three times, one row per block.
+        The settings table beside the log is hidden first (the game hides it
+        anyway) so the log has its full width, and the font is shrunk only if
+        the longest row still would not fit -- since 2026-09-28; before, the
+        104-column rows wrapped in the narrower compact log."""
+        import time
+        from PyQt5.QtCore import QCoreApplication
+        from PyQt5.QtGui import QFont
+        table = getattr(self, 'settings_table_box', None)
+        if table is not None:
+            table.hide()
+        QCoreApplication.processEvents()
+        longest = max(('>' + line for line in lines), key=len, default='')
+        size = self._banner_point_size(longest, self.console_output.viewport().width())
+        size_text = f"{size:g}pt"
+        prev_font = self.console_output.font()
+        font = QFont(self.BANNER_FONT_FAMILY)
+        font.setPointSizeF(size)
+        self.console_output.setFont(font)
+        try:
+            for _ in range(3):
+                for idx, line in enumerate(lines):
+                    self.console_output.appendHtml(
+                        f"<pre style='margin:0;font-family:\"{self.BANNER_FONT_FAMILY}\";"
+                        f"font-size:{size_text}'>>{line}</pre>")
+                    if idx % 20 == 0:
+                        QCoreApplication.processEvents()
+                    time.sleep(0.01)
+        finally:
+            self.console_output.setFont(prev_font)
 
     def get_game_icon_path(self):
         """The controller-circle icon for the current lock/activity state."""
@@ -3434,6 +3471,33 @@ class VideoConverterApp(QMainWindow):
                 "Level: %(level)s  Best level: %(best)s")
             % {"score": score, "high": high_score, "level": level, "best": highest_level}
         )
+        self._sync_game_auto_mute(game)
+
+    def _make_game_sounds(self, game):
+        """GameSounds for a BallBuster run: speaker state from settings,
+        auto-muted while NVC converts or records."""
+        from ui.extras.game_sounds import GameSounds
+        sounds = GameSounds(game, enabled=self.settings.get('game_sound', True),
+                            persist=self._persist_game_sound)
+        self._sync_game_auto_mute(game, sounds)
+        return sounds
+
+    def _persist_game_sound(self, key, value):
+        self.settings[key] = value
+        save_settings(self.settings)
+
+    def game_should_auto_mute(self):
+        activity = self.current_activity()
+        return bool(activity.converting) or activity.recording_phase in ("starting", "recording", "stopping")
+
+    def _sync_game_auto_mute(self, game, sounds=None):
+        sounds = sounds or getattr(game, 'sounds', None)
+        if sounds is None:
+            return
+        muted = self.game_should_auto_mute()
+        if muted != sounds.auto_muted:
+            sounds.set_auto_muted(muted)
+            game.update()
 
     def open_file_dialog(self):
         from PyQt5.QtWidgets import QFileDialog
@@ -3560,6 +3624,7 @@ class VideoConverterApp(QMainWindow):
 
         self.ballbuster_widget = BallBusterWidget(theme=skin_name)
         self.ballbuster_widget.setAttribute(Qt.WA_DeleteOnClose)
+        self.ballbuster_widget.sounds = self._make_game_sounds(self.ballbuster_widget)
         self.log_tab_layout.insertWidget(self.log_container_index, self.ballbuster_widget, 1) # stretch=1
         self.ballbuster_widget.setFocus()
 

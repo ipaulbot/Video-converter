@@ -363,6 +363,21 @@ CHAPTERS: list[dict] = [
                 ("Bestandspad kopiëren", "Kopieert het pad van het geselecteerde bestand."),
                 ("Instellingen", "Opent Instellingen."),
             ]},
+            {"type": "para", "text": (
+                "BallBuster XT. Het controller-pictogram in de voettekst start een "
+                "bubbelschieter op de plaats van het logboek zolang er niets converteert; "
+                "score, level en records lopen in de statusregel mee en de bezem haalt het "
+                "logboek terug. Drie of meer gelijke ballen verdwijnen; grotere combinaties "
+                "leveren meer per bal op en opeenvolgende treffers vermenigvuldigen de "
+                "punten (x2, daarna x3, als een chip naast het level). Speciale ballen "
+                "kondigen zich aan met een gekleurde gloed en ring rond de schieter: goud is "
+                "de Jackpotbal (landt, draait een rol en keert een kleurwissing, een kleine "
+                "bom, 250 punten of niets uit), teal de Stuiterbal (kaatst), rood de Nuke, "
+                "paars de Superbal (wisselt van kleur -- schiet op de kleur die u nodig "
+                "hebt), oranje een Geladen bal. De luidspreker rechtsboven schakelt de "
+                "geluidseffecten; NVC onthoudt de keuze en dempt het spel vanzelf tijdens "
+                "een conversie of opname. Scores vanaf 2.3.0 worden zo gewogen; oudere "
+                "vermeldingen in de toplijst zijn onder de vlakke regels behaald.")},
         ],
     },
     {
