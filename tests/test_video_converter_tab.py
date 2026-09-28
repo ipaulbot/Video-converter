@@ -57,6 +57,46 @@ class VideoConverterTabTests(unittest.TestCase):
         window.restore_files_table_after_game()
         self.assertFalse(window.converted_files_widget.isHidden())
 
+    def test_ballbuster_banner_lines_do_not_wrap_in_the_narrower_log(self):
+        # Since the settings table sits beside the log, the compact log is
+        # ~490 px wide and the 104-column banner at Courier 7 pt (520 px)
+        # wrapped every row onto a second line. The banner now hides the
+        # table for the intro (the game hides it anyway) and picks a font
+        # size that fits the viewport.
+        window = self._window()
+        window.set_window_mode("compact", persist=False)
+        window.tabs.setCurrentWidget(window.converter_tab_scroll)
+        window.move(-7000, -7000)
+        window.show()
+        try:
+            for _ in range(6):
+                self.app.processEvents()
+            lines = ["#" * 103] * 6
+            with patch("time.sleep"):
+                window._append_ballbuster_banner(lines)
+            for _ in range(6):
+                self.app.processEvents()
+            self.assertTrue(window.settings_table_box.isHidden())
+            doc = window.console_output.document()
+            block = doc.begin()
+            wrapped = []
+            while block.isValid():
+                if block.text().startswith(">###"):
+                    wrapped.append(block.layout().lineCount())
+                block = block.next()
+            self.assertEqual(len(wrapped), 18)  # the banner scrolls past three times
+            self.assertEqual(set(wrapped), {1})
+        finally:
+            window.hide()
+
+    def test_banner_point_size_shrinks_only_when_the_line_will_not_fit(self):
+        window = self._window()
+        line = ">" + "#" * 103
+        self.assertEqual(window._banner_point_size(line, 2000), 7.0)
+        small = window._banner_point_size(line, 300)
+        self.assertLess(small, 7.0)
+        self.assertGreaterEqual(small, 4.0)
+
     def test_game_borrows_the_sidebar_context_header_and_returns_it(self):
         window = self._window()
         header = window.context_header

@@ -2153,23 +2153,9 @@ class VideoConverterApp(QMainWindow):
         from utils.resources import resource_path
         binary_path = resource_path('graphics/balls/BallbusterXT.txt')
         try:
-            import time
-            from PyQt5.QtCore import QCoreApplication, QTimer
-            from PyQt5.QtGui import QFont
             with open(binary_path, 'r', encoding='utf-8', errors='ignore') as f:
                 lines = [line.rstrip('\n') for idx, line in enumerate(f) if idx < 1000]
-            # Temporarily switch console font to small monospace for ASCII art
-            prev_font = self.console_output.font()
-            self.console_output.setFont(QFont('Courier New', 7))
-            try:
-                for _ in range(3):
-                    for idx, line in enumerate(lines):
-                        self.console_output.appendHtml(f"<pre style='margin:0;font-family:\"Courier New\";font-size:7pt'>>{line}</pre>")
-                        if idx % 20 == 0:
-                            QCoreApplication.processEvents()
-                        time.sleep(0.01)
-            finally:
-                self.console_output.setFont(prev_font)
+            self._append_ballbuster_banner(lines)
         except FileNotFoundError:
             self.append_log(f"[INFO] Binary file {binary_path} not found. Proceeding anyway.")
         # Read high score and best level from system state
@@ -2201,6 +2187,57 @@ class VideoConverterApp(QMainWindow):
         from PyQt5.QtCore import QCoreApplication
         QCoreApplication.processEvents()
         self._schedule(3000, self.launch_ballbuster_game)
+
+    BANNER_FONT_FAMILY = 'Courier New'
+    BANNER_POINT_SIZE = 7.0
+    BANNER_MIN_POINT_SIZE = 4.0
+
+    def _banner_point_size(self, longest_line, viewport_width):
+        """Largest point size (7 down to 4, in halves) at which `longest_line`
+        fits `viewport_width` in the banner's monospace font. QPlainTextEdit
+        wraps at the viewport, and a wrapped banner row reads as a blank line
+        between rows."""
+        from PyQt5.QtGui import QFont, QFontMetricsF
+        size = self.BANNER_POINT_SIZE
+        while size > self.BANNER_MIN_POINT_SIZE:
+            font = QFont(self.BANNER_FONT_FAMILY)
+            font.setPointSizeF(size)
+            if QFontMetricsF(font).horizontalAdvance(longest_line) <= viewport_width:
+                break
+            size -= 0.5
+        return size
+
+    def _append_ballbuster_banner(self, lines):
+        """Write the ASCII title into the log three times, one row per block.
+        The settings table beside the log is hidden first (the game hides it
+        anyway) so the log has its full width, and the font is shrunk only if
+        the longest row still would not fit -- since 2026-09-28; before, the
+        104-column rows wrapped in the narrower compact log."""
+        import time
+        from PyQt5.QtCore import QCoreApplication
+        from PyQt5.QtGui import QFont
+        table = getattr(self, 'settings_table_box', None)
+        if table is not None:
+            table.hide()
+        QCoreApplication.processEvents()
+        longest = max(('>' + line for line in lines), key=len, default='')
+        size = self._banner_point_size(longest, self.console_output.viewport().width())
+        size_text = f"{size:g}pt"
+        prev_font = self.console_output.font()
+        font = QFont(self.BANNER_FONT_FAMILY)
+        font.setPointSizeF(size)
+        self.console_output.setFont(font)
+        try:
+            for _ in range(3):
+                for idx, line in enumerate(lines):
+                    self.console_output.appendHtml(
+                        f"<pre style='margin:0;font-family:\"{self.BANNER_FONT_FAMILY}\";"
+                        f"font-size:{size_text}'>>{line}</pre>")
+                    if idx % 20 == 0:
+                        QCoreApplication.processEvents()
+                    time.sleep(0.01)
+        finally:
+            self.console_output.setFont(prev_font)
 
     def get_game_icon_path(self):
         """The controller-circle icon for the current lock/activity state."""
