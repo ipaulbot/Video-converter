@@ -138,6 +138,24 @@ class ConversionWorker(QRunnable):
             return False
         command = build_ffmpeg_command(self.settings, input_file, output_file)
         total_duration = self.get_duration(input_file)
+        if self._run_conversion_command(command, input_file, output_file, total_duration):
+            return True
+        if self._cancel_requested or not self.settings.get('use_gpu', False):
+            return False
+        cpu_settings = dict(self.settings)
+        cpu_settings['use_gpu'] = False
+        fallback_command = build_ffmpeg_command(cpu_settings, input_file, output_file)
+        if fallback_command == command:
+            return False
+        try:
+            if os.path.exists(output_file) and os.path.getsize(output_file) == 0:
+                os.remove(output_file)
+        except OSError:
+            pass
+        self.signals.log.emit("[gpu] Hardware encoder failed; retrying with CPU encoder…")
+        return self._run_conversion_command(fallback_command, input_file, output_file, total_duration)
+
+    def _run_conversion_command(self, command, input_file, output_file, total_duration):
         startupinfo, creationflags = get_subprocess_startupinfo()
         try:
             with subprocess.Popen(

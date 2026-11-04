@@ -422,6 +422,26 @@ class RunOrchestrationTests(unittest.TestCase):
             w = self._run({}, **kwargs)
             self.assertEqual(len(w.signals.completions), 1, kwargs)
 
+    def test_gpu_conversion_failure_retries_once_with_cpu_encoder(self):
+        w = _worker({"use_gpu": True, "gpu_encoder": "nvidia", "video_codec": "libx264"})
+        w.get_duration = lambda _p: 1.0
+        commands_tried = []
+
+        def fake_run(cmd, _in, _out, _dur):
+            commands_tried.append(cmd)
+            return len(commands_tried) == 2
+
+        w._run_conversion_command = fake_run
+        with patch("conversion.worker.os.path.exists", return_value=True), \
+             patch("conversion.ffmpeg_utils.GPU_ENCODERS", {"nvidia": {"h264": "h264_nvenc"}}):
+            ok = w.perform_conversion("C:/in/clip.mp4", "C:/out/clip.mp4")
+
+        self.assertTrue(ok)
+        self.assertEqual(len(commands_tried), 2)
+        self.assertIn("h264_nvenc", commands_tried[0])
+        self.assertIn("libx264", commands_tried[1])
+        self.assertTrue(any("retrying with CPU encoder" in str(m) for m in w.signals.logs))
+
 
 if __name__ == "__main__":
     unittest.main()

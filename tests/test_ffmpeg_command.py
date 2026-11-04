@@ -80,6 +80,41 @@ class FfmpegCommandTests(unittest.TestCase):
 
         self.assertNotIn("-y", command)
 
+    def test_nvenc_short_gop_disables_b_frames_and_clamps_gop_to_at_least_two(self):
+        with patch.object(
+            ffmpeg_utils,
+            "GPU_ENCODERS",
+            {"nvidia": {"h264": "h264_nvenc", "hevc": "hevc_nvenc"}},
+        ):
+            command = ffmpeg_utils.build_ffmpeg_command(
+                self._base_settings(
+                    use_gpu=True,
+                    gpu_encoder="nvidia",
+                    video_codec="libx264",
+                    keyframe_interval=1,
+                ),
+                "input.mov",
+                "output.mp4",
+            )
+
+        self.assertEqual(command[command.index("-c:v") + 1], "h264_nvenc")
+        self.assertEqual(command[command.index("-bf") + 1], "0")
+        self.assertEqual(command[command.index("-g") + 1], "2")
+
+    def test_cpu_short_gop_keeps_exact_keyframe_interval(self):
+        command = ffmpeg_utils.build_ffmpeg_command(
+            self._base_settings(
+                use_gpu=False,
+                video_codec="libx264",
+                keyframe_interval=1,
+            ),
+            "input.mov",
+            "output.mp4",
+        )
+
+        self.assertNotIn("-bf", command)
+        self.assertEqual(command[command.index("-g") + 1], "1")
+
 
 if __name__ == "__main__":
     unittest.main()

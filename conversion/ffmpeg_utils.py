@@ -62,11 +62,13 @@ def normalize_video_codec(video_codec):
     return aliases.get(codec.lower(), codec)
 
 def video_codec_intent(video_codec):
-    """Return the GPU encoder family implied by a selected codec."""
+    """Return the GPU encoder family implied by a selected codec, or '' if CPU-only."""
     normalized = normalize_video_codec(video_codec).lower()
     if normalized in {'libx265', 'hevc', 'h265'}:
         return 'hevc'
-    return 'h264'
+    if normalized in {'libx264', 'h264', 'x264'}:
+        return 'h264'
+    return ''
 
 def build_ffmpeg_command(settings, input_file, output_file):
     """
@@ -82,6 +84,7 @@ def build_ffmpeg_command(settings, input_file, output_file):
     if settings.get('copy_only', False):
         command.extend(['-c', 'copy'])
     else:
+        active_video_codec = ""
         # If GPU acceleration is enabled, check for "Auto" or specific vendor
         if settings.get('use_gpu', False):
             gpu_vendor = settings.get('gpu_encoder', 'Auto')
@@ -102,26 +105,30 @@ def build_ffmpeg_command(settings, input_file, output_file):
             if gpu_vendor.lower() != 'none':
                 gpu_encoder_map = _gpu_encoders().get(gpu_vendor.lower(), {})
                 codec_intent = video_codec_intent(settings.get('video_codec', 'libx264'))
-                gpu_encoder = gpu_encoder_map.get(codec_intent, '')
+                gpu_encoder = gpu_encoder_map.get(codec_intent, '') if codec_intent else ''
 
                 if gpu_encoder:
+                    active_video_codec = gpu_encoder
                     command.extend(['-c:v', gpu_encoder])
                     logger.info(f"Using GPU Encoder: {gpu_encoder}")
                 else:
                     # Fall back to the normal video codec if mapping not found.
                     video_codec = normalize_video_codec(settings.get('video_codec', 'libx264'))
                     if video_codec:
+                        active_video_codec = video_codec
                         command.extend(['-c:v', video_codec])
-                        logger.warning(f"GPU {gpu_vendor} found but no {codec_intent.upper()} encoder mapped. Using CPU codec: {video_codec}")
+                        logger.warning(f"GPU {gpu_vendor} found but no {(codec_intent or video_codec).upper()} encoder mapped. Using CPU codec: {video_codec}")
             else:
                  # GPU requested but none found/selected -> CPU fallback
                 video_codec = normalize_video_codec(settings.get('video_codec', 'libx264'))
                 if video_codec:
+                    active_video_codec = video_codec
                     command.extend(['-c:v', video_codec])
                     logger.info(f"GPU not used. Using CPU codec: {video_codec}")
         else:
             video_codec = normalize_video_codec(settings.get('video_codec', 'libx264'))
             if video_codec:
+                active_video_codec = video_codec
                 command.extend(['-c:v', video_codec])
         audio_codec = settings.get('audio_codec', 'aac')
         if audio_codec:
@@ -383,7 +390,13 @@ def build_ffmpeg_command(settings, input_file, output_file):
         try:
             gop = int(gop)
             if gop > 0:
-                command.extend(['-g', str(gop)])
+                if active_video_codec.lower().endswith('_nvenc') and gop <= 4:
+                    # NVENC defaults to 3 B-frames and requires gopLength > max_b_frames + 1;
+                    # passing -g 1..4 without disabling B-frames fails encoder initialization
+                    # ("Gop Length should be greater than number of B frames + 1").
+                    command.extend(['-bf', '0', '-g', str(max(2, gop))])
+                else:
+                    command.extend(['-g', str(gop)])
         except Exception:
             logger.debug("build_ffmpeg_command: suppressed error", exc_info=True)
 
