@@ -634,11 +634,15 @@ class VideoConverterApp(QMainWindow):
         self.lossless_editor_tab_scroll.setWidget(card)
         self.tabs.addTab(self.lossless_editor_tab_scroll, _tr("Lossless Editor"))
 
-        # Multi-Source Recorder Tab
+        # Multi-Source Recorder Tab. Device discovery (`ffmpeg -f dshow -list_devices`)
+        # and camera previews are deferred until the tab is actually opened so
+        # launching NVC does not spawn ffmpeg.exe or trigger Windows Firewall
+        # prompts for network/GenICam camera discovery at startup.
         self.multi_source_recorder_widget = MultiSourceRecorderWidget(
             self,
             button_style=getattr(self, 'current_button_style', None),
-            load_saved_settings=True
+            load_saved_settings=True,
+            defer_startup_probe=True,
         )
         self.multi_source_recorder_widget.start_btn.clicked.disconnect()
         self.multi_source_recorder_widget.start_btn.clicked.connect(self.toggle_process)
@@ -1050,6 +1054,9 @@ class VideoConverterApp(QMainWindow):
         if index >= 0:
             self.tabs.setCurrentIndex(index)
             self.on_tab_changed(index)
+        recorder = getattr(self, "multi_source_recorder_widget", None)
+        if recorder is not None and hasattr(recorder, "activate_recorder_if_needed"):
+            recorder.activate_recorder_if_needed()
 
     def current_tool_tab_order(self):
         """Tool tab keys left to right as the bar shows them now."""
@@ -1628,6 +1635,9 @@ class VideoConverterApp(QMainWindow):
         if media_scroll is not None and self.tabs.currentWidget() is media_scroll:
             self._ensure_media_player_widget()
         if self._recorder_tab_is_active():
+            recorder = getattr(self, 'multi_source_recorder_widget', None)
+            if recorder is not None and hasattr(recorder, 'activate_recorder_if_needed'):
+                recorder.activate_recorder_if_needed()
             self._show_recorder_layout_preview()
         elif self._showing_recorder_layout_preview:
             # Leaving the recorder tab: drop the schematic so a later file preview is clean.

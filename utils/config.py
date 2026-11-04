@@ -63,7 +63,7 @@ default_settings = {
         "video_converter": True,
         "pc_report": False,
         "lossless_editor": False,
-        "multi_source_recorder": True,
+        "multi_source_recorder": False,
         "media_player": True,
     },
     "media_player": {

@@ -24,17 +24,17 @@ class ConfigTests(unittest.TestCase):
     def test_non_numeric_retention_becomes_zero(self):
         self.assertEqual(coerce_retention_days("abc"), 0)
 
-    def test_default_visible_tool_tabs_include_multi_source_recorder(self):
+    def test_default_visible_tool_tabs_hide_multi_source_recorder(self):
         settings = normalize_settings({})
 
-        self.assertTrue(settings["visible_tool_tabs"]["multi_source_recorder"])
+        self.assertFalse(settings["visible_tool_tabs"]["multi_source_recorder"])
         self.assertEqual(
             settings["visible_tool_tabs"],
             {
                 "video_converter": True,
                 "pc_report": False,
                 "lossless_editor": False,
-                "multi_source_recorder": True,
+                "multi_source_recorder": False,
                 "media_player": True,
             },
         )
@@ -44,7 +44,7 @@ class ConfigTests(unittest.TestCase):
 
         self.assertTrue(settings["visible_tool_tabs"]["pc_report"])
         self.assertTrue(settings["visible_tool_tabs"]["video_converter"])
-        self.assertTrue(settings["visible_tool_tabs"]["multi_source_recorder"])
+        self.assertFalse(settings["visible_tool_tabs"]["multi_source_recorder"])
 
     def test_old_log_and_files_tabs_migrate_to_the_video_converter_tab(self):
         # Either old tab on -> the merged tab on; both off -> off.

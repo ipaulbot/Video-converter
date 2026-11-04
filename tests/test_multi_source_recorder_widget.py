@@ -139,6 +139,19 @@ class MultiSourceRecorderWidgetTests(unittest.TestCase):
 
         self.assertEqual(started, [False])
 
+    def test_widget_can_defer_startup_probe_until_tab_is_activated(self):
+        started = []
+        with patch.object(
+            MultiSourceRecorderWidget,
+            "start_device_discovery",
+            lambda self, force=False: started.append(force),
+        ):
+            widget = MultiSourceRecorderWidget(auto_preview=False, defer_startup_probe=True)
+            self.assertEqual(started, [])
+            self.assertTrue(widget.activate_recorder_if_needed())
+            self.assertEqual(started, [False])
+            self.assertFalse(widget.activate_recorder_if_needed())
+
     def test_discovery_result_is_ignored_after_widget_is_destroyed(self):
         with patch.object(
             MultiSourceRecorderWidget,

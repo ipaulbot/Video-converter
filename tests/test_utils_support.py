@@ -97,6 +97,22 @@ class ResourcePathTests(unittest.TestCase):
         result = resources.resource_path("docs/help/x.pdf")
         self.assertTrue(result.endswith("docs/help/x.pdf"), result)
 
+    def test_frozen_ffmpeg_binary_is_staged_to_stable_bin_dir(self):
+        import sys
+        import tempfile
+        with tempfile.TemporaryDirectory() as bundle_dir, tempfile.TemporaryDirectory() as data_dir:
+            bundled_ffmpeg = os.path.join(bundle_dir, "ffmpeg.exe")
+            with open(bundled_ffmpeg, "wb") as handle:
+                handle.write(b"fake-ffmpeg-binary")
+            with patch.dict(os.environ, {"NVC_DATA_DIR": data_dir}), \
+                 patch.object(sys, "frozen", True, create=True), \
+                 patch.object(sys, "_MEIPASS", bundle_dir, create=True):
+                staged = resources.resource_path("ffmpeg.exe")
+                self.assertEqual(staged, os.path.join(data_dir, "bin", "ffmpeg.exe"))
+                self.assertTrue(os.path.isfile(staged))
+                with open(staged, "rb") as handle:
+                    self.assertEqual(handle.read(), b"fake-ffmpeg-binary")
+
 
 class SubprocessHelperTests(unittest.TestCase):
     def test_it_returns_a_pair(self):

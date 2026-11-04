@@ -1395,7 +1395,7 @@ class MultiSourceRecorderWidget(QWidget):
     # window reuses it instead of spinning ffmpeg up again.
     DEVICE_SCAN_TTL_S = 45.0
 
-    def __init__(self, parent=None, button_style=None, directshow_devices=None, auto_preview=True, load_saved_settings=False):
+    def __init__(self, parent=None, button_style=None, directshow_devices=None, auto_preview=True, load_saved_settings=False, defer_startup_probe=False):
         super().__init__(parent)
         self._workflow_host = parent
         self.button_style = button_style
@@ -1408,6 +1408,7 @@ class MultiSourceRecorderWidget(QWidget):
         self.device_discovery_running = False
         self.last_device_scan_ok = None
         self.last_device_scan_at = None
+        self._startup_probe_pending = bool(defer_startup_probe)
         self.device_scan_finished.connect(self._apply_device_scan)
         self.auto_preview = auto_preview
         self.preview_processes = {}
@@ -1452,9 +1453,28 @@ class MultiSourceRecorderWidget(QWidget):
         self.record_start_watchdog_timer = QTimer(self)
         self.record_start_watchdog_timer.setSingleShot(True)
         self.record_start_watchdog_timer.timeout.connect(self._begin_pending_recording)
-        self.start_device_discovery()
+        if not self._startup_probe_pending:
+            self.start_device_discovery()
         if load_saved_settings:
-            self.load_current_recorder_settings()
+            self.load_current_recorder_settings(refresh_previews=not self._startup_probe_pending)
+
+    def activate_recorder_if_needed(self):
+        """Run the deferred startup device scan and preview refresh once when the tab is first shown.
+
+        Why this is deferred in the main window: `ffmpeg -f dshow -list_devices`
+        loads third-party DirectShow capture filters (such as Basler pylon
+        GenICam), which broadcast GigE Vision UDP discovery packets and trigger
+        a Windows Defender Firewall prompt for ffmpeg.exe. Running that probe at
+        application startup -- when the user only opened Video Converter -- is
+        jarring and unnecessary.
+        """
+        if not getattr(self, "_startup_probe_pending", False):
+            return False
+        self._startup_probe_pending = False
+        self.start_device_discovery()
+        if self.auto_preview and os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            self.refresh_previews_from_sources(force_restart=False)
+        return True
 
     def _source_label(self, source_type_id):
         return {
@@ -2858,9 +2878,12 @@ class MultiSourceRecorderWidget(QWidget):
     def save_current_recorder_settings(self):
         save_recorder_settings(self.recorder_settings_path(), self.capture_recorder_settings())
 
-    def load_current_recorder_settings(self):
+    def load_current_recorder_settings(self, refresh_previews=None):
         try:
-            refresh_previews = os.environ.get("QT_QPA_PLATFORM") != "offscreen"
+            if refresh_previews is None:
+                refresh_previews = os.environ.get("QT_QPA_PLATFORM") != "offscreen"
+            else:
+                refresh_previews = bool(refresh_previews) and os.environ.get("QT_QPA_PLATFORM") != "offscreen"
             self.apply_recorder_settings(
                 load_recorder_settings(self.recorder_settings_path()),
                 refresh_previews=refresh_previews,
